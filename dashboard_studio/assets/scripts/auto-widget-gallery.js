@@ -254,7 +254,7 @@
     function isVariableTopic(topic, meta) {
         if (meta && meta.isVariable) return true;
         var t = String(topic || '');
-        if (t.indexOf('homey/variables/') === 0) return true;
+        if (t.indexOf('homey/variables/') === 0 || t.indexOf('homeassistant/variables/') === 0) return true;
         if (t.indexOf('local/') === 0) return true;
         return false;
     }
@@ -265,7 +265,7 @@
             return cap === 'start' || cap === 'set' || cap === 'trigger';
         }
         var t = String(topic || '').toLowerCase();
-        if (t.indexOf('homey/flows/') === 0 || t.indexOf('flows/') === 0) {
+        if (t.indexOf('homey/flows/') === 0 || t.indexOf('homeassistant/flows/') === 0 || t.indexOf('flows/') === 0) {
             return cap === 'start' || cap === 'set' || cap === 'trigger';
         }
         return false;
@@ -277,7 +277,7 @@
             return cap === 'set' || cap === 'start' || cap === 'trigger';
         }
         var t = String(topic || '').toLowerCase();
-        if (t.indexOf('homey/moods/') === 0 || t.indexOf('moods/') === 0 || t.indexOf('mood-') === 0) {
+        if (t.indexOf('homey/moods/') === 0 || t.indexOf('homeassistant/moods/') === 0 || t.indexOf('moods/') === 0 || t.indexOf('mood-') === 0) {
             return cap === 'set' || cap === 'start' || cap === 'trigger';
         }
         return false;
@@ -321,6 +321,8 @@
         var rest = '';
         if (text.indexOf('homey/event/') === 0) rest = text.slice(12);
         else if (text.indexOf('homey/insight/') === 0) rest = text.slice(14);
+        else if (text.indexOf('homeassistant/event/') === 0) rest = text.slice(20);
+        else if (text.indexOf('homeassistant/insight/') === 0) rest = text.slice(22);
         else return '';
         var parts = rest.split('/').filter(Boolean);
         return parts.length ? parts[parts.length - 1] : '';
@@ -339,7 +341,7 @@
         var parts = topicParts(topic);
         if (!parts.length) return '';
         var seg = parts[0];
-        if (seg === 'local' || seg === 'homey' || seg === 'sim' || seg === 'mqtt' || seg === 'nodered') {
+        if (seg === 'local' || seg === 'homey' || seg === 'homeassistant' || seg === 'sim' || seg === 'mqtt' || seg === 'nodered') {
             seg = parts.length >= 2 ? parts[parts.length - 2] : '';
         }
         return titleCase(String(seg).replace(/[_-]+/g, ' '));
@@ -411,10 +413,10 @@
         var capBlob = meta && meta.capabilityId ? topicWords(meta.capabilityId) : '';
         var titleBlob = meta && meta.title ? topicWords(meta.title) : '';
         var blob = (capBlob + ' ' + topicWords(topic) + ' ' + titleBlob).trim();
-        var unit = '';
+        var unit = (meta && meta.units) ? String(meta.units) : '';
         var icon = '';
-        if ((meta && meta.isFlow) || t.indexOf('homey/flows/') === 0 || t.indexOf('flows/') === 0) icon = 'ph-play-circle';
-        else if ((meta && meta.isMood) || t.indexOf('homey/moods/') === 0 || t.indexOf('moods/') === 0) icon = 'ph-sparkle';
+        if ((meta && meta.isFlow) || t.indexOf('homey/flows/') === 0 || t.indexOf('homeassistant/flows/') === 0 || t.indexOf('flows/') === 0) icon = 'ph-play-circle';
+        else if ((meta && meta.isMood) || t.indexOf('homey/moods/') === 0 || t.indexOf('homeassistant/moods/') === 0 || t.indexOf('moods/') === 0) icon = 'ph-sparkle';
         for (var i = 0; i < INFER_RULES.length; i++) {
             var rule = INFER_RULES[i];
             if (!hasWord(blob, rule.word)) continue;
@@ -430,10 +432,10 @@
         if (t.indexOf('local/') === 0) return 'local';
         if (meta && meta.isVariable) return 'variable';
         if (meta && (meta.isFlow || meta.isMood)) return 'automation';
-        if (t.indexOf('homey/flows/') === 0 || t.indexOf('flows/') === 0) return 'automation';
-        if (t.indexOf('homey/moods/') === 0 || t.indexOf('moods/') === 0 || t.indexOf('mood-') === 0) return 'automation';
+        if (t.indexOf('homey/flows/') === 0 || t.indexOf('homeassistant/flows/') === 0 || t.indexOf('flows/') === 0) return 'automation';
+        if (t.indexOf('homey/moods/') === 0 || t.indexOf('homeassistant/moods/') === 0 || t.indexOf('moods/') === 0 || t.indexOf('mood-') === 0) return 'automation';
         if (/^mood-|-start$|\/start$|\/enabled$/i.test(t)) return 'automation';
-        if (t.indexOf('homey/insight/') === 0 || /insight/i.test(t) || /\/log(?:\/|$)|\/list(?:\/|$)/i.test(t)) return 'insight';
+        if (t.indexOf('homey/insight/') === 0 || t.indexOf('homeassistant/insight/') === 0 || /insight/i.test(t) || /\/log(?:\/|$)|\/list(?:\/|$)/i.test(t)) return 'insight';
         return 'device';
     }
 
@@ -4824,7 +4826,8 @@
         }
         syncRefreshButton();
         notifyCount();
-        if (String(session._driverType).toLowerCase() === 'homey') requestLatestValues();
+        var dtLower = String(session._driverType).toLowerCase();
+        if (dtLower === 'homey' || dtLower === 'homeassistant') requestLatestValues();
     }
 
     function removeHook() {

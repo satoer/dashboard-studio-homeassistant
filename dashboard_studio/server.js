@@ -119,8 +119,94 @@ const SKIP_RAW_ATTRIBUTES = new Set([
   'device_class',
   'state_class',
   'restored',
-  'editable'
+  'editable',
+  'unit_of_measurement',
+  'native_unit_of_measurement',
+  'display_precision',
+  'suggested_display_precision',
+  'last_reset',
+  'assumed_state',
+  'initial',
+  'has_date',
+  'has_time',
+  'mode',
+  'min',
+  'max',
+  'step',
+  'pattern',
+  'entity_id',
+  'id',
+  'user_id',
+  'auto_update',
+  'state_color'
 ]);
+
+const SENSOR_DEVICE_CLASS_MAP = {
+  temperature: { id: 'measure_temperature', title: 'Temperature' },
+  humidity: { id: 'measure_humidity', title: 'Humidity' },
+  carbon_dioxide: { id: 'measure_co2', title: 'CO2' },
+  co2: { id: 'measure_co2', title: 'CO2' },
+  carbon_monoxide: { id: 'measure_co', title: 'CO' },
+  co: { id: 'measure_co', title: 'CO' },
+  pm25: { id: 'measure_pm25', title: 'PM2.5' },
+  pm2_5: { id: 'measure_pm25', title: 'PM2.5' },
+  pm10: { id: 'measure_pm10', title: 'PM10' },
+  pm1: { id: 'measure_pm1', title: 'PM1' },
+  volatile_organic_compounds: { id: 'measure_voc', title: 'VOC' },
+  volatile_organic_compounds_parts: { id: 'measure_voc', title: 'VOC' },
+  voc: { id: 'measure_voc', title: 'VOC' },
+  aqi: { id: 'measure_aqi', title: 'Air Quality Index' },
+  nitrogen_dioxide: { id: 'measure_no2', title: 'NO2' },
+  ozone: { id: 'measure_o3', title: 'Ozone' },
+  power: { id: 'measure_power', title: 'Power' },
+  apparent_power: { id: 'measure_power', title: 'Apparent Power' },
+  reactive_power: { id: 'measure_power', title: 'Reactive Power' },
+  energy: { id: 'meter_power', title: 'Energy' },
+  energy_storage: { id: 'meter_power', title: 'Stored Energy' },
+  gas: { id: 'meter_gas', title: 'Gas' },
+  water: { id: 'meter_water', title: 'Water' },
+  battery: { id: 'measure_battery', title: 'Battery' },
+  illuminance: { id: 'measure_luminance', title: 'Luminance' },
+  pressure: { id: 'measure_pressure', title: 'Pressure' },
+  atmospheric_pressure: { id: 'measure_pressure', title: 'Atmospheric Pressure' },
+  voltage: { id: 'measure_voltage', title: 'Voltage' },
+  current: { id: 'measure_current', title: 'Current' },
+  frequency: { id: 'measure_frequency', title: 'Frequency' },
+  signal_strength: { id: 'measure_signal_strength', title: 'Signal Strength' },
+  sound_pressure: { id: 'measure_noise', title: 'Noise' },
+  wind_speed: { id: 'measure_wind_strength', title: 'Wind Speed' },
+  wind_direction: { id: 'measure_wind_angle', title: 'Wind Direction' },
+  precipitation: { id: 'measure_rain', title: 'Precipitation' },
+  precipitation_intensity: { id: 'measure_rain', title: 'Rain Intensity' },
+  moisture: { id: 'measure_moisture', title: 'Moisture' }
+};
+
+const BINARY_SENSOR_DEVICE_CLASS_MAP = {
+  motion: { id: 'alarm_motion', title: 'Motion' },
+  occupancy: { id: 'alarm_presence', title: 'Occupancy' },
+  presence: { id: 'alarm_presence', title: 'Presence' },
+  door: { id: 'alarm_contact', title: 'Door Contact' },
+  garage_door: { id: 'alarm_contact', title: 'Garage Door' },
+  window: { id: 'alarm_contact', title: 'Window Contact' },
+  opening: { id: 'alarm_contact', title: 'Opening' },
+  smoke: { id: 'alarm_smoke', title: 'Smoke Alarm' },
+  gas: { id: 'alarm_gas', title: 'Gas Alarm' },
+  carbon_monoxide: { id: 'alarm_co', title: 'CO Alarm' },
+  moisture: { id: 'alarm_water', title: 'Water Leak' },
+  tamper: { id: 'alarm_tamper', title: 'Tamper Alarm' },
+  battery: { id: 'alarm_battery', title: 'Low Battery' },
+  heat: { id: 'alarm_heat', title: 'Heat Alarm' },
+  cold: { id: 'alarm_cold', title: 'Cold Alarm' },
+  problem: { id: 'alarm_generic', title: 'Problem' },
+  safety: { id: 'alarm_generic', title: 'Safety' },
+  vibration: { id: 'alarm_vibration', title: 'Vibration' },
+  connectivity: { id: 'alarm_connectivity', title: 'Connectivity' },
+  plug: { id: 'onoff', title: 'Plugged In' },
+  power: { id: 'onoff', title: 'Power' },
+  light: { id: 'alarm_light', title: 'Light Detected' },
+  sound: { id: 'alarm_noise', title: 'Sound Detected' },
+  lock: { id: 'locked', title: 'Lock' }
+};
 
 function flattenSettingsLocaleStrings(node, prefix, out) {
   const acc = out || {};
@@ -197,6 +283,9 @@ class DashboardStudioHAServer {
     this.haDevices = new Map();
     this.haEntities = new Map();
     this.haConfig = { time_zone: 'UTC', location_name: 'Home Assistant' };
+    this.deviceCapByKey = new Map();
+    this.deviceCapsByEntity = new Map();
+    this.cachedDevicesResponse = null;
 
     this.ws = null;
     this.wsConnected = false;
@@ -624,7 +713,8 @@ class DashboardStudioHAServer {
       await this.sendHaWsCommand('subscribe_events', { event_type: 'entity_registry_updated' }).catch(() => {});
       await this.sendHaWsCommand('subscribe_events', { event_type: 'dashboard_studio_call' }).catch(() => {});
 
-      this.populateInitialStateCache();
+      this.rebuildDeviceCatalog();
+      this.populateInitialStateCache(true);
       this.syncAllOpenBinarySensorsToHa();
     } catch (err) {
       console.error('[DashboardStudio] Failed to initialize HA state and subscriptions:', err.message);
@@ -664,6 +754,8 @@ class DashboardStudioHAServer {
         }
       }
     }
+
+    this.rebuildDeviceCatalog();
   }
 
   haRestRequest(method, apiPath, bodyObj, customConn) {
@@ -797,7 +889,137 @@ class DashboardStudioHAServer {
     };
   }
 
-  extractCapabilitiesForEntity(stateObj) {
+  stripDevicePrefixFromTitle(friendlyName, deviceName) {
+    const fn = String(friendlyName || '').trim();
+    const dn = String(deviceName || '').trim();
+    if (!fn || !dn) return fn;
+    if (fn.toLowerCase().startsWith(dn.toLowerCase())) {
+      const stripped = fn.slice(dn.length).replace(/^[\s\-:·_]+/, '').trim();
+      if (stripped) return stripped;
+    }
+    return fn;
+  }
+
+  deriveEntityObjectSuffix(entityId, deviceSlug) {
+    const objId = String(entityId || '').split('.').slice(1).join('.') || String(entityId || '');
+    const slug = slugifyEntityPart(objId);
+    if (deviceSlug && slug.startsWith(deviceSlug + '_')) {
+      const rest = slug.slice(deviceSlug.length + 1).replace(/^_+|_+$/g, '');
+      if (rest) return rest;
+    }
+    return slug;
+  }
+
+  resolvePrimaryCapabilityMeta(stateObj, options = {}) {
+    const entityId = stateObj.entity_id;
+    const domain = entityId.split('.')[0];
+    const attrs = stateObj.attributes || {};
+    const deviceClass = String(attrs.device_class || '').trim().toLowerCase();
+    const unit = attrs.unit_of_measurement !== undefined && attrs.unit_of_measurement !== null
+      ? String(attrs.unit_of_measurement).trim()
+      : '';
+    const friendlyName = attrs.friendly_name || entityId;
+    const deviceName = options.deviceName || '';
+    const deviceSlug = options.deviceSlug || '';
+    const suffixSlug = this.deriveEntityObjectSuffix(entityId, deviceSlug);
+    const shortTitle = this.stripDevicePrefixFromTitle(friendlyName, deviceName);
+
+    const formatWithUnit = (label) => {
+      const base = String(label || 'Value').trim();
+      if (!unit) return base;
+      if (base.endsWith(`(${unit})`)) return base;
+      return `${base} (${unit})`;
+    };
+
+    if (domain === 'sensor') {
+      const mapped = SENSOR_DEVICE_CLASS_MAP[deviceClass];
+      if (mapped) {
+        const baseLabel = (deviceName && shortTitle !== friendlyName) ? shortTitle : (shortTitle || mapped.title);
+        return { id: mapped.id, title: formatWithUnit(baseLabel), units: unit || null };
+      }
+
+      if (suffixSlug === 'carbon_dioxide' || suffixSlug.endsWith('_co2') || suffixSlug === 'co2' || unit === 'ppm') {
+        return { id: 'measure_co2', title: formatWithUnit(shortTitle || 'CO2'), units: unit || null };
+      }
+      if (
+        suffixSlug === 'volatile_organic_compounds' ||
+        suffixSlug === 'volatile_organic_compounds_parts' ||
+        suffixSlug.endsWith('_voc') ||
+        suffixSlug === 'voc' ||
+        suffixSlug === 'tvoc' ||
+        unit === 'ppb'
+      ) {
+        return { id: 'measure_voc', title: formatWithUnit(shortTitle || 'VOC'), units: unit || null };
+      }
+      if (suffixSlug === 'pm2_5' || suffixSlug === 'pm25' || suffixSlug.endsWith('_pm2_5') || suffixSlug.endsWith('_pm25')) {
+        return { id: 'measure_pm25', title: formatWithUnit(shortTitle || 'PM2.5'), units: unit || null };
+      }
+      if (suffixSlug === 'pm10' || suffixSlug.endsWith('_pm10')) {
+        return { id: 'measure_pm10', title: formatWithUnit(shortTitle || 'PM10'), units: unit || null };
+      }
+      if (suffixSlug === 'temperature' || suffixSlug.endsWith('_temperature') || unit === '°C' || unit === '°F') {
+        return { id: 'measure_temperature', title: formatWithUnit(shortTitle || 'Temperature'), units: unit || null };
+      }
+      if (suffixSlug === 'humidity' || suffixSlug.endsWith('_humidity')) {
+        return { id: 'measure_humidity', title: formatWithUnit(shortTitle || 'Humidity'), units: unit || null };
+      }
+      if (suffixSlug === 'power' || suffixSlug.endsWith('_power') || unit === 'W') {
+        return { id: 'measure_power', title: formatWithUnit(shortTitle || 'Power'), units: unit || null };
+      }
+      if (suffixSlug === 'energy' || suffixSlug.endsWith('_energy') || unit === 'kWh' || unit === 'Wh') {
+        return { id: 'meter_power', title: formatWithUnit(shortTitle || 'Energy'), units: unit || null };
+      }
+      if (suffixSlug === 'battery' || suffixSlug.endsWith('_battery')) {
+        return { id: 'measure_battery', title: formatWithUnit(shortTitle || 'Battery'), units: unit || null };
+      }
+      if (suffixSlug === 'illuminance' || suffixSlug === 'lux' || unit === 'lx') {
+        return { id: 'measure_luminance', title: formatWithUnit(shortTitle || 'Luminance'), units: unit || null };
+      }
+      if (suffixSlug === 'pressure' || unit === 'hPa' || unit === 'mbar') {
+        return { id: 'measure_pressure', title: formatWithUnit(shortTitle || 'Pressure'), units: unit || null };
+      }
+
+      const fallbackId = suffixSlug || 'state';
+      return {
+        id: fallbackId,
+        title: formatWithUnit(shortTitle || fallbackId.replace(/_/g, ' ')),
+        units: unit || null
+      };
+    }
+
+    if (domain === 'binary_sensor') {
+      const mapped = BINARY_SENSOR_DEVICE_CLASS_MAP[deviceClass];
+      if (mapped) {
+        const baseLabel = (deviceName && shortTitle !== friendlyName) ? shortTitle : (shortTitle || mapped.title);
+        return { id: mapped.id, title: baseLabel, units: null };
+      }
+      const fallbackId = suffixSlug
+        ? (suffixSlug.startsWith('alarm_') || suffixSlug === 'onoff' ? suffixSlug : `alarm_${suffixSlug}`)
+        : 'alarm_generic';
+      return {
+        id: fallbackId,
+        title: shortTitle || 'Binary Sensor',
+        units: null
+      };
+    }
+
+    if (domain === 'number' || domain === 'select' || domain === 'text' || domain === 'button') {
+      const fallbackId = suffixSlug || 'state';
+      return {
+        id: fallbackId,
+        title: formatWithUnit(shortTitle || 'State'),
+        units: unit || null
+      };
+    }
+
+    return {
+      id: 'state',
+      title: formatWithUnit(deviceName && shortTitle !== friendlyName ? shortTitle : 'State'),
+      units: unit || null
+    };
+  }
+
+  extractCapabilitiesForEntity(stateObj, options = {}) {
     const caps = {};
     if (!stateObj || !stateObj.entity_id) return caps;
 
@@ -805,8 +1027,10 @@ class DashboardStudioHAServer {
     const domain = entityId.split('.')[0];
     const rawState = stateObj.state;
     const attrs = stateObj.attributes || {};
+    const unit = attrs.unit_of_measurement !== undefined && attrs.unit_of_measurement !== null
+      ? String(attrs.unit_of_measurement).trim()
+      : null;
 
-    // Primary state value conversion
     let parsedState = rawState;
     if (BINARY_ON_OFF_DOMAINS.has(domain)) {
       parsedState = rawState === 'on';
@@ -817,69 +1041,89 @@ class DashboardStudioHAServer {
       }
     }
 
-    caps.state = {
-      value: parsedState,
-      title: 'State',
-      type: typeof parsedState
-    };
-
     if (domain === 'light') {
       const lc = this.buildLightCompositeFromHaState(stateObj);
       if (lc) {
-        caps.onoff = { value: lc.onoff, title: 'On / Off', type: 'boolean' };
-        caps.dim = { value: lc.dim, title: 'Dim level (0-1)', type: 'number' };
-        caps.light_hue = { value: lc.hue, title: 'Light Hue (0-1)', type: 'number' };
-        caps.light_saturation = { value: lc.saturation, title: 'Light Saturation (0-1)', type: 'number' };
-        caps.light_temperature = { value: lc.temperature, title: 'Color Temperature (0-1)', type: 'number' };
-        caps.light_mode = { value: lc.mode, title: 'Light Mode', type: 'string' };
+        caps.onoff = { value: lc.onoff, title: 'On / Off', type: 'boolean', units: null };
+        caps.dim = { value: lc.dim, title: 'Dim level (0-1)', type: 'number', units: null };
+        caps.light_hue = { value: lc.hue, title: 'Light Hue (0-1)', type: 'number', units: null };
+        caps.light_saturation = { value: lc.saturation, title: 'Light Saturation (0-1)', type: 'number', units: null };
+        caps.light_temperature = { value: lc.temperature, title: 'Color Temperature (0-1)', type: 'number', units: null };
+        caps.light_mode = { value: lc.mode, title: 'Light Mode', type: 'string', units: null };
         caps[LIGHT_COMPOSITE_CAP_ID] = {
           value: lc.compositeString,
           title: 'Light Controller (Composite JSON)',
-          type: 'string'
+          type: 'string',
+          units: null
         };
       }
+    } else if (domain === 'sensor' || domain === 'binary_sensor' || domain === 'number' || domain === 'select' || domain === 'text' || domain === 'button') {
+      const primaryMeta = this.resolvePrimaryCapabilityMeta(stateObj, options);
+      caps[primaryMeta.id] = {
+        value: parsedState,
+        title: primaryMeta.title,
+        type: typeof parsedState,
+        units: primaryMeta.units,
+        isPrimary: true
+      };
     } else if (BINARY_ON_OFF_DOMAINS.has(domain)) {
+      const shortTitle = options.deviceName
+        ? this.stripDevicePrefixFromTitle(attrs.friendly_name || entityId, options.deviceName)
+        : '';
       caps.onoff = {
         value: rawState === 'on',
-        title: 'On / Off',
-        type: 'boolean'
+        title: (shortTitle && shortTitle !== (attrs.friendly_name || entityId)) ? `${shortTitle} · On / Off` : 'On / Off',
+        type: 'boolean',
+        units: null,
+        isPrimary: true
       };
     } else if (domain === 'cover') {
       const pos = Number.isFinite(Number(attrs.current_position))
         ? roundTo(clampNum(Number(attrs.current_position) / 100, 0, 1), 2)
         : (rawState === 'open' ? 1 : 0);
-      caps.windowcoverings_set = { value: pos, title: 'Position (0-1)', type: 'number' };
+      caps.windowcoverings_set = { value: pos, title: 'Position (0-1)', type: 'number', units: null, isPrimary: true };
       caps.windowcoverings_state = {
         value: rawState === 'opening' ? 'up' : (rawState === 'closing' ? 'down' : 'idle'),
         title: 'Cover State',
-        type: 'string'
+        type: 'string',
+        units: null
       };
     } else if (domain === 'climate') {
       if (attrs.temperature !== undefined) {
-        caps.target_temperature = { value: Number(attrs.temperature), title: 'Target Temperature', type: 'number' };
+        caps.target_temperature = { value: Number(attrs.temperature), title: 'Target Temperature', type: 'number', units: unit || '°C', isPrimary: true };
       }
       if (attrs.current_temperature !== undefined) {
-        caps.measure_temperature = { value: Number(attrs.current_temperature), title: 'Current Temperature', type: 'number' };
+        caps.measure_temperature = { value: Number(attrs.current_temperature), title: 'Current Temperature', type: 'number', units: unit || '°C' };
       }
+      caps.hvac_mode = { value: String(rawState || ''), title: 'HVAC Mode', type: 'string', units: null };
     } else if (domain === 'media_player') {
-      caps.speaker_playing = { value: rawState === 'playing', title: 'Playing', type: 'boolean' };
+      caps.speaker_playing = { value: rawState === 'playing', title: 'Playing', type: 'boolean', units: null, isPrimary: true };
       if (attrs.media_artist !== undefined) {
-        caps.speaker_artist = { value: String(attrs.media_artist || ''), title: 'Artist', type: 'string' };
+        caps.speaker_artist = { value: String(attrs.media_artist || ''), title: 'Artist', type: 'string', units: null };
       }
       if (attrs.media_title !== undefined) {
-        caps.speaker_track = { value: String(attrs.media_title || ''), title: 'Track Title', type: 'string' };
+        caps.speaker_track = { value: String(attrs.media_title || ''), title: 'Track Title', type: 'string', units: null };
       }
       if (attrs.media_album_name !== undefined) {
-        caps.speaker_album = { value: String(attrs.media_album_name || ''), title: 'Album', type: 'string' };
+        caps.speaker_album = { value: String(attrs.media_album_name || ''), title: 'Album', type: 'string', units: null };
       }
       if (attrs.volume_level !== undefined) {
-        caps.volume_set = { value: roundTo(Number(attrs.volume_level), 2), title: 'Volume (0-1)', type: 'number' };
+        caps.volume_set = { value: roundTo(Number(attrs.volume_level), 2), title: 'Volume (0-1)', type: 'number', units: null };
       }
       if (attrs.is_volume_muted !== undefined) {
-        caps.volume_mute = { value: Boolean(attrs.is_volume_muted), title: 'Muted', type: 'boolean' };
+        caps.volume_mute = { value: Boolean(attrs.is_volume_muted), title: 'Muted', type: 'boolean', units: null };
       }
     } else if (domain === 'lock') {
-      caps.locked = { value: rawState === 'locked', title: 'Locked', type: 'boolean' };
+      caps.locked = { value: rawState === 'locked', title: 'Locked', type: 'boolean', units: null, isPrimary: true };
+    } else {
+      const primaryMeta = this.resolvePrimaryCapabilityMeta(stateObj, options);
+      caps[primaryMeta.id] = {
+        value: parsedState,
+        title: primaryMeta.title,
+        type: typeof parsedState,
+        units: primaryMeta.units,
+        isPrimary: true
+      };
     }
 
     for (const [attrKey, attrVal] of Object.entries(attrs)) {
@@ -890,7 +1134,8 @@ class DashboardStudioHAServer {
       caps[attrKey] = {
         value: attrVal,
         title: attrKey.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase()),
-        type: typeof attrVal
+        type: typeof attrVal,
+        units: null
       };
     }
 
@@ -985,156 +1230,22 @@ class DashboardStudioHAServer {
     }, cacheCategory, broadcast);
   }
 
-  emitEntityStatePayloads(entityId, stateObj, enabledCaps, broadcast = true) {
-    if (!entityId || !stateObj || !Array.isArray(enabledCaps) || enabledCaps.length === 0) return;
-    const domain = entityId.split('.')[0];
-    const attrs = stateObj.attributes || {};
-    const friendlyName = attrs.friendly_name || entityId;
-    const areaName = this.getAreaNameForEntity(entityId);
-    const hasAccess = Boolean(this.getHaConnectionConfig().token);
-
-    // 1. Helper / Variable
-    if (HELPER_DOMAINS.has(domain) && (enabledCaps.includes('value') || enabledCaps.includes('state'))) {
-      const val = this.extractHelperValue(stateObj);
-      this.emitMqttStylePayload({
-        topic: `homeassistant/variables/${entityId}/value`,
-        value: val,
-        deviceId: entityId,
-        capabilityId: 'value',
-        setable: hasAccess,
-        getable: true,
-        title: friendlyName,
-        isVariable: true,
-        type: typeof val,
-        domain,
-        entityId
-      }, 'variable', broadcast);
-    }
-
-    // 2. Automation / Script
-    if (FLOW_DOMAINS.has(domain)) {
-      if (enabledCaps.includes('start')) {
-        this.emitMqttStylePayload({
-          topic: `homeassistant/flows/${entityId}/start`,
-          value: false,
-          deviceId: entityId,
-          capabilityId: 'start',
-          setable: hasAccess,
-          getable: false,
-          title: `${friendlyName} · Start`,
-          isFlow: true,
-          isVariable: false,
-          domain,
-          entityId
-        }, 'flow', broadcast);
-      }
-      if (enabledCaps.includes('enabled')) {
-        const isEnabled = stateObj.state === 'on';
-        this.emitMqttStylePayload({
-          topic: `homeassistant/flows/${entityId}/enabled`,
-          value: isEnabled,
-          deviceId: entityId,
-          capabilityId: 'enabled',
-          setable: hasAccess && domain === 'automation',
-          getable: true,
-          title: `${friendlyName} · Enabled`,
-          isFlow: true,
-          isVariable: false,
-          domain,
-          entityId
-        }, 'flow', broadcast);
-      }
-      return;
-    }
-
-    // 3. Scene / Mood
-    if (MOOD_DOMAINS.has(domain)) {
-      if (enabledCaps.includes('set')) {
-        this.emitMqttStylePayload({
-          topic: `homeassistant/moods/${entityId}/set`,
-          value: false,
-          deviceId: entityId,
-          capabilityId: 'set',
-          setable: hasAccess,
-          getable: false,
-          title: `${areaName} · ${friendlyName}`,
-          isMood: true,
-          isVariable: false,
-          zoneName: areaName,
-          domain,
-          entityId
-        }, 'mood', broadcast);
-      }
-      return;
-    }
-
-    // 4. Standard Entity Capabilities
-    const readOnlyDomain = domain === 'sensor' || domain === 'binary_sensor' || domain === 'weather' || domain === 'sun' || domain === 'person' || domain === 'zone' || domain === 'device_tracker';
-    const extracted = this.extractCapabilitiesForEntity(stateObj);
-    for (const capId of enabledCaps) {
-      if (extracted[capId] !== undefined) {
-        const capMeta = extracted[capId];
-        this.emitMqttStylePayload({
-          topic: `homeassistant/${entityId}/${capId}`,
-          value: capMeta.value,
-          deviceId: entityId,
-          capabilityId: capId,
-          setable: !readOnlyDomain && hasAccess,
-          getable: true,
-          title: `${friendlyName} · ${capMeta.title || capId}`,
-          units: attrs.unit_of_measurement || null,
-          isVariable: false,
-          isFlow: false,
-          isMood: false,
-          zoneName: areaName,
-          type: capMeta.type || typeof capMeta.value,
-          domain,
-          entityId
-        }, 'device', broadcast);
-      }
-    }
+  isReadOnlyDomain(domain) {
+    return (
+      domain === 'sensor' ||
+      domain === 'binary_sensor' ||
+      domain === 'weather' ||
+      domain === 'sun' ||
+      domain === 'person' ||
+      domain === 'zone' ||
+      domain === 'device_tracker'
+    );
   }
 
-  onHaStateChanged(entityId, newState, _oldState) {
-    if (!entityId || !newState) return;
-    this.haStates.set(entityId, newState);
-
-    const enabledConfig = this.getEnabledCapabilities();
-    const enabledCaps = enabledConfig[entityId];
-    if (!Array.isArray(enabledCaps) || enabledCaps.length === 0) return;
-
-    this.emitEntityStatePayloads(entityId, newState, enabledCaps, true);
-  }
-
-  extractHelperValue(stateObj) {
-    if (!stateObj) return null;
-    const domain = stateObj.entity_id.split('.')[0];
-    const raw = stateObj.state;
-    if (domain === 'input_boolean') return raw === 'on';
-    if (domain === 'input_number' || domain === 'counter') {
-      const n = Number(raw);
-      return Number.isFinite(n) ? n : 0;
-    }
-    return raw;
-  }
-
-  populateInitialStateCache(broadcast = false) {
-    const enabledConfig = this.getEnabledCapabilities();
-    for (const [entityId, enabledCaps] of Object.entries(enabledConfig)) {
-      if (!Array.isArray(enabledCaps) || enabledCaps.length === 0) continue;
-      const stateObj = this.haStates.get(entityId);
-      if (!stateObj) continue;
-      this.emitEntityStatePayloads(entityId, stateObj, enabledCaps, broadcast);
-    }
-    if (broadcast && this.io) {
-      for (const socket of this.io.sockets.sockets.values()) {
-        this.emitStateCacheToSocket(socket);
-      }
-    }
-  }
-
-  buildGetDevicesResponse() {
+  rebuildDeviceCatalog() {
     const result = [];
+    const byKey = new Map();
+    const byEntity = new Map();
     const statesList = Array.from(this.haStates.values());
     const hasAccess = Boolean(this.getHaConnectionConfig().token);
 
@@ -1143,6 +1254,17 @@ class DashboardStudioHAServer {
       const nameB = (b.attributes && b.attributes.friendly_name) || b.entity_id;
       return String(nameA).localeCompare(String(nameB));
     });
+
+    const registerCapMapping = (mapping) => {
+      byKey.set(`${mapping.deviceId}/${mapping.capId}`, mapping);
+      if (!byEntity.has(mapping.entityId)) {
+        byEntity.set(mapping.entityId, []);
+      }
+      byEntity.get(mapping.entityId).push(mapping);
+    };
+
+    const deviceEntitiesBuckets = new Map();
+    const standaloneEntities = [];
 
     for (const st of statesList) {
       if (!st || !st.entity_id) continue;
@@ -1217,28 +1339,458 @@ class DashboardStudioHAServer {
             }
           ]
         });
+        continue;
       }
 
+      const entReg = this.haEntities.get(entityId);
+      const haDevId = entReg && entReg.device_id && this.haDevices.has(entReg.device_id)
+        ? entReg.device_id
+        : null;
+
+      if (haDevId) {
+        if (!deviceEntitiesBuckets.has(haDevId)) {
+          deviceEntitiesBuckets.set(haDevId, []);
+        }
+        deviceEntitiesBuckets.get(haDevId).push(st);
+      } else {
+        standaloneEntities.push(st);
+      }
+    }
+
+    const usedDeviceIds = new Set();
+
+    // Build grouped Home Assistant devices
+    for (const [haDevId, childStates] of deviceEntitiesBuckets.entries()) {
+      const haDev = this.haDevices.get(haDevId) || {};
+      const firstFriendly = (childStates[0] && childStates[0].attributes && childStates[0].attributes.friendly_name) || haDevId;
+      const deviceName = String(haDev.name_by_user || haDev.name || firstFriendly).trim();
+      let deviceSlug = slugifyEntityPart(deviceName);
+      if (!deviceSlug || usedDeviceIds.has(deviceSlug)) {
+        deviceSlug = `${deviceSlug || 'device'}_${slugifyEntityPart(haDevId).slice(0, 6)}`;
+      }
+      usedDeviceIds.add(deviceSlug);
+
+      let zoneName = 'Default';
+      if (haDev.area_id && this.haAreas.has(haDev.area_id)) {
+        zoneName = this.haAreas.get(haDev.area_id);
+      } else {
+        for (const st of childStates) {
+          const areaCandidate = this.getAreaNameForEntity(st.entity_id);
+          if (areaCandidate && areaCandidate !== 'Default') {
+            zoneName = areaCandidate;
+            break;
+          }
+        }
+      }
+
+      // First pass: extract capabilities for each child entity and count base capability IDs
+      const rawChildEntries = [];
+      const baseCapCount = new Map();
+      for (const st of childStates) {
+        const entityId = st.entity_id;
+        const domain = entityId.split('.')[0];
+        const readOnly = this.isReadOnlyDomain(domain);
+        const extracted = this.extractCapabilitiesForEntity(st, { deviceName, deviceSlug });
+        const suffixSlug = this.deriveEntityObjectSuffix(entityId, deviceSlug);
+        const shortEntityLabel = this.stripDevicePrefixFromTitle(
+          (st.attributes && st.attributes.friendly_name) || entityId,
+          deviceName
+        );
+        for (const [entityCapId, capMeta] of Object.entries(extracted)) {
+          baseCapCount.set(entityCapId, (baseCapCount.get(entityCapId) || 0) + 1);
+          rawChildEntries.push({
+            entityId,
+            domain,
+            readOnly,
+            entityCapId,
+            capMeta,
+            suffixSlug,
+            shortEntityLabel
+          });
+        }
+      }
+
+      const capabilities = [];
+      const seenFinalCapIds = new Set();
+
+      for (const item of rawChildEntries) {
+        let finalCapId = item.entityCapId;
+        let finalTitle = item.capMeta.title || item.entityCapId;
+
+        if ((baseCapCount.get(item.entityCapId) || 0) > 1) {
+          if (item.suffixSlug && item.suffixSlug !== item.entityCapId) {
+            finalCapId = `${item.entityCapId}_${item.suffixSlug}`;
+          }
+          if (item.shortEntityLabel && !finalTitle.toLowerCase().includes(item.shortEntityLabel.toLowerCase())) {
+            finalTitle = `${item.shortEntityLabel} · ${finalTitle}`;
+          }
+        }
+
+        if (seenFinalCapIds.has(finalCapId)) {
+          finalCapId = `${finalCapId}_${slugifyEntityPart(item.entityId)}`;
+        }
+        seenFinalCapIds.add(finalCapId);
+
+        const setable = !item.readOnly && hasAccess;
+        const topic = `homeassistant/${deviceSlug}/${finalCapId}`;
+
+        capabilities.push({
+          id: finalCapId,
+          title: finalTitle,
+          type: item.capMeta.type || 'string',
+          units: item.capMeta.units || null,
+          getable: true,
+          setable,
+          topic,
+          entityId: item.entityId
+        });
+
+        registerCapMapping({
+          deviceId: deviceSlug,
+          deviceName,
+          zoneName,
+          capId: finalCapId,
+          title: `${deviceName} · ${finalTitle}`,
+          shortTitle: finalTitle,
+          type: item.capMeta.type || 'string',
+          units: item.capMeta.units || null,
+          getable: true,
+          setable,
+          topic,
+          entityId: item.entityId,
+          entityCapId: item.entityCapId,
+          isPrimary: Boolean(item.capMeta.isPrimary)
+        });
+      }
+
+      if (capabilities.length > 0) {
+        result.push({
+          id: deviceSlug,
+          name: deviceName,
+          zoneName,
+          capabilities
+        });
+      }
+    }
+
+    // Build standalone entities (not linked to a device in HA device registry)
+    for (const st of standaloneEntities) {
+      const entityId = st.entity_id;
+      const domain = entityId.split('.')[0];
+      const friendlyName = (st.attributes && st.attributes.friendly_name) || entityId;
+      const zoneName = this.getAreaNameForEntity(entityId);
+      const readOnly = this.isReadOnlyDomain(domain);
       const extracted = this.extractCapabilitiesForEntity(st);
-      const readOnlyDomain = domain === 'sensor' || domain === 'binary_sensor' || domain === 'weather' || domain === 'sun' || domain === 'person' || domain === 'zone' || domain === 'device_tracker';
-      const capabilities = Object.keys(extracted).map((cid) => ({
-        id: cid,
-        title: extracted[cid].title || cid,
-        type: extracted[cid].type || 'string',
-        getable: true,
-        setable: !readOnlyDomain && hasAccess,
-        topic: `homeassistant/${entityId}/${cid}`
-      }));
+
+      const capabilities = Object.keys(extracted).map((cid) => {
+        const capMeta = extracted[cid];
+        const setable = !readOnly && hasAccess;
+        const topic = `homeassistant/${entityId}/${cid}`;
+        registerCapMapping({
+          deviceId: entityId,
+          deviceName: friendlyName,
+          zoneName,
+          capId: cid,
+          title: `${friendlyName} · ${capMeta.title || cid}`,
+          shortTitle: capMeta.title || cid,
+          type: capMeta.type || 'string',
+          units: capMeta.units || null,
+          getable: true,
+          setable,
+          topic,
+          entityId,
+          entityCapId: cid,
+          isPrimary: Boolean(capMeta.isPrimary)
+        });
+        return {
+          id: cid,
+          title: capMeta.title || cid,
+          type: capMeta.type || 'string',
+          units: capMeta.units || null,
+          getable: true,
+          setable,
+          topic,
+          entityId
+        };
+      });
 
       result.push({
         id: entityId,
         name: friendlyName,
-        zoneName: this.getAreaNameForEntity(entityId),
+        zoneName,
         capabilities
       });
     }
 
+    result.sort((a, b) => String(a.name || a.id).localeCompare(String(b.name || b.id)));
+
+    this.deviceCapByKey = byKey;
+    this.deviceCapsByEntity = byEntity;
+    this.cachedDevicesResponse = result;
+    this.migrateLegacyEnabledCapabilities();
     return result;
+  }
+
+  migrateLegacyEnabledCapabilities() {
+    const enabled = this.store.enabled_capabilities;
+    if (!enabled || typeof enabled !== 'object') return;
+    let changed = false;
+
+    for (const [key, caps] of Object.entries(enabled)) {
+      if (!Array.isArray(caps) || caps.length === 0) continue;
+      // Check if `key` is a child entity_id that now belongs to a grouped device
+      const mappings = this.deviceCapsByEntity.get(key);
+      if (!mappings || mappings.length === 0) continue;
+
+      const groupedMappings = mappings.filter((m) => m.deviceId !== key);
+      if (groupedMappings.length === 0) continue;
+
+      for (const oldCap of caps) {
+        let target = groupedMappings.find((m) => m.entityCapId === oldCap || m.capId === oldCap);
+        if (!target && (oldCap === 'state' || oldCap === 'unit_of_measurement')) {
+          target = groupedMappings.find((m) => m.isPrimary) || groupedMappings[0];
+        }
+        if (target) {
+          if (!Array.isArray(enabled[target.deviceId])) {
+            enabled[target.deviceId] = [];
+          }
+          if (!enabled[target.deviceId].includes(target.capId)) {
+            enabled[target.deviceId].push(target.capId);
+            changed = true;
+          }
+        }
+      }
+      delete enabled[key];
+      changed = true;
+    }
+
+    if (changed) {
+      this.savePersistentStore();
+    }
+  }
+
+  emitEntityStatePayloads(entityId, stateObj, enabledCaps, broadcast = true) {
+    if (!entityId || !stateObj || !Array.isArray(enabledCaps) || enabledCaps.length === 0) return;
+    const domain = entityId.split('.')[0];
+    const attrs = stateObj.attributes || {};
+    const friendlyName = attrs.friendly_name || entityId;
+    const areaName = this.getAreaNameForEntity(entityId);
+    const hasAccess = Boolean(this.getHaConnectionConfig().token);
+
+    // 1. Helper / Variable
+    if (HELPER_DOMAINS.has(domain) && (enabledCaps.includes('value') || enabledCaps.includes('state'))) {
+      const val = this.extractHelperValue(stateObj);
+      this.emitMqttStylePayload({
+        topic: `homeassistant/variables/${entityId}/value`,
+        value: val,
+        deviceId: entityId,
+        capabilityId: 'value',
+        setable: hasAccess,
+        getable: true,
+        title: friendlyName,
+        isVariable: true,
+        type: typeof val,
+        domain,
+        entityId
+      }, 'variable', broadcast);
+      return;
+    }
+
+    // 2. Automation / Script
+    if (FLOW_DOMAINS.has(domain)) {
+      if (enabledCaps.includes('start')) {
+        this.emitMqttStylePayload({
+          topic: `homeassistant/flows/${entityId}/start`,
+          value: false,
+          deviceId: entityId,
+          capabilityId: 'start',
+          setable: hasAccess,
+          getable: false,
+          title: `${friendlyName} · Start`,
+          isFlow: true,
+          isVariable: false,
+          domain,
+          entityId
+        }, 'flow', broadcast);
+      }
+      if (enabledCaps.includes('enabled')) {
+        const isEnabled = stateObj.state === 'on';
+        this.emitMqttStylePayload({
+          topic: `homeassistant/flows/${entityId}/enabled`,
+          value: isEnabled,
+          deviceId: entityId,
+          capabilityId: 'enabled',
+          setable: hasAccess && domain === 'automation',
+          getable: true,
+          title: `${friendlyName} · Enabled`,
+          isFlow: true,
+          isVariable: false,
+          domain,
+          entityId
+        }, 'flow', broadcast);
+      }
+      return;
+    }
+
+    // 3. Scene / Mood
+    if (MOOD_DOMAINS.has(domain)) {
+      if (enabledCaps.includes('set')) {
+        this.emitMqttStylePayload({
+          topic: `homeassistant/moods/${entityId}/set`,
+          value: false,
+          deviceId: entityId,
+          capabilityId: 'set',
+          setable: hasAccess,
+          getable: false,
+          title: `${areaName} · ${friendlyName}`,
+          isMood: true,
+          isVariable: false,
+          zoneName: areaName,
+          domain,
+          entityId
+        }, 'mood', broadcast);
+      }
+      return;
+    }
+
+    // 4. Standard standalone entity capabilities
+    const readOnlyDomain = this.isReadOnlyDomain(domain);
+    const extracted = this.extractCapabilitiesForEntity(stateObj);
+    const primaryKey = Object.keys(extracted).find((k) => extracted[k] && extracted[k].isPrimary);
+
+    for (const capId of enabledCaps) {
+      const capMeta = extracted[capId] || (capId === 'state' && primaryKey ? extracted[primaryKey] : undefined);
+      if (capMeta !== undefined) {
+        this.emitMqttStylePayload({
+          topic: `homeassistant/${entityId}/${capId}`,
+          value: capMeta.value,
+          deviceId: entityId,
+          capabilityId: capId,
+          setable: !readOnlyDomain && hasAccess,
+          getable: true,
+          title: `${friendlyName} · ${capMeta.title || capId}`,
+          units: capMeta.units || attrs.unit_of_measurement || null,
+          isVariable: false,
+          isFlow: false,
+          isMood: false,
+          zoneName: areaName,
+          type: capMeta.type || typeof capMeta.value,
+          domain,
+          entityId
+        }, 'device', broadcast);
+      }
+    }
+  }
+
+  emitMappedDeviceCapabilityPayload(mapping, stateObj, broadcast = true) {
+    if (!mapping || !stateObj) return;
+    const extracted = this.extractCapabilitiesForEntity(stateObj, {
+      deviceName: mapping.deviceName,
+      deviceSlug: mapping.deviceId
+    });
+    const primaryKey = Object.keys(extracted).find((k) => extracted[k] && extracted[k].isPrimary);
+    const capMeta = extracted[mapping.entityCapId] || (primaryKey ? extracted[primaryKey] : undefined);
+    if (!capMeta) return;
+
+    const attrs = stateObj.attributes || {};
+    const domain = mapping.entityId.split('.')[0];
+
+    this.emitMqttStylePayload({
+      topic: mapping.topic,
+      value: capMeta.value,
+      deviceId: mapping.deviceId,
+      capabilityId: mapping.capId,
+      setable: mapping.setable,
+      getable: mapping.getable,
+      title: mapping.title,
+      units: capMeta.units || mapping.units || attrs.unit_of_measurement || null,
+      isVariable: false,
+      isFlow: false,
+      isMood: false,
+      zoneName: mapping.zoneName,
+      type: capMeta.type || typeof capMeta.value,
+      domain,
+      entityId: mapping.entityId
+    }, 'device', broadcast);
+  }
+
+  onHaStateChanged(entityId, newState, _oldState) {
+    if (!entityId || !newState) return;
+    const isNewEntity = !this.haStates.has(entityId);
+    this.haStates.set(entityId, newState);
+    if (isNewEntity || !this.cachedDevicesResponse) {
+      this.rebuildDeviceCatalog();
+    }
+
+    const enabledConfig = this.getEnabledCapabilities();
+
+    // 1. Check if any grouped/mapped device capabilities backed by this entity are enabled
+    const mappings = this.deviceCapsByEntity.get(entityId) || [];
+    for (const mapping of mappings) {
+      const devEnabled = enabledConfig[mapping.deviceId];
+      if (Array.isArray(devEnabled) && devEnabled.includes(mapping.capId)) {
+        this.emitMappedDeviceCapabilityPayload(mapping, newState, true);
+      }
+    }
+
+    // 2. Check direct entityId entries (Flows, Moods, Variables, or legacy direct entity bindings)
+    const directCaps = enabledConfig[entityId];
+    if (Array.isArray(directCaps) && directCaps.length > 0) {
+      const domain = entityId.split('.')[0];
+      if (FLOW_DOMAINS.has(domain) || MOOD_DOMAINS.has(domain) || HELPER_DOMAINS.has(domain) || mappings.length === 0) {
+        this.emitEntityStatePayloads(entityId, newState, directCaps, true);
+      }
+    }
+  }
+
+  extractHelperValue(stateObj) {
+    if (!stateObj) return null;
+    const domain = stateObj.entity_id.split('.')[0];
+    const raw = stateObj.state;
+    if (domain === 'input_boolean') return raw === 'on';
+    if (domain === 'input_number' || domain === 'counter') {
+      const n = Number(raw);
+      return Number.isFinite(n) ? n : 0;
+    }
+    return raw;
+  }
+
+  populateInitialStateCache(broadcast = false) {
+    if (!this.cachedDevicesResponse) {
+      this.rebuildDeviceCatalog();
+    }
+    const enabledConfig = this.getEnabledCapabilities();
+    for (const [devOrEntityId, enabledCaps] of Object.entries(enabledConfig)) {
+      if (!Array.isArray(enabledCaps) || enabledCaps.length === 0) continue;
+
+      let handledByMapping = false;
+      for (const capId of enabledCaps) {
+        const mapping = this.deviceCapByKey.get(`${devOrEntityId}/${capId}`);
+        if (mapping) {
+          handledByMapping = true;
+          const st = this.haStates.get(mapping.entityId);
+          if (st) {
+            this.emitMappedDeviceCapabilityPayload(mapping, st, broadcast);
+          }
+        }
+      }
+
+      if (!handledByMapping) {
+        const stateObj = this.haStates.get(devOrEntityId);
+        if (stateObj) {
+          this.emitEntityStatePayloads(devOrEntityId, stateObj, enabledCaps, broadcast);
+        }
+      }
+    }
+    if (broadcast && this.io) {
+      for (const socket of this.io.sockets.sockets.values()) {
+        this.emitStateCacheToSocket(socket);
+      }
+    }
+  }
+
+  buildGetDevicesResponse() {
+    return this.rebuildDeviceCatalog();
   }
 
   // =========================================================================
@@ -1320,12 +1872,23 @@ class DashboardStudioHAServer {
       return;
     }
 
-    // 4. Entity capability (`<entity_id>/<capability>`)
-    const entityId = parts[0];
+    // 4. Grouped Device or Direct Entity capability (`<device_or_entity_id>/<capability>`)
+    const devOrEntityId = parts[0];
     const capId = parts.slice(1).join('/');
-    if (!entityId.includes('.')) return;
 
-    await this.executeEntityCapabilityService(entityId, capId, val);
+    if (!this.cachedDevicesResponse) {
+      this.rebuildDeviceCatalog();
+    }
+
+    const mapping = this.deviceCapByKey.get(`${devOrEntityId}/${capId}`);
+    if (mapping && mapping.entityId) {
+      await this.executeEntityCapabilityService(mapping.entityId, mapping.entityCapId || capId, val);
+      return;
+    }
+
+    if (!devOrEntityId.includes('.')) return;
+
+    await this.executeEntityCapabilityService(devOrEntityId, capId, val);
   }
 
   async setHaHelperValue(identifier, value) {
@@ -3336,6 +3899,59 @@ class DashboardStudioHAServer {
       }
     }
 
+    if (method === 'POST' && apiPath === '/api/ha-auto-configure') {
+      const body = await this.readJsonBody(req);
+      const token = String(body.token || body.key || '').trim();
+      if (!token) {
+        return this.sendJson(res, 400, { ok: false, error: 'Missing token' });
+      }
+      const candidates = [];
+      if (Array.isArray(body.candidate_urls)) {
+        for (const u of body.candidate_urls) {
+          const cleanU = String(u || '').trim().replace(/\/+$/, '');
+          if (cleanU && !candidates.includes(cleanU)) candidates.push(cleanU);
+        }
+      }
+      if (body.ha_url) {
+        const cleanU = String(body.ha_url).trim().replace(/\/+$/, '');
+        if (cleanU && !candidates.includes(cleanU)) candidates.unshift(cleanU);
+      }
+      const currentUrl = (this.getAppSettings().haUrl || '').trim().replace(/\/+$/, '');
+      if (currentUrl && !candidates.includes(currentUrl)) candidates.push(currentUrl);
+      const remoteIp = String(req.socket && req.socket.remoteAddress ? req.socket.remoteAddress : '')
+        .replace(/^::ffff:/, '');
+      if (remoteIp && remoteIp !== '127.0.0.1' && remoteIp !== '::1') {
+        const remoteCandidate = `http://${remoteIp}:8123`;
+        if (!candidates.includes(remoteCandidate)) candidates.push(remoteCandidate);
+      }
+      for (const fallback of ['http://127.0.0.1:8123', 'http://localhost:8123', 'http://host.docker.internal:8123', 'http://homeassistant.local:8123']) {
+        if (!candidates.includes(fallback)) candidates.push(fallback);
+      }
+
+      let verifiedUrl = '';
+      for (const candidateUrl of candidates) {
+        try {
+          await this.haRestRequest('GET', '/api/', null, { httpUrl: candidateUrl, token });
+          verifiedUrl = candidateUrl;
+          break;
+        } catch (_e) {}
+      }
+
+      this.store.personal_api_key = token;
+      if (verifiedUrl) {
+        this.store.app_settings.haUrl = verifiedUrl;
+      } else if (candidates[0] && !this.store.app_settings.haUrl) {
+        this.store.app_settings.haUrl = candidates[0];
+      }
+      this.savePersistentStore();
+      this.connectToHomeAssistant();
+      return this.sendJson(res, 200, {
+        ok: true,
+        connected: Boolean(verifiedUrl),
+        haUrl: this.store.app_settings.haUrl || ''
+      });
+    }
+
     if (method === 'GET' && apiPath === '/api/settings') {
       return this.sendJson(res, 200, this.getClientSettingsPayload());
     }
@@ -3357,7 +3973,7 @@ class DashboardStudioHAServer {
       const prevUrl = this.getAppSettings().haUrl;
       this.store.app_settings = Object.assign({}, this.store.app_settings, val);
       this.savePersistentStore();
-      this.populateInitialStateCache();
+      this.populateInitialStateCache(true);
       if (this.io) {
         this.io.emit('settings_updated', this.getClientSettingsPayload());
       }
@@ -3390,6 +4006,9 @@ class DashboardStudioHAServer {
     // Settings store (`Homey.get` / `Homey.set` compatibility)
     if (method === 'GET' && apiPath.startsWith('/api/store/')) {
       const key = decodeURIComponent(apiPath.slice('/api/store/'.length));
+      if (key === 'enabled_capabilities' && !this.cachedDevicesResponse && this.haStates.size > 0) {
+        this.rebuildDeviceCatalog();
+      }
       return this.sendJson(res, 200, { value: this.store[key] !== undefined ? this.store[key] : null });
     }
 
@@ -3399,7 +4018,16 @@ class DashboardStudioHAServer {
       const val = body.value;
       this.store[key] = val;
       this.savePersistentStore();
-      this.populateInitialStateCache();
+      if (key === 'enabled_capabilities') {
+        for (const [cachedTopic, entry] of this.stateCache.entries()) {
+          if (entry && entry.type === 'mqtt') {
+            this.stateCache.delete(cachedTopic);
+          }
+        }
+        this.populateInitialStateCache(true);
+      } else {
+        this.populateInitialStateCache(false);
+      }
       return this.sendJson(res, 200, { ok: true });
     }
 

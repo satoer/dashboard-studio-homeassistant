@@ -42,30 +42,33 @@ With **100% local storage directly on your Home Assistant**, your dashboard file
 
 ## Quick Installation Guide
 
-### Step 1: Add the Repository
+### Option A: Home Assistant OS / Supervised (Add-on Store)
 1. In Home Assistant, open **Settings &rarr; Add-ons &rarr; Add-on Store**.
 2. Click the three dots menu (`...`) in the top-right corner &rarr; **Repositories**.
 3. Add the repository URL:
    `	ext
    https://github.com/satoer/dashboard-studio-homeassistant
    `
-4. Click **Add**, then close the dialog.
+4. Click **Add**, install **Dashboard Studio**, toggle **Show in sidebar** and **Start on boot**, and click **Start**.
 
-### Step 2: Install & Start
-1. Search for or select **Dashboard Studio** in the Add-on Store list.
-2. Click **Install** (the initial build takes 1-2 minutes).
-3. Toggle **Show in sidebar** and **Start on boot**.
-4. Click **Start**.
+### Option B: Home Assistant Container (Docker) - One-Command Installer
+If you run **Home Assistant Container** in Docker (without the Add-on Store), run the included install.sh script on your Docker host:
+`ash
+git clone https://github.com/satoer/dashboard-studio-homeassistant.git
+cd dashboard-studio-homeassistant
+sudo bash ./install.sh
+`
+The installer automatically detects your running homeassistant container and its /config mount, installs custom_components/dashboard_studio, and starts the dashboard-studio container on port 5050.
 
-### Step 3: Enable Native Automations (Companion Integration)
-On startup, the Add-on automatically places the companion custom component into your Home Assistant /config/custom_components/dashboard_studio folder:
-1. Restart Home Assistant Core once (**Developer Tools &rarr; Restart**).
+### Enable the Companion Integration (Auto-Authenticates)
+1. Restart Home Assistant Core once if this is your first install.
 2. Go to **Settings &rarr; Devices & Services &rarr; Add Integration**.
 3. Search for **Dashboard Studio** and click to add it.
-4. All 14 automation triggers, conditions, and action services are now available in your Home Assistant Automation Editor!
+4. Adding the integration automatically provisions a Long-Lived Access Token and connects Dashboard Studio to Home Assistant (no manual token copy-pasting required), while exposing all 14 automation triggers, conditions, and action services!
 
-### Step 4: Dedicated Wall-Mounted Tablets & Kiosks
+### Dedicated Wall-Mounted Tablets & Kiosks
 For wall displays or kiosks, open:
+* **Designer & Viewer:** `http://<homeassistant-ip>:5050`
 * **Viewer Runtime:** `http://<homeassistant-ip>:5050/viewer.html?dashboard=YourDashboardName`
 * **Configuration & Admin Panel:** `http://<homeassistant-ip>:5050/admin`
 
@@ -87,7 +90,7 @@ Dashboard Studio is an independent passion project representing thousands of hou
 
 If you enjoy using the software and want to help support ongoing development, consider buying a couple of Red Bulls:
 
-☕ [**Donate via PayPal**](https://www.paypal.com/donate/?hosted_button_id=GR8AUPXN8TW9Q)
+[**Donate via PayPal**](https://www.paypal.com/donate/?hosted_button_id=GR8AUPXN8TW9Q)
 
 Donations are never required, but always deeply appreciated and keep the motivation high!
 
@@ -95,7 +98,7 @@ Donations are never required, but always deeply appreciated and keep the motivat
 
 ## Copyright & License Terms
 
-© 2026 **Satoer Creations**. All rights reserved.
+(c) 2026 **Satoer Creations**. All rights reserved.
 
 Dashboard Studio is an independent project built and maintained with passion by a single developer.
 

@@ -149,7 +149,8 @@
             ? DataDriverRegistry.getType()
             : ((typeof MASTER_SETTINGS !== 'undefined' && MASTER_SETTINGS.dataDriver) ? MASTER_SETTINGS.dataDriver : '');
 
-        if (String(driverType).toLowerCase() === 'homey' && driver && typeof driver.requestStateSync === 'function') {
+        var dtLower = String(driverType).toLowerCase();
+        if ((dtLower === 'homey' || dtLower === 'homeassistant') && driver && typeof driver.requestStateSync === 'function') {
             try {
                 driver.requestStateSync();
             } catch (err) {

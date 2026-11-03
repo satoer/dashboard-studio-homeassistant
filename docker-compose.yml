@@ -1,0 +1,18 @@
+services:
+  dashboard-studio:
+    build:
+      context: ./dashboard_studio
+      dockerfile: Dockerfile
+    image: dashboard-studio:latest
+    container_name: dashboard-studio
+    restart: unless-stopped
+    ports:
+      - "${DASHBOARD_STUDIO_PORT:-5050}:5050"
+    environment:
+      - PORT=5050
+      - HA_URL=${HA_URL:-http://host.docker.internal:8123}
+      - HA_TOKEN=${HA_TOKEN:-}
+    volumes:
+      - ${DASHBOARD_STUDIO_DATA_DIR:-/opt/dashboard-studio/data}:/data
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

@@ -3,12 +3,15 @@ from __future__ import annotations
 
 import logging
 from typing import Any
+from urllib.parse import urlparse
 
 import aiohttp
+from homeassistant.auth.models import TOKEN_TYPE_LONG_LIVED_ACCESS_TOKEN
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, ServiceCall, ServiceResponse, SupportsResponse
 from homeassistant.helpers import config_validation as cv, device_registry as dr
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.helpers.network import get_url
 from homeassistant.helpers.typing import ConfigType
 
 from .const import (
@@ -167,6 +170,112 @@ async def _async_register_services(hass: HomeAssistant) -> None:
     )
 
 
+async def _async_get_or_create_long_lived_token(hass: HomeAssistant) -> str:
+    """Create or reuse a Long-Lived Access Token for Dashboard Studio automatically."""
+    try:
+        users = await hass.auth.async_get_users()
+        target_user = None
+        for user in users:
+            if not user.is_active or user.system_generated:
+                continue
+            if user.is_owner:
+                target_user = user
+                break
+            if user.is_admin and target_user is None:
+                target_user = user
+
+        if target_user is None:
+            for user in users:
+                if user.is_active and not user.system_generated:
+                    target_user = user
+                    break
+
+        if target_user is None:
+            return ""
+
+        client_name = "Dashboard Studio Auto-Provisioned"
+        existing_refresh = None
+        for rt in list(target_user.refresh_tokens.values()):
+            if (
+                rt.token_type == TOKEN_TYPE_LONG_LIVED_ACCESS_TOKEN
+                and rt.client_name == client_name
+            ):
+                existing_refresh = rt
+                break
+
+        if existing_refresh is None:
+            existing_refresh = await hass.auth.async_create_refresh_token(
+                target_user,
+                client_name=client_name,
+                token_type=TOKEN_TYPE_LONG_LIVED_ACCESS_TOKEN,
+            )
+
+        return hass.auth.async_create_access_token(existing_refresh)
+    except Exception as err:  # noqa: BLE001
+        _LOGGER.debug("Could not auto-generate Long-Lived Access Token: %s", err)
+        return ""
+
+
+async def _async_push_auto_config_to_server(
+    hass: HomeAssistant, server_url: str, manual_token: str = ""
+) -> None:
+    """Push Home Assistant URL and access token to the Dashboard Studio server."""
+    token = manual_token.strip() if manual_token else ""
+    if not token:
+        token = await _async_get_or_create_long_lived_token(hass)
+    if not token:
+        return
+
+    candidate_urls: list[str] = []
+    for prefer_external in (False, True):
+        try:
+            u = get_url(hass, allow_internal=True, allow_ip=True, prefer_external=prefer_external)
+            if u and u not in candidate_urls:
+                candidate_urls.append(u.rstrip("/"))
+        except Exception:  # noqa: BLE001
+            pass
+
+    try:
+        parsed = urlparse(server_url)
+        if parsed.hostname and parsed.hostname not in ("localhost", "127.0.0.1"):
+            host_ha = f"http://{parsed.hostname}:8123"
+            if host_ha not in candidate_urls:
+                candidate_urls.insert(0, host_ha)
+    except Exception:  # noqa: BLE001
+        pass
+
+    for fallback in (
+        "http://127.0.0.1:8123",
+        "http://localhost:8123",
+        "http://host.docker.internal:8123",
+    ):
+        if fallback not in candidate_urls:
+            candidate_urls.append(fallback)
+
+    session = async_get_clientsession(hass)
+    clean_server = server_url.rstrip("/")
+    try:
+        async with session.post(
+            f"{clean_server}/api/ha-auto-configure",
+            json={
+                "token": token,
+                "candidate_urls": candidate_urls,
+            },
+            timeout=aiohttp.ClientTimeout(total=10),
+        ) as resp:
+            if resp.status == 200:
+                _LOGGER.info(
+                    "Auto-configured Dashboard Studio server (%s) with Home Assistant credentials",
+                    clean_server,
+                )
+    except Exception as err:  # noqa: BLE001
+        _LOGGER.debug(
+            "Could not auto-configure Dashboard Studio server at %s: %s",
+            clean_server,
+            err,
+        )
+
+
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     """Set up the Dashboard Studio component."""
     hass.data.setdefault(DOMAIN, {})
@@ -177,13 +286,18 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up Dashboard Studio from a config entry."""
     hass.data.setdefault(DOMAIN, {})
-    hass.data[DOMAIN][entry.entry_id] = {
-        CONF_SERVER_URL: entry.options.get(
+    server_url = str(
+        entry.options.get(
             CONF_SERVER_URL, entry.data.get(CONF_SERVER_URL, DEFAULT_SERVER_URL)
-        ),
-        CONF_API_TOKEN: entry.options.get(
-            CONF_API_TOKEN, entry.data.get(CONF_API_TOKEN, "")
-        ),
+        )
+    ).rstrip("/")
+    api_token = str(
+        entry.options.get(CONF_API_TOKEN, entry.data.get(CONF_API_TOKEN, ""))
+    ).strip()
+
+    hass.data[DOMAIN][entry.entry_id] = {
+        CONF_SERVER_URL: server_url,
+        CONF_API_TOKEN: api_token,
     }
 
     device_registry = dr.async_get(hass)
@@ -193,10 +307,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         manufacturer="Dashboard Studio",
         model="Dashboard Studio Runtime & Designer",
         name="Dashboard Studio",
-        configuration_url=hass.data[DOMAIN][entry.entry_id][CONF_SERVER_URL],
+        configuration_url=f"{server_url}/admin",
     )
 
     await _async_register_services(hass)
+    hass.async_create_task(_async_push_auto_config_to_server(hass, server_url, api_token))
     entry.async_on_unload(entry.add_update_listener(async_reload_entry))
     return True
 
