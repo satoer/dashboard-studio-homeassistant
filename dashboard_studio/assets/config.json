@@ -1,22 +1,22 @@
 {
-  "environment": "homey",
+  "environment": "homeassistant",
   "ui": {
     "showDataConnection": true,
     "showLocalButtons": true,
     "showServerButtons": true,
     "warnWhenDriverOffline": false,
-    "hiddenDrivers": ["nodered"],
+    "hiddenDrivers": ["homey", "nodered"],
     "hiddenWidgets": []
   },
   "defaults": {
-    "dataDriver": "homey",
+    "dataDriver": "homeassistant",
     "hideEditor": false,
     "cacheValues": true
   },
   "storage": {
     "endpoints": {
-      "dashboard": "/api/app/com.satoer.dashboardstudio/dashboards",
-      "template": "/api/app/com.satoer.dashboardstudio/templates"
+      "dashboard": "/dashboards",
+      "template": "/templates"
     }
   }
 }

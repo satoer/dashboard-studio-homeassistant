@@ -3774,6 +3774,13 @@ class DashboardStudioHAServer {
     }
 
     // 8. Static files from `ASSETS_ROOT`
+    if (cleanRel === 'config.json') {
+      const haPlatformConfig = path.resolve(__dirname, '..', 'individual platforms', 'homeassistant', 'config.json');
+      if (fs.existsSync(haPlatformConfig)) {
+        this.serveStaticFile(res, haPlatformConfig);
+        return;
+      }
+    }
     const resolvedAsset = path.resolve(ASSETS_ROOT, cleanRel);
     if (resolvedAsset.startsWith(path.resolve(ASSETS_ROOT)) && fs.existsSync(resolvedAsset) && fs.statSync(resolvedAsset).isFile()) {
       this.serveStaticFile(res, resolvedAsset);
