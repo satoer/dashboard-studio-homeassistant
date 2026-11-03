@@ -1,0 +1,42 @@
+{
+  "id": "Icon_Grid_1",
+  "name": "List",
+  "widgetType": "menu",
+  "version": "2.0.0",
+  "variants": [
+    {
+      "id": "default",
+      "name": "Icon Left",
+      "settings": {
+        "menuLayout": "vertical",
+        "menuIconLoc": "left",
+        "menuItemHeight": 0,
+        "menuItemWidth": 0,
+        "iconSize": 35,
+        "typography": {
+          "menuItem": {
+            "fontSize": 12
+          }
+        },
+        "menuHAuto": true
+      }
+    },
+    {
+      "id": "Icon_Left_1",
+      "name": "Icon Right",
+      "settings": {
+        "menuLayout": "vertical",
+        "menuIconLoc": "right",
+        "menuItemHeight": 0,
+        "menuItemWidth": 0,
+        "iconSize": 35,
+        "typography": {
+          "menuItem": {
+            "fontSize": 12
+          }
+        },
+        "menuHAuto": true
+      }
+    }
+  ]
+}

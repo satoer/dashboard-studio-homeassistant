@@ -1,0 +1,19 @@
+{
+  "id": "List_Icon_1",
+  "name": "List + Icon + Checkboxes",
+  "widgetType": "list",
+  "version": "2.0.0",
+  "variants": [
+    {
+      "id": "default",
+      "name": "default",
+      "settings": {
+        "showIcons": true,
+        "showTimestamp": false,
+        "enableCheckboxes": true,
+        "time24h": true,
+        "dateFormat": "none"
+      }
+    }
+  ]
+}

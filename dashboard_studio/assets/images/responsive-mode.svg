@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="100%" height="100%">
+  <defs>
+    <mask id="icon-cutout-mask">
+      <!-- White base keeps masked elements visible -->
+      <rect width="800" height="800" fill="#FFFFFF" />
+
+      <!-- Black cutouts punch fully transparent holes -->
+      <g fill="#000000">
+        <!-- Col 1, Card 1: 2x5 Circle Grid -->
+        <circle cx="75" cy="100" r="10" />
+        <circle cx="117.5" cy="100" r="10" />
+        <circle cx="160" cy="100" r="10" />
+        <circle cx="202.5" cy="100" r="10" />
+        <circle cx="245" cy="100" r="10" />
+
+        <circle cx="75" cy="175" r="10" />
+        <circle cx="117.5" cy="175" r="10" />
+        <circle cx="160" cy="175" r="10" />
+        <circle cx="202.5" cy="175" r="10" />
+        <circle cx="245" cy="175" r="10" />
+
+        <!-- Col 1, Card 2: Avatar + Title Bar + Divider Bar -->
+        <circle cx="88" cy="305" r="16" />
+        <rect x="116" y="295" width="86" height="20" rx="10" />
+        <rect x="70" y="380" width="180" height="20" rx="10" />
+
+        <!-- Col 1, Card 3: 4 Varied Lines -->
+        <rect x="70" y="515" width="160" height="18" rx="9" />
+        <rect x="70" y="565" width="105" height="18" rx="9" />
+        <rect x="70" y="615" width="135" height="18" rx="9" />
+        <rect x="70" y="665" width="80" height="18" rx="9" />
+
+        <!-- Col 2, Card 1: 3 Columns -->
+        <rect x="310" y="68" width="52" height="159" rx="10" />
+        <rect x="374" y="68" width="52" height="159" rx="10" />
+        <rect x="438" y="68" width="52" height="159" rx="10" />
+
+        <!-- Col 2, Card 2: 4 Inline Dots -->
+        <circle cx="325" cy="315" r="11" />
+        <circle cx="375" cy="315" r="11" />
+        <circle cx="425" cy="315" r="11" />
+        <circle cx="475" cy="315" r="11" />
+
+        <!-- Col 2, Card 3: 5 Equal Lines -->
+        <rect x="310" y="430" width="180" height="18" rx="9" />
+        <rect x="310" y="495" width="180" height="18" rx="9" />
+        <rect x="310" y="560" width="180" height="18" rx="9" />
+        <rect x="310" y="625" width="180" height="18" rx="9" />
+        <rect x="310" y="690" width="180" height="18" rx="9" />
+
+        <!-- Col 3, Card 1: Thumbnail + 2 Lines + Bottom Line -->
+        <rect x="550" y="70" width="54" height="54" rx="10" />
+        <rect x="618" y="77" width="112" height="16" rx="8" />
+        <rect x="618" y="105" width="65" height="16" rx="8" />
+        <rect x="550" y="180" width="180" height="18" rx="9" />
+
+        <!-- Col 3, Card 2: Thumbnail + 2 Lines + Bottom Line -->
+        <rect x="550" y="310" width="54" height="54" rx="10" />
+        <rect x="618" y="317" width="112" height="16" rx="8" />
+        <rect x="618" y="345" width="65" height="16" rx="8" />
+        <rect x="550" y="420" width="180" height="18" rx="9" />
+
+        <!-- Col 3, Card 3: Thumbnail + 2 Lines -->
+        <rect x="550" y="555" width="54" height="54" rx="10" />
+        <rect x="618" y="562" width="112" height="16" rx="8" />
+        <rect x="618" y="590" width="65" height="16" rx="8" />
+      </g>
+    </mask>
+  </defs>
+
+  <!-- Masked Black Containers on Transparent Canvas -->
+  <g fill="#000000" mask="url(#icon-cutout-mask)">
+    <!-- Column 1 -->
+    <rect x="50" y="50" width="220" height="175" rx="20" />
+    <rect x="50" y="245" width="220" height="210" rx="20" />
+    <rect x="50" y="475" width="220" height="275" rx="20" />
+
+    <!-- Column 2 -->
+    <rect x="290" y="50" width="220" height="195" rx="20" />
+    <rect x="290" y="265" width="220" height="100" rx="20" />
+    <rect x="290" y="385" width="220" height="365" rx="20" />
+
+    <!-- Column 3 -->
+    <rect x="530" y="50" width="220" height="220" rx="20" />
+    <rect x="530" y="290" width="220" height="220" rx="20" />
+    <rect x="530" y="530" width="220" height="220" rx="20" />
+  </g>
+</svg>

@@ -1,0 +1,52 @@
+{
+  "id": "List_Timestamp_Date_Icon_1",
+  "name": "List + Timestamp + Date + Icon + Checkboxes",
+  "widgetType": "list",
+  "version": "2.0.0",
+  "variants": [
+    {
+      "id": "default",
+      "name": "24 HR Day - Month",
+      "settings": {
+        "showIcons": true,
+        "showTimestamp": true,
+        "enableCheckboxes": true,
+        "time24h": true,
+        "dateFormat": "DD-MM"
+      }
+    },
+    {
+      "id": "24_HR_1",
+      "name": "12 HR Day - Month",
+      "settings": {
+        "showIcons": true,
+        "showTimestamp": true,
+        "enableCheckboxes": true,
+        "time24h": false,
+        "dateFormat": "DD-MM"
+      }
+    },
+    {
+      "id": "12_HR_Day_-_Month_1",
+      "name": "24 HR Month - Day",
+      "settings": {
+        "showIcons": true,
+        "showTimestamp": true,
+        "enableCheckboxes": true,
+        "time24h": true,
+        "dateFormat": "MM-DD"
+      }
+    },
+    {
+      "id": "12_HR_Month_-_Day_1",
+      "name": "12 HR Month - Day",
+      "settings": {
+        "showIcons": true,
+        "showTimestamp": true,
+        "enableCheckboxes": true,
+        "time24h": false,
+        "dateFormat": "MM-DD"
+      }
+    }
+  ]
+}

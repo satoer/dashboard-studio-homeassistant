@@ -1,0 +1,294 @@
+{
+  "battery": [
+    {
+      "id": "Horizontal_Battery",
+      "name": "Horizontal Battery",
+      "file": "Horizontal_Battery.json",
+      "variantCount": 2
+    },
+    {
+      "id": "Vertical_Battery",
+      "name": "Vertical Battery",
+      "file": "Vertical_Battery.json",
+      "variantCount": 2
+    }
+  ],
+  "clock": [
+    {
+      "id": "Analog_Clock",
+      "name": "Analog Clock",
+      "file": "Analog_Clock.json",
+      "variantCount": 1
+    },
+    {
+      "id": "Date",
+      "name": "Date",
+      "file": "Date.json",
+      "variantCount": 10
+    },
+    {
+      "id": "Flip_Clock",
+      "name": "Flip Clock",
+      "file": "Flip_Clock.json",
+      "variantCount": 2
+    },
+    {
+      "id": "Time",
+      "name": "Time",
+      "file": "Time.json",
+      "variantCount": 8
+    }
+  ],
+  "gauge": [
+    {
+      "id": "Arc_-_Center_Icon",
+      "name": "Arc - Center Icon",
+      "file": "Arc_-_Center_Icon.json",
+      "variantCount": 3
+    },
+    {
+      "id": "Arc_-_Center_Value_Icon_Bottom",
+      "name": "Arc - Center Value Icon Bottom",
+      "file": "Arc_-_Center_Value_Icon_Bottom.json",
+      "variantCount": 3
+    },
+    {
+      "id": "Arc_-_Center_Value_Icon_Top",
+      "name": "Arc - Center Value Icon Top",
+      "file": "Arc_-_Center_Value_Icon_Top.json",
+      "variantCount": 3
+    },
+    {
+      "id": "Arc_-_Inner_Values",
+      "name": "Arc - Inner Values",
+      "file": "Arc_-_Inner_Values.json",
+      "variantCount": 3
+    },
+    {
+      "id": "Arc_-_Inner_Values_Rotated",
+      "name": "Arc - Inner Values Rotated",
+      "file": "Arc_-_Inner_Values_Rotated.json",
+      "variantCount": 3
+    },
+    {
+      "id": "Arc_-_Outer_Values",
+      "name": "Arc - Outer Values",
+      "file": "Arc_-_Outer_Values.json",
+      "variantCount": 3
+    },
+    {
+      "id": "Arc_-_Outer_Values_Rotated",
+      "name": "Arc - Outer Values Rotated",
+      "file": "Arc_-_Outer_Values_Rotated.json",
+      "variantCount": 3
+    },
+    {
+      "id": "Horizontal_-_Icon_Left",
+      "name": "Horizontal - Icon Left",
+      "file": "Horizontal_-_Icon_Left.json",
+      "variantCount": 1
+    },
+    {
+      "id": "Horizontal_-_No_Icon_Left_Aligned",
+      "name": "Horizontal - No Icon Left Aligned",
+      "file": "Horizontal_-_No_Icon_Left_Aligned.json",
+      "variantCount": 1
+    },
+    {
+      "id": "Horizontal_-_No_Icon_Right_Aligned",
+      "name": "Horizontal - No Icon Right Aligned",
+      "file": "Horizontal_-_No_Icon_Right_Aligned.json",
+      "variantCount": 1
+    },
+    {
+      "id": "Icon_and_Value_Only",
+      "name": "Icon and Value Only",
+      "file": "Icon_and_Value_Only.json",
+      "variantCount": 1
+    }
+  ],
+  "graph": [
+    {
+      "id": "Bar_Graph",
+      "name": "Bar Graph",
+      "file": "Bar_Graph.json",
+      "variantCount": 13
+    },
+    {
+      "id": "Line_Graph",
+      "name": "Line Graph",
+      "file": "Line_Graph.json",
+      "variantCount": 13
+    },
+    {
+      "id": "Smooth_Line_Graph",
+      "name": "Smooth Line Graph",
+      "file": "Smooth_Line_Graph.json",
+      "variantCount": 13
+    }
+  ],
+  "list": [
+    {
+      "id": "List_Checkboxes",
+      "name": "List + Checkboxes",
+      "file": "List_Checkboxes.json",
+      "variantCount": 1
+    },
+    {
+      "id": "List_Icon",
+      "name": "List + Icon",
+      "file": "List_Icon.json",
+      "variantCount": 1
+    },
+    {
+      "id": "List_Icon_Checkboxes",
+      "name": "List + Icon + Checkboxes",
+      "file": "List_Icon_Checkboxes.json",
+      "variantCount": 1
+    },
+    {
+      "id": "List_Timestamp",
+      "name": "List + Timestamp",
+      "file": "List_Timestamp.json",
+      "variantCount": 2
+    },
+    {
+      "id": "List_Timestamp_Checkboxes",
+      "name": "List + Timestamp + Checkboxes",
+      "file": "List_Timestamp_Checkboxes.json",
+      "variantCount": 2
+    },
+    {
+      "id": "List_Timestamp_Date",
+      "name": "List + Timestamp + Date",
+      "file": "List_Timestamp_Date.json",
+      "variantCount": 4
+    },
+    {
+      "id": "List_Timestamp_Date_Icon",
+      "name": "List + Timestamp + Date + Icon",
+      "file": "List_Timestamp_Date_Icon.json",
+      "variantCount": 4
+    },
+    {
+      "id": "List_Timestamp_Date_Icon_Checkboxes",
+      "name": "List + Timestamp + Date + Icon + Checkboxes",
+      "file": "List_Timestamp_Date_Icon_Checkboxes.json",
+      "variantCount": 4
+    },
+    {
+      "id": "List_Timestamp_Icon",
+      "name": "List + Timestamp + Icon",
+      "file": "List_Timestamp_Icon.json",
+      "variantCount": 2
+    },
+    {
+      "id": "List_Timestamp_Icon_Checkboxes",
+      "name": "List + Timestamp + Icon + Checkboxes",
+      "file": "List_Timestamp_Icon_Checkboxes.json",
+      "variantCount": 2
+    },
+    {
+      "id": "List_Text_Only",
+      "name": "List Text Only",
+      "file": "List_Text_Only.json",
+      "variantCount": 1
+    }
+  ],
+  "menu": [
+    {
+      "id": "Horizontal_Menu",
+      "name": "Horizontal Menu",
+      "file": "Horizontal_Menu.json",
+      "variantCount": 4
+    },
+    {
+      "id": "Icon_Grid",
+      "name": "Icon Grid",
+      "file": "Icon_Grid.json",
+      "variantCount": 3
+    },
+    {
+      "id": "List",
+      "name": "List",
+      "file": "List.json",
+      "variantCount": 2
+    }
+  ],
+  "slider": [
+    {
+      "id": "Horizontal_Slider_-_Label_Bottom",
+      "name": "Horizontal Slider - Label Bottom",
+      "file": "Horizontal_Slider_-_Label_Bottom.json",
+      "variantCount": 6
+    },
+    {
+      "id": "Horizontal_Slider_-_Label_Left",
+      "name": "Horizontal Slider - Label Left",
+      "file": "Horizontal_Slider_-_Label_Left.json",
+      "variantCount": 6
+    },
+    {
+      "id": "Horizontal_Slider_-_Label_Right",
+      "name": "Horizontal Slider - Label Right",
+      "file": "Horizontal_Slider_-_Label_Right.json",
+      "variantCount": 6
+    },
+    {
+      "id": "Horizontal_Slider_-_Label_Top",
+      "name": "Horizontal Slider - Label Top",
+      "file": "Horizontal_Slider_-_Label_Top.json",
+      "variantCount": 6
+    },
+    {
+      "id": "Vertical_Slider_-_Label_Bottom",
+      "name": "Vertical Slider - Label Bottom",
+      "file": "Vertical_Slider_-_Label_Bottom.json",
+      "variantCount": 6
+    },
+    {
+      "id": "Vertical_Slider_-_Label_Left",
+      "name": "Vertical Slider - Label Left",
+      "file": "Vertical_Slider_-_Label_Left.json",
+      "variantCount": 6
+    },
+    {
+      "id": "Vertical_Slider_-_Label_Right",
+      "name": "Vertical Slider - Label Right",
+      "file": "Vertical_Slider_-_Label_Right.json",
+      "variantCount": 6
+    },
+    {
+      "id": "Vertical_Slider_-_Label_Top",
+      "name": "Vertical Slider - Label Top",
+      "file": "Vertical_Slider_-_Label_Top.json",
+      "variantCount": 6
+    }
+  ],
+  "switch": [
+    {
+      "id": "Button_Label_Inside",
+      "name": "Button Label Inside",
+      "file": "Button_Label_Inside.json",
+      "variantCount": 4
+    },
+    {
+      "id": "Button_Label_Inside_No_Icon",
+      "name": "Button Label Inside No Icon",
+      "file": "Button_Label_Inside_No_Icon.json",
+      "variantCount": 4
+    },
+    {
+      "id": "Button_Label_Outside",
+      "name": "Button Label Outside",
+      "file": "Button_Label_Outside.json",
+      "variantCount": 4
+    },
+    {
+      "id": "Pill_Switch",
+      "name": "Pill Switch",
+      "file": "Pill_Switch.json",
+      "variantCount": 4
+    }
+  ]
+}

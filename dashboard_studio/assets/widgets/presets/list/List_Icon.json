@@ -1,0 +1,19 @@
+{
+  "id": "List_Text_Only_1_2",
+  "name": "List + Icon",
+  "widgetType": "list",
+  "version": "2.0.0",
+  "variants": [
+    {
+      "id": "default",
+      "name": "default",
+      "settings": {
+        "showIcons": true,
+        "showTimestamp": false,
+        "enableCheckboxes": false,
+        "time24h": true,
+        "dateFormat": "none"
+      }
+    }
+  ]
+}

@@ -1,0 +1,2458 @@
+/* Dashboard Studio — runtime canvas, widgets, viewer overlays */
+
+*, *::before, *::after { box-sizing: border-box; border-style: solid; border-width: 0; border-color: transparent; }
+img, video { max-width: 100%; height: auto; }
+/* UI fonts load non-blocking from viewer.html / editor.html; dashboard fonts via Dashboard.loadFonts(). */
+
+:root {
+    /* --- DARK MODE (Default) --- */
+    --ui-bg: #0f172a;
+    /* Slate 900 */
+    --ui-header-bg: #1e293b;
+    /* Slate 800 */
+    --ui-wrapper-bg: #020617;
+    /* Slate 950 */
+    --ui-border: #334155;
+    /* Slate 700 */
+    --ui-text: #e2e8f0;
+    /* Slate 200 */
+    --ui-text-muted: #94a3b8;
+    /* Slate 400 */
+    --ui-input-bg: #0f172a;
+    /* Slate 900 */
+    --ui-input-border: #334155;
+    /* Slate 700 */
+    --ui-accent: #06b6d4;
+    /* Cyan 500 */
+    --ui-accent-hover: #22d3ee;
+
+    --ui-formula-topic-tag: #c4b5fd;
+    /* Cyan 400 */
+    --ui-danger: #ef4444;
+    /* Red 500 */
+    --ui-danger-hover: #dc2626;
+    /* Red 600 */
+    --ui-tool-bg: #334155;
+    /* Slate 700 */
+    --ui-tool-hover: #475569;
+    /* Slate 600 */
+    --ui-scroll-track: #1e293b;
+    --ui-scroll-thumb: #475569;
+    --ui-wrapper-pattern: rgba(100, 116, 139, 0.15);
+    color-scheme: dark;
+
+    /* Safe Area Variables */
+    --sa-top: env(safe-area-inset-top, 0px);
+    --sa-bottom: env(safe-area-inset-bottom, 0px);
+    --sa-left: env(safe-area-inset-left, 0px);
+    --sa-right: env(safe-area-inset-right, 0px);
+
+    /* Editor Button Variables */
+    --btn-gap: 0.5rem;
+    --btn-height: 36px;
+    --btn-font-size: 0.75rem;
+}
+
+.gap-1   { gap: 0.25rem; }
+.gap-2   { gap: 0.5rem; }
+.gap-3   { gap: 0.75rem; }
+.gap-4   { gap: 1rem; }
+.gap-x-1 { column-gap: 0.25rem; }
+.gap-x-2 { column-gap: 0.5rem; }
+.gap-x-3 { column-gap: 0.75rem; }
+.gap-x-4 { column-gap: 1rem; }
+.gap-y-1 { row-gap: 0.25rem; }
+.gap-y-2 { row-gap: 0.5rem; }
+.gap-y-3 { row-gap: 0.75rem; }
+.gap-y-4 { row-gap: 1rem; }
+
+.min-h-\[1px\] { min-height: 1px; }
+
+body.ui-light {
+    /* --- LIGHT MODE --- */
+    color-scheme: light;
+    --ui-bg: #f8fafc;
+    --ui-header-bg: #f1f5f9;
+    --ui-wrapper-bg: #e2e8f0;
+    --ui-border: #cbd5e1;
+    --ui-text: #334155;
+    --ui-text-muted: #64748b;
+    --ui-input-bg: #ffffff;
+    --ui-input-border: #cbd5e1;
+    --ui-accent: #0284c7;
+    --ui-accent-hover: #0ea5e9;
+
+    --ui-formula-topic-tag: #6d28d9;
+    --ui-danger: #dc2626;
+    --ui-danger-hover: #ef4444;
+    --ui-tool-bg: #e2e8f0;
+    --ui-tool-hover: #cbd5e1;
+    --ui-scroll-track: #f1f5f9;
+    --ui-scroll-thumb: #cbd5e1;
+    --ui-wrapper-pattern: rgba(148, 163, 184, 0.2);
+}
+
+/* --- LIGHT MODE DIALOG OVERRIDES (runtime overlays) --- */
+body.ui-light .ds-dialog,
+body.ui-light .cd-box,
+body.ui-light .ds-loading-card {
+    background: rgba(255, 255, 255, 0.58);
+    -webkit-backdrop-filter: blur(40px) saturate(1.55);
+    backdrop-filter: blur(40px) saturate(1.55);
+    border-color: rgba(255, 255, 255, 0.72);
+    box-shadow:
+        0 0 0 1px rgba(148, 163, 184, 0.18),
+        0 18px 42px -12px rgba(31, 38, 135, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+html {
+    overscroll-behavior: none;
+    overscroll-behavior-x: none;
+}
+
+body.ui-light .ds-dialog-header {
+    background: rgba(255, 255, 255, 0.35);
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--ui-wrapper-bg);
+    color: var(--ui-text);
+    margin: 0;
+    overflow: hidden;
+    display: flex;
+    height: 100vh;
+    /* iPad Safari: 100vh includes the area behind the collapsible address bar, so the
+       dashboard top hides under it. 100dvh excludes the browser chrome and tracks the
+       bar as it shows/hides. Falls back to 100vh on engines without dvh support. */
+    height: 100dvh;
+    padding-top: var(--sa-top);
+    padding-bottom: var(--sa-bottom);
+    padding-left: var(--sa-left);
+    padding-right: var(--sa-right);
+    overscroll-behavior: none;
+}
+
+/* Gesture Controls active: hint WebKit to handle vertical pan and yield horizontal swipes to JavaScript */
+html.gestures-enabled,
+body.gestures-enabled,
+body.gestures-enabled #dashboard-wrapper,
+body.gestures-enabled #dashboard-stage,
+body.gestures-enabled #dashboard-canvas {
+    touch-action: pan-y;
+}
+
+/* Edit mode: mesh backdrop visible; dashboard scrolls full viewport under floating editor */
+body.edit-mode {
+    display: block;
+    position: relative;
+    background-color: var(--bg-base, var(--ui-wrapper-bg));
+    transition: background-color 0.7s ease;
+}
+
+/* Safari 12 flex-gap fallback (polyfilled via margin when flex gap is unsupported) */
+html.no-flex-gap .flex.gap-1 > * + *,
+html.no-flex-gap .inline-flex.gap-1 > * + * {
+    margin-left: 0.25rem;
+}
+
+html.no-flex-gap .flex.gap-2 > * + *,
+html.no-flex-gap .inline-flex.gap-2 > * + * {
+    margin-left: 0.5rem;
+}
+
+html.no-flex-gap .flex.gap-3 > * + *,
+html.no-flex-gap .inline-flex.gap-3 > * + * {
+    margin-left: 0.75rem;
+}
+
+html.no-flex-gap .flex.flex-col.gap-1 > * + *,
+html.no-flex-gap .inline-flex.flex-col.gap-1 > * + * {
+    margin-top: 0.25rem;
+    margin-left: 0;
+}
+
+html.no-flex-gap .flex.flex-col.gap-2 > * + *,
+html.no-flex-gap .inline-flex.flex-col.gap-2 > * + * {
+    margin-top: 0.5rem;
+    margin-left: 0;
+}
+
+html.no-flex-gap .flex.flex-col.gap-3 > * + *,
+html.no-flex-gap .inline-flex.flex-col.gap-3 > * + * {
+    margin-top: 0.75rem;
+    margin-left: 0;
+}
+
+/* =========================================
+   CANVAS & WIDGETS
+   ========================================= */
+
+#dashboard-wrapper {
+    flex-grow: 1;
+    position: relative;
+    overflow: auto;
+    background-color: var(--ui-wrapper-bg);
+    background-image: radial-gradient(var(--ui-border) 1px, transparent 1px);
+    background-size: var(--grid-dot-size, 20px) var(--grid-dot-size, 20px);
+    min-width: 320px;
+    min-height: 0;
+    transition: background-color 0.3s ease;
+    scrollbar-width: thin;
+    scrollbar-color: var(--ui-scroll-thumb) var(--ui-scroll-track);
+}
+
+#dashboard-wrapper::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+#dashboard-wrapper::-webkit-scrollbar-track {
+    background: var(--ui-scroll-track);
+}
+
+#dashboard-wrapper::-webkit-scrollbar-thumb {
+    background: var(--ui-scroll-thumb);
+    border-radius: 10px;
+}
+
+#dashboard-wrapper::-webkit-scrollbar-thumb:hover {
+    background: var(--ui-text-muted);
+}
+
+body.edit-mode #dashboard-wrapper {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    flex-grow: unset;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    background-image: radial-gradient(var(--ui-border) 1px, transparent 1px);
+    background-size: var(--grid-dot-size, 20px) var(--grid-dot-size, 20px);
+}
+
+body.edit-mode #dashboard-stage {
+    padding-left: var(--dashboard-stage-pad-left, calc(var(--editor-panel-width, 400px) + var(--editor-gutter, 1rem) * 2));
+    padding-right: var(--dashboard-stage-pad-right, 0px);
+    box-sizing: border-box;
+    transition: padding-left 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+        padding-right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+body.edit-mode.help-panel-resizing #dashboard-stage,
+body.dashboard-canvas-overscan #dashboard-stage {
+    transition: none;
+}
+
+body.viewer-mode:not(.edit-mode) {
+    /* Full-bleed runtime: drop the home-indicator bottom safe-area padding so the dashboard
+       wrapper extends to the bottom edge (matches edit-mode full-bleed). Top/side insets stay
+       for notch devices. Without this, `height: 100%` on the flex wrapper stops above the
+       ~20px env(safe-area-inset-bottom) strip on iPad. */
+    padding-bottom: 0;
+}
+
+body.viewer-mode #dashboard-wrapper {
+    flex: 1 1 auto;
+    width: 100%;
+    height: 100%;
+}
+
+/* Centers the canvas when it fits; grows with oversized canvases so overflow scroll
+   can reach every edge (centering on #dashboard-wrapper itself clips the left/top).
+   Viewer/edit overscan uses --dashboard-stage-pad-* plus centered wrapper scroll. */
+#dashboard-stage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-width: 100%;
+    min-height: 100%;
+    width: max-content;
+    height: max-content;
+    padding-left: var(--dashboard-stage-pad-left, 0px);
+    padding-right: var(--dashboard-stage-pad-right, 0px);
+}
+
+/* Tall fixed canvas: start-align so the top stays inside the scroll range.
+   align-items:center overflows upward, and WebKit will not scroll to that top,
+   which pins the parked offset at the bottom of the page. */
+body.dashboard-canvas-overflow-y #dashboard-stage {
+    align-items: flex-start;
+}
+
+/* 0=Auto axes: fill the scroll container; fixed axes keep max-content (1.10.1 center/scroll). */
+#dashboard-stage.dashboard-stage-auto-width {
+    width: 100%;
+}
+
+#dashboard-stage.dashboard-stage-auto-height {
+    height: 100%;
+}
+
+/* Responsive mode: fill viewport, grow with content, and place the bounded canvas
+   per Column Alignment via inline justify-content. The stage grows with content so
+   the mirrored background covers the full scrollable area.
+   `display: block` (not the base `flex`) is required for iOS 12 / Safari 12: a flex
+   container with `height: auto` + `min-height: 100%` does not grow to fit an
+   overflowing flex item on legacy WebKit, so the stage stayed at viewport height and
+   the wrapper had nothing to scroll. Alignment is done via canvas auto-margins, so
+   flex centering is not needed here. */
+#dashboard-stage.dashboard-stage-responsive-mode {
+    display: block;
+    align-items: flex-start;
+    justify-content: flex-start;
+    width: 100%;
+    min-width: 100%;
+    min-height: 100%;
+    height: auto;
+    padding-top: var(--responsive-page-padding-top, 20px);
+    padding-right: var(--responsive-page-padding-right, 20px);
+    padding-bottom: var(--responsive-page-padding-bottom, 20px);
+    padding-left: var(--responsive-page-padding-left, 20px);
+    box-sizing: border-box;
+}
+
+body.edit-mode #dashboard-stage.dashboard-stage-responsive-mode {
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding-left: calc(var(--editor-panel-width, 400px) + var(--editor-gutter, 1rem) * 2 + var(--responsive-page-padding-left, 20px));
+    padding-right: var(--responsive-page-padding-right, 20px);
+    padding-top: var(--responsive-page-padding-top, 20px);
+    padding-bottom: var(--responsive-page-padding-bottom, 20px);
+}
+
+body.edit-mode.help-open #dashboard-stage.dashboard-stage-responsive-mode {
+    padding-right: calc(var(--help-panel-active-width, 0px) + var(--editor-gutter, 1rem) * 2 + var(--responsive-page-padding-right, 20px));
+}
+
+/* Reserve the vertical-scrollbar gutter always so the canvas width stays constant when
+   content grows past the viewport and the scrollbar toggles. Without this, the toggle
+   shifts the canvas width ~15px, which re-triggers the reflow, which changes the content
+   height, which toggles the scrollbar again - a self-sustaining oscillation that matches
+   the reported Firefox "settles after many seconds" / Chrome "slow framerate" behaviour. */
+#dashboard-wrapper.dashboard-wrapper-responsive-mode {
+    scrollbar-gutter: stable;
+}
+
+#dashboard-canvas {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-color: #020617;
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+    transition: width 0.3s, height 0.3s;
+    flex-shrink: 0;
+    isolation: isolate;
+}
+
+/* Edit-mode view zoom. The host is the layout footprint; the canvas keeps design pixels and scales visually. */
+#dashboard-editor-zoom-host.is-active {
+    position: relative;
+    flex-shrink: 0;
+    overflow: visible;
+}
+
+#dashboard-canvas.editor-zoom-active {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: none;
+}
+
+#dashboard-canvas::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    pointer-events: none;
+    background-image: linear-gradient(to right, var(--ui-wrapper-pattern) 1px, transparent 1px), linear-gradient(to bottom, var(--ui-wrapper-pattern) 1px, transparent 1px);
+    background-size: var(--grid-dot-size, 20px) var(--grid-dot-size, 20px);
+    display: none;
+    z-index: 9999;
+}
+
+/* =========================================================
+   Layout Mode: Scale to Fit Screen
+   ========================================================= */
+
+#dashboard-wrapper.dashboard-wrapper-scale-view,
+#dashboard-stage.dashboard-stage-scale-mode {
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+}
+
+#dashboard-stage.dashboard-stage-scale-mode {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+#dashboard-scale-host.dashboard-scale-host-active {
+    position: relative;
+    flex-shrink: 0;
+}
+
+#dashboard-canvas.layout-mode-scale {
+    overflow: hidden;
+    transition: none;
+    flex-shrink: 0;
+}
+
+/* =========================================================
+   Layout Mode: Responsive Columns
+   ========================================================= */
+
+#dashboard-canvas.layout-mode-responsive {
+    display: grid;
+    grid-template-columns: repeat(var(--responsive-col-count, 4), minmax(var(--responsive-min, 250px), var(--responsive-max, 1fr)));
+    grid-auto-rows: var(--responsive-row-unit, 4px);
+    grid-auto-flow: dense;
+    justify-content: var(--responsive-align, start);
+    width: 100%;
+    height: auto;
+    min-height: 100%;
+    min-width: calc(var(--responsive-col-count, 4) * var(--responsive-min, 250px) + (var(--responsive-col-count, 4) - 1) * var(--responsive-gap, 10px));
+    overflow: visible;
+    box-shadow: none;
+    gap: var(--responsive-gap, 10px);
+    align-content: start;
+    align-items: stretch;
+    /* The reflow reserves rows (grid-row span N) to fit content, so the canvas height
+       changes on every reflow pass. Animating that height (the default width/height 0.3s
+       transition) keeps the ResizeObserver firing throughout the animation and resets the
+       debounced reflow every frame: Firefox only settles after many seconds, Chrome burns
+       frames on the perpetual animation + re-render. Responsive mode must snap, not tween. */
+    transition: none;
+}
+
+#dashboard-canvas.layout-mode-responsive .widget-wrapper {
+    position: relative;
+    left: auto;
+    top: auto;
+    width: auto;
+    min-width: 0;
+    max-width: 100%;
+    height: 100%;
+    min-height: var(--responsive-min-widget-height, 250px);
+}
+
+#dashboard-canvas.layout-mode-responsive .widget-container {
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+}
+
+#dashboard-canvas.layout-mode-responsive .widget-wrapper.responsive-scale-mode .widget-content-scale-viewport {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+#dashboard-canvas.layout-mode-responsive .widget-wrapper.responsive-scale-mode .widget-content {
+    flex-shrink: 0;
+    transform-origin: center center;
+}
+
+#dashboard-canvas.layout-mode-responsive .resize-handle {
+    display: none;
+}
+
+/* =========================================================
+   Group Composite (Responsive Columns only)
+   A group renders as a single grid item whose stage hosts its
+   members positioned by design-space fractions.
+   ========================================================= */
+
+#dashboard-canvas.layout-mode-responsive .group-composite-wrapper {
+    position: relative;
+    min-width: 0;
+    min-height: 0;
+}
+
+#dashboard-canvas.layout-mode-responsive .group-composite-stage {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    overflow: hidden;
+}
+
+/* Group Rescale: members are absolutely positioned at a uniformly scaled, centered
+   rect inside the stage (no design-layer transform), so each member keeps native
+   container chrome and only its inner content scales. The base .group-composite-stage
+   rule (position:absolute, overflow:hidden) already provides the containing block. */
+
+#dashboard-canvas.layout-mode-responsive .group-composite-stage .widget-wrapper {
+    position: absolute;
+    left: auto;
+    top: auto;
+    width: auto;
+    height: auto;
+    min-width: 0;
+    min-height: 0;
+    max-height: none;
+    max-width: none;
+}
+
+/* Authoring mode (group open): free-form fixed-pixel canvas (like Fixed Resolution),
+   sized to fit all members. Members are positioned absolutely anywhere inside it.
+   The composite outline is only computed on close, so this canvas is not constrained
+   to the group's bounding box. */
+#dashboard-canvas.layout-mode-responsive .group-composite-wrapper.composite-authoring {
+    background-color: color-mix(in srgb, var(--ui-accent, #06b6d4) 5%, transparent);
+    border: 1px solid color-mix(in srgb, var(--ui-border, #334155) 60%, transparent);
+    border-radius: 12px;
+    box-sizing: border-box;
+}
+
+/* Group focus mode (Responsive Columns): hide every other canvas item while authoring. */
+#dashboard-canvas.layout-mode-responsive.composite-group-open > .widget-wrapper,
+#dashboard-canvas.layout-mode-responsive.composite-group-open > .group-composite-wrapper:not(.composite-authoring) {
+    display: none;
+}
+
+#dashboard-canvas.layout-mode-responsive.composite-group-open > .group-composite-wrapper.composite-authoring {
+    grid-column: 1 / -1;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+#dashboard-canvas.layout-mode-responsive .group-composite-wrapper.composite-authoring .group-composite-stage {
+    overflow: visible;
+}
+
+/* Resize handles in open group authoring: same as Fixed Resolution (selected only). */
+body.edit-mode:not(.hold-live-preview)
+    #dashboard-canvas.layout-mode-responsive.composite-group-open
+    .group-composite-wrapper.composite-authoring
+    .widget-wrapper.selected
+    .resize-handle {
+    display: block;
+}
+
+body.edit-mode:not(.hold-live-preview)
+    #dashboard-canvas.layout-mode-responsive.composite-group-open
+    .group-composite-wrapper.composite-authoring
+    .widget-wrapper.multi-selected
+    .resize-handle {
+    display: none;
+}
+
+/* Edit-mode selection outline on the composite wrapper as a whole. */
+body.edit-mode:not(.hold-live-preview)
+    #dashboard-canvas.layout-mode-responsive .group-composite-wrapper.composite-selected {
+    outline: 2px solid var(--ui-accent);
+    outline-offset: 2px;
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.25);
+}
+
+/* Light Grid: stacked control panel below the grid (Responsive Columns only) */
+.lg-popover--stacked {
+    position: relative;
+    width: 100%;
+    flex-shrink: 0;
+}
+
+.lg-popover--stacked .pop-rh {
+    display: none;
+}
+
+/* Runtime: full-canvas dim layer when a group uses Blur Background When Visible (see Dashboard._syncGroupBackdropOverlays). */
+#dashboard-canvas .dashboard-group-dim-overlay {
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    background: rgba(15, 23, 42, 0.38);
+}
+
+/* Canvas Dialog Box overlay (Confirmation Dialog and later info roles). Hosted inside #dashboard-canvas. */
+#dashboard-canvas .dashboard-dialog-root {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 100000;
+    pointer-events: none;
+}
+
+#dashboard-canvas .dashboard-dialog-dim {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    background: rgba(15, 23, 42, 0.38);
+    pointer-events: auto;
+}
+
+#dashboard-canvas .dashboard-dialog-panel {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: 1.25rem 1.35rem;
+    max-width: 92%;
+    max-height: 92%;
+    overflow: visible;
+    pointer-events: auto;
+    background: color-mix(in srgb, var(--ui-header-bg) 72%, transparent);
+    -webkit-backdrop-filter: blur(40px) saturate(1.55);
+    backdrop-filter: blur(40px) saturate(1.55);
+    border: 1px solid color-mix(in srgb, var(--ui-border) 70%, #fff 30%);
+    box-shadow:
+        0 0 0 1px color-mix(in srgb, var(--ui-accent) 12%, transparent),
+        0 24px 48px -14px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 color-mix(in srgb, #fff 18%, transparent);
+}
+
+#dashboard-canvas .dashboard-dialog-root.is-preview .dashboard-dialog-dim {
+    display: none;
+    pointer-events: none;
+}
+
+#dashboard-canvas .dashboard-dialog-root.is-preview .dashboard-dialog-panel {
+    cursor: move;
+    touch-action: none;
+}
+
+#dashboard-canvas .dashboard-dialog-root.is-preview.is-position-locked .dashboard-dialog-panel {
+    cursor: default;
+}
+
+body.edit-mode:not(.hold-live-preview)
+    #dashboard-canvas .dashboard-dialog-root.is-preview .resize-handle {
+    display: block;
+}
+
+#dashboard-canvas .dashboard-dialog-message-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin: 0 0 1rem 0;
+    gap: 0.75rem;
+}
+
+#dashboard-canvas .dashboard-dialog-icon {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+#dashboard-canvas .dashboard-dialog-message {
+    margin: 0;
+    min-width: 0;
+    color: var(--ui-text);
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+#dashboard-canvas .dashboard-dialog-actions {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+#dashboard-canvas .dashboard-dialog-btn {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    box-sizing: border-box;
+    padding: 0.45rem 0.9rem;
+    color: #fff;
+}
+
+#dashboard-canvas .dashboard-dialog-root.is-preview .dashboard-dialog-btn {
+    cursor: default;
+}
+
+#dashboard-canvas .dashboard-dialog-btn + .dashboard-dialog-btn {
+    margin-left: 0.6rem;
+}
+
+#dashboard-canvas .dashboard-dialog-btn-icon {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-right: 0.35rem;
+}
+
+#dashboard-canvas .dashboard-dialog-btn-label {
+    display: inline-block;
+}
+
+/* Widget type tag: shared with Create widget menu & getWidgetTagHtml. Colors via --widget-color-local in inline style (do not set --widget-color-local here). */
+.widget-registry-type-tag {
+    font-size: 0.6rem;
+    background: color-mix(in srgb, var(--widget-color-local, var(--ui-accent)) 15%, transparent);
+    color: var(--widget-color-local, var(--ui-accent));
+    border: 1px solid color-mix(in srgb, var(--widget-color-local, var(--ui-accent)) 30%, transparent);
+    padding: 2px 6px;
+    border-radius: 4px;
+    vertical-align: middle;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+    box-sizing: border-box;
+}
+
+.widget-registry-type-tag--inline {
+    display: inline-block;
+    margin-right: 8px;
+    flex-shrink: 0;
+}
+
+.widget-wrapper {
+    position: absolute;
+    box-sizing: border-box;
+}
+
+/* View / hold-live preview: wrapper is layout-only; clicks pass through to interactive widgets below. */
+body:not(.edit-mode) .widget-wrapper,
+body.hold-live-preview .widget-wrapper {
+    pointer-events: none;
+}
+
+.widget-container {
+    width: 100%;
+    height: 100%;
+    transition: background 0.3s ease, box-shadow 0.3s ease, border 0.3s ease, border-radius 0.3s ease;
+    overflow: hidden;
+    border-radius: 2rem;
+    box-sizing: border-box;
+    user-select: none;
+    position: relative;
+    pointer-events: none;
+}
+
+.widget-error {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: rgba(15, 23, 42, 0.95);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    border-radius: inherit;
+    padding: 10px;
+    text-align: center;
+    pointer-events: none;
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
+    border: 2px solid var(--ui-danger);
+}
+
+.widget-error i {
+    font-size: 32px;
+    color: var(--ui-danger);
+    margin-bottom: 4px;
+}
+
+.widget-error span {
+    font-size: 10px;
+    color: #fca5a5;
+    font-family: 'JetBrains Mono', monospace;
+    line-height: 1.2;
+}
+
+body:not(.edit-mode) .widget-container.interactive,
+body.hold-live-preview .widget-container.interactive {
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+.eb-input-host {
+    --eb-bg: transparent;
+    --eb-border: 1px solid transparent;
+    --eb-radius: 0px;
+    --eb-color: inherit;
+    --eb-font: inherit;
+    --eb-weight: 400;
+    --eb-style: normal;
+    --eb-size: 14px;
+    --eb-align: left;
+    --eb-pad: 0px;
+    --eb-placeholder: inherit;
+    --eb-focus-col: transparent;
+    --eb-focus-shadow: none;
+    width: 100%;
+    display: flex;
+    flex: 1 1 auto;
+}
+.eb-input-host input,
+.eb-input-host textarea {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    outline: none;
+    background: var(--eb-bg);
+    border: var(--eb-border);
+    border-radius: var(--eb-radius);
+    color: var(--eb-color);
+    font-family: var(--eb-font);
+    font-weight: var(--eb-weight);
+    font-style: var(--eb-style);
+    font-size: var(--eb-size);
+    text-align: var(--eb-align);
+    padding: var(--eb-pad);
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.eb-input-host textarea {
+    resize: none;
+}
+.eb-input-host input::placeholder,
+.eb-input-host textarea::placeholder {
+    color: var(--eb-placeholder);
+    opacity: 0.8;
+}
+.eb-input-host input:not([readonly]):focus,
+.eb-input-host textarea:not([readonly]):focus {
+    border-color: var(--eb-focus-col);
+    box-shadow: var(--eb-focus-shadow);
+}
+.eb-input-host.eb-is-readonly input,
+.eb-input-host.eb-is-readonly textarea,
+.eb-input-host.eb-is-deactivated input,
+.eb-input-host.eb-is-deactivated textarea {
+    pointer-events: none;
+    cursor: default;
+}
+.eb-input-host:not(.eb-is-readonly):not(.eb-is-deactivated) input,
+.eb-input-host:not(.eb-is-readonly):not(.eb-is-deactivated) textarea {
+    pointer-events: auto;
+    cursor: text;
+}
+
+/* Switch/Button: pointer only on the actual control face, not the full widget frame */
+body:not(.edit-mode) .widget-container.interactive.switch-widget-container,
+body.hold-live-preview .widget-container.interactive.switch-widget-container {
+    cursor: default;
+}
+
+body:not(.edit-mode) .widget-container.interactive.switch-widget-container .sw-btn,
+body.hold-live-preview .widget-container.interactive.switch-widget-container .sw-btn {
+    cursor: pointer;
+}
+
+/* Text Only: hit target and label use the full widget content area (below group title) */
+.widget-container.switch-widget-container.sw-text-only-mode .widget-content {
+    justify-content: flex-start;
+    align-items: stretch;
+}
+
+.widget-container.switch-widget-container.sw-text-only-mode .sw-layout {
+    flex: 1 1 auto;
+    width: 100%;
+    min-height: 0;
+    align-self: stretch;
+    align-items: stretch;
+    justify-content: flex-start;
+}
+
+.widget-container.switch-widget-container.sw-text-only-mode .sw-btn {
+    flex: 1 1 auto;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    align-self: stretch;
+}
+
+.widget-container.switch-widget-container.sw-text-only-mode .sw-content {
+    flex: 1 1 auto;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+}
+
+/* Invisible: full container hit target; hidden at runtime, editor outline always visible */
+body:not(.edit-mode) .widget-container.interactive.switch-widget-container.sw-invisible-mode,
+body.hold-live-preview .widget-container.interactive.switch-widget-container.sw-invisible-mode {
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+body:not(.edit-mode) .widget-container.interactive.switch-widget-container.sw-invisible-mode .sw-btn,
+body.hold-live-preview .widget-container.interactive.switch-widget-container.sw-invisible-mode .sw-btn {
+    cursor: pointer;
+}
+
+/* Text widget: enable pointer hits for Markdown links/scrolling without a pointer cursor over static text */
+body:not(.edit-mode) .widget-container.interactive.text-widget-container,
+body.hold-live-preview .widget-container.interactive.text-widget-container {
+    cursor: default;
+}
+
+/* Graph widget: enable pointer hits for hover values without a pointer cursor over the entire widget */
+body:not(.edit-mode) .widget-container.interactive.graph-widget-container,
+body.hold-live-preview .widget-container.interactive.graph-widget-container {
+    cursor: default;
+}
+
+body:not(.edit-mode) .widget-container.interactive.text-widget-container .text-md-root a[href],
+body.hold-live-preview .widget-container.interactive.text-widget-container .text-md-root a[href] {
+    cursor: pointer;
+}
+
+/* Deactivated widgets: suppress clicks, hovers, and pointer events in view mode */
+body:not(.edit-mode) .widget-wrapper.widget-is-deactivated,
+body:not(.edit-mode) .widget-wrapper.widget-is-deactivated .widget-container,
+body:not(.edit-mode) .widget-wrapper.widget-is-deactivated .widget-container.interactive,
+body.hold-live-preview .widget-wrapper.widget-is-deactivated,
+body.hold-live-preview .widget-wrapper.widget-is-deactivated .widget-container,
+body.hold-live-preview .widget-wrapper.widget-is-deactivated .widget-container.interactive {
+    pointer-events: none;
+    cursor: default;
+}
+
+body:not(.edit-mode) .widget-wrapper.widget-is-deactivated .sw-btn,
+body.hold-live-preview .widget-wrapper.widget-is-deactivated .sw-btn,
+body:not(.edit-mode) .widget-wrapper.widget-is-deactivated .text-md-root a[href],
+body.hold-live-preview .widget-wrapper.widget-is-deactivated .text-md-root a[href] {
+    pointer-events: none;
+    cursor: default;
+}
+
+/* Phosphor Duotone: runtime sets --icon-primary-color / --icon-secondary-color on the icon wrap */
+.widget-container i.ph-duotone::before {
+    color: var(--icon-secondary-color, currentColor);
+    opacity: var(--icon-secondary-opacity, 1);
+}
+.widget-container i.ph-duotone::after {
+    color: var(--icon-primary-color, currentColor);
+}
+
+.resize-handle {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: var(--ui-accent);
+    border: 1px solid white;
+    border-radius: 50%;
+    z-index: 901;
+    display: none;
+    touch-action: none;
+}
+
+.resize-handle::after {
+    content: '';
+    position: absolute;
+    inset: -11px;
+}
+
+.rh-nw {
+    top: -5px;
+    left: -5px;
+    cursor: nw-resize;
+}
+
+.rh-ne {
+    top: -5px;
+    right: -5px;
+    cursor: ne-resize;
+}
+
+.rh-sw {
+    bottom: -5px;
+    left: -5px;
+    cursor: sw-resize;
+}
+
+.rh-se {
+    bottom: -5px;
+    right: -5px;
+    cursor: se-resize;
+}
+
+.rh-n {
+    top: -5px;
+    left: 50%;
+    margin-left: -5px;
+    cursor: n-resize;
+}
+
+.rh-s {
+    bottom: -5px;
+    left: 50%;
+    margin-left: -5px;
+    cursor: s-resize;
+}
+
+.rh-w {
+    left: -5px;
+    top: 50%;
+    margin-top: -5px;
+    cursor: w-resize;
+}
+
+.rh-e {
+    right: -5px;
+    top: 50%;
+    margin-top: -5px;
+    cursor: e-resize;
+}
+
+.arrow-handle {
+    touch-action: none;
+}
+
+/* =========================================
+   DIALOG SYSTEM — runtime primitives
+   ========================================= */
+
+/* Shared keyframes */
+@keyframes ds-dialog-fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@keyframes ds-dialog-pop-in {
+    from { opacity: 0; transform: translateY(-6px) scale(0.985); }
+    to   { opacity: 1; transform: translateY(0)    scale(1); }
+}
+
+/* --- Backdrop (runtime: custom-dialog + driver-offline + loading overlay) --- */
+#custom-dialog,
+#driver-offline-warning,
+#loading-overlay {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    inset: 0;
+    z-index: 10020;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(2, 6, 23, 0.48);
+    -webkit-backdrop-filter: blur(14px) saturate(1.2);
+    backdrop-filter: blur(14px) saturate(1.2);
+}
+
+/* System prompts must stack above editor feature modals (e.g. widget preset picker at 10040). */
+#custom-dialog {
+    z-index: 10060;
+}
+
+#custom-dialog.show,
+#driver-offline-warning.show,
+#loading-overlay.show {
+    display: flex;
+}
+
+#custom-dialog.show,
+#driver-offline-warning.show {
+    animation: ds-dialog-fade-in 150ms ease-out both;
+}
+
+#loading-overlay.show {
+    animation: none;
+}
+
+/* Loading overlay sits just below dialogs. No backdrop-filter and no canvas
+   filter: both force a full-viewport GPU pass on the boot path. */
+#loading-overlay {
+    z-index: 9998;
+    background: rgba(2, 6, 23, 0.42);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+}
+
+#driver-offline-warning {
+    z-index: 10010;
+}
+
+body.ui-light #custom-dialog,
+body.ui-light #driver-offline-warning,
+body.ui-light #loading-overlay {
+    background: rgba(100, 116, 139, 0.2);
+}
+
+body.ui-light #loading-overlay {
+    background: rgba(100, 116, 139, 0.16);
+}
+
+/* --- Panel (runtime cards) --- */
+.ds-dialog,
+.cd-box,
+.ds-loading-card {
+    position: relative;
+    background: color-mix(in srgb, var(--ui-header-bg) 72%, transparent);
+    -webkit-backdrop-filter: blur(40px) saturate(1.55);
+    backdrop-filter: blur(40px) saturate(1.55);
+    border: 1px solid color-mix(in srgb, var(--ui-border) 70%, #fff 30%);
+    border-radius: 12px;
+    box-shadow:
+        0 0 0 1px color-mix(in srgb, var(--ui-accent) 12%, transparent),
+        0 24px 48px -14px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 color-mix(in srgb, #fff 18%, transparent);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: ds-dialog-pop-in 160ms cubic-bezier(0.2, 0.9, 0.3, 1.1) both;
+}
+
+.cd-box {
+    width: 360px;
+    max-width: 92vw;
+}
+
+#custom-dialog.mode-code .cd-box {
+    width: min(900px, 92vw);
+}
+
+#custom-dialog.mode-pick-one .cd-box {
+    width: min(460px, 92vw);
+}
+
+/* Three actions (Save as copy / Skip / Replace) share the 360px dialog.
+   The shared 8.5rem button minimum fits two actions only, so this row
+   sizes to each label and wraps instead of clipping the first button. */
+#custom-dialog.mode-choose-three .ds-dialog-footer {
+    flex-wrap: wrap;
+}
+
+#custom-dialog.mode-choose-three .ds-dialog-button {
+    min-width: 0;
+    width: auto;
+    flex: 1 1 auto;
+}
+
+/* --- Header (runtime) --- */
+.ds-dialog-header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.6rem 0.85rem;
+    background: color-mix(in srgb, var(--ui-accent) 8%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--ui-border) 70%, transparent);
+    flex-shrink: 0;
+    cursor: grab;
+    user-select: none;
+}
+
+.ds-dialog-header:active {
+    cursor: grabbing;
+}
+
+.ds-dialog-header button,
+.ds-dialog-header input {
+    cursor: default;
+    user-select: auto;
+}
+
+.ds-dialog-header .ds-dialog-close {
+    cursor: pointer;
+}
+
+.ds-dialog-header::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent,
+        color-mix(in srgb, var(--ui-accent) 55%, transparent), transparent);
+    pointer-events: none;
+}
+
+/* --- Title (icon badge + label) --- */
+.ds-dialog-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    color: var(--ui-text);
+    white-space: nowrap;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 0;
+}
+
+.ds-dialog-title-icon {
+    width: 1.4rem;
+    height: 1.4rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    background: color-mix(in srgb, var(--ui-accent) 14%, transparent);
+    color: var(--ui-accent);
+    flex-shrink: 0;
+    font-size: 1rem;
+}
+
+/* --- Close button (runtime) --- */
+.ds-dialog-close {
+    flex-shrink: 0;
+    width: 28px;
+    min-width: 28px;
+    height: 28px;
+    min-height: 28px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--ui-text-muted);
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    font-weight: 500;
+    line-height: 1.2;
+    font-size: var(--btn-font-size);
+}
+
+.ds-dialog-close:hover {
+    background: color-mix(in srgb, var(--ui-danger) 18%, transparent);
+    border-color: color-mix(in srgb, var(--ui-danger) 45%, transparent);
+    color: #fff;
+}
+
+.ds-dialog-body {
+    padding: 1rem;
+    overflow-y: auto;
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+/* --- Footer (action row, bottom of body) --- */
+.ds-dialog-footer {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+    padding: 0.7rem 0.85rem;
+    border-top: 1px solid color-mix(in srgb, var(--ui-border) 60%, transparent);
+    background: color-mix(in srgb, var(--ui-bg) 92%, transparent);
+    flex-shrink: 0;
+}
+
+/* Shared action button sizing for all dialog panels.
+   Keeps a universal baseline width, but allows longer labels to expand. */
+.ds-dialog-button {
+    min-width: 8.5rem;
+    width: max-content;
+    max-width: 100%;
+    white-space: nowrap;
+    justify-content: center;
+}
+
+.ds-dialog-button.w-full {
+    width: 100%;
+}
+
+.ds-dialog-button.is-kb-selected,
+.dashboard-dialog-btn.is-kb-selected,
+.btn-tool.is-kb-selected {
+    outline: none;
+    box-shadow: inset 0 0 0 2px var(--accent, var(--ui-accent, #3b82f6));
+}
+
+.ds-dialog-button.primary.is-kb-selected,
+.btn-tool.primary.is-kb-selected,
+.btn-tool.primary.is-kb-selected:hover,
+.dashboard-dialog-btn.is-kb-selected {
+    outline: none;
+    box-shadow: inset 0 0 0 2px #fff;
+}
+
+/* --- Accent pill link (reusable help link inside any dialog) --- */
+.ds-help-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.22rem 0.55rem;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--ui-accent);
+    background: color-mix(in srgb, var(--ui-accent) 8%, transparent);
+    border: 1px solid color-mix(in srgb, var(--ui-accent) 28%, transparent);
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+    white-space: nowrap;
+}
+
+.ds-help-link:hover {
+    background: color-mix(in srgb, var(--ui-accent) 18%, transparent);
+    color: #fff;
+    transform: translateY(-1px);
+}
+
+.ds-help-link i {
+    font-size: 0.78rem;
+}
+
+/* --- Numeric Payload Formula inline chip field --- */
+.ds-value-tag {
+    display: inline-flex;
+    align-items: center;
+    vertical-align: baseline;
+    padding: 0.1rem 0.4rem;
+    margin: 0 0.05rem;
+    border-radius: 999px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--ui-accent);
+    background: color-mix(in srgb, var(--ui-accent) 8%, transparent);
+    border: 1px solid color-mix(in srgb, var(--ui-accent) 28%, transparent);
+    white-space: nowrap;
+    user-select: all;
+    cursor: default;
+}
+
+.ds-topic-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
+    vertical-align: baseline;
+    padding: 0.1rem 0.35rem;
+    margin: 0 0.05rem;
+    border-radius: 999px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--ui-formula-topic-tag);
+    background: color-mix(in srgb, var(--ui-formula-topic-tag) 14%, transparent);
+    border: 1px solid color-mix(in srgb, var(--ui-formula-topic-tag) 32%, transparent);
+    white-space: nowrap;
+    user-select: all;
+    cursor: default;
+    max-width: 12rem;
+}
+
+.ds-topic-tag .ph-link {
+    font-size: 0.6rem;
+    flex-shrink: 0;
+}
+
+.ds-topic-tag-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ds-formula-topic-wrap {
+    margin-bottom: 0.35rem;
+    padding: 0.35rem;
+    border-radius: 0.375rem;
+    border: 1px solid var(--ui-border, rgba(148, 163, 184, 0.25));
+    background: rgba(15, 23, 42, 0.5);
+}
+
+.ds-formula-topic-wrap .ds-formula-topic-label {
+    font-size: 0.65rem;
+    color: rgb(148, 163, 184);
+    margin-bottom: 0.35rem;
+}
+
+.ds-formula-color-wrap {
+    margin-bottom: 0.35rem;
+    padding: 0.35rem;
+    border-radius: 0.375rem;
+    border: 1px solid var(--ui-border, rgba(148, 163, 184, 0.25));
+    background: rgba(15, 23, 42, 0.5);
+}
+
+.ds-formula-color-wrap .ds-formula-color-label {
+    font-size: 0.65rem;
+    color: rgb(148, 163, 184);
+    margin-bottom: 0.35rem;
+}
+
+.ds-value-tag,
+.ds-topic-tag {
+    pointer-events: auto;
+}
+
+.ds-formula-input-editable {
+    height: auto;
+    min-height: 2rem;
+    line-height: 1.45;
+    white-space: pre-wrap;
+    word-break: break-word;
+    cursor: text;
+}
+
+.ds-formula-input-editable.is-empty:before {
+    content: attr(data-placeholder);
+    color: var(--ui-text-muted, #64748b);
+    pointer-events: none;
+}
+
+.control-input.ds-formula-input.invalid {
+    border-color: var(--ui-danger, #f87171);
+    outline-color: var(--ui-danger, #f87171);
+}
+
+.ds-transform-mode-select {
+    margin-bottom: 0.35rem;
+}
+
+.ds-formula-presets {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    margin-top: 0.15rem;
+}
+
+.ds-formula-preset-btn {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.35rem;
+    width: 100%;
+    padding: 0.12rem 0;
+    margin: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    text-align: left;
+    color: #94a3b8;
+    transition: color 0.15s ease;
+}
+
+.ds-formula-preset-btn:hover {
+    color: #e2e8f0;
+}
+
+.ds-formula-preset-icon {
+    flex-shrink: 0;
+    font-size: 0.7rem;
+    line-height: 1.35;
+    margin-top: 0.05rem;
+}
+
+.ds-formula-preset-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.05rem;
+    min-width: 0;
+}
+
+.ds-formula-preset-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.ds-formula-preset-hint {
+    font-size: 0.6rem;
+    font-weight: 400;
+    line-height: 1.25;
+    color: #64748b;
+}
+
+.ds-formula-preset-btn:hover .ds-formula-preset-hint {
+    color: #94a3b8;
+}
+
+/* --- Loading overlay card (uses .ds-loading-card for content) --- */
+.ds-loading-card {
+    padding: 1.5rem 3rem;
+    gap: 1rem;
+    align-items: center;
+    flex-direction: column;
+}
+
+html.no-flex-gap .ds-loading-card > * + * {
+    margin-top: 1rem;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+/* Fader geometry matches the mask-free SVG (viewBox 10000, knob r=1400, tracks
+   inset 585). Only translate3d runs: SMIL path "d" morphs retessellate on the
+   main thread and freeze during a short boot. Percents are of each part, so
+   1800 viewBox units on the knob is 1800/2800 of its box. */
+.ds-loading-card .ds-loading-spinner {
+    position: relative;
+    width: 2.75rem;
+    height: 2.75rem;
+    flex-shrink: 0;
+}
+
+.ds-loading-ch {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 28%;
+}
+
+.ds-loading-ch:nth-child(1) { left: 3%; }
+.ds-loading-ch:nth-child(2) { left: 36%; }
+.ds-loading-ch:nth-child(3) { left: 69%; }
+
+.ds-loading-clip {
+    position: absolute;
+    left: 29.11%;
+    width: 41.79%;
+    top: 5%;
+    height: 90%;
+    overflow: hidden;
+    border-radius: 999px;
+}
+
+.ds-loading-top,
+.ds-loading-bot {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: #3B82F6;
+}
+
+.ds-loading-knob {
+    position: absolute;
+    left: 0;
+    top: 36%;
+    width: 100%;
+    height: 28%;
+    border-radius: 50%;
+    background: #3B82F6;
+}
+
+.ds-loading-ch:nth-child(1) .ds-loading-top {
+    transform: translate3d(0, -30%, 0);
+    animation: ds-loading-top-1 2s cubic-bezier(0.42, 0, 0.58, 1) infinite alternate;
+}
+.ds-loading-ch:nth-child(1) .ds-loading-bot {
+    transform: translate3d(0, 89.967%, 0);
+    animation: ds-loading-bot-1 2s cubic-bezier(0.42, 0, 0.58, 1) infinite alternate;
+}
+.ds-loading-ch:nth-child(1) .ds-loading-knob {
+    transform: translate3d(0, 64.286%, 0);
+    animation: ds-loading-knob-1 2s cubic-bezier(0.42, 0, 0.58, 1) infinite alternate;
+}
+
+.ds-loading-ch:nth-child(2) .ds-loading-top {
+    transform: translate3d(0, -70%, 0);
+    animation: ds-loading-top-2 2.25s cubic-bezier(0.42, 0, 0.58, 1) infinite alternate;
+}
+.ds-loading-ch:nth-child(2) .ds-loading-bot {
+    transform: translate3d(0, 49.967%, 0);
+    animation: ds-loading-bot-2 2.25s cubic-bezier(0.42, 0, 0.58, 1) infinite alternate;
+}
+.ds-loading-ch:nth-child(2) .ds-loading-knob {
+    transform: translate3d(0, -64.286%, 0);
+    animation: ds-loading-knob-2 2.25s cubic-bezier(0.42, 0, 0.58, 1) infinite alternate;
+}
+
+.ds-loading-ch:nth-child(3) .ds-loading-top {
+    transform: translate3d(0, -26.667%, 0);
+    animation: ds-loading-top-3 1.75s cubic-bezier(0.42, 0, 0.58, 1) infinite alternate;
+}
+.ds-loading-ch:nth-child(3) .ds-loading-bot {
+    transform: translate3d(0, 93.3%, 0);
+    animation: ds-loading-bot-3 1.75s cubic-bezier(0.42, 0, 0.58, 1) infinite alternate;
+}
+.ds-loading-ch:nth-child(3) .ds-loading-knob {
+    transform: translate3d(0, 75%, 0);
+    animation: ds-loading-knob-3 1.75s cubic-bezier(0.42, 0, 0.58, 1) infinite alternate;
+}
+
+@keyframes ds-loading-top-1 {
+    from { transform: translate3d(0, -30%, 0); }
+    to { transform: translate3d(0, -78.889%, 0); }
+}
+@keyframes ds-loading-bot-1 {
+    from { transform: translate3d(0, 89.967%, 0); }
+    to { transform: translate3d(0, 41.078%, 0); }
+}
+@keyframes ds-loading-knob-1 {
+    from { transform: translate3d(0, 64.286%, 0); }
+    to { transform: translate3d(0, -92.857%, 0); }
+}
+
+@keyframes ds-loading-top-2 {
+    from { transform: translate3d(0, -70%, 0); }
+    to { transform: translate3d(0, -26.667%, 0); }
+}
+@keyframes ds-loading-bot-2 {
+    from { transform: translate3d(0, 49.967%, 0); }
+    to { transform: translate3d(0, 93.3%, 0); }
+}
+@keyframes ds-loading-knob-2 {
+    from { transform: translate3d(0, -64.286%, 0); }
+    to { transform: translate3d(0, 75%, 0); }
+}
+
+@keyframes ds-loading-top-3 {
+    from { transform: translate3d(0, -26.667%, 0); }
+    to { transform: translate3d(0, -66.667%, 0); }
+}
+@keyframes ds-loading-bot-3 {
+    from { transform: translate3d(0, 93.3%, 0); }
+    to { transform: translate3d(0, 53.3%, 0); }
+}
+@keyframes ds-loading-knob-3 {
+    from { transform: translate3d(0, 75%, 0); }
+    to { transform: translate3d(0, -53.571%, 0); }
+}
+
+.ds-loading-card .ds-loading-text {
+    color: var(--ui-text);
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Reusable scroll-box (e.g. file lists inside a dialog body) */
+.ds-scroll-box {
+    background: var(--ui-input-bg, #0f172a);
+    border: 1px solid color-mix(in srgb, var(--ui-border) 70%, transparent);
+    border-radius: 6px;
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 0;
+}
+
+.ds-scroll-box--compact {
+    max-height: 10rem;
+    padding: 0.5rem;
+}
+
+.ds-hidden {
+    display: none !important;
+}
+
+.cd-body {
+    padding: 1rem 1.1rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    overflow-y: auto;
+    min-height: 0;
+    flex: 1 1 auto;
+}
+
+.cd-msg {
+    color: var(--ui-text-muted);
+    font-size: 0.85rem;
+    line-height: 1.55;
+    margin: 0;
+}
+
+.cd-msg:empty {
+    display: none;
+}
+
+.cd-msg.migration-details {
+    max-height: min(55vh, 28rem);
+    overflow-y: auto;
+    padding-right: 0.2rem;
+}
+
+.cd-msg.migration-details ul {
+    margin: 0.45rem 0 0.6rem 1.1rem;
+    padding: 0;
+}
+
+.cd-msg.migration-details li {
+    margin: 0.15rem 0;
+}
+
+.cd-choices {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    max-height: min(50vh, 320px);
+    overflow-y: auto;
+}
+
+.cd-choices .ds-dialog-button {
+    width: 100%;
+    justify-content: flex-start;
+    text-align: left;
+    padding: 0.55rem 0.75rem;
+}
+
+.cd-input {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.cd-prompt-extras {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.cd-prompt-extras:empty {
+    display: none !important;
+}
+
+.cd-markdown-link-target-fieldset {
+    border: 1px solid color-mix(in srgb, var(--ui-border) 70%, transparent);
+    border-radius: 8px;
+    padding: 0.65rem 0.75rem 0.75rem;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.cd-markdown-link-target-fieldset legend {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--ui-text);
+    padding: 0 0.35rem;
+}
+
+.cd-markdown-link-target-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    margin-top: 0.25rem;
+}
+
+.cd-markdown-link-target-rows label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.82rem;
+    color: var(--ui-text-muted);
+    cursor: pointer;
+}
+
+.cd-link-target-extras {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.cd-batch-links-options {
+    border: 1px solid color-mix(in srgb, var(--ui-border) 70%, transparent);
+    border-radius: 8px;
+    padding: 0.65rem 0.75rem 0.75rem;
+    margin: 0.75rem 0 0;
+    box-sizing: border-box;
+}
+
+.cd-batch-links-options legend {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--ui-text);
+    padding: 0 0.35rem;
+}
+
+.cd-batch-links-option-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    margin-top: 0.25rem;
+}
+
+.cd-batch-links-option-rows label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.82rem;
+    color: var(--ui-text-muted);
+    cursor: pointer;
+}
+
+.cd-textarea {
+    display: none;
+    width: 100%;
+    min-height: 260px;
+    box-sizing: border-box;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 0.8rem;
+    line-height: 1.4;
+    resize: vertical;
+    white-space: pre;
+    padding: 0.7rem 0.85rem;
+    border-radius: 8px;
+    border: 1px solid color-mix(in srgb, var(--ui-border) 70%, transparent);
+    background: color-mix(in srgb, var(--ui-bg) 85%, #000);
+    color: var(--ui-text);
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.cd-textarea:focus {
+    border-color: color-mix(in srgb, var(--ui-accent) 65%, transparent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--ui-accent) 18%, transparent);
+}
+
+/* --- Minimal controls for viewer CustomDialog (edit mode uses editor.css glass) --- */
+
+body:not(.edit-mode) .control-input {
+    width: 100%;
+    padding: 0.4rem 0.6rem;
+    background-color: var(--ui-input-bg);
+    border: 1px solid var(--ui-input-border);
+    border-radius: 0.375rem;
+    color: var(--ui-text);
+    font-size: 0.85rem;
+    font-family: 'Inter', sans-serif;
+    transition: border-color 0.2s;
+}
+
+body:not(.edit-mode) select.control-input,
+body:not(.edit-mode) select.control-input option {
+    transition: none;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+body:not(.edit-mode) .control-input:focus {
+    outline: none;
+    border-color: var(--ui-accent);
+}
+
+/* --- TOOLBAR BUTTONS (viewer; edit mode uses editor.css glass) --- */
+body:not(.edit-mode) .btn-tool {
+    min-height: var(--btn-height);
+    padding: 0.4rem 0.6rem;
+    border-radius: 0.375rem;
+    background: var(--ui-tool-bg);
+    color: var(--ui-text);
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s, opacity 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--btn-font-size);
+    font-weight: 500;
+    line-height: 1.2;
+    gap: 0.35rem;
+    white-space: normal;
+    text-align: center;
+}
+
+body:not(.edit-mode) .btn-tool-icon-only {
+    min-width: var(--btn-height);
+    width: var(--btn-height);
+    padding: 0;
+}
+
+body:not(.edit-mode) .btn-tool:hover {
+    background: var(--ui-tool-hover);
+}
+
+body:not(.edit-mode) .btn-tool.primary {
+    background: var(--ui-accent);
+    color: #fff;
+    font-weight: 600;
+}
+
+body:not(.edit-mode) .btn-tool.primary:hover {
+    background: var(--ui-accent-hover);
+}
+
+body:not(.edit-mode) .btn-tool.danger {
+    color: var(--ui-danger);
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid var(--ui-danger);
+}
+
+body:not(.edit-mode) .btn-tool.danger:hover {
+    background: var(--ui-danger);
+    color: white;
+}
+
+.ds-clock-analog-wrap {
+    --clock-tick-dist: 0px;
+    --clock-tick-color: currentColor;
+    --clock-num-dist: 0px;
+    --clock-deact-col: transparent;
+    --clock-deact-size: 100%;
+}
+.ds-clock-analog-wrap .face,
+.ds-clock-analog-wrap .num {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+.ds-clock-analog-wrap.ds-clock-deact-face .face {
+    width: var(--clock-deact-size);
+    height: var(--clock-deact-size);
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    border: 2px solid var(--clock-deact-col);
+    box-sizing: border-box;
+}
+.ds-clock-analog-wrap .tk {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform-origin: center;
+    background-color: var(--clock-tick-color);
+    width: 1px;
+    height: 6px;
+    transform: translate(-50%, -50%) rotate(var(--clock-tick-angle, 0deg)) translate(0, calc(-1 * var(--clock-tick-dist)));
+}
+.ds-clock-analog-wrap .tk.tk-major {
+    width: 3px;
+    height: 12px;
+}
+.ds-clock-analog-wrap.ds-clock-hide-ticks .tk {
+    display: none;
+}
+.ds-clock-analog-wrap .nm {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    text-align: center;
+    transform-origin: center;
+    transform: translate(-50%, -50%) rotate(var(--clock-num-angle, 0deg)) translate(0, calc(-1 * var(--clock-num-dist))) rotate(var(--clock-num-angle-neg, 0deg));
+}
+.ds-clock-analog-wrap.ds-clock-hide-numbers .nm {
+    display: none;
+}
+.ds-clock-analog-wrap .h {
+    position: absolute;
+    bottom: 50%;
+    transform-origin: bottom center;
+    border-radius: 9px;
+    width: var(--clock-hand-w, 4px);
+    height: var(--clock-hand-h, 40px);
+    left: var(--clock-hand-left, calc(50% - 2px));
+    background-color: var(--clock-hand-color, currentColor);
+}
+@keyframes ds-clock-sec-sweep {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+@keyframes ds-arrow-flow {
+    from { stroke-dashoffset: 0; }
+    to { stroke-dashoffset: var(--arrow-flow-span, 0px); }
+}
+.ds-clock-analog-wrap .cp,
+.ds-clock-analog-wrap .bcp {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    width: var(--clock-cap-w);
+    height: var(--clock-cap-h);
+    background-color: var(--clock-cap-color);
+}
+.ds-clock-analog-wrap .cp {
+    z-index: 20;
+}
+.ds-clock-analog-wrap.ds-clock-hide-second .sc {
+    display: none;
+}
+.ds-clock-analog-wrap.ds-clock-hide-back-cap .bcp {
+    display: none;
+}
+
+.ds-visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.graph-inner-content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+}
+.graph-widget-label {
+    width: 100%;
+    flex-shrink: 0;
+}
+.graph-body-wrap {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    min-width: 0;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    gap: 8px;
+    box-sizing: border-box;
+}
+.graph-chart-wrap {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    min-width: 0;
+    width: 100%;
+}
+.graph-chart-wrap canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+/* Graph widget: connected companion legend */
+.graph-legend {
+    position: absolute;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    z-index: 20;
+    user-select: none;
+    max-width: 100%;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+.graph-legend--autosize {
+    width: max-content;
+    height: max-content;
+}
+
+.graph-legend--stacked {
+    position: relative;
+    box-sizing: border-box;
+    flex-shrink: 0;
+}
+
+.graph-legend--stacked.graph-legend--top,
+.graph-legend--stacked.graph-legend--bottom {
+    width: 100%;
+    max-width: 100%;
+}
+
+.graph-legend--stacked.graph-legend--left,
+.graph-legend--stacked.graph-legend--right {
+    height: 100%;
+    max-height: 100%;
+}
+
+.graph-legend--stacked.graph-legend--left.graph-legend--autosize,
+.graph-legend--stacked.graph-legend--right.graph-legend--autosize {
+    height: 100%;
+}
+
+.graph-legend--stacked .graph-legend-rh {
+    display: none !important;
+}
+
+.graph-legend-body {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    align-items: center;
+    padding: 6px 10px;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    min-height: 0;
+    position: relative;
+    z-index: 10;
+}
+
+.graph-legend--column .graph-legend-body {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    gap: 6px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.graph-legend--left .graph-legend-body,
+.graph-legend--right .graph-legend-body {
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.graph-legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    border: none;
+    padding: 3px 6px;
+    margin: 0;
+    cursor: pointer;
+    border-radius: 4px;
+    color: inherit;
+    font: inherit;
+    outline: none;
+    transition: opacity 0.15s ease, background-color 0.15s ease;
+    white-space: nowrap;
+}
+
+.graph-legend-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+body.ui-light .graph-legend-item:hover {
+    background: rgba(15, 23, 42, 0.06);
+}
+
+.graph-legend-item.is-hidden {
+    opacity: 0.35;
+    filter: grayscale(80%);
+}
+
+.graph-legend-swatch {
+    display: inline-block;
+    width: 14px;
+    height: 3px;
+    border-radius: 1px;
+    flex-shrink: 0;
+}
+
+.graph-legend-swatch--square {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+}
+
+.graph-legend-swatch--circle {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.graph-legend-name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+.graph-hover-label {
+    position: absolute;
+    pointer-events: none;
+    display: none;
+    white-space: nowrap;
+    z-index: 2;
+    transform: translate(-50%, -50%);
+}
+
+/* Experimental Clock widget — flip digits (scoped under .ds-flip-clock) */
+.ds-flip-clock {
+    text-align: center;
+    perspective: 400px;
+    box-sizing: border-box;
+}
+
+.ds-flip-clock *,
+.ds-flip-clock *::before,
+.ds-flip-clock *::after {
+    box-sizing: border-box;
+}
+
+.ds-flip-inner {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: var(--ds-flip-column-gap, 0.2em);
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+.ds-flip-piece {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.ds-flip-slot {
+    font-size: var(--ds-flip-label-size, 12px);
+    display: block;
+    text-align: center;
+    margin-top: 0.25em;
+    line-height: 1.15;
+}
+
+.ds-flip-ampm-card {
+    align-self: center;
+    box-sizing: border-box;
+    min-width: 2.1em;
+    padding: 0.22em 0.5em;
+    line-height: 1.1;
+    text-align: center;
+    border-radius: var(--ds-flip-radius, 6px);
+    background: var(--ds-flip-lower-bg, #1e293b);
+    color: var(--ds-flip-num-color-bottom, #f8fafc);
+    border: 1px solid rgba(0, 0, 0, 0.35);
+}
+
+.ds-flip-card {
+    display: block;
+    position: relative;
+    padding-bottom: 0.72em;
+    font-size: var(--ds-flip-font-size, 32px);
+    line-height: 0.95;
+    font-variant-numeric: tabular-nums;
+    font-weight: inherit;
+}
+
+.ds-flip-card-top,
+.ds-flip-card-back::before {
+    display: block;
+    height: 0.72em;
+    color: var(--ds-flip-num-color-top, #f8fafc);
+    background: var(--ds-flip-upper-bg, #0f172a);
+    padding: 0.25em 0.25em;
+    border-radius: var(--ds-flip-radius, 6px) var(--ds-flip-radius, 6px) 0 0;
+    backface-visibility: hidden;
+    transform-style: preserve-3d;
+    width: 1.8em;
+    text-align: center;
+    overflow: hidden;
+    transform: translateZ(0);
+}
+
+.ds-flip-card > .ds-flip-card-bottom {
+    color: var(--ds-flip-num-color-bottom, #f8fafc);
+    position: absolute;
+    top: 50%;
+    left: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.35);
+    background: var(--ds-flip-lower-bg, #1e293b);
+    border-radius: 0 0 var(--ds-flip-radius, 6px) var(--ds-flip-radius, 6px);
+    pointer-events: none;
+    display: block;
+    height: 0.72em;
+    padding: 0.25em 0.25em;
+    width: 1.8em;
+    text-align: center;
+    overflow: hidden;
+    transform-style: preserve-3d;
+    transform: translateZ(0);
+}
+
+.ds-flip-card > .ds-flip-card-bottom::after {
+    display: block;
+    margin-top: -0.72em;
+    content: attr(data-value);
+}
+
+.ds-flip-card-back {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    pointer-events: none;
+}
+
+.ds-flip-card-back::before {
+    content: attr(data-value);
+    position: relative;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.ds-flip-card-back .ds-flip-card-bottom {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    height: 0.72em;
+    width: 1.8em;
+    border-top: 1px solid rgba(0, 0, 0, 0.35);
+    background: var(--ds-flip-lower-bg, #1e293b);
+    border-radius: 0 0 var(--ds-flip-radius, 6px) var(--ds-flip-radius, 6px);
+    overflow: hidden;
+    pointer-events: none;
+    display: block;
+    color: var(--ds-flip-num-color-bottom, #f8fafc);
+    padding: 0.25em 0.25em;
+    text-align: center;
+    transform-style: preserve-3d;
+    transform: translateZ(0);
+}
+
+.ds-flip-card-back .ds-flip-card-bottom::after {
+    display: block;
+    margin-top: -0.72em;
+    content: attr(data-value);
+}
+
+.ds-flip-piece.ds-flip .ds-flip-card-back::before {
+    animation: dsFlipTop 0.3s cubic-bezier(0.37, 0.01, 0.94, 0.35) both;
+    transform-origin: center bottom;
+}
+
+.ds-flip-piece.ds-flip .ds-flip-card-back .ds-flip-card-bottom {
+    transform-origin: center top;
+    animation: dsFlipBottom 0.55s cubic-bezier(0.15, 0.45, 0.28, 1) both;
+}
+
+@keyframes dsFlipTop {
+    0% {
+        transform: rotateX(0deg);
+        z-index: 2;
+        opacity: 0.99;
+    }
+    99% {
+        opacity: 0.99;
+    }
+    100% {
+        transform: rotateX(-90deg);
+        opacity: 0;
+    }
+}
+
+@keyframes dsFlipBottom {
+    0%, 50% {
+        z-index: -1;
+        transform: rotateX(90deg);
+        opacity: 0;
+    }
+    51% {
+        opacity: 0.99;
+    }
+    100% {
+        opacity: 0.99;
+        transform: rotateX(0deg);
+        z-index: 5;
+    }
+}
+
+.ds-clock-text-root {
+    line-height: 1.25;
+    word-break: break-word;
+}
+
+.ds-clock-text-inner {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.ds-clock-text-time {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1, "lnum" 1;
+}
+
+.ds-clock-text-date {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1, "lnum" 1;
+}
+
+.ds-clock-text-num {
+    display: inline-block;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1, "lnum" 1;
+    min-width: 2ch;
+    text-align: center;
+}
+
+.ds-clock-text-sep {
+    display: inline-block;
+    min-width: 1ch;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+}
+
+.ds-clock-text-ampm {
+    display: inline-block;
+}
+
+/* Text widget — :ph-spacer: (WebCal alignment) uses invisible ph-calendar width */
+.text-md-root i.text-md-ph-icon-spacer {
+    visibility: hidden;
+}
+
+/* Text widget rendered markdown: code and quotes after sanitizer allowlist */
+.text-md-root pre {
+    margin: 0.35em 0;
+    padding: 0.5em 0.65em;
+    border-radius: 0.25rem;
+    background: color-mix(in srgb, var(--ui-header-bg, #1e293b) 90%, var(--ui-bg, #0f172a));
+    border: 1px solid var(--ui-border, #334155);
+    overflow: auto;
+    font-size: 0.92em;
+}
+
+.text-md-root code {
+    font-family: ui-monospace, monospace;
+    font-size: 0.95em;
+    padding: 0.1em 0.25em;
+    border-radius: 0.2rem;
+    background: color-mix(in srgb, var(--ui-header-bg, #1e293b) 85%, transparent);
+}
+
+.text-md-root pre code {
+    padding: 0;
+    background: transparent;
+}
+
+.text-md-root blockquote {
+    margin: 0.35em 0;
+    padding: 0.25em 0 0.25em 0.75em;
+    border-left: 3px solid var(--ui-border, #334155);
+    color: color-mix(in srgb, var(--ui-text, #e2e8f0) 88%, var(--ui-text-muted, #94a3b8));
+}

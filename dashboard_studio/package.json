@@ -1,0 +1,14 @@
+﻿{
+  "name": "dashboard-studio-homeassistant",
+  "version": "2.3.2",
+  "description": "Dashboard Studio for Home Assistant - Visualize your home, exactly how you imagine it.",
+  "main": "server.js",
+  "author": "Satoer Creations <dashboardstudio@satoer.com>",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "socket.io": "^4.7.2",
+    "ws": "^8.18.0"
+  }
+}

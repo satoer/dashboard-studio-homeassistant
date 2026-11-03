@@ -1,0 +1,19 @@
+{
+  "id": "List_Text_Only_1_3",
+  "name": "List + Checkboxes",
+  "widgetType": "list",
+  "version": "2.0.0",
+  "variants": [
+    {
+      "id": "default",
+      "name": "default",
+      "settings": {
+        "showIcons": false,
+        "showTimestamp": false,
+        "enableCheckboxes": true,
+        "time24h": true,
+        "dateFormat": "none"
+      }
+    }
+  ]
+}

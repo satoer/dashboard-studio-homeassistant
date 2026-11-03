@@ -1,0 +1,41 @@
+{
+  "id": "Horizontal_-_No_Icon_Right_Aligned",
+  "name": "Horizontal - No Icon Right Aligned",
+  "widgetType": "gauge",
+  "version": "2.0.0",
+  "variants": [
+    {
+      "id": "default",
+      "name": "default",
+      "settings": {
+        "width": 340,
+        "height": 100,
+        "barType": "horizontal",
+        "gapRound": -25,
+        "gapHoriz": 28,
+        "gaugeSizeOffset": 0,
+        "showLabels": false,
+        "rotateLabels": false,
+        "labelCount": 0,
+        "labelOffset": 0,
+        "showIcon": false,
+        "icons": {
+          "on": {
+            "offsetY": 0
+          }
+        },
+        "iconSize": 66,
+        "typography": {
+          "caption": {
+            "offsetY": 49
+          },
+          "value": {
+            "fontSize": 48,
+            "offsetY": 0
+          }
+        },
+        "valueAlignment": "right"
+      }
+    }
+  ]
+}

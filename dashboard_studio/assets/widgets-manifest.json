@@ -1,0 +1,23 @@
+{
+  "widgets": [
+    "widgets/clock.js",
+    "widgets/battery.js",
+    "widgets/label.js",
+    "widgets/text.js",
+    "widgets/graph.js",
+    "widgets/switch.js",
+    "widgets/slider.js",
+    "widgets/container.js",
+    "widgets/arrow.js",
+    "widgets/image.js",
+    "widgets/list.js",
+    "widgets/editbox.js",
+    "widgets/menu.js",
+    "widgets/lightgrid.js",
+    "widgets/icon.js",
+    "widgets/gauge.js"
+  ],
+  "experimental": [
+    "widgets-experimental/videostream.js"
+  ]
+}

@@ -1,0 +1,116 @@
+{
+  "id": "Horizontal_Slider_-_Label_Top_1_3",
+  "name": "Horizontal Slider - Label Right",
+  "widgetType": "slider",
+  "version": "2.0.0",
+  "variants": [
+    {
+      "id": "Value_Right",
+      "name": "Value Inside",
+      "settings": {
+        "typography": {
+          "caption": {
+            "fontSize": 18
+          },
+          "unit": {
+            "fontSize": 18
+          }
+        },
+        "vertical": false,
+        "labelLocation": "right",
+        "valueLocation": "middle",
+        "showVal": true
+      }
+    },
+    {
+      "id": "Value_Top",
+      "name": "Value Top",
+      "settings": {
+        "vertical": false,
+        "typography": {
+          "caption": {
+            "fontSize": 18
+          },
+          "unit": {
+            "fontSize": 18
+          }
+        },
+        "labelLocation": "right",
+        "valueLocation": "top",
+        "showVal": true
+      }
+    },
+    {
+      "id": "Value_Top_1",
+      "name": "Value Bottom",
+      "settings": {
+        "vertical": false,
+        "typography": {
+          "caption": {
+            "fontSize": 18
+          },
+          "unit": {
+            "fontSize": 18
+          }
+        },
+        "labelLocation": "right",
+        "valueLocation": "bottom",
+        "showVal": true
+      }
+    },
+    {
+      "id": "Value_Top_2",
+      "name": "Value Left",
+      "settings": {
+        "vertical": false,
+        "typography": {
+          "caption": {
+            "fontSize": 18
+          },
+          "unit": {
+            "fontSize": 18
+          }
+        },
+        "labelLocation": "right",
+        "valueLocation": "left",
+        "showVal": true
+      }
+    },
+    {
+      "id": "Value_Left_1",
+      "name": "Value Right",
+      "settings": {
+        "vertical": false,
+        "typography": {
+          "caption": {
+            "fontSize": 18
+          },
+          "unit": {
+            "fontSize": 18
+          }
+        },
+        "labelLocation": "right",
+        "valueLocation": "right",
+        "showVal": true
+      }
+    },
+    {
+      "id": "Value_Right_1",
+      "name": "No Value",
+      "settings": {
+        "vertical": false,
+        "typography": {
+          "caption": {
+            "fontSize": 18
+          },
+          "unit": {
+            "fontSize": 18
+          }
+        },
+        "labelLocation": "right",
+        "valueLocation": "right",
+        "showVal": false
+      }
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "id": "Pill_Switch",
+  "name": "Pill Switch",
+  "widgetType": "switch",
+  "version": "2.0.0",
+  "variants": [
+    {
+      "id": "Label_Outside_Top",
+      "name": "Label Outside Top",
+      "settings": {
+        "style": "switch",
+        "showIcon": false,
+        "textOnlyLabelVerticalAlign": "center",
+        "buttonLabelPosition": "top"
+      }
+    },
+    {
+      "id": "Label_Outside_Bottom",
+      "name": "Label Outside Bottom",
+      "settings": {
+        "style": "switch",
+        "showIcon": false,
+        "textOnlyLabelVerticalAlign": "center",
+        "buttonLabelPosition": "bottom"
+      }
+    },
+    {
+      "id": "Label_Outside_Left",
+      "name": "Label Outside Left",
+      "settings": {
+        "style": "switch",
+        "showIcon": false,
+        "textOnlyLabelVerticalAlign": "center",
+        "buttonLabelPosition": "left"
+      }
+    },
+    {
+      "id": "Label_Outside_Right",
+      "name": "Label Outside Right",
+      "settings": {
+        "style": "switch",
+        "showIcon": false,
+        "textOnlyLabelVerticalAlign": "center",
+        "buttonLabelPosition": "right"
+      }
+    }
+  ]
+}

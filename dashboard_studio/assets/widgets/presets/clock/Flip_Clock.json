@@ -1,0 +1,36 @@
+{
+  "id": "Analog_Clock_1",
+  "name": "Flip Clock",
+  "widgetType": "clock",
+  "version": "2.0.0",
+  "variants": [
+    {
+      "id": "default",
+      "name": "24 Hr",
+      "settings": {
+        "displayMode": "flip",
+        "clockUse12Hour": false,
+        "textShowTime": true,
+        "textShowDate": true,
+        "textDateSeg1": "day",
+        "textDateSeg0": "weekday",
+        "textDateSeg2": "monthName",
+        "textDateSeg3": "yearLong"
+      }
+    },
+    {
+      "id": "24_Hr_1",
+      "name": "12 Hr",
+      "settings": {
+        "displayMode": "flip",
+        "clockUse12Hour": true,
+        "textShowTime": true,
+        "textShowDate": true,
+        "textDateSeg1": "day",
+        "textDateSeg0": "weekday",
+        "textDateSeg2": "monthName",
+        "textDateSeg3": "yearLong"
+      }
+    }
+  ]
+}

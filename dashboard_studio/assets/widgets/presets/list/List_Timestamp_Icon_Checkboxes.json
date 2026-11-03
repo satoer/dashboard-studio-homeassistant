@@ -1,0 +1,30 @@
+{
+  "id": "List_Timestamp_Icon_1",
+  "name": "List + Timestamp + Icon + Checkboxes",
+  "widgetType": "list",
+  "version": "2.0.0",
+  "variants": [
+    {
+      "id": "default",
+      "name": "24 HR",
+      "settings": {
+        "showIcons": true,
+        "showTimestamp": true,
+        "enableCheckboxes": true,
+        "time24h": true,
+        "dateFormat": "none"
+      }
+    },
+    {
+      "id": "24_HR_1",
+      "name": "12 HR",
+      "settings": {
+        "showIcons": true,
+        "showTimestamp": true,
+        "enableCheckboxes": true,
+        "time24h": false,
+        "dateFormat": "none"
+      }
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "id": "Horizontal_-_Icon_Left",
+  "name": "Horizontal - Icon Left",
+  "widgetType": "gauge",
+  "version": "2.0.0",
+  "variants": [
+    {
+      "id": "default",
+      "name": "default",
+      "settings": {
+        "width": 340,
+        "height": 120,
+        "barType": "horizontal",
+        "gapRound": -25,
+        "gaugeSizeOffset": 0,
+        "showLabels": false,
+        "rotateLabels": false,
+        "labelOffset": 0,
+        "showIcon": true,
+        "iconSize": 66,
+        "typography": {
+          "value": {
+            "fontSize": 48,
+            "offsetY": 0
+          },
+          "caption": {
+            "offsetY": 0
+          }
+        },
+        "valueAlignment": "left",
+        "gapHoriz": 8,
+        "icons": {
+          "on": {
+            "offsetY": 0
+          }
+        }
+      }
+    }
+  ]
+}

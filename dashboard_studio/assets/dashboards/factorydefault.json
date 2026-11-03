@@ -1,0 +1,1251 @@
+{
+  "version": "2.3.0",
+  "master": {
+    "connection": {
+      "dataDriver": "homey",
+      "driverSettings": {
+        "namespace": "undefined"
+      }
+    },
+    "environment": {
+      "canvas": {
+        "width": 1180,
+        "height": 820,
+        "preset": "1180,820",
+        "background": {
+          "startColor": "@background",
+          "startOpacity": 100,
+          "endColor": "@backgroundAccent",
+          "endOpacity": 100,
+          "type": "radial",
+          "angle": 0,
+          "overlay": false,
+          "image": "",
+          "size": "cover"
+        }
+      },
+      "grid": {
+        "size": 10,
+        "show": true,
+        "snap": true
+      },
+      "paging": {
+        "currentPage": 1,
+        "currentPageOutputTopic": "",
+        "inactivityPageEnabled": false,
+        "inactivityReturnPage": 1,
+        "inactivityTimeoutSeconds": 60
+      },
+      "editorMode": "advanced",
+      "editorZoom": 100,
+      "quickToolbar": {
+        "visibility": "auto",
+        "enabled": true,
+        "mode": "docked",
+        "x": 0,
+        "y": 0,
+        "columns": 1,
+        "rows": 0
+      },
+      "preloadImagesOnAllPages": false,
+      "layout": {
+        "mode": "fixed",
+        "scale": {
+          "keepAspectRatio": true
+        }
+      },
+      "widgetLabelMode": "hover",
+      "hideScrollbars": false,
+      "gestures": {
+        "touchOnly": true,
+        "swipeLeft": {
+          "enabled": false,
+          "action": "next_page",
+          "page": 1,
+          "topic": "",
+          "payload": ""
+        },
+        "swipeRight": {
+          "enabled": false,
+          "action": "prev_page",
+          "page": 1,
+          "topic": "",
+          "payload": ""
+        },
+        "swipeUp": {
+          "enabled": false,
+          "action": "topic",
+          "page": 1,
+          "topic": "",
+          "payload": ""
+        },
+        "swipeDown": {
+          "enabled": false,
+          "action": "topic",
+          "page": 1,
+          "topic": "",
+          "payload": ""
+        },
+        "paging": {
+          "ignorePages": "",
+          "wrapAround": false
+        }
+      },
+      "theme": "default_dark",
+      "holdToActivateDuration": 1.5,
+      "audio": {
+        "topicMap": []
+      },
+      "dialogBox": {
+        "message": "Are you sure?",
+        "confirmLabel": "Yes",
+        "dismissLabel": "No",
+        "buttonColor": "@accent",
+        "showButtonIcons": false,
+        "showDialogIcon": true,
+        "autoButtonSize": true,
+        "buttonWidth": 120,
+        "buttonHeight": 40,
+        "backgroundColor": "@surface",
+        "borderColor": "@borderAccent",
+        "autoDialogSize": true,
+        "dialogWidth": 360,
+        "dialogHeight": 180,
+        "centerDialog": true,
+        "dialogX": 0,
+        "dialogY": 0,
+        "modalMode": true,
+        "icons": {
+          "dialog": {
+            "size": 50
+          },
+          "confirm": {
+            "source": "phosphor",
+            "builtin": "ph-check",
+            "weight": "bold",
+            "customUrl": "",
+            "tintImage": false,
+            "color": "@onAccent",
+            "accentColor": "@iconAccent",
+            "size": 18
+          },
+          "dismiss": {
+            "source": "phosphor",
+            "builtin": "ph-x",
+            "weight": "bold",
+            "customUrl": "",
+            "tintImage": false,
+            "color": "@onAccent",
+            "accentColor": "@iconAccent",
+            "size": 18
+          }
+        }
+      }
+    },
+    "typography": {
+      "fontFamily": "'Inter', sans-serif",
+      "base": {
+        "fontSize": 24
+      },
+      "value": {
+        "fontSize": 48,
+        "color": "@text"
+      },
+      "unit": {
+        "fontSize": 20
+      },
+      "label": {
+        "fontSize": 12,
+        "color": "@textMuted",
+        "textTransform": "uppercase",
+        "bold": false,
+        "lineHeight": 1.5
+      },
+      "customFonts": [],
+      "textAlign": "center",
+      "verticalAlign": "middle"
+    },
+    "container": {
+      "width": 260,
+      "height": 300,
+      "padding": 12,
+      "show": true,
+      "background": {
+        "startColor": "@surface",
+        "startOpacity": 80,
+        "endColor": "@surfaceAlt",
+        "endOpacity": 80,
+        "angle": 145,
+        "blur": 0
+      },
+      "glow": {
+        "enabled": true,
+        "color": "@glow",
+        "radius": 34,
+        "opacity": 26
+      },
+      "border": {
+        "color": "@borderAccent",
+        "width": 1,
+        "opacity": 100,
+        "cornerRadius": 12
+      },
+      "innerGlow": {
+        "size": 0,
+        "color": "@borderAccent",
+        "opacity": 100
+      }
+    },
+    "theme": {
+      "colors": {
+        "background": "#102447",
+        "backgroundAccent": "#020C1F",
+        "surface": "#0F2E52",
+        "surfaceAlt": "#010E26",
+        "surfaceHover": "#334155",
+        "overlay": "#0f172a",
+        "text": "#f8fafc",
+        "textMuted": "#94a3b8",
+        "onSurface": "#f8fafc",
+        "onAccent": "#083344",
+        "accent": "#67e8f9",
+        "accentSoft": "#22d3ee",
+        "accentSecondary": "#06b6d4",
+        "accentOff": "#1e3a5f",
+        "controlOff": "#475569",
+        "thumb": "#ffffff",
+        "border": "#1E3A5F",
+        "borderAccent": "#1A3869",
+        "icon": "#C7D9FF",
+        "iconAccent": "#233B70",
+        "iconMuted": "#64748b",
+        "success": "#22c55e",
+        "warning": "#f59e0b",
+        "danger": "#ef4444",
+        "glow": "#06b6d4",
+        "link": "#22d3ee",
+        "placeholder": "#64748b",
+        "markerTint1": "#b06d7f",
+        "markerTint2": "#b89f5c",
+        "markerTint3": "#6f7eb8",
+        "markerTint4": "#3d9590"
+      }
+    },
+    "widgetDefaults": {
+      "switch": {
+        "mode": "toggle",
+        "style": "switch",
+        "buttonAlignment": "center",
+        "buttonLabelPosition": "top",
+        "labelHint": "truncated",
+        "bevel": false,
+        "scale": 1,
+        "buttonRadius": 12,
+        "buttonContentInset": 10,
+        "icons": {
+          "on": {
+            "size": 24,
+            "offsetX": 0,
+            "offsetY": 0,
+            "builtin": "ph-check-fat",
+            "color": "@onAccent",
+            "hoverColor": "@text"
+          },
+          "off": {
+            "color": "@icon"
+          }
+        },
+        "showIcon": true,
+        "backgroundColorOn": "@glow",
+        "backgroundColorOff": "@accentOff",
+        "backgroundColorHover": "@accent",
+        "thumbColor": "@thumb",
+        "labelColor": "@textMuted",
+        "typography": {
+          "buttonLabelOutside": {
+            "fontSize": 12,
+            "textAlign": "center",
+            "textTransform": "uppercase",
+            "bold": false,
+            "italic": false,
+            "color": "@text",
+            "colorOff": "@textMuted",
+            "opacity": 100,
+            "offsetX": 0,
+            "offsetY": 0
+          },
+          "buttonLabelInside": {
+            "fontSize": 12,
+            "textAlign": "center",
+            "textTransform": "capitalize",
+            "bold": false,
+            "italic": false,
+            "color": "@onAccent",
+            "colorOff": "@thumb",
+            "opacity": 100,
+            "offsetX": 0,
+            "offsetY": 0
+          }
+        },
+        "enableGlow": true,
+        "glowColor": "@glow",
+        "glowRadius": 40,
+        "outlineWidth": 0,
+        "outlineColor": "@borderAccent",
+        "backgroundOpacity": 100,
+        "outlineOpacity": 100,
+        "buttonBlur": 0,
+        "buttonInnerGlow": 0,
+        "buttonInnerGlowColor": "@borderAccent",
+        "buttonInnerGlowOpacity": 100,
+        "thumbOutlineWidth": 0,
+        "thumbOutlineColor": "@accent",
+        "thumbOutlineOpacity": 100,
+        "thumbInnerGlow": 0,
+        "thumbInnerGlowColor": "@accent",
+        "thumbInnerGlowOpacity": 100
+      },
+      "defaultSwitchIconOnFilled": true,
+      "defaultSwitchIconOffFilled": true,
+      "text": {
+        "textWrap": true,
+        "linkTarget": "markdown",
+        "autoFitText": false,
+        "overflowScroll": false,
+        "paragraphBlockSpace": 8,
+        "h1BlockSpace": 8,
+        "h2BlockSpace": 8,
+        "h3BlockSpace": 8,
+        "thBlockSpace": 8,
+        "tdBlockSpace": 0,
+        "blockTypographyBlockSpace": 8,
+        "blockTypographyLineHeight": 1.35,
+        "syncTableColumnWidths": false,
+        "equalTableColumnWidths": false,
+        "tableColumnWidth": 0,
+        "tableStyle": "minimal",
+        "calendarWeekStart": "monday",
+        "tableBorderRadius": 5,
+        "tableCellPadding": 10,
+        "tableBorderColor": "@border",
+        "tableBorderOpacity": 100,
+        "separatorColor": "@border",
+        "separatorOpacity": 100,
+        "tableHeaderBackground": "@accentSoft",
+        "tableHeaderBackgroundOpacity": 100,
+        "tableHeaderAccentBackground": "@accent",
+        "tableHeaderAccentBackgroundOpacity": 100,
+        "tableRowBackground": "@surfaceAlt",
+        "tableRowBackgroundOpacity": 40,
+        "tableRowAltBackground": "@surface",
+        "tableRowAltBackgroundOpacity": 40,
+        "hrColor": "@border",
+        "hrOpacity": 100,
+        "iconColor": "@icon",
+        "iconOpacity": 100,
+        "iconWeight": "regular",
+        "iconAccentColor": "@iconAccent",
+        "iconAccentOpacity": 100,
+        "block1Color": "@markerTint1",
+        "block2Color": "@markerTint2",
+        "block3Color": "@markerTint3",
+        "block4Color": "@markerTint4",
+        "contentAnimationOnLiveTopics": false,
+        "typography": {
+          "paragraph": {
+            "fontSize": 12,
+            "color": "@textMuted",
+            "textAlign": "left",
+            "textTransform": "none",
+            "bold": false,
+            "italic": false,
+            "opacity": 100,
+            "offsetX": 0,
+            "offsetY": 0
+          },
+          "block": {
+            "fontSize": 12,
+            "color": "@text",
+            "textAlign": "left",
+            "textTransform": "none",
+            "bold": false,
+            "italic": false,
+            "opacity": 100,
+            "offsetX": 0,
+            "offsetY": 0
+          },
+          "h1": {
+            "fontSize": 24,
+            "color": "@text",
+            "textAlign": "left",
+            "textTransform": "none",
+            "bold": true,
+            "italic": false,
+            "opacity": 100,
+            "offsetX": 0,
+            "offsetY": 0
+          },
+          "h2": {
+            "fontSize": 18,
+            "color": "@text",
+            "textAlign": "left",
+            "textTransform": "none",
+            "bold": true,
+            "italic": false,
+            "opacity": 100,
+            "offsetX": 0,
+            "offsetY": 0
+          },
+          "h3": {
+            "fontSize": 14,
+            "color": "@text",
+            "textAlign": "left",
+            "textTransform": "none",
+            "bold": true,
+            "italic": false,
+            "opacity": 100,
+            "offsetX": 0,
+            "offsetY": 0
+          },
+          "th": {
+            "fontSize": 12,
+            "color": "@accentSoft",
+            "textAlign": "table_defined",
+            "textTransform": "uppercase",
+            "bold": true,
+            "italic": false,
+            "opacity": 100,
+            "offsetX": 0,
+            "offsetY": 0,
+            "colorFilled": "@onAccent"
+          },
+          "td": {
+            "fontSize": 12,
+            "color": "@text",
+            "textAlign": "table_defined",
+            "textTransform": "none",
+            "bold": false,
+            "italic": false,
+            "opacity": 100,
+            "offsetX": 0,
+            "offsetY": 0
+          }
+        },
+        "codeColor": "@thumb",
+        "codeBackground": "@accentOff"
+      },
+      "textMdCodeBlockSpace": 8,
+      "textMdCodeLineHeight": 1.35,
+      "textMdCodeFs": 12,
+      "textMdCodeAlign": "left",
+      "textMdCodeCase": "none",
+      "textMdCodeBold": false,
+      "textMdCodeItalic": false,
+      "textMdCodeOpacity": 100,
+      "textMdCodeOffX": 0,
+      "textMdCodeOffY": 0,
+      "menu": {
+        "itemSpacing": 4,
+        "itemCornerRadius": 8,
+        "icons": {
+          "on": {
+            "color": "@onAccent",
+            "accentColor": "@iconAccent",
+            "size": 24
+          },
+          "off": {
+            "color": "@icon",
+            "accentColor": "@iconAccent"
+          }
+        },
+        "itemBackgroundOn": "@glow",
+        "itemBackgroundOnOpacity": 100,
+        "itemBackgroundOff": "@accentOff",
+        "itemBackgroundOffOpacity": 100,
+        "itemBackgroundHover": "@accent",
+        "itemBackgroundHoverOpacity": 10,
+        "itemOutlineWidth": 0,
+        "itemOutlineColor": "@borderAccent",
+        "itemOutlineOpacity": 100,
+        "itemBlur": 0,
+        "itemInnerGlow": 0,
+        "itemInnerGlowColor": "@borderAccent",
+        "itemInnerGlowOpacity": 100,
+        "spacerStyle": "line",
+        "spacerAmount": 5,
+        "spacerColor": "@border",
+        "itemColorOff": "@textMuted",
+        "typography": {
+          "item": {
+            "fontSize": 12,
+            "textAlign": "left",
+            "textTransform": "none",
+            "bold": false,
+            "italic": false,
+            "color": "@surfaceAlt",
+            "colorOff": "@textMuted",
+            "opacity": 100,
+            "offsetX": 0,
+            "offsetY": 0
+          }
+        },
+        "labelHint": "truncated"
+      },
+      "gauge": {
+        "startColor": "@accent",
+        "endColor": "@accentSecondary",
+        "trackColor": "@border",
+        "valueColor": "@text",
+        "unitColor": "@textMuted",
+        "icons": {
+          "on": {
+            "color": "@icon",
+            "source": "phosphor",
+            "builtin": "ph-thermometer-simple",
+            "weight": "fill",
+            "customUrl": "",
+            "tintImage": false,
+            "size": 80,
+            "offsetX": 0,
+            "offsetY": 0
+          }
+        },
+        "barGlow": true,
+        "barThickness": 12,
+        "trackThickness": 16,
+        "barType": "round",
+        "layoutRound": "bottom",
+        "layoutHorizontal": "right",
+        "abbreviateLargeValues": false,
+        "keepTrailingZeros": false,
+        "customDisplayRange": false,
+        "displayMin": 0,
+        "displayMax": 100,
+        "displayDecimalPlaces": 1,
+        "displayKeepTrailingZeros": false,
+        "solidBarColor": false,
+        "roundGap": -25,
+        "horizontalGap": 8,
+        "trackOutlineWidth": 0,
+        "trackOutlineColor": "@accent",
+        "trackOpacity": 100,
+        "trackOutlineOpacity": 100,
+        "trackBlur": 0,
+        "trackInnerGlow": 0,
+        "trackInnerGlowColor": "@accent",
+        "trackInnerGlowOpacity": 100,
+        "barOpacity": 100,
+        "barOutlineWidth": 0,
+        "barOutlineColor": "@thumb",
+        "barOutlineOpacity": 100,
+        "barInnerGlow": 0,
+        "barInnerGlowColor": "@thumb",
+        "barInnerGlowOpacity": 100,
+        "sizeOffset": 0,
+        "showIcon": true,
+        "typography": {
+          "caption": {
+            "fontSize": 12,
+            "color": "@textMuted",
+            "textTransform": "uppercase",
+            "bold": false,
+            "italic": false,
+            "opacity": 100,
+            "offsetX": 0,
+            "offsetY": 0
+          },
+          "value": {
+            "fontFamily": "",
+            "fontSize": 48,
+            "color": "@text",
+            "bold": true,
+            "italic": false,
+            "opacity": 100,
+            "offsetX": 0,
+            "offsetY": 0
+          },
+          "unit": {
+            "fontSize": 20,
+            "color": "@textMuted",
+            "bold": false,
+            "italic": false,
+            "opacity": 100
+          },
+          "axis": {
+            "fontSize": 11,
+            "color": "@textMuted",
+            "bold": false,
+            "italic": false,
+            "opacity": 100
+          }
+        },
+        "captionAlignRound": "center",
+        "captionAlignHorizontal": "left"
+      },
+      "slider": {
+        "trackColor": "@border",
+        "fillColor": "@accent",
+        "thumbColor": "@thumb",
+        "valueColor": "@text",
+        "trackThickness": 36,
+        "fillThickness": 24,
+        "thumbSize": 29,
+        "thumbShadow": true,
+        "showValue": true,
+        "valueLocation": "middle",
+        "labelLocation": "top",
+        "typography": {
+          "value": {
+            "offsetX": 0,
+            "offsetY": 0,
+            "fontSize": 10,
+            "textAlign": "center",
+            "fontFamily": "'Inter', sans-serif",
+            "bold": false
+          },
+          "caption": {
+            "offsetX": 0,
+            "offsetY": 0
+          },
+          "unit": {
+            "fontSize": 20,
+            "color": "@textMuted",
+            "bold": false,
+            "italic": false,
+            "opacity": 100
+          }
+        },
+        "vertical": false,
+        "allowDecimals": false,
+        "stepSize": 0.1,
+        "customDisplayRange": false,
+        "displayMin": 0,
+        "displayMax": 100,
+        "displayDecimalPlaces": 1,
+        "displayKeepTrailingZeros": false,
+        "trackOutlineWidth": 0,
+        "trackOutlineColor": "@accent",
+        "trackOpacity": 100,
+        "trackOutlineOpacity": 100,
+        "trackBlur": 0,
+        "trackInnerGlow": 0,
+        "trackInnerGlowColor": "@accent",
+        "trackInnerGlowOpacity": 100,
+        "fillOpacity": 100,
+        "fillOutlineWidth": 0,
+        "fillOutlineColor": "@thumb",
+        "fillOutlineOpacity": 100,
+        "fillInnerGlow": 0,
+        "fillInnerGlowColor": "@thumb",
+        "fillInnerGlowOpacity": 100,
+        "thumbOutlineWidth": 0,
+        "thumbOutlineColor": "@accent",
+        "thumbOutlineOpacity": 100,
+        "thumbInnerGlow": 0,
+        "thumbInnerGlowColor": "@accent",
+        "thumbInnerGlowOpacity": 100
+      },
+      "icon": {
+        "icons": {
+          "on": {
+            "color": "@danger",
+            "source": "phosphor",
+            "builtin": "",
+            "weight": "fill",
+            "customUrl": "",
+            "tintImage": false,
+            "accentColor": "@iconAccent"
+          },
+          "off": {
+            "color": "@icon",
+            "source": "phosphor",
+            "builtin": "ph-warning",
+            "weight": "fill",
+            "customUrl": "",
+            "tintImage": false,
+            "accentColor": "@iconAccent"
+          }
+        },
+        "filled": true,
+        "animSpeed": 1,
+        "blink": false,
+        "glowOnActive": true,
+        "size": 80,
+        "typography": {
+          "caption": {
+            "fontFamily": null,
+            "fontSize": null,
+            "color": null,
+            "textAlign": null,
+            "textTransform": null,
+            "bold": null,
+            "offsetX": null,
+            "offsetY": null
+          }
+        }
+      },
+      "battery": {
+        "goodColor": "@success",
+        "lowColor": "@danger",
+        "borderColor": "@controlOff",
+        "emptyColor": "@borderAccent",
+        "vertical": false,
+        "segments": 0,
+        "lowThreshold": 20,
+        "outlineWidth": 4,
+        "innerPadding": 4,
+        "terminalSize": 10
+      },
+      "arrow": {
+        "mainColor": "@accentSecondary",
+        "flowColor": "@success",
+        "reverseFlowColor": "@danger",
+        "glowColor": "@accentSoft",
+        "thickness": 10,
+        "headSize": 30,
+        "lineRadius": 5,
+        "headRound": 4,
+        "bendRadius": 15,
+        "customPoints": [],
+        "animationEnabled": true,
+        "animationSpeed": 2,
+        "animationReverse": false,
+        "flowWidth": 0,
+        "gradientWidth": 100,
+        "glowWidth": 15,
+        "glowOpacity": 50
+      },
+      "list": {
+        "showIcons": true,
+        "showTimestamp": false,
+        "maxLines": 10,
+        "rawMode": false,
+        "iconSize": 20,
+        "iconColor": "@icon",
+        "iconGap": 12,
+        "textColor": "@onSurface",
+        "fontSize": 14,
+        "gap": 4,
+        "textWrap": false,
+        "lineHeight": 1.5,
+        "textTransform": "none",
+        "fontFamily": "'Inter', sans-serif",
+        "bold": false,
+        "timeSize": 12,
+        "timeColor": "@warning",
+        "timeFormat": "HH:mm",
+        "time24h": true,
+        "dateFormat": "none"
+      },
+      "image": {
+        "fitContainer": true,
+        "proportional": true,
+        "scale": 100,
+        "opacity": 100,
+        "fallbackUrl": "images/brokenlink.png"
+      },
+      "clock": {
+        "tickColor": "@controlOff",
+        "numberColor": "@textMuted",
+        "hourColor": "@text",
+        "minuteColor": "@onSurface",
+        "secondColor": "@glow",
+        "showTicks": true,
+        "showNumbers": true,
+        "sweep": "smooth",
+        "capSize": 12,
+        "backCapSize": 18,
+        "offset": 0,
+        "numberDistance": 70,
+        "handWidthHour": 8,
+        "handLengthHour": 55,
+        "handWidthMinute": 5,
+        "handLengthMinute": 85,
+        "handWidthSecond": 2,
+        "handLengthSecond": 90,
+        "useSystemTime": true,
+        "timezone": "UTC",
+        "displayMode": "analog",
+        "use12Hour": false,
+        "flipUpperColor": "@accentSoft",
+        "flipLowerColor": "@accent",
+        "flipCardRadius": 12,
+        "flipSeparator": 6,
+        "flipShowLabels": true,
+        "flipShowSeconds": true,
+        "textShowDate": true,
+        "textDateSeg0": "weekday",
+        "textDateSeg1": "day",
+        "textDateSeg2": "monthName",
+        "textDateSeg3": "yearLong",
+        "textDateSeg4": "none",
+        "textDateSeparator": "",
+        "textDateLinebreak": true,
+        "textShowTime": true,
+        "textShowHour": true,
+        "textShowMinute": true,
+        "textShowSecond": true,
+        "textSeparator": ":",
+        "textBlinkSeparator": false,
+        "textLocale": "en-GB",
+        "typography": {
+          "analogNumbers": {
+            "fontSize": 20,
+            "fontFamily": "'Inter', sans-serif",
+            "color": "@textMuted",
+            "textTransform": "none",
+            "bold": true,
+            "italic": false
+          },
+          "flipNumbers": {
+            "fontSize": 28,
+            "fontFamily": "",
+            "color": "@onAccent",
+            "bold": true,
+            "italic": false
+          },
+          "flipLabel": {
+            "fontSize": 10,
+            "fontFamily": "",
+            "color": "@textMuted",
+            "textTransform": "none",
+            "bold": false,
+            "italic": false,
+            "offsetX": 0,
+            "offsetY": 0
+          },
+          "flipAmPm": {
+            "fontSize": 12,
+            "fontFamily": "",
+            "color": "@onAccent",
+            "textAlign": "center",
+            "textTransform": "none",
+            "bold": true,
+            "italic": false,
+            "offsetX": 0,
+            "offsetY": 0
+          },
+          "timeDate": {
+            "color": "@textMuted"
+          }
+        }
+      },
+      "defaultClockTimeDateFs": 16,
+      "defaultClockTimeDateFont": "",
+      "defaultClockTimeDateAlign": "center",
+      "defaultClockTimeDateCase": "none",
+      "defaultClockTimeDateBold": false,
+      "defaultClockTimeDateItalic": false,
+      "defaultClockFlipLocale": "en-GB",
+      "defaultClockTextWeekPrefix": "",
+      "defaultClockFlipLabelHour": "",
+      "defaultClockFlipLabelMinute": "",
+      "defaultClockFlipLabelSecond": "",
+      "graph": {
+        "chartType": "line",
+        "smoothingAmount": 0,
+        "lineWidth": 2,
+        "barDirection": "vertical",
+        "barGap": 2,
+        "barRadius": 4,
+        "positiveStartOpacity": 20,
+        "positiveEndOpacity": 0,
+        "negativeStartOpacity": 20,
+        "negativeEndOpacity": 0,
+        "bufferMode": "points",
+        "durationPreset": "24h",
+        "durationCustomValue": 1,
+        "durationCustomUnit": "hours",
+        "fixedTimeWindow": false,
+        "timelineAdvance": "data",
+        "lineGaps": "break",
+        "categoryLabelRotation": 0,
+        "valueLabelRotation": 0,
+        "showLegend": true,
+        "legendPosition": "right",
+        "legendLayout": "column",
+        "legendSwatch": "square",
+        "legendAutoSize": true,
+        "legendWidth": 160,
+        "legendHeight": 72,
+        "typography": {
+          "legendItem": {
+            "fontFamily": "'Inter', sans-serif",
+            "fontSize": 12,
+            "color": "@text",
+            "bold": false,
+            "italic": false,
+            "textAlign": "left",
+            "textTransform": "none",
+            "opacity": 100
+          },
+          "dataText": {
+            "fontFamily": "'Inter', sans-serif",
+            "fontSize": 14,
+            "color": "@onSurface",
+            "bold": false
+          },
+          "axisX": {
+            "fontFamily": "'Inter', sans-serif",
+            "fontSize": 10,
+            "color": "@iconMuted",
+            "opacity": 100,
+            "bold": false
+          },
+          "pointValue": {
+            "fontFamily": "'Inter', sans-serif",
+            "fontSize": 10,
+            "color": "@accent",
+            "bold": false,
+            "italic": false,
+            "textAlign": "left",
+            "textTransform": "none",
+            "opacity": 100,
+            "offsetX": 6,
+            "offsetY": -6
+          },
+          "pointValueBar": {
+            "fontFamily": "'Inter', sans-serif",
+            "fontSize": 10,
+            "color": "@accent",
+            "bold": false,
+            "italic": false,
+            "textAlign": "center",
+            "textTransform": "none",
+            "opacity": 100,
+            "offsetX": 0,
+            "offsetY": -6
+          }
+        },
+        "barOutlineColor": "@surfaceAlt",
+        "barOutlineWidth": 0,
+        "negativeBarOutlineColor": "@surfaceAlt",
+        "showPoints": false,
+        "pointSize": 4,
+        "animation": "none",
+        "animationDuration": 2,
+        "animationStreamDuration": 0.6,
+        "animationShimmer": true,
+        "animationStaggerBars": true,
+        "dynamicFloor": {
+          "autoMin": true
+        },
+        "dynamicCeiling": {
+          "autoMax": true
+        },
+        "useBaseline": false,
+        "baselineValue": 0,
+        "negativeMode": "show_neg",
+        "decimals": 0,
+        "roundingMode": "exact",
+        "headroom": 0,
+        "maxPoints": 20,
+        "reverseDirection": false,
+        "scrollDirection": "left",
+        "offsetX": 0,
+        "offsetY": 0,
+        "showAxisX": false,
+        "timeFormat": "Datapoints",
+        "time24h": true,
+        "dateFormat": "DD-MM-YYYY",
+        "timezoneConvert": false,
+        "showAxisY": false,
+        "axisResolutionX": 5,
+        "axisResolutionY": 4,
+        "autoAxisResolutionX": false,
+        "autoAxisResolutionY": false,
+        "axisWidthY": 0,
+        "axisWidthX": 0,
+        "axisOffsetX": 10,
+        "axisOffsetY": 10,
+        "showPointValues": false,
+        "pointValuesHoverOnly": false,
+        "pointValuesInterval": 1,
+        "pointValuesDecimals": 0,
+        "pointValuesAbbreviate": true,
+        "autoPointValuesInterval": false,
+        "gridHTopShow": false,
+        "gridHTopColor": "@accentSoft",
+        "gridHTopWidth": 2,
+        "gridHTopOpacity": 80,
+        "gridHBottomShow": false,
+        "gridHBottomColor": "@accentSoft",
+        "gridHBottomWidth": 2,
+        "gridHBottomOpacity": 80,
+        "gridHBaseShow": false,
+        "gridHBaseColor": "@warning",
+        "gridHBaseWidth": 2,
+        "gridHBaseOpacity": 80,
+        "gridHInnerShow": false,
+        "gridHInnerColor": "@borderAccent",
+        "gridHInnerWidth": 1,
+        "gridHInnerOpacity": 40,
+        "gridHInnerSpace": 0,
+        "gridVShow": false,
+        "gridVColor": "@borderAccent",
+        "gridVWidth": 1,
+        "gridVOpacity": 40,
+        "gridVSpace": 0,
+        "gridVLeftShow": false,
+        "gridVLeftColor": "@accentSoft",
+        "gridVLeftWidth": 2,
+        "gridVLeftOpacity": 80,
+        "gridVRightShow": false,
+        "gridVRightColor": "@accentSoft",
+        "gridVRightWidth": 2,
+        "gridVRightOpacity": 80,
+        "showTickX": false,
+        "showTickY": false,
+        "tickXSpacing": 0,
+        "tickYCount": 0,
+        "tickXSize": 8,
+        "tickXThickness": 4,
+        "tickXColor": "@accentSoft",
+        "tickXOffset": 0,
+        "tickYSize": 8,
+        "tickYThickness": 4,
+        "tickYColor": "@accentSoft",
+        "tickYOffset": 0
+      },
+      "lightgrid": {
+        "presets": [
+          {
+            "state": "ON",
+            "brightness": 255,
+            "color_mode": "color_temp",
+            "color_temp": 153
+          },
+          {
+            "state": "ON",
+            "brightness": 255,
+            "color_mode": "color_temp",
+            "color_temp": 250
+          },
+          {
+            "state": "ON",
+            "brightness": 255,
+            "color_mode": "color_temp",
+            "color_temp": 350
+          },
+          {
+            "state": "ON",
+            "brightness": 255,
+            "color_mode": "color_temp",
+            "color_temp": 500
+          },
+          {
+            "state": "ON",
+            "brightness": 255,
+            "color_mode": "hs",
+            "color": {
+              "h": 0,
+              "s": 100
+            }
+          },
+          {
+            "state": "ON",
+            "brightness": 255,
+            "color_mode": "hs",
+            "color": {
+              "h": 30,
+              "s": 100
+            }
+          },
+          {
+            "state": "ON",
+            "brightness": 255,
+            "color_mode": "hs",
+            "color": {
+              "h": 60,
+              "s": 100
+            }
+          },
+          {
+            "state": "ON",
+            "brightness": 255,
+            "color_mode": "hs",
+            "color": {
+              "h": 90,
+              "s": 100
+            }
+          },
+          {
+            "state": "ON",
+            "brightness": 255,
+            "color_mode": "hs",
+            "color": {
+              "h": 120,
+              "s": 100
+            }
+          },
+          {
+            "state": "ON",
+            "brightness": 255,
+            "color_mode": "hs",
+            "color": {
+              "h": 150,
+              "s": 100
+            }
+          },
+          {
+            "state": "ON",
+            "brightness": 255,
+            "color_mode": "hs",
+            "color": {
+              "h": 180,
+              "s": 100
+            }
+          },
+          {
+            "state": "ON",
+            "brightness": 255,
+            "color_mode": "hs",
+            "color": {
+              "h": 210,
+              "s": 100
+            }
+          },
+          {
+            "state": "ON",
+            "brightness": 255,
+            "color_mode": "hs",
+            "color": {
+              "h": 240,
+              "s": 100
+            }
+          },
+          {
+            "state": "ON",
+            "brightness": 255,
+            "color_mode": "hs",
+            "color": {
+              "h": 270,
+              "s": 100
+            }
+          },
+          {
+            "state": "ON",
+            "brightness": 255,
+            "color_mode": "hs",
+            "color": {
+              "h": 300,
+              "s": 100
+            }
+          },
+          {
+            "state": "ON",
+            "brightness": 255,
+            "color_mode": "hs",
+            "color": {
+              "h": 330,
+              "s": 100
+            }
+          }
+        ],
+        "presetColumns": 4,
+        "presetRows": 4,
+        "presetGap": 8,
+        "presetIndicators": true,
+        "columns": 1,
+        "itemHeight": 60,
+        "itemWidth": 0,
+        "itemSpacing": 8,
+        "tileBackgroundColor": "@surface",
+        "tileHoverColor": "@accentSoft",
+        "tileBackgroundOpacity": 100,
+        "tileOutlineWidth": 0,
+        "tileOutlineColor": "@borderAccent",
+        "tileOutlineOpacity": 100,
+        "tileBlur": 0,
+        "tileInnerGlow": 0,
+        "tileInnerGlowColor": "@borderAccent",
+        "tileInnerGlowOpacity": 100,
+        "tileTextColor": "@onSurface",
+        "tileFontFamily": "'Inter', sans-serif",
+        "tileBold": true,
+        "toggleColorOn": "@glow",
+        "toggleColorOff": "@accentOff",
+        "iconSize": 24,
+        "iconColorOff": "@icon",
+        "iconColorOn": "@glow",
+        "useLightColor": true,
+        "iconColorize": false,
+        "popoverWidth": 260,
+        "popoverHeight": 360,
+        "autoDeselect": false,
+        "deselectTime": 10,
+        "typography": {
+          "widgetLabel": {
+            "fontFamily": null,
+            "fontSize": null,
+            "color": null,
+            "textAlign": null,
+            "textTransform": null,
+            "bold": null,
+            "offsetX": null,
+            "offsetY": null
+          },
+          "lightName": {
+            "fontFamily": null,
+            "fontSize": null,
+            "color": null,
+            "textAlign": null,
+            "textTransform": null,
+            "bold": null
+          },
+          "panelTitle": {
+            "fontFamily": null,
+            "fontSize": null,
+            "color": null,
+            "textAlign": null,
+            "textTransform": null,
+            "bold": null,
+            "offsetX": null,
+            "offsetY": null
+          }
+        }
+      },
+      "editbox": {
+        "backgroundColor": "@surface",
+        "backgroundOpacity": 100,
+        "borderColor": "@accentSecondary",
+        "borderWidth": 1,
+        "borderRadius": 8,
+        "enableFocusGlow": true,
+        "focusColor": "@link",
+        "typography": {
+          "inputText": {
+            "color": "@text",
+            "fontSize": 14,
+            "bold": false,
+            "textAlign": "left"
+          }
+        },
+        "placeholderColor": "@placeholder",
+        "textPadding": 8
+      },
+      "label": {
+        "widthAuto": true,
+        "heightAuto": true,
+        "typography": {
+          "widgetLabel": {
+            "fontFamily": "",
+            "fontSize": 12,
+            "textAlign": "left",
+            "textTransform": "none",
+            "bold": false,
+            "italic": false,
+            "color": "@onSurface",
+            "opacity": 100,
+            "offsetX": 0,
+            "offsetY": 0
+          }
+        }
+      },
+      "defaultDeactivatedColor": "@controlOff",
+      "defaultDeactivatedColorAccent": "@textMuted"
+    }
+  },
+  "globalBindings": {},
+  "widgets": {}
+}

@@ -1,0 +1,41 @@
+{
+  "id": "Icon_and_Value_Only",
+  "name": "Icon and Value Only",
+  "widgetType": "gauge",
+  "version": "2.0.0",
+  "variants": [
+    {
+      "id": "default",
+      "name": "default",
+      "settings": {
+        "width": 220,
+        "height": 100,
+        "barType": "none",
+        "gapRound": -25,
+        "gapHoriz": 8,
+        "gaugeSizeOffset": 0,
+        "showLabels": false,
+        "rotateLabels": false,
+        "labelCount": 0,
+        "labelOffset": 0,
+        "showIcon": true,
+        "icons": {
+          "on": {
+            "offsetY": 0
+          }
+        },
+        "iconSize": 68,
+        "typography": {
+          "value": {
+            "fontSize": 48,
+            "offsetY": 0
+          },
+          "caption": {
+            "offsetY": 0
+          }
+        },
+        "valueAlignment": "left"
+      }
+    }
+  ]
+}

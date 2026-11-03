@@ -1,0 +1,76 @@
+{
+  "id": "List_1",
+  "name": "Horizontal Menu",
+  "widgetType": "menu",
+  "version": "2.0.0",
+  "variants": [
+    {
+      "id": "default",
+      "name": "Icon Left",
+      "settings": {
+        "menuLayout": "horizontal",
+        "menuIconLoc": "left",
+        "menuItemHeight": 0,
+        "menuItemWidth": 0,
+        "iconSize": 35,
+        "typography": {
+          "menuItem": {
+            "fontSize": 12
+          }
+        },
+        "menuHAuto": true
+      }
+    },
+    {
+      "id": "Icon_Left_1",
+      "name": "Icon Top",
+      "settings": {
+        "menuLayout": "horizontal",
+        "menuIconLoc": "top",
+        "menuItemHeight": 0,
+        "menuItemWidth": 0,
+        "iconSize": 35,
+        "typography": {
+          "menuItem": {
+            "fontSize": 12
+          }
+        },
+        "menuHAuto": true
+      }
+    },
+    {
+      "id": "Icon_Top_1",
+      "name": "Icon Right",
+      "settings": {
+        "menuLayout": "horizontal",
+        "menuIconLoc": "right",
+        "menuItemHeight": 0,
+        "menuItemWidth": 0,
+        "iconSize": 35,
+        "typography": {
+          "menuItem": {
+            "fontSize": 12
+          }
+        },
+        "menuHAuto": true
+      }
+    },
+    {
+      "id": "Icon_Right_1",
+      "name": "Icon Bottom",
+      "settings": {
+        "menuLayout": "horizontal",
+        "menuIconLoc": "bottom",
+        "menuItemHeight": 0,
+        "menuItemWidth": 0,
+        "iconSize": 35,
+        "typography": {
+          "menuItem": {
+            "fontSize": 12
+          }
+        },
+        "menuHAuto": true
+      }
+    }
+  ]
+}

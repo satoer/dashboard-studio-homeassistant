@@ -1,0 +1,104 @@
+{
+  "id": "Arc_-_Center_Icon",
+  "name": "Arc - Center Icon",
+  "widgetType": "gauge",
+  "version": "2.0.0",
+  "variants": [
+    {
+      "id": "default",
+      "name": "Small",
+      "settings": {
+        "width": 140,
+        "height": 180,
+        "barType": "round",
+        "gapRound": -25,
+        "gaugeSizeOffset": 0,
+        "showLabels": false,
+        "rotateLabels": false,
+        "labelOffset": 0,
+        "showIcon": true,
+        "iconSize": 50,
+        "typography": {
+          "value": {
+            "fontSize": 48,
+            "offsetY": 0
+          },
+          "caption": {
+            "offsetY": 0
+          }
+        },
+        "valueAlignment": "center",
+        "gapHoriz": 8,
+        "icons": {
+          "on": {
+            "offsetY": 0
+          }
+        }
+      }
+    },
+    {
+      "id": "Medium",
+      "name": "Medium",
+      "settings": {
+        "width": 180,
+        "height": 220,
+        "barType": "round",
+        "gapRound": -25,
+        "gaugeSizeOffset": 0,
+        "showLabels": false,
+        "rotateLabels": false,
+        "labelOffset": 0,
+        "showIcon": true,
+        "iconSize": 80,
+        "typography": {
+          "value": {
+            "fontSize": 48,
+            "offsetY": 0
+          },
+          "caption": {
+            "offsetY": 0
+          }
+        },
+        "valueAlignment": "center",
+        "gapHoriz": 8,
+        "icons": {
+          "on": {
+            "offsetY": 0
+          }
+        }
+      }
+    },
+    {
+      "id": "Large",
+      "name": "Large",
+      "settings": {
+        "width": 250,
+        "height": 270,
+        "barType": "round",
+        "gapRound": -55,
+        "gaugeSizeOffset": 0,
+        "showLabels": false,
+        "rotateLabels": false,
+        "labelOffset": 0,
+        "showIcon": true,
+        "iconSize": 120,
+        "typography": {
+          "value": {
+            "fontSize": 48,
+            "offsetY": 0
+          },
+          "caption": {
+            "offsetY": 0
+          }
+        },
+        "valueAlignment": "center",
+        "gapHoriz": 8,
+        "icons": {
+          "on": {
+            "offsetY": 0
+          }
+        }
+      }
+    }
+  ]
+}

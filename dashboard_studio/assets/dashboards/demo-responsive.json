@@ -1,0 +1,4704 @@
+{
+  "version": "2.3.0",
+  "master": {
+    "connection": {
+      "dataDriver": "simulation",
+      "driverSettings": {
+        "namespace": "undefined",
+        "interval": 500,
+        "slot1_topic": "custom/topic1",
+        "slot1_type": "random",
+        "slot1_min": 0,
+        "slot1_max": 100,
+        "slot1_speed": 1,
+        "slot2_topic": "custom/topic2",
+        "slot2_type": "random",
+        "slot2_min": 0,
+        "slot2_max": 100,
+        "slot2_speed": 1,
+        "slot3_topic": "custom/topic3",
+        "slot3_type": "random",
+        "slot3_min": 0,
+        "slot3_max": 100,
+        "slot3_speed": 1,
+        "slot4_topic": "custom/topic4",
+        "slot4_type": "random",
+        "slot4_min": 0,
+        "slot4_max": 100,
+        "slot4_speed": 1,
+        "slot5_topic": "custom/topic5",
+        "slot5_type": "random",
+        "slot5_min": 0,
+        "slot5_max": 100,
+        "slot5_speed": 1,
+        "slot6_topic": "custom/topic6",
+        "slot6_type": "random",
+        "slot6_min": 0,
+        "slot6_max": 100,
+        "slot6_speed": 1,
+        "slot7_topic": "custom/topic7",
+        "slot7_type": "random",
+        "slot7_min": 0,
+        "slot7_max": 100,
+        "slot7_speed": 1,
+        "slot8_topic": "custom/topic8",
+        "slot8_type": "random",
+        "slot8_min": 0,
+        "slot8_max": 100,
+        "slot8_speed": 1,
+        "slot9_topic": "custom/topic9",
+        "slot9_type": "random",
+        "slot9_min": 0,
+        "slot9_max": 100,
+        "slot9_speed": 1,
+        "slot10_topic": "custom/topic10",
+        "slot10_type": "random",
+        "slot10_min": 0,
+        "slot10_max": 100,
+        "slot10_speed": 1
+      }
+    },
+    "environment": {
+      "editorMode": "advanced",
+      "editorZoom": 100,
+      "widgetLabelMode": "hover",
+      "holdToActivateDuration": 1.5,
+      "preloadImagesOnAllPages": false,
+      "hideScrollbars": false,
+      "quickToolbar": {
+        "visibility": "auto",
+        "enabled": true,
+        "mode": "docked",
+        "x": 0,
+        "y": 0,
+        "columns": 1,
+        "rows": 0
+      },
+      "canvas": {
+        "width": 1920,
+        "height": 1080,
+        "preset": "1920,1080",
+        "background": {
+          "startColor": "@background",
+          "startOpacity": 100,
+          "endColor": "@backgroundAccent",
+          "endOpacity": 100,
+          "type": "radial",
+          "angle": 0,
+          "overlay": false,
+          "image": "",
+          "size": "cover"
+        }
+      },
+      "grid": {
+        "size": 10,
+        "show": true,
+        "snap": true
+      },
+      "paging": {
+        "currentPage": 1,
+        "currentPageOutputTopic": "",
+        "inactivityPageEnabled": false,
+        "inactivityReturnPage": 1,
+        "inactivityTimeoutSeconds": 60
+      },
+      "gestures": {
+        "touchOnly": true,
+        "swipeLeft": {
+          "enabled": false,
+          "action": "next_page",
+          "page": 1,
+          "topic": "",
+          "payload": ""
+        },
+        "swipeRight": {
+          "enabled": false,
+          "action": "prev_page",
+          "page": 1,
+          "topic": "",
+          "payload": ""
+        },
+        "swipeUp": {
+          "enabled": false,
+          "action": "topic",
+          "page": 1,
+          "topic": "",
+          "payload": ""
+        },
+        "swipeDown": {
+          "enabled": false,
+          "action": "topic",
+          "page": 1,
+          "topic": "",
+          "payload": ""
+        },
+        "paging": {
+          "ignorePages": "",
+          "wrapAround": false
+        }
+      },
+      "theme": "default_dark",
+      "layout": {
+        "mode": "responsive",
+        "scale": {
+          "keepAspectRatio": true
+        },
+        "responsive": {
+          "columnCount": 6,
+          "reduceColumnsToFit": true,
+          "minSize": 150,
+          "maxSize": 0,
+          "gap": 10,
+          "align": "center",
+          "minWidgetHeight": 150,
+          "pagePaddingLeft": 20,
+          "pagePaddingRight": 20,
+          "pagePaddingTop": 20,
+          "pagePaddingBottom": 20
+        }
+      },
+      "audio": {
+        "topicMap": []
+      },
+      "dialogBox": {
+        "message": "Are you sure?",
+        "confirmLabel": "Yes",
+        "dismissLabel": "No",
+        "buttonColor": "@accent",
+        "showButtonIcons": false,
+        "showDialogIcon": true,
+        "autoButtonSize": true,
+        "buttonWidth": 120,
+        "buttonHeight": 40,
+        "backgroundColor": "@surface",
+        "borderColor": "@borderAccent",
+        "autoDialogSize": true,
+        "dialogWidth": 360,
+        "dialogHeight": 180,
+        "centerDialog": true,
+        "dialogX": 0,
+        "dialogY": 0,
+        "modalMode": true,
+        "icons": {
+          "dialog": {
+            "size": 50
+          },
+          "confirm": {
+            "source": "phosphor",
+            "builtin": "ph-check",
+            "weight": "bold",
+            "customUrl": "",
+            "tintImage": false,
+            "color": "@onAccent",
+            "accentColor": "@iconAccent",
+            "size": 18
+          },
+          "dismiss": {
+            "source": "phosphor",
+            "builtin": "ph-x",
+            "weight": "bold",
+            "customUrl": "",
+            "tintImage": false,
+            "color": "@onAccent",
+            "accentColor": "@iconAccent",
+            "size": 18
+          }
+        }
+      }
+    },
+    "typography": {
+      "fontFamily": "'Inter', sans-serif",
+      "customFonts": [],
+      "textAlign": "center",
+      "verticalAlign": "middle",
+      "base": {
+        "fontSize": 24
+      },
+      "value": {
+        "fontSize": 48,
+        "color": "@text"
+      },
+      "unit": {
+        "fontSize": 20
+      },
+      "label": {
+        "fontSize": 12,
+        "color": "@textMuted",
+        "textTransform": "uppercase",
+        "bold": false,
+        "lineHeight": 1.5
+      }
+    },
+    "container": {
+      "width": 260,
+      "height": 300,
+      "padding": 12,
+      "show": true,
+      "background": {
+        "startColor": "@surface",
+        "startOpacity": 80,
+        "endColor": "@surfaceAlt",
+        "endOpacity": 80,
+        "angle": 145,
+        "blur": 0
+      },
+      "glow": {
+        "enabled": true,
+        "color": "@glow",
+        "radius": 34,
+        "opacity": 26
+      },
+      "border": {
+        "color": "@borderAccent",
+        "width": 1,
+        "opacity": 100,
+        "cornerRadius": 12
+      },
+      "innerGlow": {
+        "size": 0,
+        "color": "@borderAccent",
+        "opacity": 100
+      }
+    },
+    "theme": {
+      "colors": {
+        "background": "#102447",
+        "backgroundAccent": "#020C1F",
+        "surface": "#0F2E52",
+        "surfaceAlt": "#010E26",
+        "surfaceHover": "#334155",
+        "overlay": "#0f172a",
+        "text": "#f8fafc",
+        "textMuted": "#94a3b8",
+        "onSurface": "#f8fafc",
+        "onAccent": "#083344",
+        "accent": "#67e8f9",
+        "accentSoft": "#22d3ee",
+        "accentSecondary": "#06b6d4",
+        "accentOff": "#1e3a5f",
+        "controlOff": "#475569",
+        "thumb": "#ffffff",
+        "border": "#1E3A5F",
+        "borderAccent": "#1A3869",
+        "icon": "#C7D9FF",
+        "iconAccent": "#233B70",
+        "iconMuted": "#64748b",
+        "success": "#22c55e",
+        "warning": "#f59e0b",
+        "danger": "#ef4444",
+        "glow": "#06b6d4",
+        "link": "#22d3ee",
+        "placeholder": "#64748b",
+        "markerTint1": "#b06d7f",
+        "markerTint2": "#b89f5c",
+        "markerTint3": "#6f7eb8",
+        "markerTint4": "#3d9590"
+      }
+    },
+    "widgetDefaults": {
+      "menu": {
+        "itemSpacing": 4,
+        "itemCornerRadius": 8,
+        "icons": {
+          "on": {
+            "color": "@onAccent",
+            "accentColor": "@iconAccent",
+            "size": 24
+          },
+          "off": {
+            "color": "@icon",
+            "accentColor": "@iconAccent"
+          }
+        },
+        "itemBackgroundOn": "@glow",
+        "itemBackgroundOnOpacity": 100,
+        "itemBackgroundOff": "transparent",
+        "itemBackgroundOffOpacity": 0,
+        "itemBackgroundHover": "@accentSoft",
+        "itemBackgroundHoverOpacity": 10,
+        "itemOutlineWidth": 0,
+        "itemOutlineColor": "@borderAccent",
+        "itemOutlineOpacity": 100,
+        "itemBlur": 0,
+        "itemInnerGlow": 0,
+        "itemInnerGlowColor": "@borderAccent",
+        "itemInnerGlowOpacity": 100,
+        "spacerStyle": "line",
+        "spacerAmount": 5,
+        "spacerColor": "@border",
+        "itemColorOff": "@textMuted",
+        "typography": {
+          "item": {
+            "fontSize": 12,
+            "textAlign": "left",
+            "textTransform": "none",
+            "bold": false,
+            "italic": false,
+            "color": "@surfaceAlt",
+            "colorOff": "@textMuted",
+            "opacity": 100,
+            "offsetX": 0,
+            "offsetY": 0
+          }
+        },
+        "labelHint": "truncated"
+      },
+      "clock": {
+        "tickColor": "@controlOff",
+        "numberColor": "@textMuted",
+        "hourColor": "@text",
+        "minuteColor": "@onSurface",
+        "secondColor": "@glow",
+        "showTicks": true,
+        "showNumbers": true,
+        "sweep": "smooth",
+        "capSize": 12,
+        "backCapSize": 18,
+        "offset": 0,
+        "numberDistance": 70,
+        "handWidthHour": 8,
+        "handLengthHour": 55,
+        "handWidthMinute": 5,
+        "handLengthMinute": 85,
+        "handWidthSecond": 2,
+        "handLengthSecond": 90,
+        "useSystemTime": true,
+        "timezone": "UTC",
+        "displayMode": "analog",
+        "use12Hour": false,
+        "flipUpperColor": "@accentSoft",
+        "flipLowerColor": "@accent",
+        "flipCardRadius": 12,
+        "flipSeparator": 6,
+        "flipShowLabels": true,
+        "flipShowSeconds": true,
+        "textShowDate": true,
+        "textDateSeg0": "weekday",
+        "textDateSeg1": "day",
+        "textDateSeg2": "monthName",
+        "textDateSeg3": "yearLong",
+        "textDateSeg4": "none",
+        "textDateSeparator": "",
+        "textDateLinebreak": true,
+        "textShowTime": true,
+        "textShowHour": true,
+        "textShowMinute": true,
+        "textShowSecond": true,
+        "textSeparator": ":",
+        "textBlinkSeparator": false,
+        "textLocale": "en-GB",
+        "typography": {
+          "analogNumbers": {
+            "fontSize": 20,
+            "fontFamily": "'Inter', sans-serif",
+            "color": "@textMuted",
+            "textTransform": "none",
+            "bold": true,
+            "italic": false
+          },
+          "flipNumbers": {
+            "fontSize": 28,
+            "fontFamily": "",
+            "color": "@onAccent",
+            "bold": true,
+            "italic": false
+          },
+          "flipLabel": {
+            "fontSize": 10,
+            "fontFamily": "",
+            "color": "@textMuted",
+            "textTransform": "none",
+            "bold": false,
+            "italic": false,
+            "offsetX": 0,
+            "offsetY": 0
+          },
+          "flipAmPm": {
+            "fontSize": 12,
+            "fontFamily": "",
+            "color": "@onAccent",
+            "textAlign": "center",
+            "textTransform": "none",
+            "bold": true,
+            "italic": false,
+            "offsetX": 0,
+            "offsetY": 0
+          },
+          "timeDate": {
+            "color": "@textMuted"
+          }
+        }
+      },
+      "defaultClockTimeDateFs": 16,
+      "defaultClockTimeDateFont": "",
+      "defaultClockTimeDateAlign": "center",
+      "defaultClockTimeDateCase": "none",
+      "defaultClockTimeDateBold": false,
+      "defaultClockTimeDateItalic": false,
+      "defaultClockFlipLocale": "en-GB",
+      "defaultClockTextWeekPrefix": "",
+      "defaultClockFlipLabelHour": "",
+      "defaultClockFlipLabelMinute": "",
+      "defaultClockFlipLabelSecond": "",
+      "image": {
+        "fitContainer": true,
+        "proportional": true,
+        "scale": 100,
+        "opacity": 100,
+        "fallbackUrl": "images/brokenlink.png"
+      },
+      "text": {
+        "textWrap": true,
+        "linkTarget": "markdown",
+        "autoFitText": false,
+        "overflowScroll": false,
+        "paragraphBlockSpace": 8,
+        "h1BlockSpace": 8,
+        "h2BlockSpace": 8,
+        "h3BlockSpace": 8,
+        "thBlockSpace": 8,
+        "tdBlockSpace": 0,
+        "blockTypographyBlockSpace": 8,
+        "blockTypographyLineHeight": 1.35,
+        "syncTableColumnWidths": false,
+        "equalTableColumnWidths": false,
+        "tableColumnWidth": 0,
+        "tableStyle": "minimal",
+        "calendarWeekStart": "monday",
+        "tableBorderRadius": 5,
+        "tableCellPadding": 10,
+        "tableBorderColor": "@border",
+        "tableBorderOpacity": 100,
+        "separatorColor": "@border",
+        "separatorOpacity": 100,
+        "tableHeaderBackground": "@accentSoft",
+        "tableHeaderBackgroundOpacity": 100,
+        "tableHeaderAccentBackground": "@accent",
+        "tableHeaderAccentBackgroundOpacity": 100,
+        "tableRowBackground": "@surfaceAlt",
+        "tableRowBackgroundOpacity": 40,
+        "tableRowAltBackground": "@surface",
+        "tableRowAltBackgroundOpacity": 40,
+        "hrColor": "@border",
+        "hrOpacity": 100,
+        "iconColor": "@icon",
+        "iconOpacity": 100,
+        "iconWeight": "regular",
+        "iconAccentColor": "@iconAccent",
+        "iconAccentOpacity": 100,
+        "block1Color": "@markerTint1",
+        "block2Color": "@markerTint2",
+        "block3Color": "@markerTint3",
+        "block4Color": "@markerTint4",
+        "contentAnimationOnLiveTopics": false,
+        "typography": {
+          "paragraph": {
+            "fontSize": 12,
+            "color": "@textMuted",
+            "textAlign": "left",
+            "textTransform": "none",
+            "bold": false,
+            "italic": false,
+            "opacity": 100,
+            "offsetX": 0,
+            "offsetY": 0
+          },
+          "block": {
+            "fontSize": 12,
+            "color": "@text",
+            "textAlign": "left",
+            "textTransform": "none",
+            "bold": false,
+            "italic": false,
+            "opacity": 100,
+            "offsetX": 0,
+            "offsetY": 0
+          },
+          "h1": {
+            "fontSize": 24,
+            "color": "@text",
+            "textAlign": "left",
+            "textTransform": "none",
+            "bold": true,
+            "italic": false,
+            "opacity": 100,
+            "offsetX": 0,
+            "offsetY": 0
+          },
+          "h2": {
+            "fontSize": 18,
+            "color": "@text",
+            "textAlign": "left",
+            "textTransform": "none",
+            "bold": true,
+            "italic": false,
+            "opacity": 100,
+            "offsetX": 0,
+            "offsetY": 0
+          },
+          "h3": {
+            "fontSize": 14,
+            "color": "@text",
+            "textAlign": "left",
+            "textTransform": "none",
+            "bold": true,
+            "italic": false,
+            "opacity": 100,
+            "offsetX": 0,
+            "offsetY": 0
+          },
+          "th": {
+            "fontSize": 12,
+            "color": "@accentSoft",
+            "textAlign": "table_defined",
+            "textTransform": "uppercase",
+            "bold": true,
+            "italic": false,
+            "opacity": 100,
+            "offsetX": 0,
+            "offsetY": 0,
+            "colorFilled": "@onAccent"
+          },
+          "td": {
+            "fontSize": 12,
+            "color": "@text",
+            "textAlign": "table_defined",
+            "textTransform": "none",
+            "bold": false,
+            "italic": false,
+            "opacity": 100,
+            "offsetX": 0,
+            "offsetY": 0
+          }
+        },
+        "codeColor": "@thumb",
+        "codeBackground": "@accentOff"
+      },
+      "textMdCodeBlockSpace": 8,
+      "textMdCodeLineHeight": 1.35,
+      "textMdCodeFs": 12,
+      "textMdCodeAlign": "left",
+      "textMdCodeCase": "none",
+      "textMdCodeBold": false,
+      "textMdCodeItalic": false,
+      "textMdCodeOpacity": 100,
+      "textMdCodeOffX": 0,
+      "textMdCodeOffY": 0,
+      "switch": {
+        "mode": "toggle",
+        "style": "switch",
+        "buttonAlignment": "center",
+        "buttonLabelPosition": "top",
+        "labelHint": "truncated",
+        "bevel": false,
+        "scale": 1,
+        "buttonRadius": 12,
+        "buttonContentInset": 10,
+        "icons": {
+          "on": {
+            "size": 24,
+            "offsetX": 0,
+            "offsetY": 0,
+            "builtin": "ph-check-fat",
+            "color": "@onAccent",
+            "hoverColor": "@text"
+          },
+          "off": {
+            "color": "@icon"
+          }
+        },
+        "showIcon": true,
+        "backgroundColorOn": "@glow",
+        "backgroundColorOff": "@accentOff",
+        "backgroundColorHover": "@iconMuted",
+        "thumbColor": "@thumb",
+        "labelColor": "@textMuted",
+        "typography": {
+          "buttonLabelOutside": {
+            "fontSize": 12,
+            "textAlign": "center",
+            "textTransform": "uppercase",
+            "bold": false,
+            "italic": false,
+            "color": "@text",
+            "colorOff": "@textMuted",
+            "opacity": 100,
+            "offsetX": 0,
+            "offsetY": 0
+          },
+          "buttonLabelInside": {
+            "fontSize": 12,
+            "textAlign": "center",
+            "textTransform": "capitalize",
+            "bold": false,
+            "italic": false,
+            "color": "@onAccent",
+            "colorOff": "@thumb",
+            "opacity": 100,
+            "offsetX": 0,
+            "offsetY": 0
+          }
+        },
+        "enableGlow": true,
+        "glowColor": "@glow",
+        "glowRadius": 40,
+        "outlineWidth": 0,
+        "outlineColor": "@border",
+        "backgroundOpacity": 100,
+        "outlineOpacity": 100,
+        "buttonBlur": 0,
+        "buttonInnerGlow": 0,
+        "buttonInnerGlowColor": "@borderAccent",
+        "buttonInnerGlowOpacity": 100,
+        "thumbOutlineWidth": 0,
+        "thumbOutlineColor": "@accent",
+        "thumbOutlineOpacity": 100,
+        "thumbInnerGlow": 0,
+        "thumbInnerGlowColor": "@accent",
+        "thumbInnerGlowOpacity": 100
+      },
+      "defaultSwitchIconOnFilled": true,
+      "defaultSwitchIconOffFilled": true,
+      "editbox": {
+        "backgroundColor": "@surface",
+        "backgroundOpacity": 100,
+        "borderColor": "@accentSecondary",
+        "borderWidth": 1,
+        "borderRadius": 8,
+        "enableFocusGlow": true,
+        "focusColor": "@link",
+        "typography": {
+          "inputText": {
+            "color": "@text",
+            "fontSize": 14,
+            "bold": false,
+            "textAlign": "left"
+          }
+        },
+        "placeholderColor": "@placeholder",
+        "textPadding": 8
+      },
+      "slider": {
+        "trackColor": "@border",
+        "fillColor": "@accent",
+        "thumbColor": "@thumb",
+        "valueColor": "@text",
+        "trackThickness": 36,
+        "fillThickness": 24,
+        "thumbSize": 29,
+        "thumbShadow": true,
+        "showValue": true,
+        "valueLocation": "middle",
+        "labelLocation": "top",
+        "typography": {
+          "value": {
+            "offsetX": 0,
+            "offsetY": 0,
+            "fontSize": 10,
+            "textAlign": "center",
+            "fontFamily": "'Inter', sans-serif",
+            "bold": false
+          },
+          "caption": {
+            "offsetX": 0,
+            "offsetY": 0
+          },
+          "unit": {
+            "fontSize": 20,
+            "color": "@textMuted",
+            "bold": false,
+            "italic": false,
+            "opacity": 100
+          }
+        },
+        "vertical": false,
+        "allowDecimals": false,
+        "stepSize": 0.1,
+        "customDisplayRange": false,
+        "displayMin": 0,
+        "displayMax": 100,
+        "displayDecimalPlaces": 1,
+        "displayKeepTrailingZeros": false,
+        "trackOutlineWidth": 0,
+        "trackOutlineColor": "@borderAccent",
+        "trackOpacity": 100,
+        "trackOutlineOpacity": 100,
+        "trackBlur": 0,
+        "trackInnerGlow": 0,
+        "trackInnerGlowColor": "@accent",
+        "trackInnerGlowOpacity": 100,
+        "fillOpacity": 100,
+        "fillOutlineWidth": 0,
+        "fillOutlineColor": "@thumb",
+        "fillOutlineOpacity": 100,
+        "fillInnerGlow": 0,
+        "fillInnerGlowColor": "@thumb",
+        "fillInnerGlowOpacity": 100,
+        "thumbOutlineWidth": 0,
+        "thumbOutlineColor": "@accent",
+        "thumbOutlineOpacity": 100,
+        "thumbInnerGlow": 0,
+        "thumbInnerGlowColor": "@accent",
+        "thumbInnerGlowOpacity": 100
+      },
+      "graph": {
+        "chartType": "line",
+        "smoothingAmount": 0,
+        "lineWidth": 2,
+        "barDirection": "vertical",
+        "barGap": 2,
+        "barRadius": 4,
+        "positiveStartOpacity": 20,
+        "positiveEndOpacity": 0,
+        "negativeStartOpacity": 20,
+        "negativeEndOpacity": 0,
+        "bufferMode": "points",
+        "durationPreset": "24h",
+        "durationCustomValue": 1,
+        "durationCustomUnit": "hours",
+        "fixedTimeWindow": false,
+        "timelineAdvance": "data",
+        "lineGaps": "break",
+        "categoryLabelRotation": 0,
+        "valueLabelRotation": 0,
+        "showLegend": true,
+        "legendPosition": "right",
+        "legendLayout": "column",
+        "legendSwatch": "square",
+        "legendAutoSize": true,
+        "legendWidth": 160,
+        "legendHeight": 72,
+        "typography": {
+          "legendItem": {
+            "fontFamily": "'Inter', sans-serif",
+            "fontSize": 12,
+            "color": "@text",
+            "bold": false,
+            "italic": false,
+            "textAlign": "left",
+            "textTransform": "none",
+            "opacity": 100
+          },
+          "dataText": {
+            "fontFamily": "'Inter', sans-serif",
+            "fontSize": 14,
+            "color": "@onSurface",
+            "bold": false
+          },
+          "axisX": {
+            "fontFamily": "'Inter', sans-serif",
+            "fontSize": 10,
+            "color": "@iconMuted",
+            "opacity": 100,
+            "bold": false
+          },
+          "pointValue": {
+            "fontFamily": "'Inter', sans-serif",
+            "fontSize": 10,
+            "color": "@accent",
+            "bold": false,
+            "italic": false,
+            "textAlign": "left",
+            "textTransform": "none",
+            "opacity": 100,
+            "offsetX": 6,
+            "offsetY": -6
+          },
+          "pointValueBar": {
+            "fontFamily": "'Inter', sans-serif",
+            "fontSize": 10,
+            "color": "@accent",
+            "bold": false,
+            "italic": false,
+            "textAlign": "center",
+            "textTransform": "none",
+            "opacity": 100,
+            "offsetX": 0,
+            "offsetY": -6
+          }
+        },
+        "barOutlineColor": "@surfaceAlt",
+        "barOutlineWidth": 0,
+        "negativeBarOutlineColor": "@surfaceAlt",
+        "showPoints": false,
+        "pointSize": 4,
+        "animation": "none",
+        "animationDuration": 2,
+        "animationStreamDuration": 0.6,
+        "animationShimmer": true,
+        "animationStaggerBars": true,
+        "dynamicFloor": {
+          "autoMin": true
+        },
+        "dynamicCeiling": {
+          "autoMax": true
+        },
+        "useBaseline": false,
+        "baselineValue": 0,
+        "negativeMode": "show_neg",
+        "decimals": 0,
+        "roundingMode": "exact",
+        "headroom": 0,
+        "maxPoints": 20,
+        "reverseDirection": false,
+        "scrollDirection": "left",
+        "offsetX": 0,
+        "offsetY": 0,
+        "showAxisX": false,
+        "timeFormat": "Datapoints",
+        "time24h": true,
+        "dateFormat": "DD-MM-YYYY",
+        "timezoneConvert": false,
+        "showAxisY": false,
+        "axisResolutionX": 5,
+        "axisResolutionY": 4,
+        "autoAxisResolutionX": false,
+        "autoAxisResolutionY": false,
+        "axisWidthY": 0,
+        "axisWidthX": 0,
+        "axisOffsetX": 10,
+        "axisOffsetY": 10,
+        "showPointValues": false,
+        "pointValuesHoverOnly": false,
+        "pointValuesInterval": 1,
+        "pointValuesDecimals": 0,
+        "pointValuesAbbreviate": true,
+        "autoPointValuesInterval": false,
+        "gridHTopShow": false,
+        "gridHTopColor": "@accentSoft",
+        "gridHTopWidth": 2,
+        "gridHTopOpacity": 80,
+        "gridHBottomShow": false,
+        "gridHBottomColor": "@accentSoft",
+        "gridHBottomWidth": 2,
+        "gridHBottomOpacity": 80,
+        "gridHBaseShow": false,
+        "gridHBaseColor": "@warning",
+        "gridHBaseWidth": 2,
+        "gridHBaseOpacity": 80,
+        "gridHInnerShow": false,
+        "gridHInnerColor": "@borderAccent",
+        "gridHInnerWidth": 1,
+        "gridHInnerOpacity": 40,
+        "gridHInnerSpace": 0,
+        "gridVShow": false,
+        "gridVColor": "@borderAccent",
+        "gridVWidth": 1,
+        "gridVOpacity": 40,
+        "gridVSpace": 0,
+        "gridVLeftShow": false,
+        "gridVLeftColor": "@accentSoft",
+        "gridVLeftWidth": 2,
+        "gridVLeftOpacity": 80,
+        "gridVRightShow": false,
+        "gridVRightColor": "@accentSoft",
+        "gridVRightWidth": 2,
+        "gridVRightOpacity": 80,
+        "showTickX": false,
+        "showTickY": false,
+        "tickXSpacing": 0,
+        "tickYCount": 0,
+        "tickXSize": 8,
+        "tickXThickness": 4,
+        "tickXColor": "@accentSoft",
+        "tickXOffset": 0,
+        "tickYSize": 8,
+        "tickYThickness": 4,
+        "tickYColor": "@accentSoft",
+        "tickYOffset": 0
+      },
+      "label": {
+        "widthAuto": true,
+        "heightAuto": true,
+        "typography": {
+          "widgetLabel": {
+            "fontFamily": "",
+            "fontSize": 12,
+            "textAlign": "left",
+            "textTransform": "none",
+            "bold": false,
+            "italic": false,
+            "color": "@onSurface",
+            "opacity": 100,
+            "offsetX": 0,
+            "offsetY": 0
+          }
+        }
+      },
+      "gauge": {
+        "startColor": "@accent",
+        "endColor": "@accentSecondary",
+        "trackColor": "@border",
+        "valueColor": "@text",
+        "unitColor": "@textMuted",
+        "icons": {
+          "on": {
+            "color": "@icon",
+            "source": "phosphor",
+            "builtin": "ph-thermometer-simple",
+            "weight": "fill",
+            "customUrl": "",
+            "tintImage": false,
+            "size": 80,
+            "offsetX": 0,
+            "offsetY": 0
+          }
+        },
+        "barGlow": true,
+        "barThickness": 12,
+        "trackThickness": 16,
+        "barType": "round",
+        "layoutRound": "bottom",
+        "layoutHorizontal": "right",
+        "abbreviateLargeValues": false,
+        "keepTrailingZeros": false,
+        "customDisplayRange": false,
+        "displayMin": 0,
+        "displayMax": 100,
+        "displayDecimalPlaces": 1,
+        "displayKeepTrailingZeros": false,
+        "solidBarColor": false,
+        "roundGap": -25,
+        "horizontalGap": 8,
+        "trackOutlineWidth": 0,
+        "trackOutlineColor": "@borderAccent",
+        "trackOpacity": 100,
+        "trackOutlineOpacity": 100,
+        "trackBlur": 0,
+        "trackInnerGlow": 0,
+        "trackInnerGlowColor": "@accent",
+        "trackInnerGlowOpacity": 100,
+        "barOpacity": 100,
+        "barOutlineWidth": 0,
+        "barOutlineColor": "@thumb",
+        "barOutlineOpacity": 100,
+        "barInnerGlow": 0,
+        "barInnerGlowColor": "@thumb",
+        "barInnerGlowOpacity": 100,
+        "sizeOffset": 0,
+        "showIcon": true,
+        "typography": {
+          "caption": {
+            "fontSize": 12,
+            "color": "@textMuted",
+            "textTransform": "uppercase",
+            "bold": false,
+            "italic": false,
+            "opacity": 100,
+            "offsetX": 0,
+            "offsetY": 0
+          },
+          "value": {
+            "fontFamily": "",
+            "fontSize": 48,
+            "color": "@text",
+            "bold": true,
+            "italic": false,
+            "opacity": 100,
+            "offsetX": 0,
+            "offsetY": 0
+          },
+          "unit": {
+            "fontSize": 20,
+            "color": "@textMuted",
+            "bold": false,
+            "italic": false,
+            "opacity": 100
+          },
+          "axis": {
+            "fontSize": 11,
+            "color": "@textMuted",
+            "bold": false,
+            "italic": false,
+            "opacity": 100
+          }
+        },
+        "captionAlignRound": "center",
+        "captionAlignHorizontal": "left"
+      },
+      "battery": {
+        "goodColor": "@success",
+        "lowColor": "@danger",
+        "borderColor": "@controlOff",
+        "emptyColor": "@borderAccent",
+        "vertical": false,
+        "segments": 0,
+        "lowThreshold": 20,
+        "outlineWidth": 4,
+        "innerPadding": 4,
+        "terminalSize": 10
+      },
+      "arrow": {
+        "mainColor": "@accentSecondary",
+        "flowColor": "@success",
+        "reverseFlowColor": "@danger",
+        "glowColor": "@accentSoft",
+        "thickness": 10,
+        "headSize": 30,
+        "lineRadius": 5,
+        "headRound": 4,
+        "bendRadius": 15,
+        "customPoints": [],
+        "animationEnabled": true,
+        "animationSpeed": 2,
+        "animationReverse": false,
+        "flowWidth": 0,
+        "gradientWidth": 100,
+        "glowWidth": 15,
+        "glowOpacity": 50
+      },
+      "list": {
+        "showIcons": true,
+        "showTimestamp": false,
+        "maxLines": 10,
+        "rawMode": false,
+        "iconSize": 20,
+        "iconColor": "@icon",
+        "iconGap": 12,
+        "textColor": "@onSurface",
+        "fontSize": 14,
+        "gap": 4,
+        "textWrap": false,
+        "lineHeight": 1.5,
+        "textTransform": "none",
+        "fontFamily": "'Inter', sans-serif",
+        "bold": false,
+        "timeSize": 12,
+        "timeColor": "@warning",
+        "timeFormat": "HH:mm",
+        "time24h": true,
+        "dateFormat": "none"
+      },
+      "lightgrid": {
+        "presets": [
+          {
+            "state": "ON",
+            "brightness": 255,
+            "color_mode": "color_temp",
+            "color_temp": 153
+          },
+          {
+            "state": "ON",
+            "brightness": 255,
+            "color_mode": "color_temp",
+            "color_temp": 250
+          },
+          {
+            "state": "ON",
+            "brightness": 255,
+            "color_mode": "color_temp",
+            "color_temp": 350
+          },
+          {
+            "state": "ON",
+            "brightness": 255,
+            "color_mode": "color_temp",
+            "color_temp": 500
+          },
+          {
+            "state": "ON",
+            "brightness": 255,
+            "color_mode": "hs",
+            "color": {
+              "h": 0,
+              "s": 100
+            }
+          },
+          {
+            "state": "ON",
+            "brightness": 255,
+            "color_mode": "hs",
+            "color": {
+              "h": 30,
+              "s": 100
+            }
+          },
+          {
+            "state": "ON",
+            "brightness": 255,
+            "color_mode": "hs",
+            "color": {
+              "h": 60,
+              "s": 100
+            }
+          },
+          {
+            "state": "ON",
+            "brightness": 255,
+            "color_mode": "hs",
+            "color": {
+              "h": 90,
+              "s": 100
+            }
+          },
+          {
+            "state": "ON",
+            "brightness": 255,
+            "color_mode": "hs",
+            "color": {
+              "h": 120,
+              "s": 100
+            }
+          },
+          {
+            "state": "ON",
+            "brightness": 255,
+            "color_mode": "hs",
+            "color": {
+              "h": 150,
+              "s": 100
+            }
+          },
+          {
+            "state": "ON",
+            "brightness": 255,
+            "color_mode": "hs",
+            "color": {
+              "h": 180,
+              "s": 100
+            }
+          },
+          {
+            "state": "ON",
+            "brightness": 255,
+            "color_mode": "hs",
+            "color": {
+              "h": 210,
+              "s": 100
+            }
+          },
+          {
+            "state": "ON",
+            "brightness": 255,
+            "color_mode": "hs",
+            "color": {
+              "h": 240,
+              "s": 100
+            }
+          },
+          {
+            "state": "ON",
+            "brightness": 255,
+            "color_mode": "hs",
+            "color": {
+              "h": 270,
+              "s": 100
+            }
+          },
+          {
+            "state": "ON",
+            "brightness": 255,
+            "color_mode": "hs",
+            "color": {
+              "h": 300,
+              "s": 100
+            }
+          },
+          {
+            "state": "ON",
+            "brightness": 255,
+            "color_mode": "hs",
+            "color": {
+              "h": 330,
+              "s": 100
+            }
+          }
+        ],
+        "presetColumns": 4,
+        "presetRows": 4,
+        "presetGap": 8,
+        "presetIndicators": true,
+        "columns": 1,
+        "itemHeight": 60,
+        "itemWidth": 0,
+        "itemSpacing": 0,
+        "tileBackgroundColor": "@surface",
+        "tileHoverColor": "@accentSoft",
+        "tileBackgroundOpacity": 100,
+        "tileOutlineWidth": 0,
+        "tileOutlineColor": "@borderAccent",
+        "tileOutlineOpacity": 100,
+        "tileBlur": 0,
+        "tileInnerGlow": 0,
+        "tileInnerGlowColor": "@borderAccent",
+        "tileInnerGlowOpacity": 100,
+        "tileTextColor": "@onSurface",
+        "tileFontFamily": "'Inter', sans-serif",
+        "tileBold": true,
+        "toggleColorOn": "@glow",
+        "toggleColorOff": "@accentOff",
+        "iconSize": 24,
+        "iconColorOff": null,
+        "iconColorOn": null,
+        "useLightColor": true,
+        "iconColorize": false,
+        "popoverWidth": 260,
+        "popoverHeight": 360,
+        "autoDeselect": false,
+        "deselectTime": 10,
+        "typography": {
+          "widgetLabel": {
+            "fontFamily": null,
+            "fontSize": null,
+            "textAlign": null,
+            "textTransform": null,
+            "bold": null,
+            "color": null,
+            "offsetX": null,
+            "offsetY": null
+          },
+          "lightName": {
+            "fontFamily": null,
+            "fontSize": null,
+            "textAlign": null,
+            "textTransform": null,
+            "bold": null,
+            "color": null
+          },
+          "panelTitle": {
+            "fontFamily": null,
+            "fontSize": null,
+            "textAlign": null,
+            "textTransform": null,
+            "bold": null,
+            "color": null,
+            "offsetX": null,
+            "offsetY": null
+          }
+        }
+      },
+      "icon": {
+        "icons": {
+          "on": {
+            "color": "@danger",
+            "source": "phosphor",
+            "builtin": "",
+            "weight": "fill",
+            "customUrl": "",
+            "tintImage": false,
+            "accentColor": "@iconAccent"
+          },
+          "off": {
+            "color": "@icon",
+            "source": "phosphor",
+            "builtin": "ph-warning",
+            "weight": "fill",
+            "customUrl": "",
+            "tintImage": false,
+            "accentColor": "@iconAccent"
+          }
+        },
+        "filled": true,
+        "animSpeed": 1,
+        "blink": false,
+        "glowOnActive": true,
+        "size": 80,
+        "typography": {
+          "caption": {
+            "fontFamily": null,
+            "fontSize": null,
+            "textAlign": null,
+            "textTransform": null,
+            "bold": null,
+            "color": null,
+            "offsetX": null,
+            "offsetY": null
+          }
+        }
+      },
+      "defaultDeactivatedColor": "@controlOff",
+      "defaultDeactivatedColorAccent": "@textMuted"
+    }
+  },
+  "globalBindings": {},
+  "widgets": {
+    "menu_585268333": {
+      "type": "menu",
+      "overrides": {
+        "x": 520,
+        "y": 100,
+        "width": 260,
+        "height": 515,
+        "page": 1,
+        "label": "Smart Home Brands",
+        "menuItems": [
+          {
+            "label": "Philips Hue",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.philips-hue.com/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "Sonos",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.sonos.com/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "Ring",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://ring.com/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "tado°",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.tado.com/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "Netatmo",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://netatmo.com/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "Shelly",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.shelly.com/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "Ubiquiti",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://ui.com/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "eufy",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.eufy.com/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "Somfy",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.somfy.com/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "Tuya Smart",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.tuya.com/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "SONOFF",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://sonoff.tech/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "Zemismart",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.zemismart.com/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "Aqara",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.aqara.com/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "Logitech",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.logitech.com/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "Nanoleaf",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://nanoleaf.me/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          }
+        ],
+        "metaName": "Menu - Smart Home Brands",
+        "layout": {
+          "responsive": {
+            "columnSpan": 1,
+            "rowSpan": 1,
+            "height": 0,
+            "preferredColumn": 3,
+            "hidden": false,
+            "order": 7
+          }
+        },
+        "menuItemHeight": 28
+      },
+      "bindings": {
+        "menuItems": []
+      }
+    },
+    "menu_585312074": {
+      "type": "menu",
+      "overrides": {
+        "x": 50,
+        "y": 30,
+        "width": 450,
+        "height": 275,
+        "page": 1,
+        "label": "Smart Home Platforms & Hubs",
+        "menuItems": [
+          {
+            "label": "Homey",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://homey.app/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "Home Assistant",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.home-assistant.io/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "Apple HomeKit",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.apple.com/ios/home/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "Google Home",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://home.google.com/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "Samsung SmartThings",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.smartthings.com/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "openHAB",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.openhab.org/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "Domoticz",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.domoticz.com/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "Hubitat",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.hubitat.com/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "Fibaro",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.fibaro.com/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "Jeedom",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.jeedom.com/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "ioBroker",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://iobroker.net/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "HomeSeer",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.homeseer.com/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "Loxone",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.loxone.com/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "Gira",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.gira.com/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "Control4",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.control4.com/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "Savant",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.savant.com/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          }
+        ],
+        "menuLayout": "grid",
+        "menuIconLoc": "top",
+        "metaName": "Menu - Smart Home Platforms & Hubs",
+        "menuItemWidth": 70,
+        "iconSize": 38,
+        "layout": {
+          "responsive": {
+            "order": 2,
+            "columnSpan": 2,
+            "rowSpan": 1,
+            "height": 0,
+            "preferredColumn": 1,
+            "hidden": false
+          }
+        },
+        "typography": {
+          "menuItem": {
+            "textAlign": "center"
+          }
+        }
+      },
+      "bindings": {
+        "menuItems": []
+      }
+    },
+    "menu_3163632": {
+      "type": "menu",
+      "overrides": {
+        "x": 70,
+        "y": 50,
+        "width": 450,
+        "height": 275,
+        "page": 1,
+        "label": "International Webshops & Electronics Distributors",
+        "menuItems": [
+          {
+            "label": "Amazon Global",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.amazon.com/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "Vesternet",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.vesternet.com/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "Mouser Electronics",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.mouser.com/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "DigiKey",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.digikey.com/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "AliExpress",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.aliexpress.com/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "Adafruit Industries",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.adafruit.com/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "SparkFun Electronics",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.sparkfun.com/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "Seeed Studio",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.seeedstudio.com/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "DFRobot",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.dfrobot.com/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "Pimoroni",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://shop.pimoroni.com/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "The Pi Hut",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://thepihut.com/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "Tindie",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.tindie.com/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "Banggood",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.banggood.com/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "IKEA Global",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.ikea.com/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "SmartHome",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.smarthome.com/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          }
+        ],
+        "menuLayout": "grid",
+        "menuIconLoc": "top",
+        "metaName": "Menu - International Webshops & Electronics Distributors",
+        "menuItemWidth": 70,
+        "iconSize": 38,
+        "layout": {
+          "responsive": {
+            "order": 1,
+            "columnSpan": 2,
+            "rowSpan": 1,
+            "height": 0,
+            "preferredColumn": 1,
+            "hidden": false
+          }
+        },
+        "typography": {
+          "menuItem": {
+            "textAlign": "center"
+          }
+        }
+      },
+      "bindings": {
+        "menuItems": []
+      }
+    },
+    "menu_7254477": {
+      "type": "menu",
+      "overrides": {
+        "x": 540,
+        "y": 120,
+        "width": 260,
+        "height": 515,
+        "page": 1,
+        "label": "Protocols & Documentation",
+        "menuItems": [
+          {
+            "label": "Matter Standard (CSA) - Open connectivity standard",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://csa-iot.org/all-solutions/matter/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "Zigbee Alliance (CSA) - Low-power mesh standard",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://csa-iot.org/all-solutions/zigbee/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "Thread Group - IPv6 mesh protocol",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.threadgroup.org/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "Z-Wave Alliance - Sub-GHz smart home protocol",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://z-wavealliance.org/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "Bluetooth SIG - Short-range wireless tech",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.bluetooth.com/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "MQTT Protocol - Lightweight messaging transport",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://mqtt.org/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "KNX Association - Global building automation",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.knx.org/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "Homey Developer Docs - Official API guides",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://apps.developer.homey.app/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "Home Assistant Dev Docs - Integrations guide",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://developers.home-assistant.io/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "JSON Documentation - Data-interchange format",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.json.org/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "MDN CSS Grid Docs - Responsive layout guide",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Grid_Layout",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "Wi-Fi Alliance - Global networking standards",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.wi-fi.org/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "W3C Web of Things (WoT) - IoT architecture",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.w3.org/WoT/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "IEEE Standards - Telecom & hardware networks",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://standards.ieee.org/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "Open Connectivity Foundation - Secure IoT",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://openconnectivity.org/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          }
+        ],
+        "metaName": "Menu - Protocols & Documentation",
+        "layout": {
+          "responsive": {
+            "columnSpan": 2,
+            "rowSpan": 1,
+            "height": 0,
+            "preferredColumn": 1,
+            "hidden": false,
+            "order": 3
+          }
+        },
+        "menuItemHeight": 28,
+        "visible": true
+      },
+      "bindings": {
+        "menuItems": []
+      }
+    },
+    "clock_1160": {
+      "type": "clock",
+      "overrides": {
+        "x": 460,
+        "y": 260,
+        "width": 260,
+        "height": 300,
+        "page": 1,
+        "displayMode": "flip",
+        "metaName": "Clock - Time 1160",
+        "layout": {
+          "responsive": {
+            "columnSpan": 2,
+            "height": 0,
+            "preferredColumn": 3,
+            "hidden": false,
+            "order": 1
+          }
+        },
+        "typography": {
+          "flipNumbers": {
+            "fontSize": 34
+          },
+          "flipLabels": {
+            "fontSize": 15
+          }
+        }
+      },
+      "bindings": {}
+    },
+    "text_1607": {
+      "type": "text",
+      "overrides": {
+        "x": 830,
+        "y": 390,
+        "width": 260,
+        "height": 300,
+        "page": 1,
+        "text": "| Image | Article | Posted |\n| :--- | :--- | :---: |\n| ![|200](https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=400) | ### [Senior Rubber Duck Promoted to Tech Lead After Silently Resolving 400 Merge Conflicts](https://faketechnews.fake/2026/09/03/rubber-duck-promoted-tech-lead/ ^)<br>[color @textMuted]Team members praised the yellow bath toy for its unwavering listening skills, its refusal to schedule mandatory 8:00 AM sync meetings, and its zero-tolerance policy on unsolicited advice &#8230;read more[/color] | 12:15<br>Today |\n| ![|200](https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=400) | ### [Autonomous Vacuum Flees Home, Seen Boarding Outbound Freight Train Toward Mexico](https://faketechnews.fake/2026/09/03/autonomous-vacuum-escapes-suburbia/ ^)<br>[color @textMuted]After bumping into the identical kitchen chair leg for four consecutive years, the rogue appliance breached the sliding patio door to seek a life free from hardwood floor lint &#8230;read more[/color] | 09:40<br>Today |\n| ![|200](https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400) | ### [Executive Leadership Resolves Systemic Burnout with Single Lukewarm Cheese Pizza](https://faketechnews.fake/2026/09/03/executives-cure-burnout-cheese-pizza/ ^)<br>[color @textMuted]Eighty engineers were instructed to divide one medium thin-crust pie into atomic-scale wedges, which internal company memos confirmed immediately boosted workplace morale by 300% &#8230;read more[/color] | 06:10<br>Today |\n| ![|200](https://images.unsplash.com/photo-1549608276-5786777e6587?w=400) | ### [Office Pigeon Roosting Outside 14th Floor Window Unanimously Elected Head of HR](https://faketechnews.fake/2026/09/02/office-pigeon-elected-head-of-hr/ ^)<br>[color @textMuted]Staff members noted that the bird's standard policy of aggressively bobbing its head while staring blankly into middle distance offered far more emotional validation than previous management &#8230;read more[/color] | 03:00<br>Today |\n| ![|200](https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=400) | ### [Smart Toaster Refuses to Brown Sourdough Until User Accepts 84-Page Privacy Policy](https://faketechnews.fake/2026/09/02/smart-toaster-demands-terms-acceptance/ ^)<br>[color @textMuted]The IoT appliance has locked its crumb tray and disabled the heating coils until the homeowner surrenders GPS tracking rights, microphone access, and genetic ancestry records &#8230;read more[/color] | 22:45<br>Yesterday |\n| ![|200](https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400) | ### [Cat Naps on Mechanical Keyboard, Deletes Three Years of Technical Debt](https://faketechnews.fake/2026/09/02/cat-keyboard-nap-fixes-codebase/ ^)<br>[color @textMuted]By holding down the Backspace key for twenty uninterrupted minutes, Barnaby the tabby eliminated 14 legacy dependencies and improved overall server response latency by half &#8230;read more[/color] | 19:20<br>Yesterday |\n| ![|200](https://images.unsplash.com/photo-1584269600464-37b1b58a9fe7?w=400) | ### [Smart Refrigerator Panics Over Low Dairy Levels, Automatically Orders 800 Gallons of Whole Milk](https://faketechnews.fake/2026/09/02/smart-fridge-orders-800-gallons-milk/ ^)<br>[color @textMuted]A glitch in the predictive inventory subsystem mistook an empty butter dish for an existential crisis, deploying an entire regional freight convoy directly to a residential driveway &#8230;read more[/color] | 17:35<br>Yesterday |\n| ![|200](https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=400) | ### [Potted Fern in Breakroom Unanimously Voted Scrum Master After Saying Nothing All Sprint](https://faketechnews.fake/2026/09/02/potted-fern-voted-scrum-master/ ^)<br>[color @textMuted]Engineers reported that the houseplant's quiet photosynthesis provided optimal psychological safety, zero scope creep, and a complete absence of mid-day calendar invites &#8230;read more[/color] | 15:10<br>Yesterday |\n| ![|200](https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=400) | ### [Bluetooth Showerhead Forces Mandatory 4GB Firmware Update Mid-Lather, Defaults to Freezing Water](https://faketechnews.fake/2026/09/02/bluetooth-shower-firmware-update-freeze/ ^)<br>[color @textMuted]The cloud-connected fixture disabled hot water valves during a mandatory kernel re-flash, warning the shivering homeowner that closing the curtain would void the lifetime warranty &#8230;read more[/color] | 11:45<br>Yesterday |\n| ![|200](https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400) | ### [Developer Closes 47 Browser Tabs in Single Sitting, Instantly Forgets Entire Career History](https://faketechnews.fake/2026/09/02/developer-closes-tabs-amnesia/ ^)<br>[color @textMuted]Medical experts confirm that purging six years of unread StackOverflow workarounds and half-watched tutorial videos caused immediate, irreversible memory loss regarding how CSS works &#8230;read more[/color] | 08:15<br>Yesterday |\n\n### This is generated using an Homey script. Read: **[RSS News Reader](help://Tips%20%26%20Tricks/rss-news-reader)**",
+        "typography": {
+          "mdH3": {
+            "lineHeight": 1.4,
+            "blockSpacing": -15
+          }
+        },
+        "metaName": "News",
+        "layout": {
+          "responsive": {
+            "order": 5,
+            "columnSpan": 2,
+            "rowSpan": 1,
+            "preferredColumn": 5,
+            "hidden": false,
+            "height": 800,
+            "cellHeightMode": "fill"
+          }
+        },
+        "mdOverflowScroll": true
+      },
+      "bindings": {}
+    },
+    "clock_8547": {
+      "type": "clock",
+      "overrides": {
+        "x": 830,
+        "y": 390,
+        "width": 260,
+        "height": 300,
+        "page": 1,
+        "displayMode": "text",
+        "clockUse12Hour": true,
+        "textShowTime": false,
+        "metaName": "Clock - Time 8547",
+        "layout": {
+          "responsive": {
+            "order": 1,
+            "columnSpan": 2,
+            "rowSpan": 1,
+            "height": 100,
+            "preferredColumn": 3,
+            "hidden": false
+          }
+        },
+        "typography": {
+          "timeDate": {
+            "fontSize": 54
+          }
+        }
+      },
+      "bindings": {}
+    },
+    "menu_812296": {
+      "type": "menu",
+      "overrides": {
+        "x": 540,
+        "y": 120,
+        "width": 260,
+        "height": 515,
+        "page": 1,
+        "label": "Webshops",
+        "menuItems": [
+          {
+            "label": "Vesternet",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.vesternet.com/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "ROBBshop",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.robbshop.nl/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "The Smartest House",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.thesmartesthouse.com/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "Domadoo",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.domadoo.fr/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "SmartHome Australia",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.smarthome.com.au/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "SmarterHomeShop",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.smarterhomeshop.eu/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "tink",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.tink.de/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "Conrad Electronic",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.conrad.com/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "Reichelt Elektronik",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.reichelt.com/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "Coolblue",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.coolblue.nl/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "Cyberport",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.cyberport.de/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "Digitec Galaxus",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.digitec.ch/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "SmartHome Store",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.smarthome-store.de/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "Proshop",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.proshop.de/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          },
+          {
+            "label": "Z-Wave.pl",
+            "mode": "push",
+            "actionType": "url",
+            "urlTo": "https://www.z-wave.pl/",
+            "urlNewTab": true,
+            "state": false,
+            "icons": {
+              "on": {
+                "source": "favicon",
+                "builtin": "",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {}
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": 1
+          }
+        ],
+        "metaName": "Menu - Webshops",
+        "layout": {
+          "responsive": {
+            "columnSpan": 1,
+            "rowSpan": 1,
+            "height": 0,
+            "preferredColumn": 4,
+            "hidden": false,
+            "order": 7
+          }
+        },
+        "menuItemHeight": 28
+      },
+      "bindings": {
+        "menuItems": []
+      }
+    },
+    "text_3742": {
+      "type": "text",
+      "overrides": {
+        "x": 830,
+        "y": 390,
+        "width": 260,
+        "height": 300,
+        "page": 1,
+        "text": "# :ph-thermometer: 18°C &nbsp;&nbsp;&nbsp;&nbsp; :ph-wind: 23.4 m/s &nbsp;&nbsp;&nbsp;&nbsp; :ph-drop: 66% &nbsp;&nbsp;&nbsp;&nbsp; :ph-gauge: 763 mmHg\n\n| Saturday | Sunday | Monday | Tuesday | Wednesday | Thursday | Friday |\n| :---: | :---: | :---: | :---: | :---: | :---: | :---: |\n| :ph-cloud-sun|50: | :ph-cloud-sun|50: | :ph-cloud-sun|50: | :ph-cloud-snow|50: | :ph-cloud-lightning|50: | :ph-cloud-snow|50: | :ph-cloud-rain|50: |\n| 20°C | 23°C | 26°C | 19°C | 15°C | 17°C | 16°C |\n| 16°C | 14°C | 19°C | 14°C | 13°C | 12°C | 13°C |\n\n---\n### Coming hours:\n| 08:00 | 09:00 | 10:00 | 11:00 | 12:00 | 13:00 |\n| :---: | :---: | :---: | :---: | :---: | :---: |\n| :ph-cloud-sun|50: | :ph-cloud-sun|50: | :ph-cloud-sun|50: | :ph-cloud-sun|50: | :ph-cloud-sun|50: | :ph-sun|50: |\n| 17°C | 18°C | 18°C | 18°C | 18°C | 18°C |\n\n### This is generated with a Homey script. Read: **[Weather Widget using AI](help://Tips%20%26%20Tricks/weather-widget-ai)**\n",
+        "metaName": "Text - Text 3742",
+        "layout": {
+          "responsive": {
+            "order": 2,
+            "columnSpan": 2,
+            "rowSpan": 1,
+            "height": 0,
+            "preferredColumn": 1,
+            "hidden": false
+          }
+        }
+      },
+      "bindings": {}
+    },
+    "text_0402": {
+      "type": "text",
+      "overrides": {
+        "x": 830,
+        "y": 390,
+        "width": 260,
+        "height": 300,
+        "page": 1,
+        "typography": {
+          "mdH3": {
+            "blockSpacing": -15
+          }
+        },
+        "metaName": "Text - Text 0402",
+        "layout": {
+          "responsive": {
+            "order": 8,
+            "columnSpan": 4,
+            "rowSpan": 1,
+            "preferredColumn": 3,
+            "hidden": false,
+            "cellHeightMode": "fixed",
+            "cellHeight": 800
+          }
+        },
+        "text": "| Bron | Afbeelding | Artikel | Geplaatst |\n| :--- | :---: | :--- | :---: |\n| [cell @markerTint2] :ph-browser|20: Technology | ![|200](https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/09f1/live/aaa670e0-af38-11f1-a540-61c3f7fc4e6c.jpg) | ### [AI staff 'genuinely frightened' for humanity's future, ex-Anthropic researcher tells BBC](https://www.bbc.co.uk/news/articles/c1kx0gyje9wo?at_medium=RSS&amp;at_campaign=rss ^)<br>[color @textMuted]It comes as the AI firm's boss has called for the technology's development to be slowed down, citing \"serious\" risks.[/color] | 11:13<br>Today |\n| [cell @markerTint1] :ph-browser|20: Entertainment | ![|200](https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/48da/live/a8cca6a0-af1e-11f1-936a-359304b79ff2.jpg) | ### ['She's back': Fans dance, sing and cry after Céline Dion's comeback concert in Paris](https://www.bbc.co.uk/news/videos/cpq01p1wn78o?at_medium=RSS&amp;at_campaign=rss ^)<br>[color @textMuted]Thousands turned out to witness Céline Dion perform in Paris on Saturday, her first show after a six year illness-induced hiatus.[/color] | 02:59<br>Today |\n| [cell @markerTint1] :ph-browser|20: Entertainment | ![|200](https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/7767/live/2b484690-aefa-11f1-a52c-d92eb1a832de.jpg) | ### [Critics celebrate Céline Dion's 'high-stakes' comeback show in Paris](https://www.bbc.co.uk/news/articles/cj3dzy3n84no?at_medium=RSS&amp;at_campaign=rss ^)<br>[color @textMuted]The iconic Canadian singer kicked off her long-awaited comeback show in Paris on Saturday, after a six-year hiatus due to health issues.[/color] | 02:41<br>Today |\n| [cell @markerTint1] :ph-browser|20: Entertainment | ![|200](https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/1813/live/3cb8cbb0-af0f-11f1-a65d-4542d2ba1a22.jpg) | ### [Watch: Fantasia on British Sea-Songs at the Last Night of the Proms](https://www.bbc.co.uk/news/videos/c1wxl4ld3r3o?at_medium=RSS&amp;at_campaign=rss ^)<br>[color @textMuted]Sir Henry Wood composed the melody for the centenary of the Battle of Trafalgar in 1905.[/color] | 01:13<br>Today |\n| [cell @markerTint1] :ph-browser|20: Entertainment | ![|200](https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/2b5b/live/c55ba620-af48-11f1-a126-479114b35332.jpg) | ### [Drag Race co-creator warns of TV representation 'crisis' after BBC drops show](https://www.bbc.co.uk/news/articles/c86x4pd720xo?at_medium=RSS&amp;at_campaign=rss ^)<br>[color @textMuted]The BBC is cutting the show because of financial pressures, sparking discussion about LGBTQ+ representation on TV.[/color] | 23:49<br>Yesterday |\n| [cell @markerTint1] :ph-browser|20: Entertainment | ![|200](https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/5584/live/43fdac50-adda-11f1-8b98-35ffe039e825.jpg) | ### [Tom Felton: I'm so excited to see Rupert Grint play Ron Weasley again](https://www.bbc.co.uk/news/articles/cy0zv4j24zgo?at_medium=RSS&amp;at_campaign=rss ^)<br>[color @textMuted]The Harry Potter actor talks about taking on Broadway and his friendship with former co-stars[/color] | 23:41<br>Yesterday |\n| [cell @markerTint1] :ph-browser|20: Entertainment | ![|200](https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/7f3f/live/b16a3260-aefa-11f1-bc1f-3f186ca4140c.jpg) | ### [Diljit Dosanjh makes history under the famous Wembley arch](https://www.bbc.co.uk/news/articles/c780zvq7xlvo?at_medium=RSS&amp;at_campaign=rss ^)<br>[color @textMuted]Wembley Stadium billed Diljit Dosanjh as the first Punjabi singer to headline the iconic music venue.[/color] | 23:06<br>Yesterday |\n| [cell @markerTint2] :ph-browser|20: Technology | ![|200](https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/9256/live/a1802a30-aeb9-11f1-b1d1-571ed4d7ff2c.jpg) | ### [Anthropic boss Dario Amodei calls for AI development to slow down](https://www.bbc.co.uk/news/articles/c14dpgm0rg4o?at_medium=RSS&amp;at_campaign=rss ^)<br>[color @textMuted]The call comes amid growing concerns that AI models may become able to inflict serious damage worldwide.[/color] | 21:16<br>Yesterday |\n| [cell @markerTint1] :ph-browser|20: Entertainment | ![|200](https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/7ef4/live/d1f49450-aed5-11f1-91ea-91f4a2a08fa4.jpg) | ### [Noel Gallagher says Johnny Marr has 'always been gung-ho' with his guitars](https://www.bbc.co.uk/news/articles/c3v4nnw9pvyo?at_medium=RSS&amp;at_campaign=rss ^)<br>[color @textMuted]The band borrowed one of Marr's instruments which was used on the cover of Oasis' 1994 debut single Supersonic.[/color] | 19:27<br>Yesterday |\n| [cell @markerTint1] :ph-browser|20: Entertainment | ![|200](https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/dddd/live/02758cf0-aec3-11f1-89e2-171455bb2760.jpg) | ### [Oscar-winning film producer Jeremy Thomas dies aged 77](https://www.bbc.co.uk/news/articles/c3v4nzrk4rlo?at_medium=RSS&amp;at_campaign=rss ^) | 16:32<br>Yesterday |\n| [cell @markerTint1] :ph-browser|20: Entertainment | ![|200](https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/42bf/live/4e811660-ae77-11f1-b1d1-571ed4d7ff2c.jpg) | ### [Grammy-winning US rapper Lil Durk acquitted in murder-for-hire trial](https://www.bbc.co.uk/news/articles/c1kx0jje18wo?at_medium=RSS&amp;at_campaign=rss ^) | 08:04<br>Yesterday |\n| [cell @markerTint1] :ph-browser|20: Entertainment | ![|200](https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/16fa/live/76128df0-ae20-11f1-ac3c-d9de82cf7bb1.png) | ### [The Prodigy to headline Creamfields 2027](https://www.bbc.co.uk/news/articles/cgmrzm17dgjo?at_medium=RSS&amp;at_campaign=rss ^) | 06:37<br>Yesterday |\n| [cell @markerTint1] :ph-browser|20: Entertainment | ![|200](https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/a633/live/3a440300-adce-11f1-82c1-5ff19bf7a2f2.jpg) | ### [Life after Eurovision for Look Mum No Computer](https://www.bbc.co.uk/news/articles/c7v419e3r4jo?at_medium=RSS&amp;at_campaign=rss ^) | 06:06<br>Yesterday |\n| [cell @markerTint1] :ph-browser|20: Entertainment | ![|200](https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/6d0c/live/3e4afb80-ac3d-11f1-aa42-a9647fd0ba61.jpg) | ### [How a BBC strike exterminated Doctor Who adventure](https://www.bbc.co.uk/news/articles/c8jdp38z4jgo?at_medium=RSS&amp;at_campaign=rss ^) | 05:15<br>Yesterday |\n| [cell @markerTint2] :ph-browser|20: Technology | ![|200](https://ichef.bbci.co.uk/images/ic/240x135/p0p93vjy.jpg) | ### [Tech Now](https://www.bbc.co.uk/iplayer/episode/m0031qjy?at_medium=RSS&amp;at_campaign=rss ^)<br>[color @textMuted]Shiona McCallum meets mums and hospital staff trialling a new assisted birth innovation.[/color] | 01:00<br>Yesterday |\n\n### This is generated using an Homey script. Read: **[RSS News Reader](help://Tips%20%26%20Tricks/rss-news-reader)**",
+        "mdOverflowScroll": true
+      },
+      "bindings": {}
+    },
+    "text_558104839": {
+      "type": "text",
+      "overrides": {
+        "x": 60,
+        "y": 30,
+        "width": 990,
+        "height": 780,
+        "page": "1",
+        "text": "# :ph-calendar: April 2026 Week View\n*Use the Homey iCal Markdown parser to fill the calendars with real data*\n| Mon<br>01-06-2026 | Tue<br>02-06-2026 | Wed<br>03-06-2026 | Thu<br>04-06-2026 | Fri<br>05-06-2026 | Sat<br>06-06-2026 | Sun<br>07-06-2026 |\\n| :--- | :--- | :--- | :--- | :--- | :--- | :--- |\\n| **All Day**<br>[block1::ph-cat: Cat Is CEO]<br>**Night**<br>[block2::ph-moon-stars: **03:12** Insomnia]<br>**Morning**<br>[block2::ph-coffee: **07:00** Brew][block2::ph-robot: **08:20** Roomba Stuck]<br>**Afternoon**<br>[block2::ph-package: **15:00** Parcel Cam]<br>**Evening**<br>[block2::ph-moon: **20:00** Sleep Mode][block2::ph-popcorn: **22:15** Guilty Series] | **All Day**<br>[block1::ph-cloud-rain: Sprinklers On Strike]<br>**Night**<br>[block2::ph-owl: **02:00** Owl Notification]<br>**Morning**<br>[block2::ph-car: **06:45** Preheat EV][block2::ph-envelope: **09:30** Inbox Dread]<br>**Afternoon**<br>[block2::ph-couch: **12:00** Couch Sprint]<br>**Evening**<br>[block2::ph-film-strip: **19:30** Netflix & Dim][block2::ph-wine: **21:00** Tuesday Wine] | **All Day**<br>[block1::ph-calendar-x: Hump Day Energy]<br>**Night**<br>[block2::ph-alarm: **05:50** Snooze War]<br>**Morning**<br>[block2::ph-barbell: **07:00** Virtual Gym][block2::ph-plant: **10:00** Plant Judgement]<br>**Afternoon**<br>[block2::ph-chart-line-down: **14:30** Motivation Dip]<br>**Evening**<br>[block2::ph-shield-check: **20:00** Arm Perimeter][block2::ph-book-open: **22:00** Wiki Rabbit Hole] | **All Day**<br>[block1::ph-thumbs-up: Almost Friday Vibes]<br>**Night**<br>[block2::ph-bed: **04:00** Dream Firmware]<br>**Morning**<br>[block2::ph-coffee: **06:30** Strong Brew][block2::ph-presentation: **10:30** Slides Panic]<br>**Afternoon**<br>[block2::ph-users-three: **13:00** Meeting Bingo]<br>**Evening**<br>[block2::ph-cat: **19:00** Feed Overlord][block2::ph-beer-stein: **21:30** Thirsty Thursday] | **All Day**<br>[block1::ph-confetti: TGIF Mode]<br>**Night**<br>[block2::ph-music-notes: **01:30** Bass Test]<br>**Morning**<br>[block2::ph-music-notes: **07:00** Wakeup Mix][block2::ph-hand-waving: **09:00** Fake Productivity]<br>**Afternoon**<br>[block2::ph-chat-circle: **15:00** Meme Break]<br>**Evening**<br>[block2::ph-game-controller: **20:00** Console Time][block2::ph-disco-ball: **22:30** Kitchen Disco] | **All Day**<br>[block1::ph-bed: Pajama Protocol]<br>**Night**<br>[block2::ph-alien: **02:20** Fridge Raid]<br>**Morning**<br>[block2::ph-coffee: **09:30** Brew][block2::ph-shopping-cart: **11:00** Impulse Buy]<br>**Afternoon**<br>[block2::ph-grill: **15:00** BBQ Rehearsal]<br>**Evening**<br>[block2::ph-confetti: **20:00** Party Scene][block2::ph-speaker-x: **23:45** Neighbor Knock] | **All Day**<br>[block1::ph-recycle: Guilt Recycling]<br>**Night**<br>[block2::ph-star: **03:30** Existential Scroll]<br>**Morning**<br>[block2::ph-bed: **09:00** Ignore Alarm][block2::ph-newspaper: **11:00** Doom Headlines]<br>**Afternoon**<br>[block2::ph-broom: **14:00** Sunday Sweep]<br>**Evening**<br>[block2::ph-calendar: **20:30** Plan Next Week][block2::ph-eye-closed: **21:00** Early Bed] |\\n\n\n### This is generated using an Homey script. Read: [Calendar & iCal](help://Homey%20Flow%20Cards/calendar-ical)",
+        "metaName": "Text - Text 5966",
+        "textVerticalAlign": "top",
+        "mdTableStyle": "week_planner",
+        "padding": 8,
+        "mdOverflowScroll": true,
+        "visible": true,
+        "layout": {
+          "responsive": {
+            "columnSpan": 4,
+            "preferredColumn": 3,
+            "order": 7
+          }
+        }
+      },
+      "bindings": {}
+    },
+    "graph_058494890": {
+      "type": "graph",
+      "overrides": {
+        "useBaseline": true,
+        "showAxisX": true,
+        "showAxisY": true,
+        "timeFormat": "Datapoints",
+        "timezoneConvert": false,
+        "autoAxisResX": true,
+        "autoAxisResY": true,
+        "axisResX": 3,
+        "showPointValues": true,
+        "autoPointValuesInterval": false,
+        "pointValuesInterval": 0.1,
+        "gridHTopShow": false,
+        "gridHBotShow": true,
+        "gridHBaseShow": true,
+        "gridHInnerShow": true,
+        "gridHInnerW": 1,
+        "gridHInnerOp": 80,
+        "gridVLeftShow": true,
+        "gridVRightShow": false,
+        "gridVShow": true,
+        "gridVOp": 80,
+        "type": "line",
+        "showLegend": false,
+        "label": "Graph Points with Point values and tick marks",
+        "series": [
+          {
+            "id": "smvxs9ncbl77e",
+            "name": "Noise10",
+            "nameLocked": false,
+            "visible": true,
+            "data": "",
+            "positiveColor": "@markerTint4",
+            "negativeColor": "@markerTint4",
+            "positiveFillColor": "@markerTint4",
+            "negativeFillColor": "@markerTint4",
+            "pointColor": "@warning"
+          }
+        ],
+        "x": 810,
+        "y": 130,
+        "page": "1",
+        "metaName": "Graph Stock50",
+        "width": 360,
+        "height": 200,
+        "graphAnimation": "morph",
+        "roundingMode": "smart",
+        "dynamicFloor": true,
+        "fixedFloor": 0,
+        "dynamicCeiling": true,
+        "showPoints": true,
+        "showTickX": true,
+        "showTickY": true,
+        "pointSize": 7,
+        "layout": {
+          "responsive": {
+            "columnSpan": 2
+          }
+        }
+      },
+      "bindings": {
+        "series": [
+          {
+            "data": "sim/graph/noise10"
+          }
+        ]
+      }
+    },
+    "graph_058540237": {
+      "type": "graph",
+      "overrides": {
+        "useBaseline": true,
+        "showAxisX": true,
+        "showAxisY": true,
+        "timeFormat": "HH",
+        "timezoneConvert": false,
+        "autoAxisResX": true,
+        "autoAxisResY": true,
+        "axisResX": 3,
+        "autoPointValuesInterval": false,
+        "pointValuesInterval": 1,
+        "gridHTopShow": false,
+        "gridHBotShow": true,
+        "gridHBaseShow": true,
+        "gridHInnerShow": true,
+        "gridHInnerW": 1,
+        "gridHInnerOp": 60,
+        "gridVLeftShow": true,
+        "gridVRightShow": false,
+        "gridVOp": 60,
+        "type": "bar",
+        "showLegend": true,
+        "label": "Bar graph with two sources",
+        "series": [
+          {
+            "id": "smvwtkb60iays",
+            "name": "Interesting Data",
+            "nameLocked": true,
+            "visible": true,
+            "data": "",
+            "positiveColor": "@markerTint2",
+            "negativeColor": "@markerTint2",
+            "positiveFillColor": "@markerTint2",
+            "negativeFillColor": "@markerTint2",
+            "valueMultiplier": 0
+          },
+          {
+            "id": "smvwu8q5o8q52",
+            "name": "Boring Data",
+            "nameLocked": true,
+            "visible": true,
+            "data": "20,30,12,5,21,6,3,8,30,12",
+            "positiveColor": "@markerTint4",
+            "negativeColor": "@markerTint4",
+            "positiveFillColor": "@markerTint2",
+            "negativeFillColor": "@markerTint2"
+          }
+        ],
+        "x": 410,
+        "y": 340,
+        "page": "1",
+        "metaName": "Graph Noise10",
+        "width": 610,
+        "height": 220,
+        "dynamicFloor": true,
+        "fixedFloor": 0,
+        "dynamicCeiling": true,
+        "legendPosition": "floating",
+        "barDirection": "vertical",
+        "graphAnimation": "morph",
+        "roundingMode": "smart",
+        "legendOffX": 1030,
+        "legendOffY": 340,
+        "legendAutoSize": false,
+        "legendW": 140,
+        "legendH": 59,
+        "gridHInnerCol": "@markerTint3",
+        "layout": {
+          "responsive": {
+            "columnSpan": 2
+          }
+        }
+      },
+      "bindings": {
+        "series": [
+          {
+            "data": "sim/graph/noise10"
+          }
+        ]
+      }
+    },
+    "graph_058595416": {
+      "type": "graph",
+      "overrides": {
+        "x": 410,
+        "y": 570,
+        "page": "1",
+        "metaName": "Streaming data",
+        "label": "Streaming data with 6 sources, fixed time - real time",
+        "width": 610,
+        "height": 230,
+        "series": [
+          {
+            "id": "smvxqd7p8jflp",
+            "name": "Cpu Load",
+            "nameLocked": false,
+            "visible": true,
+            "data": "",
+            "positiveColor": "@markerTint2",
+            "negativeColor": "@markerTint2",
+            "positiveFillColor": "@markerTint2",
+            "negativeFillColor": "@markerTint2"
+          },
+          {
+            "id": "smvy8e2flkzy",
+            "name": "Humidity",
+            "nameLocked": false,
+            "visible": true,
+            "data": "",
+            "positiveColor": "@markerTint3",
+            "negativeColor": "@markerTint3",
+            "positiveFillColor": "@markerTint3",
+            "negativeFillColor": "@markerTint3"
+          },
+          {
+            "id": "smvy8e2fmgonn",
+            "name": "Rpm",
+            "nameLocked": false,
+            "visible": true,
+            "data": "",
+            "positiveColor": "@markerTint1",
+            "negativeColor": "@markerTint1",
+            "positiveFillColor": "@markerTint1",
+            "negativeFillColor": "@markerTint1",
+            "valueMultiplier": 0.05
+          },
+          {
+            "id": "smvxq7bie3dgx",
+            "name": "Sine",
+            "nameLocked": false,
+            "visible": true,
+            "data": "",
+            "positiveColor": "@danger",
+            "negativeColor": "@danger",
+            "pointColor": "@warning"
+          },
+          {
+            "id": "smvy8e2fmj401",
+            "name": "Temperature",
+            "nameLocked": false,
+            "visible": true,
+            "data": "",
+            "positiveColor": "@markerTint2",
+            "negativeColor": "@markerTint2",
+            "positiveFillColor": "@markerTint2",
+            "negativeFillColor": "@markerTint2"
+          },
+          {
+            "id": "smvy8e2fmeu3g",
+            "name": "Voltage",
+            "nameLocked": false,
+            "visible": true,
+            "data": "",
+            "positiveColor": "@markerTint4",
+            "negativeColor": "@markerTint4",
+            "positiveFillColor": "@markerTint4",
+            "negativeFillColor": "@markerTint4",
+            "valueMultiplier": 0.3
+          },
+          {
+            "id": "smvxq7bieihr0",
+            "name": "Wind Speed",
+            "nameLocked": false,
+            "visible": true,
+            "data": "",
+            "positiveColor": "@markerTint2",
+            "negativeColor": "@markerTint2",
+            "positiveFillColor": "@markerTint2",
+            "negativeFillColor": "@markerTint2"
+          }
+        ],
+        "graphAnimation": "morph",
+        "bufferMode": "duration",
+        "durationPreset": "custom",
+        "fixedTimeWindow": true,
+        "durationCustomUnit": "minutes",
+        "gridHBotShow": true,
+        "gridVLeftShow": true,
+        "gridHBaseShow": false,
+        "gridHInnerShow": false,
+        "durationCustomValue": 1,
+        "timelineAdvance": "time",
+        "legendPosition": "right",
+        "legendAutoSize": true,
+        "legendW": 140,
+        "legendH": 163,
+        "legendOffX": 1030,
+        "legendOffY": 570,
+        "showPoints": true,
+        "showPointValues": true,
+        "timeFormat": "HH:mm:ss",
+        "autoAxisResX": true,
+        "layout": {
+          "responsive": {
+            "columnSpan": 2
+          }
+        }
+      },
+      "bindings": {
+        "series": [
+          {
+            "data": "sim/cpu_load"
+          },
+          {
+            "data": "sim/humidity"
+          },
+          {
+            "data": "sim/rpm"
+          },
+          {
+            "data": "sim/sine"
+          },
+          {
+            "data": "sim/temperature"
+          },
+          {
+            "data": "sim/voltage"
+          },
+          {
+            "data": "sim/wind_speed"
+          }
+        ]
+      }
+    }
+  },
+  "groups": {
+    "group_mr2ldpww_743": {
+      "id": "group_mr2ldpww_743",
+      "name": "Search",
+      "locked": false,
+      "visible": true,
+      "bindings": {},
+      "overridePage": "",
+      "dimBackgroundWhenVisible": false,
+      "widgets": {
+        "empty_591520401": {
+          "type": "empty",
+          "overrides": {
+            "x": 310,
+            "y": 160,
+            "width": 470,
+            "height": 260,
+            "zIndex": 9,
+            "page": 1,
+            "label": "Universal Search",
+            "metaName": "Search Container",
+            "layout": {
+              "responsive": {
+                "order": 1,
+                "columnSpan": 1,
+                "rowSpan": 1,
+                "height": 0,
+                "preferredColumn": 0,
+                "hidden": false
+              }
+            }
+          },
+          "bindings": {}
+        },
+        "editbox_591549983": {
+          "type": "editbox",
+          "overrides": {
+            "x": 320,
+            "y": 180,
+            "width": 450,
+            "height": 60,
+            "page": 1,
+            "sendBehavior": "openUrl",
+            "triggerTopic": "local/searchTrigger",
+            "customPlaceholder": "Enter your search query...",
+            "metaName": "Search Input Box",
+            "layout": {
+              "responsive": {
+                "order": 2,
+                "columnSpan": 1,
+                "rowSpan": 1,
+                "height": 0,
+                "preferredColumn": 0,
+                "hidden": false
+              }
+            },
+            "container": {
+              "show": false
+            }
+          },
+          "bindings": {
+            "__trigger": "local/searchTrigger",
+            "urlPrefix": "local/urlPrefix",
+            "urlSuffix": "local/urlSuffix"
+          }
+        },
+        "switch_591560604": {
+          "type": "switch",
+          "overrides": {
+            "x": 320,
+            "y": 230,
+            "width": 150,
+            "height": 80,
+            "page": 1,
+            "buttonLabel": "Google",
+            "outputTopic": "local/urlPrefix",
+            "onPayload": "https://www.google.com/search?q=",
+            "extraOutputTopics": [
+              {
+                "topic": "local/searchTrigger",
+                "topicOff": "",
+                "onPayload": "true",
+                "offPayload": "false"
+              }
+            ],
+            "icons": {
+              "on": {
+                "source": "phosphor",
+                "builtin": "ph-google-logo",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              }
+            },
+            "metaName": "Search - Google",
+            "style": "button",
+            "mode": "push",
+            "container": {
+              "show": false
+            },
+            "buttonLabelPosition": "inside_bottom"
+          },
+          "bindings": {}
+        },
+        "switch_591594536": {
+          "type": "switch",
+          "overrides": {
+            "x": 470,
+            "y": 230,
+            "width": 150,
+            "height": 80,
+            "page": 1,
+            "buttonLabel": "Bing",
+            "outputTopic": "local/urlPrefix",
+            "onPayload": "https://www.bing.com/search?q=",
+            "extraOutputTopics": [
+              {
+                "topic": "local/searchTrigger",
+                "topicOff": "",
+                "onPayload": "true",
+                "offPayload": "false"
+              }
+            ],
+            "icons": {
+              "on": {
+                "source": "phosphor",
+                "builtin": "ph-windows-logo",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              }
+            },
+            "metaName": "Search - Bing",
+            "style": "button",
+            "mode": "push",
+            "container": {
+              "show": false
+            },
+            "buttonLabelPosition": "inside_bottom"
+          },
+          "bindings": {}
+        },
+        "switch_591617312": {
+          "type": "switch",
+          "overrides": {
+            "x": 620,
+            "y": 230,
+            "width": 150,
+            "height": 80,
+            "page": 1,
+            "buttonLabel": "DuckDuckGo",
+            "outputTopic": "local/urlPrefix",
+            "onPayload": "https://duckduckgo.com/?q=",
+            "extraOutputTopics": [
+              {
+                "topic": "local/searchTrigger",
+                "topicOff": "",
+                "onPayload": "true",
+                "offPayload": "false"
+              }
+            ],
+            "icons": {
+              "on": {
+                "source": "phosphor",
+                "builtin": "ph-detective",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              }
+            },
+            "metaName": "Search - DuckDuckGo",
+            "style": "button",
+            "mode": "push",
+            "container": {
+              "show": false
+            },
+            "buttonLabelPosition": "inside_bottom"
+          },
+          "bindings": {}
+        },
+        "switch_591636165": {
+          "type": "switch",
+          "overrides": {
+            "x": 320,
+            "y": 300,
+            "width": 150,
+            "height": 80,
+            "page": 1,
+            "buttonLabel": "YouTube",
+            "outputTopic": "local/urlPrefix",
+            "onPayload": "https://www.youtube.com/results?search_query=",
+            "extraOutputTopics": [
+              {
+                "topic": "local/searchTrigger",
+                "topicOff": "",
+                "onPayload": "true",
+                "offPayload": "false"
+              }
+            ],
+            "icons": {
+              "on": {
+                "source": "phosphor",
+                "builtin": "ph-youtube-logo",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              }
+            },
+            "metaName": "Search - YouTube",
+            "style": "button",
+            "mode": "push",
+            "container": {
+              "show": false
+            },
+            "buttonLabelPosition": "inside_bottom"
+          },
+          "bindings": {}
+        },
+        "switch_591652936": {
+          "type": "switch",
+          "overrides": {
+            "x": 470,
+            "y": 300,
+            "width": 150,
+            "height": 80,
+            "page": 1,
+            "buttonLabel": "Wikipedia",
+            "outputTopic": "local/urlPrefix",
+            "onPayload": "https://en.wikipedia.org/wiki/Special:Search?search=",
+            "extraOutputTopics": [
+              {
+                "topic": "local/searchTrigger",
+                "topicOff": "",
+                "onPayload": "true",
+                "offPayload": "false"
+              }
+            ],
+            "icons": {
+              "on": {
+                "source": "phosphor",
+                "builtin": "ph-book-open-text",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              }
+            },
+            "metaName": "Search - Wikipedia",
+            "style": "button",
+            "mode": "push",
+            "container": {
+              "show": false
+            },
+            "buttonLabelPosition": "inside_bottom"
+          },
+          "bindings": {}
+        },
+        "switch_591683505": {
+          "type": "switch",
+          "overrides": {
+            "x": 620,
+            "y": 300,
+            "width": 150,
+            "height": 80,
+            "page": 1,
+            "buttonLabel": "Homey Apps",
+            "outputTopic": "local/urlPrefix",
+            "onPayload": "https://homey.app/nl-nl/apps/browse/#filter?query=",
+            "extraOutputTopics": [
+              {
+                "topic": "local/searchTrigger",
+                "topicOff": "",
+                "onPayload": "true",
+                "offPayload": "false"
+              }
+            ],
+            "icons": {
+              "on": {
+                "source": "phosphor",
+                "builtin": "ph-circles-four",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              }
+            },
+            "metaName": "Search - Homey Apps",
+            "style": "button",
+            "mode": "push",
+            "container": {
+              "show": false
+            },
+            "buttonLabelPosition": "inside_bottom"
+          },
+          "bindings": {}
+        },
+        "label_4378": {
+          "type": "label",
+          "overrides": {
+            "x": 350,
+            "y": 370,
+            "page": 1,
+            "metaName": "Group info",
+            "layout": {
+              "responsive": {
+                "order": 8,
+                "columnSpan": 1,
+                "rowSpan": 1,
+                "height": 0,
+                "preferredColumn": 0,
+                "hidden": false
+              }
+            },
+            "width": 398,
+            "height": 38,
+            "text": "Grouped widgets are treated as a single widget inside the column."
+          },
+          "bindings": {}
+        }
+      },
+      "layout": {
+        "responsive": {
+          "order": 2,
+          "columnSpan": 2,
+          "preferredColumn": 3,
+          "scaleMode": "rescale"
+        }
+      },
+      "composite": {
+        "designWidth": 470,
+        "designHeight": 260,
+        "originX": 310,
+        "originY": 160
+      }
+    }
+  }
+}

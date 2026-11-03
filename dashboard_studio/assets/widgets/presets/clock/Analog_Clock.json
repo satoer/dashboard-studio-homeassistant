@@ -1,0 +1,22 @@
+{
+  "id": "New_Clock",
+  "name": "Analog Clock",
+  "widgetType": "clock",
+  "version": "2.0.0",
+  "variants": [
+    {
+      "id": "default",
+      "name": "default",
+      "settings": {
+        "displayMode": "analog",
+        "clockUse12Hour": false,
+        "textShowTime": true,
+        "textShowDate": true,
+        "textDateSeg1": "day",
+        "textDateSeg0": "weekday",
+        "textDateSeg2": "monthName",
+        "textDateSeg3": "yearLong"
+      }
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "id": "Horizontal_Battery",
+  "name": "Horizontal Battery",
+  "widgetType": "battery",
+  "version": "2.0.0",
+  "variants": [
+    {
+      "id": "default",
+      "name": "Solid",
+      "settings": {
+        "vertical": false,
+        "segments": 0
+      }
+    },
+    {
+      "id": "Segmented",
+      "name": "Segmented",
+      "settings": {
+        "vertical": false,
+        "segments": 6
+      }
+    }
+  ]
+}

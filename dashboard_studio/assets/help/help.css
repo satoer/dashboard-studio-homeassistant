@@ -1,0 +1,582 @@
+.help-img-header {
+        width: 100%;
+        height: auto;
+        display: block;
+        object-fit: contain;
+        object-position: center;
+        border-radius: 8px;
+        margin-top: var(--help-md-image-header-margin-top, 0);
+        margin-bottom: var(--help-md-image-header-margin-bottom, 1.5rem);
+        border: 1px solid rgba(255,255,255,0.1);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+    }
+    .help-img-content {
+        width: 100%;
+        max-width: 800px;
+        height: auto;
+        display: block;
+        object-fit: contain;
+        object-position: center;
+        border-radius: 8px;
+        margin-top: var(--help-md-image-content-margin-top, 2rem);
+        margin-bottom: var(--help-md-image-content-margin-bottom, 2rem);
+        margin-left: auto;
+        margin-right: auto;
+        border: 1px solid rgba(255,255,255,0.15);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+        background: rgba(0,0,0,0.2);
+    }
+    .help-section-body > img.help-img-content:first-child {
+        margin-top: 0;
+        max-height: none;
+    }
+    .help-section-body img {
+        height: auto;
+        max-width: 100%;
+        max-height: 400px;
+        display: block;
+        clear: both;
+        object-fit: contain;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+    }
+    .homey-badge {
+        font-size: var(--help-md-badge-font-size, 0.6rem);
+        line-height: var(--help-md-badge-line-height, 1.2);
+        font-weight: var(--help-md-badge-font-weight, 600);
+        font-style: var(--help-md-badge-font-style, normal);
+        letter-spacing: var(--help-md-badge-letter-spacing, 0.05em);
+        background: rgba(34, 211, 238, 0.1);
+        color: #22d3ee;
+        padding-top: var(--help-md-badge-padding-top, 2px);
+        padding-bottom: var(--help-md-badge-padding-bottom, 2px);
+        padding-left: var(--help-md-badge-padding-left, 6px);
+        padding-right: var(--help-md-badge-padding-right, 6px);
+        border-radius: 4px;
+        border: 1px solid rgba(34, 211, 238, 0.2);
+        margin-left: 8px;
+        vertical-align: middle;
+        text-transform: uppercase;
+        display: inline-block;
+    }
+    .help-details {
+        background: var(--help-md-details-background, rgba(255, 255, 255, 0.03));
+        border: var(--help-md-details-border-width, 1px) solid var(--help-md-details-border-color, var(--ui-border));
+        border-radius: var(--help-md-details-border-radius, 8px);
+        margin-top: var(--help-md-details-margin-top, 0);
+        margin-bottom: var(--help-md-details-margin-bottom, 1rem);
+        overflow: hidden;
+    }
+    .help-summary {
+        padding-top: var(--help-md-details-summary-padding-top, 1rem);
+        padding-bottom: var(--help-md-details-summary-padding-bottom, 1rem);
+        padding-left: var(--help-md-details-summary-padding-left, 1.25rem);
+        padding-right: var(--help-md-details-summary-padding-right, 1.25rem);
+        font-size: var(--help-md-details-summary-font-size, inherit);
+        line-height: var(--help-md-details-summary-line-height, inherit);
+        font-weight: var(--help-md-details-summary-font-weight, 600);
+        font-style: var(--help-md-details-summary-font-style, normal);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: var(--help-md-details-summary-gap, 0.75rem);
+        user-select: none;
+        background: rgba(0, 0, 0, 0.2);
+        color: var(--ui-text);
+        transition: background 0.2s;
+    }
+    .help-summary:hover {
+        background: rgba(255, 255, 255, 0.06);
+    }
+    .help-summary::-webkit-details-marker {
+        display: none;
+    }
+    .help-summary i.ph-caret-right {
+        transition: transform 0.2s;
+        color: var(--ui-text-muted);
+    }
+    .help-details[open] .help-summary i.ph-caret-right {
+        transform: rotate(90deg);
+    }
+    .help-details[open] .help-summary {
+        border-bottom: 1px solid var(--ui-border);
+    }
+    .help-details-content {
+        padding-top: var(--help-md-details-content-padding-top, 1.5rem);
+        padding-bottom: var(--help-md-details-content-padding-bottom, 1.5rem);
+        padding-left: var(--help-md-details-content-padding-left, 1.5rem);
+        padding-right: var(--help-md-details-content-padding-right, 1.5rem);
+        font-size: var(--help-md-details-content-font-size, inherit);
+        line-height: var(--help-md-details-content-line-height, inherit);
+        color: var(--ui-text-muted);
+    }
+    .code-wrapper {
+        position: relative;
+        margin: 1.5rem 0;
+        background: var(--help-md-code-block-background, var(--ui-tool-bg));
+        border: 1px solid var(--help-md-code-block-border-color, var(--ui-border));
+        border-radius: var(--help-md-code-block-border-radius, 8px);
+    }
+    .code-copy-btn {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        z-index: 5;
+        appearance: none;
+        background: var(--glass-bg, var(--ui-tool-bg));
+        border: 1px solid var(--glass-border, var(--ui-border));
+        color: var(--ui-text-muted);
+        padding: 0.25rem 0.55rem;
+        border-radius: var(--radius-micro, 0.25rem);
+        cursor: pointer;
+        font-size: 0.72rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        font-weight: 700;
+        line-height: 1;
+        min-height: 1.6rem;
+        box-shadow: var(--elev-1);
+        transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    }
+    .code-copy-btn:hover,
+    .code-copy-btn:focus-visible {
+        color: var(--ui-accent);
+        background: color-mix(in srgb, var(--ui-accent) 10%, var(--ui-tool-bg));
+        border-color: color-mix(in srgb, var(--ui-accent) 45%, var(--ui-border));
+        outline: none;
+    }
+    body.help-code-resizing {
+        cursor: se-resize;
+        user-select: none;
+    }
+    body:not(.he-help-editor) .help-code-frame {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        position: relative;
+    }
+    body:not(.he-help-editor) .code-header.has-code-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        min-height: 2.1rem;
+        padding-right: 0.55rem;
+    }
+    body:not(.he-help-editor) .code-header-label {
+        min-width: 0;
+        flex: 1 1 auto;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    body:not(.he-help-editor) .help-code-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 0.35rem;
+        flex-shrink: 0;
+        box-sizing: border-box;
+        padding: 0.4rem 0.55rem;
+        background: var(--ui-header-bg);
+        border-bottom: 1px solid var(--ui-border);
+        white-space: nowrap;
+    }
+    body:not(.he-help-editor) .code-header.has-code-actions .help-code-toolbar {
+        width: auto;
+        margin-left: auto;
+        padding: 0;
+        background: transparent;
+        border-bottom: 0;
+    }
+    body:not(.he-help-editor) .help-code-toolbar .code-copy-btn,
+    body:not(.he-help-editor) .help-code-expand-btn {
+        position: static;
+        top: auto;
+        right: auto;
+        z-index: auto;
+        box-shadow: none;
+        min-height: 1.55rem;
+        padding: 0.25rem 0.5rem;
+        text-transform: none;
+        letter-spacing: 0;
+        font-weight: 700;
+    }
+    body:not(.he-help-editor) .help-code-expand-btn {
+        appearance: none;
+        background: var(--glass-bg, var(--ui-tool-bg));
+        border: 1px solid var(--glass-border, var(--ui-border));
+        color: var(--ui-text-muted);
+        border-radius: var(--radius-micro, 0.25rem);
+        cursor: pointer;
+        font-size: 0.72rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.35rem;
+        line-height: 1;
+        transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    }
+    body:not(.he-help-editor) .help-code-expand-btn:hover,
+    body:not(.he-help-editor) .help-code-expand-btn:focus-visible {
+        color: var(--ui-accent);
+        background: color-mix(in srgb, var(--ui-accent) 10%, var(--ui-tool-bg));
+        border-color: color-mix(in srgb, var(--ui-accent) 45%, var(--ui-border));
+        outline: none;
+    }
+    body:not(.he-help-editor) .help-code-body {
+        position: relative;
+        min-width: 0;
+        flex: 0 0 auto;
+        box-sizing: border-box;
+    }
+    body:not(.he-help-editor) .help-code-frame.is-collapsible:not(.is-expanded) .help-code-body {
+        height: var(
+            --help-code-body-height,
+            calc(
+                var(--help-md-code-block-body-font-size, 0.95em)
+                * var(--help-md-code-block-body-line-height, 1.6)
+                * 20
+                + var(--help-md-code-block-body-padding-top, 1.25rem)
+                + var(--help-md-code-block-body-padding-bottom, 1.25rem)
+            )
+        );
+        overflow: auto;
+        scrollbar-width: thin;
+        scrollbar-color: var(--ui-scroll-thumb, color-mix(in srgb, var(--ui-text) 28%, transparent)) var(--ui-scroll-track, transparent);
+    }
+    body:not(.he-help-editor) .help-code-frame.is-collapsible:not(.is-expanded) .help-code-body::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+    body:not(.he-help-editor) .help-code-frame.is-collapsible:not(.is-expanded) .help-code-body::-webkit-scrollbar-thumb {
+        background: var(--ui-scroll-thumb, color-mix(in srgb, var(--ui-text) 28%, transparent));
+        border-radius: 8px;
+    }
+    body:not(.he-help-editor) .help-code-frame.is-expanded .help-code-body {
+        height: auto;
+        overflow-x: auto;
+        overflow-y: visible;
+    }
+    body:not(.he-help-editor) .help-code-body pre {
+        margin: 0;
+        padding: 0;
+        background: transparent;
+        border: none;
+        box-sizing: border-box;
+    }
+    body:not(.he-help-editor) .help-code-frame .help-code-body code {
+        overflow: visible;
+    }
+    body:not(.he-help-editor) .help-code-frame.is-collapsible {
+        overflow: hidden;
+    }
+    body:not(.he-help-editor) .help-code-resize {
+        display: none;
+        position: relative;
+        flex-shrink: 0;
+        height: 14px;
+        background: var(--ui-header-bg);
+        border-top: 1px solid var(--ui-border);
+        cursor: se-resize;
+        touch-action: none;
+    }
+    body:not(.he-help-editor) .help-code-frame.is-collapsible:not(.is-expanded) .help-code-resize {
+        display: block;
+    }
+    body:not(.he-help-editor) .help-code-resize::after {
+        content: "";
+        position: absolute;
+        right: 5px;
+        bottom: 3px;
+        width: 10px;
+        height: 10px;
+        cursor: se-resize;
+        background:
+            linear-gradient(135deg, transparent 0 42%, color-mix(in srgb, var(--ui-text-muted) 55%, transparent) 42% 52%, transparent 52%),
+            linear-gradient(135deg, transparent 0 68%, color-mix(in srgb, var(--ui-text-muted) 70%, transparent) 68% 78%, transparent 78%);
+        opacity: 0.85;
+    }
+    body:not(.he-help-editor) .help-code-resize:hover::after,
+    body:not(.he-help-editor) .help-code-frame.is-resizing .help-code-resize::after {
+        opacity: 1;
+        background:
+            linear-gradient(135deg, transparent 0 42%, var(--ui-accent) 42% 52%, transparent 52%),
+            linear-gradient(135deg, transparent 0 68%, var(--ui-accent) 68% 78%, transparent 78%);
+    }
+    a.editor-label-help-link {
+        color: var(--ui-accent);
+        font-weight: 700;
+        text-decoration: none;
+    }
+    a.editor-label-help-link:hover {
+        text-decoration: underline;
+    }
+    .help-kbd {
+        font-family: ui-monospace, monospace;
+        font-variant-ligatures: none;
+        font-feature-settings: "liga" 0, "calt" 0;
+        font-size: var(--help-md-kbd-font-size, 0.85em);
+        line-height: var(--help-md-kbd-line-height, 1);
+        font-weight: var(--help-md-kbd-font-weight, 700);
+        background: rgba(0,0,0,0.3);
+        padding-top: var(--help-md-kbd-padding-top, 2px);
+        padding-bottom: var(--help-md-kbd-padding-bottom, 2px);
+        padding-left: var(--help-md-kbd-padding-left, 4px);
+        padding-right: var(--help-md-kbd-padding-right, 4px);
+        border-radius: 4px;
+        border: 1px solid var(--ui-border);
+    }
+    .help-section-body a {
+        font-size: var(--help-md-link-font-size, inherit);
+        color: var(--help-md-link-color, var(--ui-accent));
+        font-weight: var(--help-md-link-font-weight, 700);
+        font-style: var(--help-md-link-font-style, normal);
+        text-decoration: var(--help-md-link-text-decoration, none);
+    }
+    .help-section-body a:hover {
+        text-decoration: underline;
+    }
+    .help-section-body code,
+    .help-section-body .code-block code {
+        font-variant-ligatures: none;
+        font-feature-settings: "liga" 0, "calt" 0;
+    }
+    .help-section-body table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: var(--help-md-table-font-size, 0.95rem);
+        line-height: var(--help-md-table-line-height, 1.5);
+        margin-top: var(--help-md-table-margin-top, 1.5rem);
+        margin-bottom: var(--help-md-table-margin-bottom, 1.5rem);
+    }
+    .help-section-body th,
+    .help-section-body td {
+        border-bottom: 1px solid var(--ui-border);
+        text-align: left;
+        vertical-align: top;
+    }
+    .help-section-body th {
+        color: var(--help-md-table-header-color, var(--ui-text-muted));
+        text-transform: uppercase;
+        font-size: var(--help-md-table-header-font-size, 0.75rem);
+        line-height: var(--help-md-table-header-line-height, 1.4);
+        font-weight: var(--help-md-table-header-font-weight, 700);
+        letter-spacing: var(--help-md-table-header-letter-spacing, 0.05em);
+        background: var(--ui-header-bg);
+        padding-top: var(--help-md-table-header-padding-top, 1rem);
+        padding-bottom: var(--help-md-table-header-padding-bottom, 1rem);
+        padding-left: var(--help-md-table-header-padding-left, 1rem);
+        padding-right: var(--help-md-table-header-padding-right, 1rem);
+    }
+    .help-section-body td {
+        font-size: var(--help-md-table-cell-font-size, inherit);
+        line-height: var(--help-md-table-cell-line-height, inherit);
+        font-weight: var(--help-md-table-cell-font-weight, 400);
+        color: var(--help-md-table-cell-color, inherit);
+        padding-top: var(--help-md-table-cell-padding-top, 1rem);
+        padding-bottom: var(--help-md-table-cell-padding-bottom, 1rem);
+        padding-left: var(--help-md-table-cell-padding-left, 1rem);
+        padding-right: var(--help-md-table-cell-padding-right, 1rem);
+    }
+    .help-section-body tr:hover td {
+        background: rgba(125, 125, 125, 0.05);
+    }
+    .help-section-body td svg {
+        display: inline-block;
+        vertical-align: -0.15em;
+        margin-right: 0.4em;
+    }
+
+    .help-grid {
+        display: flex;
+        flex-direction: column;
+        gap: var(--help-md-grid-gap, 1.25rem);
+        margin-top: var(--help-md-grid-margin-top, 1.5rem);
+        margin-bottom: var(--help-md-grid-margin-bottom, 1.5rem);
+        align-items: stretch;
+    }
+
+    .help-grid-row {
+        display: grid;
+        grid-template-columns: min-content 1fr;
+        column-gap: 1rem;
+        align-items: start;
+    }
+
+    .help-grid-row > *:first-child {
+        flex-shrink: 0;
+        width: var(--help-md-grid-btn-size, 42px);
+        min-width: var(--help-md-grid-btn-size, 42px);
+    }
+
+    .help-grid-row > div:last-child > *:first-child {
+        margin-top: 0;
+    }
+
+    .help-grid .btn-tool {
+        width: var(--help-md-grid-btn-size, 42px);
+        height: var(--help-md-grid-btn-size, 42px);
+        min-width: var(--help-md-grid-btn-size, 42px);
+        min-height: var(--help-md-grid-btn-size, 42px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: var(--help-md-grid-btn-radius, 8px);
+        background: var(--help-md-grid-btn-bg, var(--ui-input-bg));
+        border: var(--help-md-grid-btn-border-width, 1px) solid var(--help-md-grid-btn-border-color, var(--ui-border));
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        color: var(--help-md-grid-btn-color, var(--ui-accent));
+        font-size: var(--help-md-grid-btn-icon-size, 1.25rem);
+        padding: 0;
+        pointer-events: none;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+    }
+    .help-access-legend {
+        display: flex;
+        flex-direction: column;
+        gap: var(--help-md-access-legend-gap, 10px);
+        margin-top: var(--help-md-access-legend-margin-top, 14px);
+        margin-bottom: var(--help-md-access-legend-margin-bottom, 18px);
+        font-size: var(--help-md-access-legend-font-size, 0.88rem);
+        line-height: var(--help-md-access-legend-line-height, 1.5);
+    }
+    .help-access-row {
+        display: grid;
+        grid-template-columns: min-content 1fr;
+        column-gap: 15px;
+        align-items: start;
+    }
+    .help-access-badge-wrap {
+        display: inline-flex;
+        align-items: center;
+        min-width: 3.25rem;
+    }
+    .help-access-badge,
+    .help-access-badge-wrap svg {
+        color: #fff;
+        vertical-align: middle;
+        display: inline-block;
+    }
+    .help-access-badge text,
+    .help-access-badge-wrap svg text {
+        fill: #fff;
+    }
+    .help-alert.warning {
+        background: var(--help-md-alert-warning-background, rgba(245, 158, 11, 0.08));
+        border-left-color: var(--help-md-alert-warning-border-left-color, #f59e0b);
+    }
+    .help-alert.warning i {
+        color: var(--help-md-alert-warning-border-left-color, #f59e0b);
+    }
+
+.help-section-body h1 {
+    font-size: var(--help-md-heading1-font-size, 2rem);
+    line-height: var(--help-md-heading1-line-height, 1.3);
+    color: var(--help-md-heading1-color, var(--ui-text));
+    font-weight: var(--help-md-heading1-font-weight, 800);
+    font-style: var(--help-md-heading1-font-style, normal);
+    margin-top: var(--help-md-heading1-margin-top, 3rem);
+    margin-bottom: var(--help-md-heading1-margin-bottom, 1.5rem);
+    padding-bottom: var(--help-md-heading1-padding-bottom, 1rem);
+    border-bottom: var(--help-md-heading1-border-bottom-width, 1px) solid var(--help-md-heading1-border-bottom-color, var(--ui-border));
+    letter-spacing: var(--help-md-heading1-letter-spacing, -0.02em);
+}
+.help-section-body h2 {
+    font-size: var(--help-md-heading2-font-size, 1.5rem);
+    line-height: var(--help-md-heading2-line-height, 1.35);
+    color: var(--help-md-heading2-color, var(--ui-text));
+    font-weight: var(--help-md-heading2-font-weight, 700);
+    font-style: var(--help-md-heading2-font-style, normal);
+    margin-top: var(--help-md-heading2-margin-top, 2.5rem);
+    margin-bottom: var(--help-md-heading2-margin-bottom, 1.25rem);
+    padding-bottom: var(--help-md-heading2-padding-bottom, 0.5rem);
+    border-bottom: var(--help-md-heading2-border-bottom-width, 0) solid var(--help-md-heading2-border-bottom-color, transparent);
+    letter-spacing: var(--help-md-heading2-letter-spacing, -0.01em);
+}
+
+.help-section-body p.lead {
+    font-size: var(--help-md-lead-font-size, 1.35rem);
+    line-height: var(--help-md-lead-line-height, 1.5);
+    color: var(--help-md-lead-color, var(--ui-text));
+    font-weight: var(--help-md-lead-font-weight, 300);
+    font-style: var(--help-md-lead-font-style, normal);
+    margin-top: var(--help-md-lead-margin-top, 0);
+    margin-bottom: var(--help-md-lead-margin-bottom, 2.5rem);
+    letter-spacing: var(--help-md-lead-letter-spacing, -0.01em);
+    background: transparent;
+    border: none;
+    padding: 0;
+}
+
+.help-section-body strong {
+    color: var(--help-md-strong-color, inherit);
+    font-weight: var(--help-md-strong-font-weight, 700);
+    font-style: var(--help-md-strong-font-style, normal);
+}
+
+.help-section-body p strong,
+.help-section-body li strong,
+.help-section-body td strong {
+    color: inherit;
+}
+
+.help-section-body p.lead strong {
+    color: inherit;
+}
+
+/* Help File Editor preview only: copy help:// URL / markdown link above headings. */
+body.he-help-editor .he-help-heading-anchor {
+    position: relative;
+    padding-top: 1.55rem;
+}
+body.he-help-editor .he-help-heading-anchor.is-page-title {
+    padding-top: 1.7rem;
+}
+body.he-help-editor .he-help-link-tools {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 3;
+    transition: opacity 0.12s ease;
+}
+body.he-help-editor .he-preview-pane:hover .he-help-link-tools,
+body.he-help-editor .he-preview-pane:focus-within .he-help-link-tools {
+    opacity: 1;
+    pointer-events: auto;
+}
+body.he-help-editor .he-help-copy-link-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.28rem;
+    min-height: 1.45rem;
+    padding: 0.18rem 0.42rem;
+    border: 1px solid var(--ui-border, var(--he-border));
+    border-radius: 6px;
+    background: var(--ui-tool-bg, var(--he-input-bg));
+    color: var(--ui-text-muted, var(--he-text-muted));
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    line-height: 1;
+    cursor: pointer;
+    transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+body.he-help-editor .he-help-copy-link-btn:hover,
+body.he-help-editor .he-help-copy-link-btn:focus-visible {
+    color: var(--ui-accent, var(--accent));
+    background: color-mix(in srgb, var(--ui-accent, var(--accent)) 10%, var(--ui-tool-bg, var(--he-input-bg)));
+    border-color: color-mix(in srgb, var(--ui-accent, var(--accent)) 45%, var(--ui-border, var(--he-border)));
+    outline: none;
+}
+body.he-help-editor .he-help-copy-link-btn.help-copy-btn-copied {
+    color: #22c55e;
+    border-color: #22c55e;
+}

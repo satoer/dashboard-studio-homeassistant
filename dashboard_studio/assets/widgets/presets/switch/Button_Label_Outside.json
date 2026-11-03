@@ -1,0 +1,48 @@
+{
+  "id": "Button_Label_Outside",
+  "name": "Button Label Outside",
+  "widgetType": "switch",
+  "version": "2.0.0",
+  "variants": [
+    {
+      "id": "Label_Outside_Top",
+      "name": "Label Top",
+      "settings": {
+        "style": "button",
+        "showIcon": true,
+        "textOnlyLabelVerticalAlign": "center",
+        "buttonLabelPosition": "top"
+      }
+    },
+    {
+      "id": "Label_Outside_Bottom",
+      "name": "Label Bottom",
+      "settings": {
+        "style": "button",
+        "showIcon": true,
+        "textOnlyLabelVerticalAlign": "center",
+        "buttonLabelPosition": "bottom"
+      }
+    },
+    {
+      "id": "Label_Outside_Left",
+      "name": "Label Left",
+      "settings": {
+        "style": "button",
+        "showIcon": true,
+        "textOnlyLabelVerticalAlign": "center",
+        "buttonLabelPosition": "left"
+      }
+    },
+    {
+      "id": "Label_Outside_Right",
+      "name": "Label Right",
+      "settings": {
+        "style": "button",
+        "showIcon": true,
+        "textOnlyLabelVerticalAlign": "center",
+        "buttonLabelPosition": "right"
+      }
+    }
+  ]
+}

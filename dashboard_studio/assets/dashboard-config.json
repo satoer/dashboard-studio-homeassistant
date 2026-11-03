@@ -1,0 +1,17 @@
+{
+  "environment": "homey",
+  "ui": {
+    "showDataConnection": true,
+    "showLocalButtons": true,
+    "showServerButtons": true
+  },
+  "defaults": {
+    "dataDriver": "homey"
+  },
+  "storage": {
+    "endpoints": {
+      "dashboard": "/api/app/com.example.dashboardstudio/dashboards",
+      "template": "/api/app/com.example.dashboardstudio/templates"
+    }
+  }
+}

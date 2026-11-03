@@ -1,0 +1,22 @@
+{
+  "environment": "homey",
+  "ui": {
+    "showDataConnection": true,
+    "showLocalButtons": true,
+    "showServerButtons": true,
+    "warnWhenDriverOffline": false,
+    "hiddenDrivers": ["nodered"],
+    "hiddenWidgets": []
+  },
+  "defaults": {
+    "dataDriver": "homey",
+    "hideEditor": false,
+    "cacheValues": true
+  },
+  "storage": {
+    "endpoints": {
+      "dashboard": "/api/app/com.satoer.dashboardstudio/dashboards",
+      "template": "/api/app/com.satoer.dashboardstudio/templates"
+    }
+  }
+}

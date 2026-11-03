@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    .glass-panel {
+        @apply flex flex-col relative overflow-hidden rounded-3xl;
+    }
+
+    .bound-topic-text {
+        color: var(--accent, #3b82f6);
+    }
+
+    .editor-muted-text {
+        color: var(--text-muted, #94a3b8);
+    }
+
+    .text-success {
+        color: var(--success, #10b981);
+    }
+
+    .text-danger {
+        color: var(--danger, #ef4444);
+    }
+}

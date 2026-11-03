@@ -1,0 +1,21 @@
+"""Constants for the Dashboard Studio integration."""
+
+DOMAIN = "dashboard_studio"
+DEFAULT_SERVER_URL = "http://localhost:5050"
+CONF_SERVER_URL = "server_url"
+CONF_API_TOKEN = "api_token"
+
+EVENT_TRIGGER = "dashboard_studio_trigger"
+EVENT_LOADED = "dashboard_studio_loaded"
+EVENT_SAVED = "dashboard_studio_saved"
+EVENT_PAGE_OPENED = "dashboard_studio_page_opened"
+EVENT_CALL = "dashboard_studio_call"
+
+SERVICE_SEND = "send"
+SERVICE_SEND_INSIGHTS = "send_insights"
+SERVICE_SEND_INSIGHTS_ADVANCED = "send_insights_advanced"
+SERVICE_RELOAD = "reload"
+SERVICE_LOAD_FILTER_ICAL = "load_filter_ical"
+SERVICE_WEBCAL_TO_MARKDOWN = "webcal_to_markdown"
+SERVICE_COMBINE_ICAL_DATA = "combine_ical_data"
+SERVICE_FETCH_RSS_MARKDOWN = "fetch_rss_markdown"

@@ -1,0 +1,360 @@
+send:
+  name: Send data to topic
+  description: Send a custom value or payload to any Dashboard Studio topic.
+  fields:
+    topic:
+      name: Topic
+      description: Target topic path (for example custom/weather or homeassistant/message).
+      required: true
+      example: "custom/notification"
+      selector:
+        text:
+    value:
+      name: Value
+      description: String, number, boolean, or JSON payload to publish to the topic.
+      required: true
+      example: "Front door opened"
+      selector:
+        text:
+    retain:
+      name: Retain in server cache
+      description: Keep this topic value cached so newly connected dashboards receive it immediately.
+      required: false
+      default: true
+      selector:
+        boolean:
+
+send_insights:
+  name: Send Recorder / History data to chart
+  description: Query Home Assistant history/statistics for an entity and publish it to a Dashboard Studio chart topic.
+  fields:
+    entity_id:
+      name: Entity
+      description: Home Assistant entity whose historical states should be queried.
+      required: true
+      example: "sensor.living_room_temperature"
+      selector:
+        entity:
+    timespan:
+      name: Timespan
+      description: Time window to query from Home Assistant history.
+      required: true
+      default: "24h"
+      selector:
+        select:
+          options:
+            - label: "Last 1 Hour"
+              value: "1h"
+            - label: "Last 6 Hours"
+              value: "6h"
+            - label: "Last 24 Hours"
+              value: "24h"
+            - label: "Last 7 Days"
+              value: "7d"
+            - label: "Last 30 Days"
+              value: "30d"
+    topic:
+      name: Target Topic
+      description: Topic that the chart widget listens to.
+      required: true
+      example: "insights/living_room_temp"
+      selector:
+        text:
+
+send_insights_advanced:
+  name: Send Recorder / History data to chart (Advanced)
+  description: Query Home Assistant history with custom aggregation, resolution, and time buckets and publish to a chart topic.
+  fields:
+    entity_id:
+      name: Entity
+      description: Home Assistant entity whose historical states should be queried.
+      required: true
+      example: "sensor.power_consumption"
+      selector:
+        entity:
+    timespan:
+      name: Timespan
+      description: Time window to query from Home Assistant history.
+      required: true
+      default: "24h"
+      selector:
+        select:
+          options:
+            - label: "Last 1 Hour"
+              value: "1h"
+            - label: "Last 6 Hours"
+              value: "6h"
+            - label: "Last 24 Hours"
+              value: "24h"
+            - label: "Last 7 Days"
+              value: "7d"
+            - label: "Last 14 Days"
+              value: "14d"
+            - label: "Last 30 Days"
+              value: "30d"
+    resolution:
+      name: Resolution / Bucket Size
+      description: Optional bucket size (auto, 5m, 15m, 1h, 6h, 1d).
+      required: false
+      default: "auto"
+      selector:
+        select:
+          options:
+            - label: "Automatic"
+              value: "auto"
+            - label: "5 Minutes"
+              value: "5m"
+            - label: "15 Minutes"
+              value: "15m"
+            - label: "1 Hour"
+              value: "1h"
+            - label: "6 Hours"
+              value: "6h"
+            - label: "1 Day"
+              value: "1d"
+    aggregation:
+      name: Aggregation Method
+      description: How values inside each time bucket should be combined.
+      required: false
+      default: "mean"
+      selector:
+        select:
+          options:
+            - label: "Mean (Average)"
+              value: "mean"
+            - label: "Min"
+              value: "min"
+            - label: "Max"
+              value: "max"
+            - label: "Sum"
+              value: "sum"
+            - label: "Delta (Last minus First)"
+              value: "delta"
+            - label: "Last"
+              value: "last"
+    topic:
+      name: Target Topic
+      description: Topic that the chart widget listens to.
+      required: true
+      example: "insights/power_24h"
+      selector:
+        text:
+
+reload:
+  name: Reload or switch dashboard
+  description: Force all connected Dashboard Studio viewers to reload or switch to a specific dashboard file.
+  fields:
+    dashboard:
+      name: Dashboard Filename (Optional)
+      description: Leave empty to reload the current dashboard, or specify a dashboard name (e.g. default or wall_tablet.json) to switch.
+      required: false
+      example: "default"
+      selector:
+        text:
+
+load_filter_ical:
+  name: Load and filter iCal / WebCal URL
+  description: Fetch an iCal/WebCal calendar, filter events by timeframe, optionally publish to a topic, and return ical_data, event_count, and summary_text.
+  fields:
+    url:
+      name: Calendar URL
+      description: HTTP/HTTPS or webcal:// URL of the .ics feed.
+      required: true
+      example: "https://calendar.google.com/calendar/ical/example/basic.ics"
+      selector:
+        text:
+    timeframe:
+      name: Timeframe
+      description: Which upcoming events to include.
+      required: false
+      default: "7d"
+      selector:
+        select:
+          options:
+            - label: "Today"
+              value: "today"
+            - label: "Today + Tomorrow"
+              value: "2d"
+            - label: "Next 3 Days"
+              value: "3d"
+            - label: "Next 7 Days"
+              value: "7d"
+            - label: "Next 14 Days"
+              value: "14d"
+            - label: "Next 30 Days"
+              value: "30d"
+            - label: "Next 90 Days"
+              value: "90d"
+    max_events:
+      name: Max Events
+      description: Maximum number of events to keep (0 = unlimited).
+      required: false
+      default: 50
+      selector:
+        number:
+          min: 0
+          max: 500
+          mode: box
+    topic:
+      name: Target Topic (Optional)
+      description: Optional topic to publish the filtered iCal text to.
+      required: false
+      selector:
+        text:
+
+webcal_to_markdown:
+  name: Convert WebCal / iCal to Markdown
+  description: Convert up to 5 WebCal/iCal URLs or raw iCal text into formatted Markdown and structured JSON event blocks for Dashboard Studio widgets.
+  fields:
+    url_1:
+      name: Calendar Source 1 (URL or raw VCALENDAR)
+      description: Primary calendar URL or raw iCal text.
+      required: true
+      selector:
+        text:
+    label_1:
+      name: Source 1 Label (Optional)
+      description: Optional label for Calendar Source 1.
+      required: false
+      selector:
+        text:
+    url_2:
+      name: Calendar Source 2 (Optional)
+      description: Second calendar URL or raw iCal text.
+      required: false
+      selector:
+        text:
+    label_2:
+      name: Source 2 Label (Optional)
+      description: Optional label for Calendar Source 2.
+      required: false
+      selector:
+        text:
+    url_3:
+      name: Calendar Source 3 (Optional)
+      description: Third calendar URL or raw iCal text.
+      required: false
+      selector:
+        text:
+    label_3:
+      name: Source 3 Label (Optional)
+      description: Optional label for Calendar Source 3.
+      required: false
+      selector:
+        text:
+    timeframe:
+      name: Timeframe
+      description: Timeframe window for events.
+      required: false
+      default: "7d"
+      selector:
+        select:
+          options:
+            - label: "Today"
+              value: "today"
+            - label: "Today + Tomorrow"
+              value: "2d"
+            - label: "Next 3 Days"
+              value: "3d"
+            - label: "Next 7 Days"
+              value: "7d"
+            - label: "Next 14 Days"
+              value: "14d"
+            - label: "Next 30 Days"
+              value: "30d"
+    max_events:
+      name: Max Events
+      description: Maximum number of events to render.
+      required: false
+      default: 25
+      selector:
+        number:
+          min: 1
+          max: 250
+          mode: box
+    topic:
+      name: Target Topic (Optional)
+      description: Optional topic to publish the generated Markdown to (also publishes <topic>_blocks and <topic>_sources).
+      required: false
+      example: "calendar/family_markdown"
+      selector:
+        text:
+
+combine_ical_data:
+  name: Combine multiple iCal feeds
+  description: Merge up to 5 raw iCal strings or calendar URLs into a single VCALENDAR feed with deduplication.
+  fields:
+    ical_1:
+      name: iCal Data or URL 1
+      description: First raw VCALENDAR string or calendar URL.
+      required: true
+      selector:
+        text:
+    ical_2:
+      name: iCal Data or URL 2
+      description: Second raw VCALENDAR string or calendar URL.
+      required: false
+      selector:
+        text:
+    ical_3:
+      name: iCal Data or URL 3
+      description: Third raw VCALENDAR string or calendar URL.
+      required: false
+      selector:
+        text:
+    timeframe:
+      name: Timeframe
+      description: Optional timeframe filter applied when combining URLs.
+      required: false
+      default: "30d"
+      selector:
+        text:
+    topic:
+      name: Target Topic (Optional)
+      description: Optional topic to publish the combined iCal feed to.
+      required: false
+      selector:
+        text:
+
+fetch_rss_markdown:
+  name: Fetch RSS / Atom feed as Markdown
+  description: Fetch an RSS 2.0 or Atom feed and format headlines into Markdown for Dashboard Studio widgets.
+  fields:
+    url:
+      name: RSS / Atom Feed URL
+      description: HTTP/HTTPS URL of the RSS or Atom XML feed.
+      required: true
+      example: "https://feeds.bbci.co.uk/news/rss.xml"
+      selector:
+        text:
+    max_items:
+      name: Max Items
+      description: Maximum number of feed items to include.
+      required: false
+      default: 10
+      selector:
+        number:
+          min: 1
+          max: 100
+          mode: box
+    include_summary:
+      name: Include Item Summary
+      description: Include the article summary/description under each headline.
+      required: false
+      default: true
+      selector:
+        boolean:
+    include_links:
+      name: Include Clickable Links
+      description: Format headlines as clickable Markdown links.
+      required: false
+      default: true
+      selector:
+        boolean:
+    topic:
+      name: Target Topic (Optional)
+      description: Optional topic to publish the formatted RSS Markdown to.
+      required: false
+      example: "news/headlines"
+      selector:
+        text:

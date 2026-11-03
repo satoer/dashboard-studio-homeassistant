@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="color-scheme" content="light dark">
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Dashboard">
+
+    <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="images/icon-192.png">
+    <link rel="manifest" href="manifest.json">
+
+    <title>Dashboard Viewer</title>
+
+    <script>
+        window.IS_VIEWER = true;
+        (function () {
+            try {
+                var type = '';
+                if (typeof performance !== 'undefined' && performance.getEntriesByType) {
+                    var nav = performance.getEntriesByType('navigation')[0];
+                    if (nav) type = nav.type;
+                }
+                if (!type && typeof performance !== 'undefined' && performance.navigation && performance.navigation.type === 2) {
+                    type = 'back_forward';
+                }
+                if (type === 'back_forward') window.location.reload();
+            } catch (e) { }
+        })();
+    </script>
+
+    <!-- Warm up third-party origins before the deferred icon script and font CSS request them. -->
+    <link rel="preconnect" href="https://unpkg.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Defer so CSS/canvas can paint; icons fill in when the font script arrives. -->
+    <script defer src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- UI chrome font, non-blocking (media swap); dashboard fonts load via Dashboard.loadFonts(). -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap"
+        media="print" onload="this.media='all'">
+
+    <link rel="stylesheet" href="tailwind.generated.css">
+    <link rel="stylesheet" href="index.css">
+</head>
+
+<body class="viewer-mode">
+
+    <div id="dashboard-wrapper">
+        <div id="dashboard-stage">
+            <div id="dashboard-canvas"></div>
+        </div>
+    </div>
+
+    <div id="driver-offline-warning" aria-live="polite" aria-hidden="true">
+        <div class="cd-box">
+            <div class="ds-dialog-header">
+                <div class="ds-dialog-title">
+                    <i class="ph-bold ph-plugs-connected ds-dialog-title-icon"></i>
+                    <span>Connection Lost</span>
+                </div>
+                <button type="button" id="driver-offline-warning-close" class="ds-dialog-close" title="Dismiss"
+                    aria-label="Dismiss" onclick="Dashboard._hideDriverOfflineWarning(true)">
+                    <i class="ph-bold ph-x"></i>
+                </button>
+            </div>
+            <div class="cd-body">
+                <div id="driver-offline-warning-message" class="cd-msg">
+                    Dashboard Studio temporarily lost connection to the active driver. It will reconnect automatically.
+                </div>
+            </div>
+            <div class="ds-dialog-footer">
+                <button type="button" class="btn-tool ds-dialog-button primary"
+                    onclick="Dashboard._hideDriverOfflineWarning(true)">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="custom-dialog">
+        <div class="cd-box">
+            <div class="ds-dialog-header">
+                <div class="ds-dialog-title">
+                    <i id="cd-title-icon" class="ph-bold ph-info ds-dialog-title-icon"></i>
+                    <span id="cd-title">Title</span>
+                </div>
+                <button type="button" id="cd-btn-close" class="ds-dialog-close" title="Close (Esc)" aria-label="Close">
+                    <i class="ph-bold ph-x"></i>
+                </button>
+            </div>
+            <div class="cd-body">
+                <div id="cd-msg" class="cd-msg">Message content goes here.</div>
+                <div id="cd-choices" class="cd-choices" style="display: none;"></div>
+                <input type="text" id="cd-input" class="control-input cd-input" placeholder="Enter value..." autocomplete="off" data-mp-ignore="true" data-lpignore="true" data-1p-ignore="true">
+                <textarea id="cd-textarea" class="control-input cd-textarea" placeholder="Paste snippet code here..." autocomplete="off" data-mp-ignore="true" data-lpignore="true" data-1p-ignore="true"></textarea>
+                <div id="cd-prompt-extras" class="cd-prompt-extras" style="display: none;"></div>
+            </div>
+            <div class="ds-dialog-footer">
+                <button type="button" id="cd-btn-extra" class="btn-tool ds-dialog-button">Extra</button>
+                <button type="button" id="cd-btn-cancel" class="btn-tool ds-dialog-button">Cancel</button>
+                <button type="button" id="cd-btn-ok" class="btn-tool ds-dialog-button primary">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="loading-overlay" class="show">
+        <div class="ds-loading-card">
+            <div class="ds-loading-spinner" aria-hidden="true">
+                <span class="ds-loading-ch">
+                    <span class="ds-loading-clip"><span class="ds-loading-top"></span><span class="ds-loading-bot"></span></span>
+                    <span class="ds-loading-knob"></span>
+                </span>
+                <span class="ds-loading-ch">
+                    <span class="ds-loading-clip"><span class="ds-loading-top"></span><span class="ds-loading-bot"></span></span>
+                    <span class="ds-loading-knob"></span>
+                </span>
+                <span class="ds-loading-ch">
+                    <span class="ds-loading-clip"><span class="ds-loading-top"></span><span class="ds-loading-bot"></span></span>
+                    <span class="ds-loading-knob"></span>
+                </span>
+            </div>
+            <div id="loading-overlay-text" class="ds-loading-text">Loading...</div>
+        </div>
+    </div>
+
+    <!-- Lean viewer core: no templates, drivers, or markdown (demand-loaded by widget-script-loader). -->
+    <script src="version.js"></script>
+    <script src="config-loader.js"></script>
+    <script src="storage/storage-base.js"></script>
+    <script src="storage/local-provider.js"></script>
+    <script src="storage/web-provider.js"></script>
+
+    <script src="worker-timer.js"></script>
+
+    <script src="topic-alias.js"></script>
+    <script src="data-driver-base.js"></script>
+
+    <script src="data-config.js"></script>
+    <script src="pointer-drag.js"></script>
+    <script src="utils.js"></script>
+    <script src="bindings-tree.js"></script>
+    <script src="formula-engine.js"></script>
+    <script src="widget-base.js"></script>
+    <script src="widget-animations.js"></script>
+    <script src="widget-script-loader.js"></script>
+</body>
+
+</html>

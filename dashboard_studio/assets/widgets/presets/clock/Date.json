@@ -1,0 +1,158 @@
+{
+  "id": "Flip_Clock_1",
+  "name": "Date",
+  "widgetType": "clock",
+  "version": "2.0.0",
+  "variants": [
+    {
+      "id": "default",
+      "name": "EU Short Dash",
+      "settings": {
+        "displayMode": "text",
+        "clockUse12Hour": false,
+        "textShowTime": false,
+        "textShowDate": true,
+        "textDateSeg1": "monthNum",
+        "textDateSeg0": "day",
+        "textDateSeg2": "yearShort",
+        "textDateSeg3": "none",
+        "textDateSeparator": "-"
+      }
+    },
+    {
+      "id": "EU_Short_Dash_1",
+      "name": "EU Short Slash",
+      "settings": {
+        "displayMode": "text",
+        "clockUse12Hour": false,
+        "textShowTime": false,
+        "textShowDate": true,
+        "textDateSeg1": "monthNum",
+        "textDateSeg0": "day",
+        "textDateSeg2": "yearShort",
+        "textDateSeg3": "none",
+        "textDateSeparator": "/"
+      }
+    },
+    {
+      "id": "EU_Short_Slash_1_2",
+      "name": "EU Short Dot",
+      "settings": {
+        "displayMode": "text",
+        "clockUse12Hour": false,
+        "textShowTime": false,
+        "textShowDate": true,
+        "textDateSeg1": "monthNum",
+        "textDateSeg0": "day",
+        "textDateSeg2": "yearShort",
+        "textDateSeg3": "none",
+        "textDateSeparator": "."
+      }
+    },
+    {
+      "id": "EU_Short_Slash_1",
+      "name": "ISO 8601",
+      "settings": {
+        "displayMode": "text",
+        "clockUse12Hour": false,
+        "textShowTime": false,
+        "textShowDate": true,
+        "textDateSeg1": "monthNum",
+        "textDateSeg0": "yearLong",
+        "textDateSeg2": "day",
+        "textDateSeg3": "none",
+        "textDateSeparator": "-"
+      }
+    },
+    {
+      "id": "ISO_8601_1_2",
+      "name": "East Asian",
+      "settings": {
+        "displayMode": "text",
+        "clockUse12Hour": false,
+        "textShowTime": false,
+        "textShowDate": true,
+        "textDateSeg1": "monthNum",
+        "textDateSeg0": "yearLong",
+        "textDateSeg2": "day",
+        "textDateSeg3": "none",
+        "textDateSeparator": "/"
+      }
+    },
+    {
+      "id": "ISO_8601_1",
+      "name": "US Short",
+      "settings": {
+        "displayMode": "text",
+        "clockUse12Hour": false,
+        "textShowTime": false,
+        "textShowDate": true,
+        "textDateSeg1": "day",
+        "textDateSeg0": "monthNum",
+        "textDateSeg2": "yearLong",
+        "textDateSeg3": "none",
+        "textDateSeparator": "/"
+      }
+    },
+    {
+      "id": "US_Short_1",
+      "name": "US Long",
+      "settings": {
+        "displayMode": "text",
+        "clockUse12Hour": false,
+        "textShowTime": false,
+        "textShowDate": true,
+        "textDateSeg1": "day",
+        "textDateSeg0": "monthName",
+        "textDateSeg2": "yearLong",
+        "textDateSeg3": "none",
+        "textDateSeparator": ""
+      }
+    },
+    {
+      "id": "US_Long_1",
+      "name": "US Full",
+      "settings": {
+        "displayMode": "text",
+        "clockUse12Hour": false,
+        "textShowTime": false,
+        "textShowDate": true,
+        "textDateSeg1": "monthName",
+        "textDateSeg0": "weekday",
+        "textDateSeg2": "day",
+        "textDateSeg3": "yearLong",
+        "textDateSeparator": ""
+      }
+    },
+    {
+      "id": "24_Hr_1",
+      "name": "EU Long",
+      "settings": {
+        "displayMode": "text",
+        "clockUse12Hour": true,
+        "textShowTime": false,
+        "textShowDate": true,
+        "textDateSeg1": "monthName",
+        "textDateSeg0": "day",
+        "textDateSeg2": "yearLong",
+        "textDateSeg3": "none",
+        "textDateSeparator": ""
+      }
+    },
+    {
+      "id": "EU_Long_1",
+      "name": "EU Full",
+      "settings": {
+        "displayMode": "text",
+        "clockUse12Hour": true,
+        "textShowTime": false,
+        "textShowDate": true,
+        "textDateSeg1": "day",
+        "textDateSeg0": "weekday",
+        "textDateSeg2": "monthName",
+        "textDateSeg3": "yearLong",
+        "textDateSeparator": ""
+      }
+    }
+  ]
+}

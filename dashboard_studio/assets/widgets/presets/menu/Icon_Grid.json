@@ -1,0 +1,59 @@
+{
+  "id": "Icon_Grid",
+  "name": "Icon Grid",
+  "widgetType": "menu",
+  "version": "2.0.0",
+  "variants": [
+    {
+      "id": "default",
+      "name": "Small",
+      "settings": {
+        "menuLayout": "grid",
+        "menuIconLoc": "top",
+        "menuItemHeight": 0,
+        "menuItemWidth": 60,
+        "iconSize": 35,
+        "typography": {
+          "menuItem": {
+            "fontSize": 12
+          }
+        },
+        "menuHAuto": true
+      }
+    },
+    {
+      "id": "small_1",
+      "name": "Medium",
+      "settings": {
+        "menuLayout": "grid",
+        "menuIconLoc": "top",
+        "menuItemHeight": 0,
+        "menuItemWidth": 70,
+        "iconSize": 60,
+        "typography": {
+          "menuItem": {
+            "fontSize": 12
+          }
+        },
+        "menuHAuto": true
+      }
+    },
+    {
+      "id": "medium_1",
+      "name": "Large",
+      "settings": {
+        "menuLayout": "grid",
+        "menuIconLoc": "top",
+        "menuItemHeight": 0,
+        "menuItemWidth": 100,
+        "iconSize": 85,
+        "typography": {
+          "menuItem": {
+            "fontSize": 12
+          }
+        },
+        "menuHAuto": true
+      }
+    }
+  ]
+}

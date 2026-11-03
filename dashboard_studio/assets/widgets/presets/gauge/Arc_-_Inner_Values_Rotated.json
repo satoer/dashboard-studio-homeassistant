@@ -1,0 +1,107 @@
+{
+  "id": "Arc_-_Inner_Values",
+  "name": "Arc - Inner Values Rotated",
+  "widgetType": "gauge",
+  "version": "2.0.0",
+  "variants": [
+    {
+      "id": "Small",
+      "name": "Small",
+      "settings": {
+        "width": 140,
+        "height": 180,
+        "barType": "round",
+        "gapRound": -25,
+        "gapHoriz": 8,
+        "gaugeSizeOffset": 0,
+        "showLabels": true,
+        "rotateLabels": true,
+        "labelCount": 5,
+        "labelOffset": -20,
+        "showIcon": true,
+        "icons": {
+          "on": {
+            "offsetY": 0
+          }
+        },
+        "iconSize": 50,
+        "typography": {
+          "value": {
+            "fontSize": 48,
+            "offsetY": 0
+          },
+          "caption": {
+            "offsetY": 0
+          }
+        },
+        "valueAlignment": "center"
+      }
+    },
+    {
+      "id": "Medium",
+      "name": "Medium",
+      "settings": {
+        "width": 180,
+        "height": 220,
+        "barType": "round",
+        "gapRound": -25,
+        "gapHoriz": 8,
+        "gaugeSizeOffset": 0,
+        "showLabels": true,
+        "rotateLabels": true,
+        "labelCount": 8,
+        "labelOffset": -20,
+        "showIcon": true,
+        "icons": {
+          "on": {
+            "offsetY": 0
+          }
+        },
+        "iconSize": 80,
+        "typography": {
+          "value": {
+            "fontSize": 48,
+            "offsetY": 0
+          },
+          "caption": {
+            "offsetY": 0
+          }
+        },
+        "valueAlignment": "center"
+      }
+    },
+    {
+      "id": "Large",
+      "name": "Large",
+      "settings": {
+        "width": 250,
+        "height": 270,
+        "barType": "round",
+        "gapRound": -55,
+        "gapHoriz": 8,
+        "gaugeSizeOffset": 0,
+        "showLabels": true,
+        "rotateLabels": true,
+        "labelCount": 11,
+        "labelOffset": -20,
+        "showIcon": true,
+        "icons": {
+          "on": {
+            "offsetY": 0
+          }
+        },
+        "iconSize": 100,
+        "typography": {
+          "value": {
+            "fontSize": 48,
+            "offsetY": 0
+          },
+          "caption": {
+            "offsetY": 0
+          }
+        },
+        "valueAlignment": "center"
+      }
+    }
+  ]
+}

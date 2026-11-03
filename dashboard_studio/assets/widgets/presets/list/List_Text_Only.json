@@ -1,0 +1,19 @@
+{
+  "id": "List_Text_Only",
+  "name": "List Text Only",
+  "widgetType": "list",
+  "version": "2.0.0",
+  "variants": [
+    {
+      "id": "default",
+      "name": "default",
+      "settings": {
+        "showIcons": false,
+        "showTimestamp": false,
+        "enableCheckboxes": false,
+        "time24h": true,
+        "dateFormat": "none"
+      }
+    }
+  ]
+}

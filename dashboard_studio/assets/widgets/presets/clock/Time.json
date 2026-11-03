@@ -1,0 +1,160 @@
+{
+  "id": "Date_1",
+  "name": "Time",
+  "widgetType": "clock",
+  "version": "2.0.0",
+  "variants": [
+    {
+      "id": "default",
+      "name": "24 Hr Short",
+      "settings": {
+        "displayMode": "text",
+        "clockUse12Hour": false,
+        "textShowTime": true,
+        "textShowDate": false,
+        "textDateSeg1": "monthNum",
+        "textDateSeg0": "weekday",
+        "textDateSeg2": "yearShort",
+        "textDateSeg3": "none",
+        "textTimeSeparator": ":",
+        "textShowHour": true,
+        "textShowMinute": true,
+        "textShowSecond": false,
+        "textBlinkSeparator": false
+      }
+    },
+    {
+      "id": "24_Hr_Short_1_2",
+      "name": "24 Hr Short Blinking",
+      "settings": {
+        "displayMode": "text",
+        "clockUse12Hour": false,
+        "textShowTime": true,
+        "textShowDate": false,
+        "textDateSeg1": "monthNum",
+        "textDateSeg0": "weekday",
+        "textDateSeg2": "yearShort",
+        "textDateSeg3": "none",
+        "textTimeSeparator": ":",
+        "textShowHour": true,
+        "textShowMinute": true,
+        "textShowSecond": false,
+        "textBlinkSeparator": true
+      }
+    },
+    {
+      "id": "24_Hr_Short_1",
+      "name": "24 Hr Long",
+      "settings": {
+        "displayMode": "text",
+        "clockUse12Hour": false,
+        "textShowTime": true,
+        "textShowDate": false,
+        "textDateSeg1": "monthNum",
+        "textDateSeg0": "weekday",
+        "textDateSeg2": "yearShort",
+        "textDateSeg3": "none",
+        "textTimeSeparator": ":",
+        "textShowHour": true,
+        "textShowMinute": true,
+        "textShowSecond": true,
+        "textBlinkSeparator": false
+      }
+    },
+    {
+      "id": "24_Hr_Long_1",
+      "name": "24 Hr Long Blinking",
+      "settings": {
+        "displayMode": "text",
+        "clockUse12Hour": false,
+        "textShowTime": true,
+        "textShowDate": false,
+        "textDateSeg1": "monthNum",
+        "textDateSeg0": "weekday",
+        "textDateSeg2": "yearShort",
+        "textDateSeg3": "none",
+        "textTimeSeparator": ":",
+        "textShowHour": true,
+        "textShowMinute": true,
+        "textShowSecond": true,
+        "textBlinkSeparator": true
+      }
+    },
+    {
+      "id": "24_Hr_1",
+      "name": "12 Hr Short",
+      "settings": {
+        "displayMode": "text",
+        "clockUse12Hour": true,
+        "textShowTime": true,
+        "textShowDate": false,
+        "textDateSeg1": "day",
+        "textDateSeg0": "weekday",
+        "textDateSeg2": "monthName",
+        "textDateSeg3": "yearLong",
+        "textTimeSeparator": ":",
+        "textShowHour": true,
+        "textShowMinute": true,
+        "textShowSecond": false,
+        "textBlinkSeparator": false
+      }
+    },
+    {
+      "id": "12_Hr_Short_1_2",
+      "name": "12 Hr Short Blinking",
+      "settings": {
+        "displayMode": "text",
+        "clockUse12Hour": true,
+        "textShowTime": true,
+        "textShowDate": false,
+        "textDateSeg1": "day",
+        "textDateSeg0": "weekday",
+        "textDateSeg2": "monthName",
+        "textDateSeg3": "yearLong",
+        "textTimeSeparator": ":",
+        "textShowHour": true,
+        "textShowMinute": true,
+        "textShowSecond": false,
+        "textBlinkSeparator": true
+      }
+    },
+    {
+      "id": "12_Hr_Short_1",
+      "name": "12 Hr Long",
+      "settings": {
+        "displayMode": "text",
+        "clockUse12Hour": true,
+        "textShowTime": true,
+        "textShowDate": false,
+        "textDateSeg1": "day",
+        "textDateSeg0": "weekday",
+        "textDateSeg2": "monthName",
+        "textDateSeg3": "yearLong",
+        "textTimeSeparator": ":",
+        "textShowHour": true,
+        "textShowMinute": true,
+        "textShowSecond": true,
+        "textBlinkSeparator": false
+      }
+    },
+    {
+      "id": "12_Hr_Long_1",
+      "name": "12 Hr Long Blinking",
+      "settings": {
+        "displayMode": "text",
+        "clockUse12Hour": true,
+        "textShowTime": true,
+        "textShowDate": false,
+        "textDateSeg1": "day",
+        "textDateSeg0": "weekday",
+        "textDateSeg2": "monthName",
+        "textDateSeg3": "yearLong",
+        "textTimeSeparator": ":",
+        "textShowHour": true,
+        "textShowMinute": true,
+        "textShowSecond": true,
+        "textBlinkSeparator": true
+      }
+    }
+  ]
+}
