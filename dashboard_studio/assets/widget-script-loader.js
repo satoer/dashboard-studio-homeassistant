@@ -683,7 +683,14 @@ const WidgetScriptLoader = {
         });
         const remainingWidgets = needs.allPaths.filter(function (p) { return !loadedPaths[p]; });
         const remainingDrivers = Object.keys(this.DRIVER_PATHS)
-            .filter(function (k) { return k !== needs.driverType; })
+            .filter(function (k) {
+                if (k === needs.driverType) return false;
+                if (window.APP_CONFIG && window.APP_CONFIG.ui && window.APP_CONFIG.ui.hiddenDrivers) {
+                    var hidden = window.APP_CONFIG.ui.hiddenDrivers;
+                    if (Array.isArray(hidden) && hidden.indexOf(k) !== -1) return false;
+                }
+                return true;
+            })
             .map(function (k) { return self.DRIVER_PATHS[k]; });
 
         const first = [this.loadScriptsParallel(remainingWidgets.concat(remainingDrivers), { tolerateFailures: true })];

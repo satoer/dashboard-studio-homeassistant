@@ -5,7 +5,7 @@
  * image and audio galleries, real-time entity/helper/automation/scene state sync,
  * and both direct port and Home Assistant Ingress hosting.
  */
-class HomeAssistantDriver extends DataDriver {
+class HomeAssistantDriver extends BaseDataDriver {
     static get metadata() {
         return {
             id: 'homeassistant',
@@ -711,9 +711,8 @@ class HomeAssistantDriver extends DataDriver {
     }
 }
 
-class HomeAssistantStorageProvider extends StorageProvider {
+class HomeAssistantStorageProvider {
     constructor(socket) {
-        super();
         this.socket = socket;
     }
 

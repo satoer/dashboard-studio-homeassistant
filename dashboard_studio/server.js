@@ -2706,7 +2706,11 @@ class DashboardStudioHAServer {
       cacheValues: 'all',
       warnWhenDriverOffline: false,
       autoEcho: true,
-      serverPort: this.port || 5050
+      serverPort: this.port || 5050,
+      ui: {
+        hiddenDrivers: ['homey', 'nodered'],
+        showDataConnection: true
+      }
     }, appSettings, {
       environment: 'homeassistant'
     });
