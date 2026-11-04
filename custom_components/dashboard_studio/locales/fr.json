@@ -24,7 +24,15 @@
       "backup": "Sauvegarde",
       "restoreBackup": "Restaurer la sauvegarde",
       "backupTooltip": "Sauvegarde uniquement les paramètres Homey",
-      "restoreTooltip": "Restaure uniquement les paramètres Homey"
+      "restoreTooltip": "Restaure uniquement les paramètres Homey",
+      "downloadSettings": "Télécharger les paramètres",
+      "downloadCapabilities": "Télécharger les capacités",
+      "clearCache": "Vider le cache d'état",
+      "close": "Fermer",
+      "copyToClipboard": "Copier dans le presse-papier",
+      "copied": "Copié !",
+      "selectFile": "Sélectionner un fichier…",
+      "restoreHelp": "Collez votre JSON de sauvegarde ci-dessous ou sélectionnez un fichier .json depuis votre ordinateur."
     },
     "feedback": {
       "saved": "Enregistré !"
@@ -32,7 +40,8 @@
     "modal": {
       "cancel": "Annuler",
       "delete": "Supprimer",
-      "ok": "OK"
+      "ok": "OK",
+      "confirm": "Confirmer"
     },
     "files": {
       "dashboards": "Tableaux de bord",
@@ -48,10 +57,13 @@
       "loadAudioError": "Error loading audio.",
       "nameColumn": "Nom",
       "actionColumn": "Action",
-      "defaultTag": "Intégré"
+      "defaultTag": "Intégré",
+      "presets": "Préréglages de widgets",
+      "clearAllSnapshots": "Effacer tous les instantanés"
     },
     "confirm": {
-      "deleteNamed": "Supprimer « __name__ » ? Cette action est irréversible."
+      "deleteNamed": "Supprimer « __name__ » ? Cette action est irréversible.",
+      "clearAllSnapshotsMsg": "Supprimer tout l'historique des instantanés pour tous les tableaux de bord ? Cette action est irréversible."
     },
     "alert": {
       "saveSettingsFailed": "Échec de l'enregistrement des paramètres.",
@@ -75,7 +87,17 @@
       "loadFailed": "Échec du chargement des données :",
       "apiInitializing": "L'API démarre encore. Actualisez cette page dans un instant.",
       "noDevices": "Aucun appareil trouvé.",
-      "filterCapability": "Filtrer par capacité…"
+      "filterCapability": "Filtrer par capacité…",
+      "expandAll": "Tout développer",
+      "collapseAll": "Tout réduire",
+      "entitiesByAreaTitle": "Entités par pièce",
+      "entitiesByAreaDesc": "Entités Home Assistant organisées par pièce. Cochez les fonctionnalités pour publier les mises à jour d'état en direct dans Dashboard Studio.",
+      "systemTitle": "Entités d'aide, automatisations et scènes",
+      "systemDesc": "Entités d'aide Home Assistant (variables), automatisations/scripts (flows) et scènes (moods)",
+      "copyTopic": "Copier le topic",
+      "copyTopicButton": "Copier le topic",
+      "copyTopicDone": "Copié",
+      "copyTopicFailed": "Impossible de copier le topic dans le presse-papier."
     },
     "dashboard": {
       "access": "Ouvrez votre tableau de bord local :",
@@ -84,7 +106,8 @@
       "urlNotDetected": "L'URL du tableau de bord n'a pas pu être détectée automatiquement.",
       "manualStep1": "1. Dans l'application Homey : Système → Général.",
       "manualStep2": "2. Sous Informations système, notez l'adresse (par ex. 192.168.1.10).",
-      "manualStep3BeforeUrl": "3. Dans le navigateur, ouvrez :"
+      "manualStep3BeforeUrl": "3. Dans le navigateur, ouvrez :",
+      "openDashboard": "Ouvrir le tableau de bord"
     },
     "ui": {
       "DashboardPort": "Port du tableau de bord",
@@ -153,7 +176,53 @@
       "BackupNoticeTitle": "Backup & Restore Information:",
       "BackupNoticeDesc": "This backup only includes Dashboard Studio app settings and enabled device capabilities (MQTT topics). Dashboard designs, themes, uploaded images, and audio files are stored separately and are not included.",
       "BackupSettingsTitle": "Backs up app settings and enabled device capabilities",
-      "RestoreSettingsTitle": "Restores app settings and enabled device capabilities"
+      "RestoreSettingsTitle": "Restores app settings and enabled device capabilities",
+      "ClearStateCache": "Vider le cache d'état",
+      "ClearStateCacheDesc": "Efface le cache mémoire des dernières valeurs connues. Force de nouvelles mises à jour lors du prochain rechargement.",
+      "TopicEcho": "Écho des topics",
+      "TopicEchoDesc": "Renvoie les événements de topics publiés aux clients WebSocket connectés pour des mises à jour en direct.",
+      "theme": "Thème",
+      "themeAuto": "Auto",
+      "themeDark": "Sombre",
+      "themeLight": "Clair",
+      "servicesCalendarNoticeTitle": "Services Home Assistant & Markdown Calendrier :",
+      "servicesCalendarNoticeDesc": "Configurez les règles de formatage pour les services Calendrier et Markdown RSS. Celles-ci déterminent comment les événements et flux s'affichent."
+    },
+    "cleanup": {
+      "sectionTitle": "Nettoyage des capacités et topics",
+      "sectionDesc": "Auditez tous les tableaux de bord pour identifier les fonctionnalités et topics activés qui ne sont plus utilisés par aucun widget ou formule.",
+      "headerTitle": "Audit des topics inutilisés",
+      "scanButton": "Rechercher les capacités inutilisées",
+      "scanPlaceholder": "Cliquez sur \"Rechercher les capacités inutilisées\" pour analyser tous les tableaux de bord sauvegardés.",
+      "apiNotReady": "L'API s'initialise encore. Veuillez réessayer dans un instant.",
+      "scanning": "Analyse des tableaux de bord en cours...",
+      "analyzing": "Analyse de tous les tableaux de bord et extraction des liaisons...",
+      "auditFailed": "Échec de l'audit",
+      "scanFailed": "Échec de l'analyse des tableaux de bord : __error__",
+      "removedDevice": "Appareil supprimé (__id__)",
+      "zoneDefault": "Par défaut",
+      "zoneUnknown": "Inconnu",
+      "removedTag": "Supprimé de Home Assistant",
+      "allUsedTitle": "Configuration entièrement optimisée",
+      "allUsedHeadline": "Toutes les capacités activées sont actuellement utilisées !",
+      "allUsedBody": "Aucune capacité inutilisée détectée (__dashboards__ tableaux de bord analysés). Votre configuration est optimale.",
+      "foundOne": "1 capacité inutilisée trouvée",
+      "foundMany": "__count__ capacités inutilisées trouvées",
+      "bannerOne": "1 capacité activée n'est référencée dans aucun tableau de bord (__dashboards__ analysés).",
+      "bannerMany": "__count__ capacités activées ne sont référencées dans aucun tableau de bord (__dashboards__ analysés).",
+      "hint": "Cochez les capacités à désactiver puis cliquez sur \"Désactiver les capacités sélectionnées\".",
+      "selectAll": "Tout sélectionner",
+      "deselectAll": "Tout désélectionner",
+      "selectedCount": "__selected__ sur __total__ sélectionné(s)",
+      "filterPlaceholder": "Filtrer la liste...",
+      "disableButton": "Désactiver les capacités sélectionnées (__count__)",
+      "selectOne": "Veuillez sélectionner au moins une capacité à désactiver.",
+      "confirmOne": "Voulez-vous vraiment désactiver 1 capacité inutilisée ?",
+      "confirmMany": "Voulez-vous vraiment désactiver __count__ capacités inutilisées ?",
+      "confirmButtonOne": "Désactiver 1 capacité",
+      "confirmButtonMany": "Désactiver __count__ capacités",
+      "successOne": "1 capacité inutilisée a été désactivée avec succès.",
+      "successMany": "__count__ capacités inutilisées ont été désactivées avec succès."
     }
   },
   "words": {

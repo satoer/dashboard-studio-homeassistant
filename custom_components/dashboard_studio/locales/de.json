@@ -24,7 +24,15 @@
       "backup": "Backup",
       "restoreBackup": "Backup wiederherstellen",
       "backupTooltip": "Sichert nur die Homey-Einstellungen",
-      "restoreTooltip": "Stellt nur die Homey-Einstellungen wieder her"
+      "restoreTooltip": "Stellt nur die Homey-Einstellungen wieder her",
+      "downloadSettings": "Einstellungen herunterladen",
+      "downloadCapabilities": "Capabilities herunterladen",
+      "clearCache": "Status-Cache leeren",
+      "close": "Schließen",
+      "copyToClipboard": "In Zwischenablage kopieren",
+      "copied": "Kopiert!",
+      "selectFile": "Datei auswählen…",
+      "restoreHelp": "Fügen Sie Ihr Backup-JSON unten ein oder wählen Sie eine .json-Datei von Ihrem Computer."
     },
     "feedback": {
       "saved": "Gespeichert!"
@@ -32,7 +40,8 @@
     "modal": {
       "cancel": "Abbrechen",
       "delete": "Löschen",
-      "ok": "OK"
+      "ok": "OK",
+      "confirm": "Bestätigen"
     },
     "files": {
       "dashboards": "Dashboards",
@@ -48,10 +57,13 @@
       "loadAudioError": "Error loading audio.",
       "nameColumn": "Name",
       "actionColumn": "Aktion",
-      "defaultTag": "Eingebaut"
+      "defaultTag": "Eingebaut",
+      "presets": "Widget-Vorlagen",
+      "clearAllSnapshots": "Alle Snapshots löschen"
     },
     "confirm": {
-      "deleteNamed": "„__name__“ löschen? Das kann nicht rückgängig gemacht werden."
+      "deleteNamed": "„__name__“ löschen? Das kann nicht rückgängig gemacht werden.",
+      "clearAllSnapshotsMsg": "Alle Snapshot-Verläufe für alle Dashboards löschen? Dies kann nicht rückgängig gemacht werden."
     },
     "alert": {
       "saveSettingsFailed": "Einstellungen konnten nicht gespeichert werden.",
@@ -75,7 +87,17 @@
       "loadFailed": "Daten konnten nicht geladen werden:",
       "apiInitializing": "Die API startet noch. Laden Sie diese Seite in einem Moment erneut.",
       "noDevices": "Keine Geräte gefunden.",
-      "filterCapability": "Nach Capability filtern…"
+      "filterCapability": "Nach Capability filtern…",
+      "expandAll": "Alle aufklappen",
+      "collapseAll": "Alle zuklappen",
+      "entitiesByAreaTitle": "Entitäten nach Bereich",
+      "entitiesByAreaDesc": "Home Assistant-Entitäten geordnet nach Bereich. Aktivieren Sie Capabilities, um Live-Statusaktualisierungen an Dashboard Studio zu senden.",
+      "systemTitle": "Helfer, Automationen & Szenen",
+      "systemDesc": "Home Assistant-Helfer (Variablen), Automationen/Skripte (Flows) und Szenen (Moods)",
+      "copyTopic": "Topic kopieren",
+      "copyTopicButton": "Topic kopieren",
+      "copyTopicDone": "Kopiert",
+      "copyTopicFailed": "Topic konnte nicht in die Zwischenablage kopiert werden."
     },
     "dashboard": {
       "access": "Öffnen Sie Ihr lokales Dashboard:",
@@ -84,7 +106,8 @@
       "urlNotDetected": "Die Dashboard-URL konnte nicht automatisch ermittelt werden.",
       "manualStep1": "1. In der Homey-app: System → Allgemein.",
       "manualStep2": "2. Unter Systeminformationen die Adresse notieren (z. B. 192.168.1.10).",
-      "manualStep3BeforeUrl": "3. Im Browser öffnen:"
+      "manualStep3BeforeUrl": "3. Im Browser öffnen:",
+      "openDashboard": "Dashboard öffnen"
     },
     "ui": {
       "DashboardPort": "Dashboard Port",
@@ -153,7 +176,53 @@
       "BackupNoticeTitle": "Backup & Restore Information:",
       "BackupNoticeDesc": "This backup only includes Dashboard Studio app settings and enabled device capabilities (MQTT topics). Dashboard designs, themes, uploaded images, and audio files are stored separately and are not included.",
       "BackupSettingsTitle": "Backs up app settings and enabled device capabilities",
-      "RestoreSettingsTitle": "Restores app settings and enabled device capabilities"
+      "RestoreSettingsTitle": "Restores app settings and enabled device capabilities",
+      "ClearStateCache": "Status-Cache leeren",
+      "ClearStateCacheDesc": "Löscht den Zwischenspeicher der zuletzt bekannten Werte. Erzwingt neue Statusaktualisierungen beim nächsten Neuladen.",
+      "TopicEcho": "Topic-Echo",
+      "TopicEchoDesc": "Spiegelt veröffentlichte Topic-Events an verbundene WebSocket-Clients für Live-Updates auf dem Canvas.",
+      "theme": "Design",
+      "themeAuto": "Automatisch",
+      "themeDark": "Dunkel",
+      "themeLight": "Hell",
+      "servicesCalendarNoticeTitle": "Home Assistant Services & Kalender Markdown:",
+      "servicesCalendarNoticeDesc": "Formatierungsregeln für Kalender- und RSS-Markdown-Dienste konfigurieren. Diese bestimmen, wie Termine und RSS-Feeds in Text- und Markdown-Widgets dargestellt werden."
+    },
+    "cleanup": {
+      "sectionTitle": "Capabilities- & Topic-Bereinigung",
+      "sectionDesc": "Überprüfen Sie alle gespeicherten Dashboards auf aktivierte Capabilities und Topics, die von keinem Widget, Menü, Schieberegler, Schalter oder Template mehr verwendet werden.",
+      "headerTitle": "Prüfung ungenutzter Topics",
+      "scanButton": "Nach ungenutzten Capabilities suchen",
+      "scanPlaceholder": "Klicken Sie auf \"Nach ungenutzten Capabilities suchen\", um alle Dashboards zu analysieren.",
+      "apiNotReady": "Die API wird noch initialisiert. Bitte versuchen Sie es gleich erneut.",
+      "scanning": "Dashboards werden gescannt...",
+      "analyzing": "Alle gespeicherten Dashboards werden analysiert und Topic-Bindungen extrahiert...",
+      "auditFailed": "Überprüfung fehlgeschlagen",
+      "scanFailed": "Scannen der Dashboards fehlgeschlagen: __error__",
+      "removedDevice": "Gelöschtes Gerät (__id__)",
+      "zoneDefault": "Standard",
+      "zoneUnknown": "Unbekannt",
+      "removedTag": "Aus Home Assistant entfernt",
+      "allUsedTitle": "Konfiguration vollständig optimiert",
+      "allUsedHeadline": "Alle aktivierten Capabilities werden verwendet!",
+      "allUsedBody": "Es wurden keine ungenutzten Capabilities gefunden (__dashboards__ Dashboards gescannt). Ihre Konfiguration ist vollständig optimiert.",
+      "foundOne": "1 ungenutzte Capability gefunden",
+      "foundMany": "__count__ ungenutzte Capabilities gefunden",
+      "bannerOne": "1 aktivierte Capability wird in Ihren gespeicherten Dashboards nicht referenziert (__dashboards__ gescannt).",
+      "bannerMany": "__count__ aktivierte Capabilities werden in Ihren gespeicherten Dashboards nicht referenziert (__dashboards__ gescannt).",
+      "hint": "Markieren Sie die Capabilities, die Sie deaktivieren möchten, und klicken Sie auf \"Ausgewählte Capabilities deaktivieren\".",
+      "selectAll": "Alle auswählen",
+      "deselectAll": "Alle abwählen",
+      "selectedCount": "__selected__ von __total__ ausgewählt",
+      "filterPlaceholder": "Liste filtern...",
+      "disableButton": "Ausgewählte Capabilities deaktivieren (__count__)",
+      "selectOne": "Bitte wählen Sie mindestens eine Capability zum Deaktivieren aus.",
+      "confirmOne": "Sind Sie sicher, dass Sie 1 ungenutzte Capability deaktivieren möchten? Dashboard Studio sendet dafür keine Aktualisierungen mehr.",
+      "confirmMany": "Sind Sie sicher, dass Sie __count__ ungenutzte Capabilities deaktivieren möchten? Dashboard Studio sendet dafür keine Aktualisierungen mehr.",
+      "confirmButtonOne": "1 Capability deaktivieren",
+      "confirmButtonMany": "__count__ Capabilities deaktivieren",
+      "successOne": "1 ungenutzte Capability erfolgreich deaktiviert.",
+      "successMany": "__count__ ungenutzte Capabilities erfolgreich deaktiviert."
     }
   },
   "words": {

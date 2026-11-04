@@ -877,7 +877,7 @@
             background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: var(--radius-md);
-            padding: 18px 20px;
+            padding: 16px 20px;
             box-shadow: var(--shadow-sm);
             margin-bottom: 20px;
         }
@@ -885,45 +885,141 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-subtle);
+            margin-bottom: 4px;
+        }
+        .file-header-left {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .file-header-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: var(--radius-sm);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(14, 165, 233, 0.12);
+            color: var(--accent-cyan);
+            flex-shrink: 0;
+        }
+        .file-icon-dashboard { background: rgba(14, 165, 233, 0.14); color: var(--accent-cyan); }
+        .file-icon-theme { background: rgba(168, 85, 247, 0.14); color: #c084fc; }
+        .file-icon-preset { background: rgba(16, 185, 129, 0.14); color: var(--accent-emerald); }
+        .file-icon-image { background: rgba(245, 158, 11, 0.14); color: #fbbf24; }
+        .file-icon-audio { background: rgba(236, 72, 153, 0.14); color: #f472b6; }
+        .file-header-title {
             font-size: 15px;
             font-weight: 700;
             color: var(--text-primary);
-            margin-bottom: 12px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid var(--border-color);
+        }
+        .file-count-badge {
+            background: var(--bg-card-subtle);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            font-size: 11.5px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 12px;
+            min-width: 20px;
+            text-align: center;
+        }
+        .btn-clear-snapshots {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px solid rgba(239, 68, 68, 0.25);
+            color: var(--accent-red);
+            padding: 6px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.15s ease;
+        }
+        .btn-clear-snapshots:hover {
+            background: var(--accent-red);
+            color: #ffffff;
+            border-color: var(--accent-red);
+            box-shadow: 0 2px 6px rgba(239, 68, 68, 0.3);
         }
         .file-table {
             width: 100%;
             border-collapse: collapse;
             font-size: 13px;
+            text-align: left;
         }
         .file-table th {
             text-align: left;
-            padding: 8px 12px;
+            padding: 10px 12px;
             color: var(--text-muted);
             font-weight: 600;
+            font-size: 11.5px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
             border-bottom: 1px solid var(--border-color);
         }
         .file-table td {
-            padding: 10px 12px;
+            padding: 11px 12px;
             border-bottom: 1px solid var(--border-subtle);
             color: var(--text-primary);
+            text-align: left !important;
+            font-style: normal !important;
             word-break: break-all;
+            vertical-align: middle;
+        }
+        .file-table tr:hover td {
+            background: var(--bg-hover);
+        }
+        .file-table tr:last-child td {
+            border-bottom: none;
+        }
+        .file-name-cell {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-align: left;
+            font-style: normal;
+        }
+        .file-name-icon {
+            color: var(--text-muted);
+            display: inline-flex;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        .file-action-cell {
+            text-align: right !important;
+            white-space: nowrap !important;
+            width: 1%;
+            padding-right: 12px;
         }
         .btn-del {
-            background: var(--accent-red-bg);
-            border: 1px solid rgba(239, 68, 68, 0.3);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px solid rgba(239, 68, 68, 0.25);
             color: var(--accent-red);
-            padding: 5px 12px;
+            padding: 6px 14px;
             border-radius: var(--radius-sm);
             font-size: 12px;
             font-weight: 600;
             cursor: pointer;
+            white-space: nowrap !important;
             transition: all 0.15s ease;
         }
         .btn-del:hover {
             background: var(--accent-red);
-            color: white;
+            color: #ffffff;
+            border-color: var(--accent-red);
+            box-shadow: 0 2px 6px rgba(239, 68, 68, 0.3);
         }
         .empty-msg {
             padding: 16px;
@@ -931,6 +1027,20 @@
             color: var(--text-muted);
             font-style: italic;
             font-size: 13px;
+        }
+        .empty-msg-box {
+            padding: 26px 16px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 13px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        .empty-msg-box svg {
+            color: var(--text-muted);
+            opacity: 0.6;
         }
 
         /* Calendar / Services Tab */
@@ -1140,10 +1250,10 @@
             </select>
             <button type="button" id="theme-toggle-btn" class="theme-toggle-btn" title="Toggle Theme">
                 <span id="theme-icon">&#9681;</span>
-                <span id="theme-label">Theme</span>
+                <span id="theme-label" data-translate="settings.ui.theme">Theme</span>
             </button>
             <a id="btn-top-open-dashboard" href="/dashboard_studio/" target="_blank" class="btn-open-dashboard">
-                <span>Open Dashboard</span>
+                <span data-translate="settings.dashboard.openDashboard">Open Dashboard</span>
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
             </a>
             <button type="button" id="btn-top-save" class="btn-primary-save" data-translate="settings.actions.saveSettings">Save Settings</button>
@@ -1153,7 +1263,7 @@
     <div class="dashboard-url-box">
         <div class="dashboard-url-row">
             <p data-translate="settings.dashboard.access">Open your local dashboard:</p>
-            <a id="dashboard-link" class="dashboard-link" href="/dashboard_studio/" target="_blank">Loading dashboard URL…</a>
+            <a id="dashboard-link" class="dashboard-link" href="/dashboard_studio/" target="_blank" data-translate="settings.dashboard.loading">Loading dashboard URL…</a>
         </div>
         <div id="manual-help" class="manual-instruction">
             <strong data-translate="settings.dashboard.cantAccess">Can't open the link?</strong><br>
@@ -1181,8 +1291,8 @@
                 <input type="text" id="capability-filter" class="filter-input" placeholder="Filter by capability / attribute…" oninput="filterDevices()" onkeyup="filterDevices()">
             </div>
             <div class="filter-actions">
-                <button type="button" class="btn-filter-action" onclick="toggleAllZones(true)">Expand All</button>
-                <button type="button" class="btn-filter-action" onclick="toggleAllZones(false)">Collapse All</button>
+                <button type="button" class="btn-filter-action" onclick="toggleAllZones(true)" data-translate="settings.config.expandAll">Expand All</button>
+                <button type="button" class="btn-filter-action" onclick="toggleAllZones(false)" data-translate="settings.config.collapseAll">Collapse All</button>
             </div>
         </div>
 
@@ -1228,10 +1338,10 @@
 
             <div class="setting-row">
                 <div class="setting-info">
-                    <span class="setting-label">Clear State Cache</span>
-                    <span class="setting-desc">Clears the in-memory cache of last known values. Forces fresh state updates on next reload.</span>
+                    <span class="setting-label" data-translate="settings.ui.ClearStateCache">Clear State Cache</span>
+                    <span class="setting-desc" data-translate="settings.ui.ClearStateCacheDesc">Clears the in-memory cache of last known values. Forces fresh state updates on next reload.</span>
                 </div>
-                <button type="button" id="btn-clear-cache" class="btn-filter-action" onclick="clearStateCache()">Clear State Cache</button>
+                <button type="button" id="btn-clear-cache" class="btn-filter-action" onclick="clearStateCache()" data-translate="settings.actions.clearCache">Clear State Cache</button>
             </div>
 
             <div class="setting-row">
@@ -1288,8 +1398,8 @@
 
             <div class="setting-row">
                 <div class="setting-info">
-                    <span class="setting-label">Topic Echo</span>
-                    <span class="setting-desc">Echoes published topic events to connected WebSocket clients for live canvas updates.</span>
+                    <span class="setting-label" data-translate="settings.ui.TopicEcho">Topic Echo</span>
+                    <span class="setting-desc" data-translate="settings.ui.TopicEchoDesc">Echoes published topic events to connected WebSocket clients for live canvas updates.</span>
                 </div>
                 <label class="toggle-switch">
                     <input type="checkbox" id="setting-topic-echo" onchange="saveSettingsDebounced()">
@@ -1305,8 +1415,8 @@
             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-top:16px;">
                 <div style="display:inline-flex; align-items:center; gap:8px; flex-wrap:wrap;">
                     <button type="button" id="btn-backup-settings" onclick="backupSettings()" class="btn-filter-action" data-translate="settings.actions.backup">Backup</button>
-                    <button type="button" id="btn-backup-settings-only" onclick="downloadSettingsOnly()" class="btn-filter-action">Download Settings</button>
-                    <button type="button" id="btn-backup-caps-only" onclick="downloadCapabilitiesOnly()" class="btn-filter-action">Download Capabilities</button>
+                    <button type="button" id="btn-backup-settings-only" onclick="downloadSettingsOnly()" class="btn-filter-action" data-translate="settings.actions.downloadSettings">Download Settings</button>
+                    <button type="button" id="btn-backup-caps-only" onclick="downloadCapabilitiesOnly()" class="btn-filter-action" data-translate="settings.actions.downloadCapabilities">Download Capabilities</button>
                     <button type="button" id="btn-restore-settings" onclick="openRestoreModal()" class="btn-filter-action" data-translate="settings.actions.restoreBackup">Restore Backup</button>
                     <input type="file" id="restore-file-input" style="display:none;" accept=".json" onchange="restoreSettings(event)">
                 </div>
@@ -1319,26 +1429,81 @@
     <div id="tab-files" class="tab-content">
         <div class="file-section">
             <div class="file-header">
-                <span data-translate="settings.files.dashboards">Dashboards</span>
-                <button type="button" class="btn-del" onclick="clearAllSnapshotsConfirm()">Clear All Snapshots</button>
+                <div class="file-header-left">
+                    <div class="file-header-icon file-icon-dashboard">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+                    </div>
+                    <span class="file-header-title" data-translate="settings.files.dashboards">Dashboards</span>
+                    <span id="badge-count-dashboards" class="file-count-badge">0</span>
+                </div>
+                <button type="button" class="btn-clear-snapshots" onclick="clearAllSnapshotsConfirm()">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                    <span data-translate="settings.files.clearAllSnapshots">Clear All Snapshots</span>
+                </button>
             </div>
-            <div id="list-dashboards" class="empty-msg" data-translate="settings.files.loadingList">Loading…</div>
+            <div id="list-dashboards" class="file-list-container">
+                <div class="empty-msg" data-translate="settings.files.loadingList">Loading…</div>
+            </div>
         </div>
+
         <div class="file-section">
-            <div class="file-header" data-translate="settings.files.templates">Themes</div>
-            <div id="list-templates" class="empty-msg" data-translate="settings.files.loadingList">Loading…</div>
+            <div class="file-header">
+                <div class="file-header-left">
+                    <div class="file-header-icon file-icon-theme">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 10 10 0 0 0 0-20"/></svg>
+                    </div>
+                    <span class="file-header-title" data-translate="settings.files.templates">Themes</span>
+                    <span id="badge-count-templates" class="file-count-badge">0</span>
+                </div>
+            </div>
+            <div id="list-templates" class="file-list-container">
+                <div class="empty-msg" data-translate="settings.files.loadingList">Loading…</div>
+            </div>
         </div>
+
         <div class="file-section">
-            <div class="file-header">Widget Presets</div>
-            <div id="list-presets" class="empty-msg" data-translate="settings.files.loadingList">Loading…</div>
+            <div class="file-header">
+                <div class="file-header-left">
+                    <div class="file-header-icon file-icon-preset">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                    </div>
+                    <span class="file-header-title" data-translate="settings.files.presets">Widget Presets</span>
+                    <span id="badge-count-presets" class="file-count-badge">0</span>
+                </div>
+            </div>
+            <div id="list-presets" class="file-list-container">
+                <div class="empty-msg" data-translate="settings.files.loadingList">Loading…</div>
+            </div>
         </div>
+
         <div class="file-section">
-            <div class="file-header" data-translate="settings.files.images">Images</div>
-            <div id="list-images" class="empty-msg" data-translate="settings.files.loadingList">Loading…</div>
+            <div class="file-header">
+                <div class="file-header-left">
+                    <div class="file-header-icon file-icon-image">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                    </div>
+                    <span class="file-header-title" data-translate="settings.files.images">Images</span>
+                    <span id="badge-count-images" class="file-count-badge">0</span>
+                </div>
+            </div>
+            <div id="list-images" class="file-list-container">
+                <div class="empty-msg" data-translate="settings.files.loadingList">Loading…</div>
+            </div>
         </div>
+
         <div class="file-section">
-            <div class="file-header" data-translate="settings.files.audio">Audio</div>
-            <div id="list-audio" class="empty-msg" data-translate="settings.files.loadingList">Loading…</div>
+            <div class="file-header">
+                <div class="file-header-left">
+                    <div class="file-header-icon file-icon-audio">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+                    </div>
+                    <span class="file-header-title" data-translate="settings.files.audio">Audio</span>
+                    <span id="badge-count-audio" class="file-count-badge">0</span>
+                </div>
+            </div>
+            <div id="list-audio" class="file-list-container">
+                <div class="empty-msg" data-translate="settings.files.loadingList">Loading…</div>
+            </div>
         </div>
     </div>
 
@@ -1346,8 +1511,9 @@
     <div id="tab-calendar" class="tab-content">
         <div class="settings-section">
             <div class="manual-instruction" style="margin-top:0; margin-bottom:18px; background:var(--bg-card-subtle); border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:12px 16px;">
-                <strong style="color:var(--text-primary);">Home Assistant Services &amp; Calendar Markdown:</strong><br>
-                <span>Configure formatting rules for the Calendar &amp; RSS Markdown services. These determine how calendar events and RSS feeds are rendered in Text and Markdown widgets.</span>
+                <strong style="color:var(--text-primary);" data-translate="settings.ui.servicesCalendarNoticeTitle">Home Assistant Services &amp; Calendar Markdown:</strong><br>
+                <span data-translate="settings.ui.servicesCalendarNoticeDesc">Configure formatting rules for the Calendar &amp; RSS Markdown services. These determine how calendar events and RSS feeds are rendered in Text and Markdown widgets.</span>
+            </div>
             </div>
 
             <div class="setting-row">
@@ -1507,8 +1673,8 @@
                 <textarea id="backup-textarea" style="width:100%; height:200px; padding:10px; font-family:ui-monospace, monospace; font-size:12px; border:1px solid var(--border-color); border-radius:var(--radius-sm); background:var(--bg-input); color:var(--text-primary); resize:none;" readonly></textarea>
             </div>
             <div class="modal-buttons">
-                <button type="button" class="modal-btn modal-btn-cancel" onclick="document.getElementById('backup-modal').classList.remove('show')">Close</button>
-                <button type="button" class="modal-btn modal-btn-confirm" onclick="copyBackupToClipboard()">Copy to Clipboard</button>
+                <button type="button" class="modal-btn modal-btn-cancel" onclick="document.getElementById('backup-modal').classList.remove('show')" data-translate="settings.actions.close">Close</button>
+                <button type="button" class="modal-btn modal-btn-confirm" onclick="copyBackupToClipboard()" data-translate="settings.actions.copyToClipboard">Copy to Clipboard</button>
             </div>
         </div>
     </div>
@@ -1517,14 +1683,14 @@
         <div class="modal-box" style="width: 540px;">
             <div class="modal-text">
                 <strong data-translate="settings.actions.restoreSettings" style="font-size:16px; font-weight:700;">Restore Settings</strong>
-                <p style="font-size:12.5px; color:var(--text-secondary); margin:6px 0 12px;">Paste your backup JSON text below, or select a .json file from your computer.</p>
+                <p style="font-size:12.5px; color:var(--text-secondary); margin:6px 0 12px;" data-translate="settings.actions.restoreHelp">Paste your backup JSON text below, or select a .json file from your computer.</p>
                 <textarea id="restore-textarea" placeholder="Paste your backup JSON here..." style="width:100%; height:200px; padding:10px; font-family:ui-monospace, monospace; font-size:12px; border:1px solid var(--border-color); border-radius:var(--radius-sm); background:var(--bg-input); color:var(--text-primary); resize:none;"></textarea>
             </div>
             <div class="modal-buttons" style="justify-content:space-between;">
-                <button type="button" class="modal-btn modal-btn-cancel" onclick="document.getElementById('restore-file-input').click();">Select File…</button>
+                <button type="button" class="modal-btn modal-btn-cancel" onclick="document.getElementById('restore-file-input').click();" data-translate="settings.actions.selectFile">Select File…</button>
                 <div style="display:flex; gap:10px;">
-                    <button type="button" class="modal-btn modal-btn-cancel" onclick="document.getElementById('restore-modal').classList.remove('show')">Cancel</button>
-                    <button type="button" class="modal-btn modal-btn-confirm" onclick="processRestoreText()">Restore</button>
+                    <button type="button" class="modal-btn modal-btn-cancel" onclick="document.getElementById('restore-modal').classList.remove('show')" data-translate="settings.modal.cancel">Cancel</button>
+                    <button type="button" class="modal-btn modal-btn-confirm" onclick="processRestoreText()" data-translate="settings.actions.restoreBackup">Restore</button>
                 </div>
             </div>
         </div>
@@ -1564,6 +1730,23 @@
             "settings.files.nameColumn": "Name",
             "settings.files.actionColumn": "Action",
             "settings.files.defaultTag": "Built-in",
+            "settings.files.presets": "Widget Presets",
+            "settings.files.clearAllSnapshots": "Clear All Snapshots",
+            "settings.actions.downloadSettings": "Download Settings",
+            "settings.actions.downloadCapabilities": "Download Capabilities",
+            "settings.actions.clearCache": "Clear State Cache",
+            "settings.actions.close": "Close",
+            "settings.actions.copyToClipboard": "Copy to Clipboard",
+            "settings.actions.copied": "Copied!",
+            "settings.actions.selectFile": "Select File…",
+            "settings.actions.restoreHelp": "Paste your backup JSON text below, or select a .json file from your computer.",
+            "settings.config.expandAll": "Expand All",
+            "settings.config.collapseAll": "Collapse All",
+            "settings.config.entitiesByAreaTitle": "Entities by Area",
+            "settings.config.entitiesByAreaDesc": "Home Assistant entities organized by Area. Tick capabilities to publish live state updates to Dashboard Studio.",
+            "settings.config.systemTitle": "Helpers, Automations & Scenes",
+            "settings.config.systemDesc": "Home Assistant Helpers (Variables), Automations/Scripts (Flows), and Scenes (Moods)",
+            "settings.dashboard.openDashboard": "Open Dashboard",
             "settings.cleanup.sectionTitle": "Capability & Topic Cleanup",
             "settings.cleanup.sectionDesc": "Audit all saved dashboards to find enabled capabilities and topics that are no longer used by any widget, menu, slider, switch, formula, or markdown template.",
             "settings.cleanup.headerTitle": "Unused Topics Audit",
@@ -1650,6 +1833,17 @@
             "settings.calendar.sourceBlockBindings.resetToDefault": "Reset to example",
             "settings.calendar.iconBindings.resetToDefault": "Reset to default",
             "settings.confirm.deleteNamed": "Delete \"__name__\"? This cannot be undone.",
+            "settings.confirm.clearAllSnapshotsMsg": "Delete all snapshot history for all dashboards? This cannot be undone.",
+            "settings.ui.ClearStateCache": "Clear State Cache",
+            "settings.ui.ClearStateCacheDesc": "Clears the in-memory cache of last known values. Forces fresh state updates on next reload.",
+            "settings.ui.TopicEcho": "Topic Echo",
+            "settings.ui.TopicEchoDesc": "Echoes published topic events to connected WebSocket clients for live canvas updates.",
+            "settings.ui.theme": "Theme",
+            "settings.ui.themeAuto": "Auto",
+            "settings.ui.themeDark": "Dark",
+            "settings.ui.themeLight": "Light",
+            "settings.ui.servicesCalendarNoticeTitle": "Home Assistant Services & Calendar Markdown:",
+            "settings.ui.servicesCalendarNoticeDesc": "Configure formatting rules for the Calendar & RSS Markdown services. These determine how calendar events and RSS feeds are rendered in Text and Markdown widgets.",
             "settings.alert.saveSettingsFailed": "Failed to save settings.",
             "settings.alert.invalidBackupFormat": "Invalid backup file format.",
             "settings.alert.restoreFailed": "Failed to restore settings.",
@@ -1706,6 +1900,9 @@
             if (devFilter) devFilter.setAttribute('placeholder', __('settings.config.filter'));
             var capFilter = document.getElementById('capability-filter');
             if (capFilter) capFilter.setAttribute('placeholder', __('settings.config.filterCapability'));
+            if (typeof currentTheme !== 'undefined' && typeof applyTheme === 'function') {
+                applyTheme(currentTheme);
+            }
         }
 
         function loadLocale(lang) {
@@ -1946,7 +2143,7 @@
             if (regularZoneNames.length > 0) {
                 var devSep = document.createElement('div');
                 devSep.className = 'config-section-separator config-devices-separator';
-                devSep.innerHTML = '<div class="config-section-title">Entities by Area</div><div class="config-section-desc">Home Assistant entities organized by Area. Tick capabilities to publish live state updates to Dashboard Studio.</div>';
+                devSep.innerHTML = '<div class="config-section-title" data-translate="settings.config.entitiesByAreaTitle">' + escapeHtml(__('settings.config.entitiesByAreaTitle')) + '</div><div class="config-section-desc" data-translate="settings.config.entitiesByAreaDesc">' + escapeHtml(__('settings.config.entitiesByAreaDesc')) + '</div>';
                 container.appendChild(devSep);
                 regularZoneNames.forEach(function (zName) {
                     container.appendChild(createZoneElement(zName, zones[zName]));
@@ -1956,7 +2153,7 @@
             if (activeSpecialZones.length > 0) {
                 var specSep = document.createElement('div');
                 specSep.className = 'config-section-separator';
-                specSep.innerHTML = '<div class="config-section-title">Helpers, Automations &amp; Scenes</div><div class="config-section-desc">Home Assistant Helpers (Variables), Automations/Scripts (Flows), and Scenes (Moods)</div>';
+                specSep.innerHTML = '<div class="config-section-title" data-translate="settings.config.systemTitle">' + escapeHtml(__('settings.config.systemTitle')) + '</div><div class="config-section-desc" data-translate="settings.config.systemDesc">' + escapeHtml(__('settings.config.systemDesc')) + '</div>';
                 container.appendChild(specSep);
                 activeSpecialZones.forEach(function (zName) {
                     container.appendChild(createZoneElement(zName, zones[zName]));
@@ -2553,25 +2750,37 @@
             var container = document.getElementById(containerId);
             if (!container) return;
 
+            var badgeEl = document.getElementById('badge-count-' + type);
+            if (badgeEl) badgeEl.textContent = files ? files.length : 0;
+
             if (!files || files.length === 0) {
-                container.innerHTML = '<div class="empty-msg">' + __('settings.files.noFiles') + '</div>';
+                container.innerHTML = '<div class="empty-msg-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg><span>' + __('settings.files.noFiles') + '</span></div>';
                 return;
+            }
+
+            var typeIcon = '';
+            if (type === 'dashboards') {
+                typeIcon = '<svg class="file-name-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>';
+            } else if (type === 'templates') {
+                typeIcon = '<svg class="file-name-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 10 10 0 0 0 0-20"/></svg>';
+            } else {
+                typeIcon = '<svg class="file-name-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>';
             }
 
             var html = '<table class="file-table"><thead><tr>' +
                 '<th>' + __('settings.files.nameColumn') + '</th>' +
-                '<th style="width:120px;text-align:right;">' + __('settings.files.actionColumn') + '</th>' +
+                '<th class="file-action-cell">' + __('settings.files.actionColumn') + '</th>' +
                 '</tr></thead><tbody>';
 
             files.forEach(function (file) {
                 var fileName = file.name || file;
                 var isBuiltin = !!file.builtin;
-                var badge = isBuiltin ? '<span class="domain-badge" style="margin-left:8px;">Built-in</span>' : '';
-                var delBtn = isBuiltin ? '' : '<button type="button" class="btn-del" onclick="deleteFileConfirm(\'' + escapeHtml(type) + '\', \'' + escapeHtml(fileName) + '\')">' + __('settings.modal.delete') + '</button>';
+                var badge = isBuiltin ? '<span class="domain-badge" style="margin-left:8px;">' + __('settings.files.defaultTag') + '</span>' : '';
+                var delBtn = isBuiltin ? '' : '<button type="button" class="btn-del" onclick="deleteFileConfirm(\'' + escapeHtml(type) + '\', \'' + escapeHtml(fileName) + '\')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg><span>' + __('settings.modal.delete') + '</span></button>';
 
                 html += '<tr>' +
-                    '<td><b>' + escapeHtml(fileName) + '</b>' + badge + '</td>' +
-                    '<td style="text-align:right;">' + delBtn + '</td>' +
+                    '<td><div class="file-name-cell">' + typeIcon + '<span>' + escapeHtml(fileName) + '</span>' + badge + '</div></td>' +
+                    '<td class="file-action-cell">' + delBtn + '</td>' +
                     '</tr>';
             });
 
@@ -2583,28 +2792,36 @@
             var container = document.getElementById('list-' + kind);
             if (!container) return;
 
+            var badgeEl = document.getElementById('badge-count-' + kind);
+            if (badgeEl) badgeEl.textContent = files ? files.length : 0;
+
             if (!files || files.length === 0) {
-                container.innerHTML = '<div class="empty-msg">' + (kind === 'images' ? __('settings.files.noImages') : __('settings.files.noAudio')) + '</div>';
+                var emptySvg = kind === 'images'
+                    ? '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>'
+                    : '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>';
+                container.innerHTML = '<div class="empty-msg-box">' + emptySvg + '<span>' + (kind === 'images' ? __('settings.files.noImages') : __('settings.files.noAudio')) + '</span></div>';
                 return;
             }
 
             var html = '<table class="file-table"><thead><tr>' +
                 '<th>' + __('settings.files.nameColumn') + '</th>' +
-                '<th style="width:140px;text-align:right;">' + __('settings.files.actionColumn') + '</th>' +
+                '<th class="file-action-cell">' + __('settings.files.actionColumn') + '</th>' +
                 '</tr></thead><tbody>';
 
             files.forEach(function (file) {
                 var fileName = file.name || file;
                 var preview = '';
                 if (kind === 'images') {
-                    preview = '<img src="/dashboard_studio/images/' + encodeURIComponent(fileName) + '" style="width:28px;height:28px;object-fit:cover;border-radius:4px;vertical-align:middle;margin-right:8px;" onerror="this.style.display=\'none\'">';
+                    preview = '<img src="/dashboard_studio/images/' + encodeURIComponent(fileName) + '" style="width:32px;height:32px;object-fit:cover;border-radius:4px;border:1px solid var(--border-color);flex-shrink:0;" onerror="this.style.display=\'none\'">';
                 } else {
-                    preview = '<audio controls src="/dashboard_studio/audio/' + encodeURIComponent(fileName) + '" style="height:24px;width:120px;vertical-align:middle;margin-right:8px;"></audio>';
+                    preview = '<audio controls src="/dashboard_studio/audio/' + encodeURIComponent(fileName) + '" style="height:28px;width:140px;vertical-align:middle;flex-shrink:0;"></audio>';
                 }
 
+                var delBtn = '<button type="button" class="btn-del" onclick="deleteFileConfirm(\'' + escapeHtml(kind) + '\', \'' + escapeHtml(fileName) + '\')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg><span>' + __('settings.modal.delete') + '</span></button>';
+
                 html += '<tr>' +
-                    '<td>' + preview + '<b>' + escapeHtml(fileName) + '</b></td>' +
-                    '<td style="text-align:right;"><button type="button" class="btn-del" onclick="deleteFileConfirm(\'' + escapeHtml(kind) + '\', \'' + escapeHtml(fileName) + '\')">' + __('settings.modal.delete') + '</button></td>' +
+                    '<td><div class="file-name-cell" style="gap:12px;">' + preview + '<span>' + escapeHtml(fileName) + '</span></div></td>' +
+                    '<td class="file-action-cell">' + delBtn + '</td>' +
                     '</tr>';
             });
 
@@ -2629,7 +2846,9 @@
         }
 
         function clearAllSnapshotsConfirm() {
-            showConfirmModal('Delete all snapshot history for all dashboards? This cannot be undone.', 'Clear All', true, function () {
+            var msg = __('settings.confirm.clearAllSnapshotsMsg');
+            var btnText = __('settings.files.clearAllSnapshots');
+            showConfirmModal(msg, btnText, true, function () {
                 api('clear-snapshots', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -2794,7 +3013,12 @@
             langSelect.addEventListener('change', function () {
                 var chosen = this.value;
                 localStorage.setItem('dashboard_studio_lang', chosen);
-                loadLocale(chosen);
+                loadLocale(chosen).then(function () {
+                    if (cachedDevices && cachedDevices.length > 0) {
+                        renderDevicesTree(cachedDevices);
+                    }
+                    loadFiles();
+                });
             });
         }
 
@@ -2804,15 +3028,16 @@
         function applyTheme(theme) {
             currentTheme = theme;
             localStorage.setItem('dashboard_studio_theme', theme);
+            var label = document.getElementById('theme-label');
             if (theme === 'dark') {
                 document.documentElement.setAttribute('data-theme', 'dark');
-                document.getElementById('theme-label').textContent = 'Dark';
+                if (label) label.textContent = __('settings.ui.themeDark');
             } else if (theme === 'light') {
                 document.documentElement.setAttribute('data-theme', 'light');
-                document.getElementById('theme-label').textContent = 'Light';
+                if (label) label.textContent = __('settings.ui.themeLight');
             } else {
                 document.documentElement.removeAttribute('data-theme');
-                document.getElementById('theme-label').textContent = 'Auto';
+                if (label) label.textContent = __('settings.ui.themeAuto');
             }
         }
         if (themeToggleBtn) {
@@ -2844,9 +3069,10 @@
            ========================================================================= */
         setStatus('Loading…', 'busy');
         updateDashboardLinks();
-        loadLocale(cleanLang);
 
-        Promise.all([api('config'), api('devices')]).then(function (results) {
+        loadLocale(cleanLang).then(function () {
+            return Promise.all([api('config'), api('devices')]);
+        }).then(function (results) {
             var cfg = results[0] || {};
             config = cfg.enabled_capabilities || {};
             populateSettingsUi(cfg.app_settings || {});

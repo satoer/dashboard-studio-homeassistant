@@ -8,11 +8,17 @@ There is no external server, Docker container, or Node.js process to maintain, a
 
 ## Quick Setup
 
-1. **Restart Home Assistant** after downloading via HACS or placing the folder into `custom_components/`.
-2. Go to **Settings -> Devices & Services -> Add Integration**.
-3. Search for **Dashboard Studio** and click **Submit**.
-4. Open **Dashboard Studio Setup** in the sidebar to enable the device capabilities you want to use.
-5. Open **Dashboard Studio** in the sidebar to create and view dashboards.
+### One-Command Installer (Linux / Docker / Supervised)
+```bash
+curl -sSL https://raw.githubusercontent.com/satoer/dashboard-studio-homeassistant/main/install.sh | sudo bash
+```
+
+### Or via HACS
+1. Add custom repository: `https://github.com/satoer/dashboard-studio-homeassistant` (category: Integration).
+2. Download and **Restart Home Assistant**.
+3. Go to **Settings -> Devices & Services -> Add Integration**, search for **Dashboard Studio**, and click **Submit**.
+4. Open **Dashboard Studio Setup** in the sidebar to enable the device capabilities you want on your dashboards.
+5. Click the link in Setup (or visit `http://<your-ha-ip>:8123/dashboard_studio/`) to design and view dashboards.
 
 ---
 

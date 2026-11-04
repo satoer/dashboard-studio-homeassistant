@@ -24,7 +24,15 @@
       "backup": "Kopia zapasowa",
       "restoreBackup": "Przywróć kopię zapasową",
       "backupTooltip": "Tworzy kopię zapasową tylko ustawień Homey",
-      "restoreTooltip": "Przywraca tylko ustawienia Homey"
+      "restoreTooltip": "Przywraca tylko ustawienia Homey",
+      "downloadSettings": "Pobierz ustawienia",
+      "downloadCapabilities": "Pobierz możliwości",
+      "clearCache": "Wyczyść pamięć podręczną stanu",
+      "close": "Zamknij",
+      "copyToClipboard": "Kopiuj do schowka",
+      "copied": "Skopiowano!",
+      "selectFile": "Wybierz plik…",
+      "restoreHelp": "Wklej poniżej swój plik JSON kopii zapasowej lub wybierz plik .json ze swojego komputera."
     },
     "feedback": {
       "saved": "Zapisano!"
@@ -32,7 +40,8 @@
     "modal": {
       "cancel": "Anuluj",
       "delete": "Usuń",
-      "ok": "OK"
+      "ok": "OK",
+      "confirm": "Potwierdź"
     },
     "files": {
       "dashboards": "Pulpity nawigacyjne",
@@ -48,10 +57,13 @@
       "loadAudioError": "Error loading audio.",
       "nameColumn": "Nazwa",
       "actionColumn": "Działanie",
-      "defaultTag": "Wbudowane"
+      "defaultTag": "Wbudowane",
+      "presets": "Szablony widżetów",
+      "clearAllSnapshots": "Wyczyść wszystkie migawki"
     },
     "confirm": {
-      "deleteNamed": "Usunąć „__name__”? To działanie jest nieodwracalne."
+      "deleteNamed": "Usunąć „__name__”? To działanie jest nieodwracalne.",
+      "clearAllSnapshotsMsg": "Usunąć całą historię migawek dla wszystkich pulpitów nawigacyjnych? Tej operacji nie można cofnąć."
     },
     "alert": {
       "saveSettingsFailed": "Nie udało się zapisać ustawień.",
@@ -75,7 +87,17 @@
       "loadFailed": "Nie udało się załadować danych:",
       "apiInitializing": "Interfejs API uruchamia się ponownie. Odśwież tę stronę za chwilę.",
       "noDevices": "Nie znaleziono żadnych urządzeń.",
-      "filterCapability": "Filtruj według możliwości…"
+      "filterCapability": "Filtruj według możliwości…",
+      "expandAll": "Rozwiń wszystko",
+      "collapseAll": "Zwiń wszystko",
+      "entitiesByAreaTitle": "Encje według obszaru",
+      "entitiesByAreaDesc": "Encje Home Assistant uporządkowane według obszaru. Zaznacz możliwości, aby publikować aktualizacje na żywo do Dashboard Studio.",
+      "systemTitle": "Pomocnicy, automatyzacje i sceny",
+      "systemDesc": "Pomocnicy Home Assistant (zmienne), automatyzacje/skrypty (przepływy) oraz sceny (nastroje)",
+      "copyTopic": "Kopiuj temat",
+      "copyTopicButton": "Kopiuj temat",
+      "copyTopicDone": "Skopiowano",
+      "copyTopicFailed": "Nie udało się skopiować tematu do schowka."
     },
     "dashboard": {
       "access": "Otwórz lokalny pulpit nawigacyjny:",
@@ -84,7 +106,8 @@
       "urlNotDetected": "Nie można automatycznie wykryć adresu URL pulpitu nawigacyjnego.",
       "manualStep1": "1. W aplikacji Homey: System → Ogólne.",
       "manualStep2": "2. W obszarze Informacje o systemie zanotuj adres (np. 192.168.1.10).",
-      "manualStep3BeforeUrl": "3. W przeglądarce otwórz:"
+      "manualStep3BeforeUrl": "3. W przeglądarce otwórz:",
+      "openDashboard": "Otwórz pulpit"
     },
     "ui": {
       "DashboardPort": "Port pulpitu nawigacyjnego",
@@ -153,7 +176,53 @@
       "BackupNoticeTitle": "Backup & Restore Information:",
       "BackupNoticeDesc": "This backup only includes Dashboard Studio app settings and enabled device capabilities (MQTT topics). Dashboard designs, themes, uploaded images, and audio files are stored separately and are not included.",
       "BackupSettingsTitle": "Backs up app settings and enabled device capabilities",
-      "RestoreSettingsTitle": "Restores app settings and enabled device capabilities"
+      "RestoreSettingsTitle": "Restores app settings and enabled device capabilities",
+      "ClearStateCache": "Wyczyść pamięć podręczną stanu",
+      "ClearStateCacheDesc": "Czyści pamięć podręczną ostatnich znanych wartości. Wymusza świeże aktualizacje stanu przy następnym przeładowaniu.",
+      "TopicEcho": "Echo tematów",
+      "TopicEchoDesc": "Przekazuje opublikowane zdarzenia tematów do połączonych klientów WebSocket w celu aktualizacji na żywo.",
+      "theme": "Motyw",
+      "themeAuto": "Automatyczny",
+      "themeDark": "Ciemny",
+      "themeLight": "Jasny",
+      "servicesCalendarNoticeTitle": "Usługi Home Assistant & Markdown Kalendarza:",
+      "servicesCalendarNoticeDesc": "Skonfiguruj reguły formatowania dla usług kalendarza i Markdown RSS."
+    },
+    "cleanup": {
+      "sectionTitle": "Czyszczenie możliwości i tematów",
+      "sectionDesc": "Przejrzyj wszystkie zapisane pulpity nawigacyjne, aby znaleźć włączone możliwości i tematy, które nie są już używane.",
+      "headerTitle": "Audyt nieużywanych tematów",
+      "scanButton": "Skanuj w poszukiwaniu nieużywanych możliwości",
+      "scanPlaceholder": "Kliknij \"Skanuj w poszukiwaniu nieużywanych możliwości\", aby przeanalizować zapisane pulpity.",
+      "apiNotReady": "Interfejs API wciąż się inicjalizuje. Spróbuj ponownie za chwilę.",
+      "scanning": "Skanowanie pulpitów...",
+      "analyzing": "Analizowanie pulpitów i wyodrębnianie powiązań tematów...",
+      "auditFailed": "Audyt nie powiódł się",
+      "scanFailed": "Skanowanie pulpitów nie powiodło się: __error__",
+      "removedDevice": "Usunięte urządzenie (__id__)",
+      "zoneDefault": "Domyślny",
+      "zoneUnknown": "Nieznany",
+      "removedTag": "Usunięto z Home Assistant",
+      "allUsedTitle": "Konfiguracja w pełni zoptymalizowana",
+      "allUsedHeadline": "Wszystkie włączone możliwości są aktualnie używane!",
+      "allUsedBody": "Nie wykryto żadnych nieużywanych możliwości (przeskanowano __dashboards__ pulpitów). Twoja konfiguracja jest w pełni zoptymalizowana.",
+      "foundOne": "Znaleziono 1 nieużywaną możliwość",
+      "foundMany": "Znaleziono __count__ nieużywanych możliwości",
+      "bannerOne": "1 włączona możliwość nie jest używana w Twoich zapisanych pulpitach (przeskanowano __dashboards__).",
+      "bannerMany": "__count__ włączonych możliwości nie jest używanych w Twoich zapisanych pulpitach (przeskanowano __dashboards__).",
+      "hint": "Zaznacz możliwości, które chcesz wyłączyć, a następnie kliknij \"Wyłącz zaznaczone możliwości\".",
+      "selectAll": "Zaznacz wszystko",
+      "deselectAll": "Odznacz wszystko",
+      "selectedCount": "Wybrano __selected__ z __total__",
+      "filterPlaceholder": "Filtruj listę...",
+      "disableButton": "Wyłącz zaznaczone możliwości (__count__)",
+      "selectOne": "Wybierz przynajmniej jedną możliwość do wyłączenia.",
+      "confirmOne": "Czy na pewno chcesz wyłączyć 1 nieużywaną możliwość?",
+      "confirmMany": "Czy na pewno chcesz wyłączyć __count__ nieużywanych możliwości?",
+      "confirmButtonOne": "Wyłącz 1 możliwość",
+      "confirmButtonMany": "Wyłącz __count__ możliwości",
+      "successOne": "Pomyślnie wyłączono 1 nieużywaną możliwość.",
+      "successMany": "Pomyślnie wyłączono __count__ nieużywanych możliwości."
     }
   },
   "words": {

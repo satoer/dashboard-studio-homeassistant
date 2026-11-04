@@ -24,7 +24,15 @@
       "backup": "Säkerhetskopiera",
       "restoreBackup": "Återställ säkerhetskopia",
       "backupTooltip": "Säkerhetskopierar endast Homey-inställningar",
-      "restoreTooltip": "Återställer endast Homey-inställningar"
+      "restoreTooltip": "Återställer endast Homey-inställningar",
+      "downloadSettings": "Ladda ner inställningar",
+      "downloadCapabilities": "Ladda ner funktioner",
+      "clearCache": "Rensa tillståndscache",
+      "close": "Stäng",
+      "copyToClipboard": "Kopiera till urklipp",
+      "copied": "Kopierad!",
+      "selectFile": "Välj fil…",
+      "restoreHelp": "Klistra in din säkerhetskopia-JSON nedan eller välj en .json-fil från din dator."
     },
     "feedback": {
       "saved": "Sparad!"
@@ -32,7 +40,8 @@
     "modal": {
       "cancel": "Avbryt",
       "delete": "Radera",
-      "ok": "OK"
+      "ok": "OK",
+      "confirm": "Bekräfta"
     },
     "files": {
       "dashboards": "Instrumentpaneler",
@@ -48,10 +57,13 @@
       "loadAudioError": "Error loading audio.",
       "nameColumn": "Namn",
       "actionColumn": "Handling",
-      "defaultTag": "Inbyggd"
+      "defaultTag": "Inbyggd",
+      "presets": "Widget-förinställningar",
+      "clearAllSnapshots": "Rensa alla ögonblicksbilder"
     },
     "confirm": {
-      "deleteNamed": "Ta bort \"__namn__\"? Denna åtgärd är oåterkallelig."
+      "deleteNamed": "Ta bort \"__namn__\"? Denna åtgärd är oåterkallelig.",
+      "clearAllSnapshotsMsg": "Radera all historik för ögonblicksbilder för alla instrumentpaneler? Detta kan inte ångras."
     },
     "alert": {
       "saveSettingsFailed": "Det gick inte att spara inställningarna.",
@@ -75,7 +87,17 @@
       "loadFailed": "Det gick inte att ladda data:",
       "apiInitializing": "API:et startar igen. Uppdatera den här sidan om ett ögonblick.",
       "noDevices": "Inga enheter hittades.",
-      "filterCapability": "Filtrera efter förmåga…"
+      "filterCapability": "Filtrera efter förmåga…",
+      "expandAll": "Expandera alla",
+      "collapseAll": "Komprimera alla",
+      "entitiesByAreaTitle": "Entiteter efter område",
+      "entitiesByAreaDesc": "Home Assistant-entiteter ordnade efter område. Markera funktioner för att skicka statusuppdateringar till Dashboard Studio.",
+      "systemTitle": "Hjälpare, automatiseringar och scener",
+      "systemDesc": "Home Assistant-hjälpare (variabler), automatiseringar/skript (flows) och scener (moods)",
+      "copyTopic": "Kopiera ämne",
+      "copyTopicButton": "Kopiera ämne",
+      "copyTopicDone": "Kopierat",
+      "copyTopicFailed": "Kunde inte kopiera ämne till urklipp."
     },
     "dashboard": {
       "access": "Öppna din lokala instrumentpanel:",
@@ -84,7 +106,8 @@
       "urlNotDetected": "Instrumentpanelens URL kunde inte identifieras automatiskt.",
       "manualStep1": "1. I Homey-appen: System → Allmänt.",
       "manualStep2": "2. Under Systeminformation, notera adressen (t.ex. 192.168.1.10).",
-      "manualStep3BeforeUrl": "3. Öppna webbläsaren:"
+      "manualStep3BeforeUrl": "3. Öppna webbläsaren:",
+      "openDashboard": "Öppna instrumentpanel"
     },
     "ui": {
       "DashboardPort": "Instrumentpanel-port",
@@ -153,7 +176,53 @@
       "BackupNoticeTitle": "Backup & Restore Information:",
       "BackupNoticeDesc": "This backup only includes Dashboard Studio app settings and enabled device capabilities (MQTT topics). Dashboard designs, themes, uploaded images, and audio files are stored separately and are not included.",
       "BackupSettingsTitle": "Backs up app settings and enabled device capabilities",
-      "RestoreSettingsTitle": "Restores app settings and enabled device capabilities"
+      "RestoreSettingsTitle": "Restores app settings and enabled device capabilities",
+      "ClearStateCache": "Rensa tillståndscache",
+      "ClearStateCacheDesc": "Rensar minnescachen för senast kända värden. Tvingar fram nya uppdateringar vid nästa omladdning.",
+      "TopicEcho": "Ämnes-eko",
+      "TopicEchoDesc": "Skickar publicerade ämneshändelser till anslutna WebSocket-klienter för live-uppdateringar.",
+      "theme": "Tema",
+      "themeAuto": "Automatiskt",
+      "themeDark": "Mörkt",
+      "themeLight": "Ljust",
+      "servicesCalendarNoticeTitle": "Home Assistant-tjänster och Kalender Markdown:",
+      "servicesCalendarNoticeDesc": "Konfigurera formateringsregler för kalender- och RSS Markdown-tjänster."
+    },
+    "cleanup": {
+      "sectionTitle": "Rensning av funktioner och ämnen",
+      "sectionDesc": "Granska alla sparade instrumentpaneler för att hitta aktiverade funktioner och ämnen som inte längre används.",
+      "headerTitle": "Granskning av oanvända ämnen",
+      "scanButton": "Sök efter oanvända funktioner",
+      "scanPlaceholder": "Klicka på \"Sök efter oanvända funktioner\" för att analysera sparade instrumentpaneler.",
+      "apiNotReady": "API:et startar fortfarande. Försök igen om en stund.",
+      "scanning": "Skannar instrumentpaneler...",
+      "analyzing": "Analyserar alla instrumentpaneler och extraherar ämnesbindningar...",
+      "auditFailed": "Granskning misslyckades",
+      "scanFailed": "Skanning av instrumentpaneler misslyckades: __error__",
+      "removedDevice": "Borttagen enhet (__id__)",
+      "zoneDefault": "Standard",
+      "zoneUnknown": "Okänd",
+      "removedTag": "Borttagen från Home Assistant",
+      "allUsedTitle": "Konfigurationen är fullt optimerad",
+      "allUsedHeadline": "Alla aktiverade funktioner används för närvarande!",
+      "allUsedBody": "Inga oanvända funktioner upptäcktes (__dashboards__ instrumentpaneler skannade). Konfigurationen är optimerad.",
+      "foundOne": "1 oanvänd funktion hittades",
+      "foundMany": "__count__ oanvända funktioner hittades",
+      "bannerOne": "1 aktiverad funktion refereras inte i dina sparade instrumentpaneler (__dashboards__ skannade).",
+      "bannerMany": "__count__ aktiverade funktioner refereras inte i dina sparade instrumentpaneler (__dashboards__ skannade).",
+      "hint": "Markera de funktioner du vill inaktivera och klicka på \"Inaktivera valda funktioner\".",
+      "selectAll": "Markera alla",
+      "deselectAll": "Avmarkera alla",
+      "selectedCount": "__selected__ av __total__ valda",
+      "filterPlaceholder": "Filtrera listan...",
+      "disableButton": "Inaktivera valda funktioner (__count__)",
+      "selectOne": "Välj minst en funktion att inaktivera.",
+      "confirmOne": "Är du säker på att du vill inaktivera 1 oanvänd funktion?",
+      "confirmMany": "Är du säker på att du vill inaktivera __count__ oanvända funktioner?",
+      "confirmButtonOne": "Inaktivera 1 funktion",
+      "confirmButtonMany": "Inaktivera __count__ funktioner",
+      "successOne": "1 oanvänd funktion inaktiverades framgångsrikt.",
+      "successMany": "__count__ oanvända funktioner inaktiverades framgångsrikt."
     }
   },
   "words": {

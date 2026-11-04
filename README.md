@@ -10,7 +10,7 @@ Dashboard Studio runs 100% in-process as a Home Assistant custom component. Ther
 
 * **Native In-Process Integration:** Runs entirely within Home Assistant Core with zero external dependencies or background containers.
 * **Single Sign-On Security:** Uses your existing Home Assistant login session. No long-lived access tokens to generate, copy, or paste.
-* **Instant Sidebar Access:** Adds Dashboard Studio directly to the Home Assistant sidebar, plus an admin-only Setup panel for capability management.
+* **Instant Sidebar Setup:** Adds an admin-only Setup panel directly to the Home Assistant sidebar for device and capability management.
 * **Selective Capability Whitelisting:** Choose exactly which devices and capabilities are exposed to dashboards, keeping memory and network usage minimal.
 * **Full-Featured Designer:** Drag-and-drop dashboard designer with widgets, composite widgets, themes, and presets.
 * **Safe Local Storage:** All dashboards, snapshots, themes, presets, images, and audio files are stored under `/config/dashboard_studio/` and are automatically included in standard Home Assistant backups.
@@ -21,11 +21,34 @@ Dashboard Studio runs 100% in-process as a Home Assistant custom component. Ther
 
 ## Installation
 
-### Method 1: HACS (Recommended)
+### Method 1: Single-Command Automated Installer (Linux / Docker / Supervised)
+
+Run this single command in your Linux terminal (via SSH or directly on your server):
+
+```bash
+curl -sSL https://raw.githubusercontent.com/satoer/dashboard-studio-homeassistant/main/install.sh | sudo bash
+```
+
+*(or using wget)*:
+
+```bash
+wget -qO- https://raw.githubusercontent.com/satoer/dashboard-studio-homeassistant/main/install.sh | sudo bash
+```
+
+**What the installer does automatically:**
+1. Detects your Home Assistant configuration directory (Docker container mount, Home Assistant OS/Supervised, or Core path).
+2. Stops and removes any obsolete `dashboard-studio` Docker container on port 5050.
+3. Downloads and installs `custom_components/dashboard_studio` into your Home Assistant `/config/custom_components/` directory.
+4. Migrates existing dashboards from `/opt/dashboard-studio/data` if present.
+5. Restarts Home Assistant.
+
+---
+
+### Method 2: HACS
 
 1. Open **HACS** in your Home Assistant sidebar.
 2. Click the three dots in the top right corner and select **Custom repositories**.
-3. Add the repository URL: `https://github.com/satoer/DashboardStudio` and select category **Integration**.
+3. Add the repository URL: `https://github.com/satoer/dashboard-studio-homeassistant` and select category **Integration**.
 4. Click **Download** on the Dashboard Studio card.
 5. **Restart Home Assistant**.
 6. In Home Assistant, navigate to **Settings -> Devices & Services -> Add Integration**.
@@ -33,7 +56,7 @@ Dashboard Studio runs 100% in-process as a Home Assistant custom component. Ther
 
 ---
 
-### Method 2: Manual Installation
+### Method 3: Manual Installation
 
 1. Download the latest release or clone this repository.
 2. Copy the `custom_components/dashboard_studio` folder into your Home Assistant `/config/custom_components/` directory.
@@ -58,8 +81,8 @@ Dashboard Studio runs 100% in-process as a Home Assistant custom component. Ther
 1. **Enable Devices & Capabilities:**
    In the Home Assistant sidebar, click **Dashboard Studio Setup** (admin-only). Browse your devices, entities, helpers, automations, or scenes and select the checkboxes for the capabilities you want available on your dashboards. Click **Save**.
 
-2. **Open the Dashboard Studio App:**
-   Click **Dashboard Studio** in the sidebar, or navigate directly in any browser:
+2. **Open the Dashboard Studio Designer:**
+   Click the link in the top banner of **Dashboard Studio Setup**, or open directly in any browser tab:
    * **Designer & App:** `http://<your-ha-ip>:8123/dashboard_studio/`
    * **Direct Dashboard View:** `http://<your-ha-ip>:8123/dashboard_studio/?dashboard=<name>`
    * **Viewer Only Mode:** Can be toggled on in the Setup panel under Settings.

@@ -24,7 +24,15 @@
       "backup": "Copia de seguridad",
       "restoreBackup": "Restaurar copia de seguridad",
       "backupTooltip": "Solo realiza una copia de seguridad de la configuración de Homey",
-      "restoreTooltip": "Solo restaura la configuración de Homey"
+      "restoreTooltip": "Solo restaura la configuración de Homey",
+      "downloadSettings": "Descargar configuración",
+      "downloadCapabilities": "Descargar capacidades",
+      "clearCache": "Borrar caché de estado",
+      "close": "Cerrar",
+      "copyToClipboard": "Copiar al portapapeles",
+      "copied": "¡Copiado!",
+      "selectFile": "Seleccionar archivo…",
+      "restoreHelp": "Pegue el JSON de respaldo abajo o seleccione un archivo .json desde su ordenador."
     },
     "feedback": {
       "saved": "¡Guardado!"
@@ -32,7 +40,8 @@
     "modal": {
       "cancel": "Cancelar",
       "delete": "Eliminar",
-      "ok": "Aceptar"
+      "ok": "Aceptar",
+      "confirm": "Confirmar"
     },
     "files": {
       "dashboards": "Paneles",
@@ -48,10 +57,13 @@
       "loadAudioError": "Error loading audio.",
       "nameColumn": "Nombre",
       "actionColumn": "Acción",
-      "defaultTag": "Integrado"
+      "defaultTag": "Integrado",
+      "presets": "Ajustes predefinidos de widgets",
+      "clearAllSnapshots": "Borrar todas las instantáneas"
     },
     "confirm": {
-      "deleteNamed": "¿Eliminar «__name__»? No se puede deshacer."
+      "deleteNamed": "¿Eliminar «__name__»? No se puede deshacer.",
+      "clearAllSnapshotsMsg": "¿Eliminar todo el historial de instantáneas de todos los paneles? Esto no se puede deshacer."
     },
     "alert": {
       "saveSettingsFailed": "Error al guardar los ajustes.",
@@ -75,7 +87,17 @@
       "loadFailed": "Error al cargar datos:",
       "apiInitializing": "La API aún está iniciando. Actualice esta página en un momento.",
       "noDevices": "No se encontraron dispositivos.",
-      "filterCapability": "Filtrar por capacidad…"
+      "filterCapability": "Filtrar por capacidad…",
+      "expandAll": "Expandir todo",
+      "collapseAll": "Contraer todo",
+      "entitiesByAreaTitle": "Entidades por área",
+      "entitiesByAreaDesc": "Entidades de Home Assistant organizadas por área. Marque las capacidades para publicar actualizaciones en tiempo real en Dashboard Studio.",
+      "systemTitle": "Ayudantes, automatizaciones y escenas",
+      "systemDesc": "Ayudantes de Home Assistant (variables), automatizaciones/scripts (flujos) y escenas (estados)",
+      "copyTopic": "Copiar topic",
+      "copyTopicButton": "Copiar topic",
+      "copyTopicDone": "Copiado",
+      "copyTopicFailed": "No se pudo copiar el topic al portapapeles."
     },
     "dashboard": {
       "access": "Abre tu panel local:",
@@ -84,7 +106,8 @@
       "urlNotDetected": "No se pudo detectar automáticamente la URL del panel.",
       "manualStep1": "1. En la app Homey: Sistema → General.",
       "manualStep2": "2. En Información del sistema, anota la dirección (por ejemplo 192.168.1.10).",
-      "manualStep3BeforeUrl": "3. En el navegador, abre:"
+      "manualStep3BeforeUrl": "3. En el navegador, abre:",
+      "openDashboard": "Abrir panel"
     },
     "ui": {
       "DashboardPort": "Puerto del panel",
@@ -153,7 +176,53 @@
       "BackupNoticeTitle": "Backup & Restore Information:",
       "BackupNoticeDesc": "This backup only includes Dashboard Studio app settings and enabled device capabilities (MQTT topics). Dashboard designs, themes, uploaded images, and audio files are stored separately and are not included.",
       "BackupSettingsTitle": "Backs up app settings and enabled device capabilities",
-      "RestoreSettingsTitle": "Restores app settings and enabled device capabilities"
+      "RestoreSettingsTitle": "Restores app settings and enabled device capabilities",
+      "ClearStateCache": "Borrar caché de estado",
+      "ClearStateCacheDesc": "Borra la caché en memoria de los últimos valores conocidos. Fuerza actualizaciones nuevas en la siguiente recarga.",
+      "TopicEcho": "Eco de topics",
+      "TopicEchoDesc": "Transmite los eventos de topics publicados a los clientes WebSocket conectados para actualizaciones en vivo.",
+      "theme": "Tema",
+      "themeAuto": "Automático",
+      "themeDark": "Oscuro",
+      "themeLight": "Claro",
+      "servicesCalendarNoticeTitle": "Servicios de Home Assistant y Markdown de Calendario:",
+      "servicesCalendarNoticeDesc": "Configure las reglas de formato para los servicios de Calendario y Markdown RSS."
+    },
+    "cleanup": {
+      "sectionTitle": "Limpieza de capacidades y topics",
+      "sectionDesc": "Audite todos los paneles guardados para detectar capacidades y topics habilitados que ya no se usan.",
+      "headerTitle": "Auditoría de topics no utilizados",
+      "scanButton": "Buscar capacidades no utilizadas",
+      "scanPlaceholder": "Haga clic en \"Buscar capacidades no utilizadas\" para analizar los paneles guardados.",
+      "apiNotReady": "La API se está iniciando. Por favor, inténtelo de nuevo en un momento.",
+      "scanning": "Escaneando paneles...",
+      "analyzing": "Analizando todos los paneles guardados...",
+      "auditFailed": "Error en la auditoría",
+      "scanFailed": "Error al escanear los paneles: __error__",
+      "removedDevice": "Dispositivo eliminado (__id__)",
+      "zoneDefault": "Predeterminado",
+      "zoneUnknown": "Desconocido",
+      "removedTag": "Eliminado de Home Assistant",
+      "allUsedTitle": "Configuración totalmente optimizada",
+      "allUsedHeadline": "¡Todas las capacidades habilitadas están en uso!",
+      "allUsedBody": "No se detectaron capacidades sin usar (__dashboards__ paneles escaneados). Su configuración está totalmente optimizada.",
+      "foundOne": "Se encontró 1 capacidad sin usar",
+      "foundMany": "Se encontraron __count__ capacidades sin usar",
+      "bannerOne": "1 capacidad habilitada no está referenciada en sus paneles guardados (__dashboards__ escaneados).",
+      "bannerMany": "__count__ capacidades habilitadas no están referenciadas en sus paneles guardados (__dashboards__ escaneados).",
+      "hint": "Marque las capacidades que desea deshabilitar y haga clic en \"Deshabilitar capacidades seleccionadas\".",
+      "selectAll": "Seleccionar todo",
+      "deselectAll": "Deseleccionar todo",
+      "selectedCount": "__selected__ de __total__ seleccionadas",
+      "filterPlaceholder": "Filtrar lista...",
+      "disableButton": "Deshabilitar capacidades seleccionadas (__count__)",
+      "selectOne": "Seleccione al menos una capacidad para deshabilitar.",
+      "confirmOne": "¿Está seguro de que desea deshabilitar 1 capacidad sin usar?",
+      "confirmMany": "¿Está seguro de que desea deshabilitar __count__ capacidades sin usar?",
+      "confirmButtonOne": "Deshabilitar 1 capacidad",
+      "confirmButtonMany": "Deshabilitar __count__ capacidades",
+      "successOne": "Se deshabilitó con éxito 1 capacidad no utilizada.",
+      "successMany": "Se deshabilitaron con éxito __count__ capacidades no utilizadas."
     }
   },
   "words": {

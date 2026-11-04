@@ -164,7 +164,10 @@ class DashboardStudioAdminView(HomeAssistantView):
         if action == "locale":
             lang = str(request.query.get("lang") or "en")
             flat = await request.app["hass"].async_add_executor_job(_load_locale_flat, lang)
-            return web.json_response({"locale": lang, "strings": flat})
+            return web.json_response(
+                {"locale": lang, "strings": flat},
+                headers={"Cache-Control": "no-cache, no-store, must-revalidate"},
+            )
         return web.json_response({"error": "unknown_action"}, status=404)
 
     async def post(self, request: web.Request, action: str) -> web.Response:
@@ -304,9 +307,16 @@ def _flatten_leaves_dict(tree: dict[str, Any], prefix: str = "") -> dict[str, st
     return out
 
 
-def _adapt_platform_text(text: str) -> str:
-    return (
-        text.replace("Removed from Homey", "Removed from Home Assistant")
+def _adapt_platform_text(text: str, lang: str = "en") -> str:
+    if not isinstance(text, str):
+        return text
+    clean_lang = "".join(ch for ch in str(lang or "en").split("-")[0].split("_")[0].lower() if ch.isalpha())
+    res = (
+        text.replace("In de Homey-app: Systeem → Algemeen.", "In Home Assistant: Instellingen → Systeem → Netwerk.")
+        .replace("In the Homey app, go to System → General.", "In Home Assistant, go to Settings → System → Network.")
+        .replace("Under System Information, note the Address", "Find your local IP address")
+        .replace("Noteer onder Systeeminformatie het adres", "Zoek hier het lokale IP-adres")
+        .replace("Removed from Homey", "Removed from Home Assistant")
         .replace("Verwijderd uit Homey", "Verwijderd uit Home Assistant")
         .replace("Homey-app", "Home Assistant")
         .replace("Homey app", "Home Assistant")
@@ -319,16 +329,31 @@ def _adapt_platform_text(text: str) -> str:
         .replace("van Homey", "van Home Assistant")
         .replace("Only backups the Homey settings", "Only backs up the Home Assistant configuration")
         .replace("Only restores the Homey settings", "Only restores the Home Assistant configuration")
-        .replace("Flow-kaarten", "Diensten & Agenda")
-        .replace("Flow cards", "Services & Calendar")
-        .replace("Flow Cards", "Services & Calendar")
-        .replace("flow cards", "services")
-        .replace("flow card", "service")
-        .replace("flow-kaart", "dienst")
-        .replace("Homey devices organized by zone", "Home Assistant entities organized by area")
+    )
+    if clean_lang == "nl":
+        res = (
+            res.replace("Flow-kaarten", "Services & Kalender")
+            .replace("Flow cards", "Services & Kalender")
+            .replace("Flow Cards", "Services & Kalender")
+            .replace("flow cards", "services")
+            .replace("flow card", "service")
+            .replace("flow-kaart", "dienst")
+        )
+    else:
+        res = (
+            res.replace("Flow-kaarten", "Services & Calendar")
+            .replace("Flow cards", "Services & Calendar")
+            .replace("Flow Cards", "Services & Calendar")
+            .replace("flow cards", "services")
+            .replace("flow card", "service")
+            .replace("flow-kaart", "service")
+        )
+    res = (
+        res.replace("Homey devices organized by zone", "Home Assistant entities organized by area")
         .replace("Homey User Variables, Flows, and Zone Moods", "Home Assistant Helpers, Automations/Scripts, and Scenes")
         .replace("Homey", "Home Assistant")
     )
+    return res
 
 
 def _load_locale_flat(lang: str) -> dict[str, str]:
@@ -353,7 +378,7 @@ def _load_locale_flat(lang: str) -> dict[str, str]:
     merged_settings = _deep_merge_dict(en_data.get("settings") or {}, user_data.get("settings") or {})
     flat = _flatten_leaves_dict(merged_settings, "settings")
     for k, v in list(flat.items()):
-        flat[k] = _adapt_platform_text(v)
+        flat[k] = _adapt_platform_text(v, clean_lang)
     return flat
 
 

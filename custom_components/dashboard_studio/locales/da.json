@@ -24,7 +24,15 @@
       "backup": "Sikkerhedskopier",
       "restoreBackup": "Gendan sikkerhedskopi",
       "backupTooltip": "Sikkerhedskopierer kun Homey-indstillinger",
-      "restoreTooltip": "Gendanner kun Homey-indstillinger"
+      "restoreTooltip": "Gendanner kun Homey-indstillinger",
+      "downloadSettings": "Download indstillinger",
+      "downloadCapabilities": "Download funktioner",
+      "clearCache": "Ryd tilstandscache",
+      "close": "Luk",
+      "copyToClipboard": "Kopier til udklipsholder",
+      "copied": "Kopieret!",
+      "selectFile": "Vælg fil…",
+      "restoreHelp": "Indsæt din sikkerhedskopi-JSON nedenfor, eller vælg en .json-fil fra din computer."
     },
     "feedback": {
       "saved": "Gemt!"
@@ -32,7 +40,8 @@
     "modal": {
       "cancel": "Annuller",
       "delete": "Slet",
-      "ok": "OK"
+      "ok": "OK",
+      "confirm": "Bekræft"
     },
     "files": {
       "dashboards": "Dashboards",
@@ -48,10 +57,13 @@
       "loadAudioError": "Error loading audio.",
       "nameColumn": "Navn",
       "actionColumn": "Handling",
-      "defaultTag": "Indbygget"
+      "defaultTag": "Indbygget",
+      "presets": "Widget-forudindstillinger",
+      "clearAllSnapshots": "Ryd alle snapshots"
     },
     "confirm": {
-      "deleteNamed": "Vil du slette \"__navn__\"? Denne handling kan ikke fortrydes."
+      "deleteNamed": "Vil du slette \"__navn__\"? Denne handling kan ikke fortrydes.",
+      "clearAllSnapshotsMsg": "Slet al snapshothistorik for alle dashboards? Dette kan ikke fortrydes."
     },
     "alert": {
       "saveSettingsFailed": "Indstillingerne kunne ikke gemmes.",
@@ -75,7 +87,17 @@
       "loadFailed": "Kunne ikke indlæse data:",
       "apiInitializing": "API'en starter stadig. Opdater denne side om et øjeblik.",
       "noDevices": "Ingen enheder fundet.",
-      "filterCapability": "Filtrer efter funktionalitet…"
+      "filterCapability": "Filtrer efter funktionalitet…",
+      "expandAll": "Udvid alle",
+      "collapseAll": "Skjul alle",
+      "entitiesByAreaTitle": "Entiteter efter område",
+      "entitiesByAreaDesc": "Home Assistant-entiteter organiseret efter område. Vælg funktioner for at sende live statusopdateringer til Dashboard Studio.",
+      "systemTitle": "Hjælpere, automatiseringer og scener",
+      "systemDesc": "Home Assistant-hjælpere (variable), automatiseringer/scripts (flows) og scener (moods)",
+      "copyTopic": "Kopier emne",
+      "copyTopicButton": "Kopier emne",
+      "copyTopicDone": "Kopieret",
+      "copyTopicFailed": "Kunne ikke kopiere emne til udklipsholder."
     },
     "dashboard": {
       "access": "Åbn dit lokale dashboard:",
@@ -84,7 +106,8 @@
       "urlNotDetected": "Dashboard-URL'en kunne ikke registreres automatisk.",
       "manualStep1": "1. I Homey-applikationen: System → Generelt.",
       "manualStep2": "2. Under System Information noter du adressen (f.eks. 192.168.1.10).",
-      "manualStep3BeforeUrl": "3. Åbn browseren:"
+      "manualStep3BeforeUrl": "3. Åbn browseren:",
+      "openDashboard": "Åbn dashboard"
     },
     "ui": {
       "DashboardPort": "Dashboard port",
@@ -153,7 +176,53 @@
       "BackupNoticeTitle": "Backup & Restore Information:",
       "BackupNoticeDesc": "This backup only includes Dashboard Studio app settings and enabled device capabilities (MQTT topics). Dashboard designs, themes, uploaded images, and audio files are stored separately and are not included.",
       "BackupSettingsTitle": "Backs up app settings and enabled device capabilities",
-      "RestoreSettingsTitle": "Restores app settings and enabled device capabilities"
+      "RestoreSettingsTitle": "Restores app settings and enabled device capabilities",
+      "ClearStateCache": "Ryd tilstandscache",
+      "ClearStateCacheDesc": "Rydder hukommelsescachen for sidst kendte værdier. Gennemtvinger nye statusopdateringer ved næste genindlæsning.",
+      "TopicEcho": "Emne-ekko",
+      "TopicEchoDesc": "Ekkoer udgivne emne-hændelser til tilsluttede WebSocket-klienter for live-opdateringer på lærredet.",
+      "theme": "Tema",
+      "themeAuto": "Automatisk",
+      "themeDark": "Mørk",
+      "themeLight": "Lys",
+      "servicesCalendarNoticeTitle": "Home Assistant Tjenester & Kalender Markdown:",
+      "servicesCalendarNoticeDesc": "Konfigurer formateringsregler for Kalender- og RSS Markdown-tjenester."
+    },
+    "cleanup": {
+      "sectionTitle": "Oprydning af funktioner og emner",
+      "sectionDesc": "Gennemgå alle gemte dashboards for at finde aktiverede funktioner og emner, der ikke længere bruges.",
+      "headerTitle": "Audit af ubrugte emner",
+      "scanButton": "Søg efter ubrugte funktioner",
+      "scanPlaceholder": "Klik på \"Søg efter ubrugte funktioner\" for at analysere alle dashboards.",
+      "apiNotReady": "API'en starter stadig. Prøv igen om et øjeblik.",
+      "scanning": "Scanner dashboards...",
+      "analyzing": "Analyserer alle dashboards og henter emne-bindinger...",
+      "auditFailed": "Scanning mislykkedes",
+      "scanFailed": "Scanning af dashboards mislykkedes: __error__",
+      "removedDevice": "Fjernet enhed (__id__)",
+      "zoneDefault": "Standard",
+      "zoneUnknown": "Ukendt",
+      "removedTag": "Fjernet fra Home Assistant",
+      "allUsedTitle": "Konfiguration fuldt optimeret",
+      "allUsedHeadline": "Alle aktiverede funktioner er i brug!",
+      "allUsedBody": "Ingen ubrugte funktioner fundet (__dashboards__ dashboards scannet). Din konfiguration er fuldt optimeret.",
+      "foundOne": "1 ubrugt funktion fundet",
+      "foundMany": "__count__ ubrugte funktioner fundet",
+      "bannerOne": "1 aktiveret funktion refereres ikke i dine dashboards (__dashboards__ scannet).",
+      "bannerMany": "__count__ aktiverede funktioner refereres ikke i dine dashboards (__dashboards__ scannet).",
+      "hint": "Marker de funktioner du vil deaktivere, og klik på \"Deaktiver valgte funktioner\".",
+      "selectAll": "Vælg alle",
+      "deselectAll": "Fravælg alle",
+      "selectedCount": "__selected__ af __total__ valgt",
+      "filterPlaceholder": "Filtrer liste...",
+      "disableButton": "Deaktiver valgte funktioner (__count__)",
+      "selectOne": "Vælg mindst én funktion, der skal deaktiveres.",
+      "confirmOne": "Er du sikker på, at du vil deaktivere 1 ubrugt funktion?",
+      "confirmMany": "Er du sikker på, at du vil deaktivere __count__ ubrugte funktioner?",
+      "confirmButtonOne": "Deaktiver 1 funktion",
+      "confirmButtonMany": "Deaktiver __count__ funktioner",
+      "successOne": "1 ubrugt funktion blev deaktiveret.",
+      "successMany": "__count__ ubrugte funktioner blev deaktiveret."
     }
   },
   "words": {

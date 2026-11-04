@@ -24,7 +24,15 @@
       "backup": "Резервная копия",
       "restoreBackup": "Восстановить копию",
       "backupTooltip": "Создает резервную копию только настроек Homey",
-      "restoreTooltip": "Восстанавливает только настройки Homey"
+      "restoreTooltip": "Восстанавливает только настройки Homey",
+      "downloadSettings": "Скачать настройки",
+      "downloadCapabilities": "Скачать возможности",
+      "clearCache": "Очистить кэш состояния",
+      "close": "Закрыть",
+      "copyToClipboard": "Копировать в буфер обмена",
+      "copied": "Скопировано!",
+      "selectFile": "Выбрать файл…",
+      "restoreHelp": "Вставьте JSON резервной копии ниже или выберите файл .json на вашем компьютере."
     },
     "feedback": {
       "saved": "Сохранено!"
@@ -32,7 +40,8 @@
     "modal": {
       "cancel": "Отмена",
       "delete": "Удалить",
-      "ok": "ОК"
+      "ok": "ОК",
+      "confirm": "Подтвердить"
     },
     "files": {
       "dashboards": "Панели управления",
@@ -48,10 +57,13 @@
       "loadAudioError": "Error loading audio.",
       "nameColumn": "Имя",
       "actionColumn": "Действие",
-      "defaultTag": "Встроенный"
+      "defaultTag": "Встроенный",
+      "presets": "Предустановки виджетов",
+      "clearAllSnapshots": "Очистить все снимки"
     },
     "confirm": {
-      "deleteNamed": "Удалить «__name__»? Это действие необратимо."
+      "deleteNamed": "Удалить «__name__»? Это действие необратимо.",
+      "clearAllSnapshotsMsg": "Удалить всю историю снимков для всех панелей? Это действие нельзя отменить."
     },
     "alert": {
       "saveSettingsFailed": "Не удалось сохранить настройки.",
@@ -75,7 +87,17 @@
       "loadFailed": "Не удалось загрузить данные:",
       "apiInitializing": "API запускается. Обновите эту страницу через минуту.",
       "noDevices": "Устройства не найдены.",
-      "filterCapability": "Фильтр по возможностям…"
+      "filterCapability": "Фильтр по возможностям…",
+      "expandAll": "Развернуть все",
+      "collapseAll": "Свернуть все",
+      "entitiesByAreaTitle": "Объекты по зонам",
+      "entitiesByAreaDesc": "Объекты Home Assistant, сгруппированные по зонам. Отметьте возможности для публикации обновлений состояния в Dashboard Studio.",
+      "systemTitle": "Помощники, автоматизации и сцены",
+      "systemDesc": "Помощники Home Assistant (переменные), автоматизации/скрипты (потоки) и сцены",
+      "copyTopic": "Копировать топик",
+      "copyTopicButton": "Копировать топик",
+      "copyTopicDone": "Скопировано",
+      "copyTopicFailed": "Не удалось скопировать топик в буфер обмена."
     },
     "dashboard": {
       "access": "Откройте локальную панель управления:",
@@ -84,7 +106,8 @@
       "urlNotDetected": "URL-адрес информационной панели не удалось определить автоматически.",
       "manualStep1": "1. В приложении Homey: Система → Общие.",
       "manualStep2": "2. В разделе «Информация о системе» запишите адрес (например, 192.168.1.10).",
-      "manualStep3BeforeUrl": "3. В браузере откройте:"
+      "manualStep3BeforeUrl": "3. В браузере откройте:",
+      "openDashboard": "Открыть панель"
     },
     "ui": {
       "DashboardPort": "Порт панели управления",
@@ -153,7 +176,53 @@
       "BackupNoticeTitle": "Backup & Restore Information:",
       "BackupNoticeDesc": "This backup only includes Dashboard Studio app settings and enabled device capabilities (MQTT topics). Dashboard designs, themes, uploaded images, and audio files are stored separately and are not included.",
       "BackupSettingsTitle": "Backs up app settings and enabled device capabilities",
-      "RestoreSettingsTitle": "Restores app settings and enabled device capabilities"
+      "RestoreSettingsTitle": "Restores app settings and enabled device capabilities",
+      "ClearStateCache": "Очистить кэш состояния",
+      "ClearStateCacheDesc": "Очищает кэш последних известных значений в памяти. Принудительно запрашивает свежие данные при следующей перезагрузке.",
+      "TopicEcho": "Эхо топиков",
+      "TopicEchoDesc": "Транслирует опубликованные события топиков подключенным WebSocket-клиентам для обновления холста в реальном времени.",
+      "theme": "Тема",
+      "themeAuto": "Автоматически",
+      "themeDark": "Темная",
+      "themeLight": "Светлая",
+      "servicesCalendarNoticeTitle": "Службы Home Assistant и Markdown календаря:",
+      "servicesCalendarNoticeDesc": "Настройте правила форматирования для служб календаря и RSS Markdown."
+    },
+    "cleanup": {
+      "sectionTitle": "Очистка возможностей и топиков",
+      "sectionDesc": "Проверьте все сохраненные панели и найдите включенные возможности и топики, которые больше не используются виджетами.",
+      "headerTitle": "Аудит неиспользуемых топиков",
+      "scanButton": "Поиск неиспользуемых возможностей",
+      "scanPlaceholder": "Нажмите \"Поиск неиспользуемых возможностей\", чтобы проанализировать сохраненные панели.",
+      "apiNotReady": "API еще запускается. Пожалуйста, повторите попытку через минуту.",
+      "scanning": "Сканирование панелей...",
+      "analyzing": "Анализ сохраненных панелей и извлечение привязок топиков...",
+      "auditFailed": "Аудит не удался",
+      "scanFailed": "Не удалось просканировать панели: __error__",
+      "removedDevice": "Удаленное устройство (__id__)",
+      "zoneDefault": "По умолчанию",
+      "zoneUnknown": "Неизвестно",
+      "removedTag": "Удалено из Home Assistant",
+      "allUsedTitle": "Конфигурация полностью оптимизирована",
+      "allUsedHeadline": "Все включенные возможности используются!",
+      "allUsedBody": "Неиспользуемых возможностей не обнаружено (просканировано панелей: __dashboards__). Ваша конфигурация полностью оптимизирована.",
+      "foundOne": "Найдена 1 неиспользуемая возможность",
+      "foundMany": "Найдено неиспользуемых возможностей: __count__",
+      "bannerOne": "1 включенная возможность не используется в сохраненных панелях (просканировано панелей: __dashboards__).",
+      "bannerMany": "Включенных возможностей не используется в сохраненных панелях: __count__ (просканировано: __dashboards__).",
+      "hint": "Отметьте возможности, которые вы хотите отключить, и нажмите \"Отключить выбранные возможности\".",
+      "selectAll": "Выбрать все",
+      "deselectAll": "Снять выбор со всех",
+      "selectedCount": "Выбрано __selected__ из __total__",
+      "filterPlaceholder": "Фильтр списка...",
+      "disableButton": "Отключить выбранные возможности (__count__)",
+      "selectOne": "Пожалуйста, выберите хотя бы одну возможность для отключения.",
+      "confirmOne": "Вы уверены, что хотите отключить 1 неиспользуемую возможность?",
+      "confirmMany": "Вы уверены, что хотите отключить __count__ неиспользуемых возможностей?",
+      "confirmButtonOne": "Отключить 1 возможность",
+      "confirmButtonMany": "Отключить __count__ возможностей",
+      "successOne": "Успешно отключена 1 неиспользуемая возможность.",
+      "successMany": "Успешно отключено неиспользуемых возможностей: __count__."
     }
   },
   "words": {

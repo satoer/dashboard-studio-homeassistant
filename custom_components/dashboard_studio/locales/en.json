@@ -62,7 +62,8 @@
       "clearAllSnapshots": "Clear All Snapshots"
     },
     "confirm": {
-      "deleteNamed": "Delete \"__name__\"? This cannot be undone."
+      "deleteNamed": "Delete \"__name__\"? This cannot be undone.",
+      "clearAllSnapshotsMsg": "Delete all snapshot history for all dashboards? This cannot be undone."
     },
     "alert": {
       "saveSettingsFailed": "Failed to save settings.",

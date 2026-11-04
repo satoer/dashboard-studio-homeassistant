@@ -24,7 +24,15 @@
       "backup": "Sikkerhetskopi",
       "restoreBackup": "Gjenopprett sikkerhetskopi",
       "backupTooltip": "Sikkerhetskopierer bare Homey-innstillinger",
-      "restoreTooltip": "Gjenoppretter bare Homey-innstillinger"
+      "restoreTooltip": "Gjenoppretter bare Homey-innstillinger",
+      "downloadSettings": "Last ned innstillinger",
+      "downloadCapabilities": "Last ned funksjoner",
+      "clearCache": "Tøm tilstandsbuffere",
+      "close": "Lukk",
+      "copyToClipboard": "Kopier til utklippstavle",
+      "copied": "Kopiert!",
+      "selectFile": "Velg fil…",
+      "restoreHelp": "Lim inn sikkerhetskopi-JSON nedenfor, eller velg en .json-fil fra datamaskinen din."
     },
     "feedback": {
       "saved": "Lagret!"
@@ -32,7 +40,8 @@
     "modal": {
       "cancel": "Avbryt",
       "delete": "Slett",
-      "ok": "OK"
+      "ok": "OK",
+      "confirm": "Bekreft"
     },
     "files": {
       "dashboards": "Dashbord",
@@ -48,10 +57,13 @@
       "loadAudioError": "Error loading audio.",
       "nameColumn": "Navn",
       "actionColumn": "Handling",
-      "defaultTag": "Innebygd"
+      "defaultTag": "Innebygd",
+      "presets": "Widget-forhåndsinnstillinger",
+      "clearAllSnapshots": "Slett alle øyeblikksbilder"
     },
     "confirm": {
-      "deleteNamed": "Vil du slette «__navn__»? Denne handlingen kan ikke angres."
+      "deleteNamed": "Vil du slette «__navn__»? Denne handlingen kan ikke angres.",
+      "clearAllSnapshotsMsg": "Slette all historikk for øyeblikksbilder for alle dashbord? Dette kan ikke angres."
     },
     "alert": {
       "saveSettingsFailed": "Kunne ikke lagre innstillingene.",
@@ -75,7 +87,17 @@
       "loadFailed": "Kunne ikke laste inn data:",
       "apiInitializing": "API-en starter fortsatt. Oppdater denne siden om et øyeblikk.",
       "noDevices": "Ingen enheter funnet.",
-      "filterCapability": "Filtrer etter egenskap…"
+      "filterCapability": "Filtrer etter egenskap…",
+      "expandAll": "Utvid alle",
+      "collapseAll": "Skjul alle",
+      "entitiesByAreaTitle": "Enheter etter område",
+      "entitiesByAreaDesc": "Home Assistant-enheter organisert etter område. Huk av for funksjoner for å sende oppdateringer til Dashboard Studio.",
+      "systemTitle": "Hjelpere, automatiseringer og scener",
+      "systemDesc": "Home Assistant-hjelpere (variabler), automatiseringer/skript (flows) og scener (moods)",
+      "copyTopic": "Kopier emne",
+      "copyTopicButton": "Kopier emne",
+      "copyTopicDone": "Kopiert",
+      "copyTopicFailed": "Kunne ikke kopiere emne til utklippstavlen."
     },
     "dashboard": {
       "access": "Åpne ditt lokale dashbord:",
@@ -84,7 +106,8 @@
       "urlNotDetected": "Dashbord-URLen kunne ikke oppdages automatisk.",
       "manualStep1": "1. I Homey-appen: System → Generelt.",
       "manualStep2": "2. Under Systeminformasjon noterer du adressen (f.eks. 192.168.1.10).",
-      "manualStep3BeforeUrl": "3. Åpne i nettleseren:"
+      "manualStep3BeforeUrl": "3. Åpne i nettleseren:",
+      "openDashboard": "Åpne dashbord"
     },
     "ui": {
       "DashboardPort": "Dashbordport",
@@ -153,7 +176,53 @@
       "BackupNoticeTitle": "Backup & Restore Information:",
       "BackupNoticeDesc": "This backup only includes Dashboard Studio app settings and enabled device capabilities (MQTT topics). Dashboard designs, themes, uploaded images, and audio files are stored separately and are not included.",
       "BackupSettingsTitle": "Backs up app settings and enabled device capabilities",
-      "RestoreSettingsTitle": "Restores app settings and enabled device capabilities"
+      "RestoreSettingsTitle": "Restores app settings and enabled device capabilities",
+      "ClearStateCache": "Tøm tilstandsbuffere",
+      "ClearStateCacheDesc": "Tømmer hurtigbufferen for sist kjente verdier. Tvinger fram nye oppdateringer ved neste innlasting.",
+      "TopicEcho": "Emne-ekko",
+      "TopicEchoDesc": "Gjentar publiserte emnehendelser til tilkoblede WebSocket-klienter for sanntidsoppdateringer.",
+      "theme": "Tema",
+      "themeAuto": "Automatisk",
+      "themeDark": "Mørk",
+      "themeLight": "Lys",
+      "servicesCalendarNoticeTitle": "Home Assistant-tjenester og Kalender Markdown:",
+      "servicesCalendarNoticeDesc": "Konfigurer formateringsregler for kalender- og RSS Markdown-tjenester."
+    },
+    "cleanup": {
+      "sectionTitle": "Opprydding av funksjoner og emner",
+      "sectionDesc": "Gjennomgå alle lagrede dashbord for å finne aktiverte funksjoner og emner som ikke lenger er i bruk.",
+      "headerTitle": "Revisjon av ubrukte emner",
+      "scanButton": "Søk etter ubrukte funksjoner",
+      "scanPlaceholder": "Klikk på \"Søk etter ubrukte funksjoner\" for å analysere alle lagrede dashbord.",
+      "apiNotReady": "API-et starter fortsatt opp. Prøv igjen om et øyeblikk.",
+      "scanning": "Skanner dashbord...",
+      "analyzing": "Analyserer alle lagrede dashbord og henter emne-bindinger...",
+      "auditFailed": "Revisjon mislyktes",
+      "scanFailed": "Skanning av dashbord mislyktes: __error__",
+      "removedDevice": "Fjernet enhet (__id__)",
+      "zoneDefault": "Standard",
+      "zoneUnknown": "Ukjent",
+      "removedTag": "Fjernet fra Home Assistant",
+      "allUsedTitle": "Konfigurasjonen er optimalisert",
+      "allUsedHeadline": "Alle aktiverte funksjoner er i bruk!",
+      "allUsedBody": "Ingen ubrukte funksjoner ble oppdaget (__dashboards__ dashbord skannet). Konfigurasjonen din er optimalisert.",
+      "foundOne": "1 ubrukt funksjon funnet",
+      "foundMany": "__count__ ubrukte funksjoner funnet",
+      "bannerOne": "1 aktivert funksjon refereres ikke i dine lagrede dashbord (__dashboards__ skannet).",
+      "bannerMany": "__count__ aktiverte funksjoner refereres ikke i dine lagrede dashbord (__dashboards__ skannet).",
+      "hint": "Huk av for funksjonene du vil deaktivere og klikk \"Deaktiver valgte funksjoner\".",
+      "selectAll": "Velg alle",
+      "deselectAll": "Fravelg alle",
+      "selectedCount": "__selected__ av __total__ valgt",
+      "filterPlaceholder": "Filtrer liste...",
+      "disableButton": "Deaktiver valgte funksjoner (__count__)",
+      "selectOne": "Vennligst velg minst én funksjon som skal deaktiveres.",
+      "confirmOne": "Er du sikker på at du vil deaktivere 1 ubrukt funksjon?",
+      "confirmMany": "Er du sikker på at du vil deaktivere __count__ ubrukte funksjoner?",
+      "confirmButtonOne": "Deaktiver 1 funksjon",
+      "confirmButtonMany": "Deaktiver __count__ funksjoner",
+      "successOne": "1 ubrukt funksjon ble deaktivert.",
+      "successMany": "__count__ ubrukte funksjoner ble deaktivert."
     }
   },
   "words": {

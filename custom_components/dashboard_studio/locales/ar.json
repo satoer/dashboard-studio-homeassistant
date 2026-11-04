@@ -24,7 +24,15 @@
       "backup": "نسخ احتياطي",
       "restoreBackup": "استعادة النسخة الاحتياطية",
       "backupTooltip": "ينسخ احتياطياً إعدادات Homey فقط",
-      "restoreTooltip": "يستعيد إعدادات Homey فقط"
+      "restoreTooltip": "يستعيد إعدادات Homey فقط",
+      "downloadSettings": "تنزيل الإعدادات",
+      "downloadCapabilities": "تنزيل الإمكانيات",
+      "clearCache": "مسح ذاكرة التخزين المؤقت للحالة",
+      "close": "إغلاق",
+      "copyToClipboard": "نسخ إلى الحافظة",
+      "copied": "تم النسخ!",
+      "selectFile": "تحديد ملف…",
+      "restoreHelp": "الصق ملف JSON للنسخة الاحتياطية أدناه أو اختر ملف .json من جهاز الكمبيوتر الخاص بك."
     },
     "feedback": {
       "saved": "تم الحفظ!"
@@ -32,7 +40,8 @@
     "modal": {
       "cancel": "إلغاء",
       "delete": "حذف",
-      "ok": "موافق"
+      "ok": "موافق",
+      "confirm": "تأكيد"
     },
     "files": {
       "dashboards": "لوحات المعلومات",
@@ -48,10 +57,13 @@
       "loadAudioError": "Error loading audio.",
       "nameColumn": "اسم",
       "actionColumn": "إجراء",
-      "defaultTag": "مدمج"
+      "defaultTag": "مدمج",
+      "presets": "إعدادات الأدوات المسبقة",
+      "clearAllSnapshots": "مسح كافة اللقطات"
     },
     "confirm": {
-      "deleteNamed": "هل تريد حذف \"__الاسم__\"؟ لا يمكن التراجع عن هذا."
+      "deleteNamed": "هل تريد حذف \"__الاسم__\"؟ لا يمكن التراجع عن هذا.",
+      "clearAllSnapshotsMsg": "هل تريد حذف كافة محفوظات اللقطات لجميع لوحات المعلومات؟ لا يمكن التراجع عن هذا الإجراء."
     },
     "alert": {
       "saveSettingsFailed": "فشل في حفظ الإعدادات.",
@@ -75,7 +87,17 @@
       "loadFailed": "فشل في تحميل البيانات:",
       "apiInitializing": "واجهة برمجة التطبيقات (API) لا تزال قيد التشغيل. قم بتحديث هذه الصفحة بعد قليل.",
       "noDevices": "لم يتم العثور على أي أجهزة.",
-      "filterCapability": "تصفية حسب القدرة…"
+      "filterCapability": "تصفية حسب القدرة…",
+      "expandAll": "توسيع الكل",
+      "collapseAll": "طي الكل",
+      "entitiesByAreaTitle": "الكيانات حسب المنطقة",
+      "entitiesByAreaDesc": "كيانات Home Assistant مرتبة حسب المنطقة. حدد الإمكانيات لنشر تحديثات الحالة المباشرة إلى Dashboard Studio.",
+      "systemTitle": "المساعدون والأتمتة والمشاهد",
+      "systemDesc": "مساعدو Home Assistant (المتغيرات)، والأتمتة/البرامج النصية (التدفقات)، والمشاهد (الأوضاع)",
+      "copyTopic": "نسخ الموضوع",
+      "copyTopicButton": "نسخ الموضوع",
+      "copyTopicDone": "تم النسخ",
+      "copyTopicFailed": "تعذر نسخ الموضوع إلى الحافظة."
     },
     "dashboard": {
       "access": "افتح لوحة المعلومات المحلية الخاصة بك:",
@@ -84,7 +106,8 @@
       "urlNotDetected": "لا يمكن اكتشاف عنوان URL للوحة المعلومات تلقائيًا.",
       "manualStep1": "1. في تطبيق Homey، انتقل إلى النظام ← عام.",
       "manualStep2": "2. ضمن معلومات النظام، لاحظ العنوان (على سبيل المثال 192.168.1.10).",
-      "manualStep3BeforeUrl": "3. في متصفحك، افتح:"
+      "manualStep3BeforeUrl": "3. في متصفحك، افتح:",
+      "openDashboard": "فتح لوحة المعلومات"
     },
     "ui": {
       "DashboardPort": "منفذ لوحة القيادة",
@@ -153,7 +176,53 @@
       "BackupNoticeTitle": "Backup & Restore Information:",
       "BackupNoticeDesc": "This backup only includes Dashboard Studio app settings and enabled device capabilities (MQTT topics). Dashboard designs, themes, uploaded images, and audio files are stored separately and are not included.",
       "BackupSettingsTitle": "Backs up app settings and enabled device capabilities",
-      "RestoreSettingsTitle": "Restores app settings and enabled device capabilities"
+      "RestoreSettingsTitle": "Restores app settings and enabled device capabilities",
+      "ClearStateCache": "مسح ذاكرة التخزين المؤقت للحالة",
+      "ClearStateCacheDesc": "يمسح ذاكرة التخزين المؤقت لآخر القيم المعروفة في الذاكرة. يفرض تحديثات جديدة للحالة عند إعادة التحميل التالية.",
+      "TopicEcho": "صدى الموضوع",
+      "TopicEchoDesc": "يعكس أحداث المواضيع المنشورة لعملاء WebSocket المتصلين للحصول على تحديثات مباشرة على مساحة العمل.",
+      "theme": "المظهر",
+      "themeAuto": "تلقائي",
+      "themeDark": "داكن",
+      "themeLight": "فاتح",
+      "servicesCalendarNoticeTitle": "خدمات Home Assistant و Markdown للتقويم:",
+      "servicesCalendarNoticeDesc": "تكوين قواعد التنسيق لخدمات التقويم و RSS Markdown."
+    },
+    "cleanup": {
+      "sectionTitle": "تنظيف الإمكانيات والمواضيع",
+      "sectionDesc": "فحص جميع لوحات المعلومات المحفوظة للعثور على الإمكانيات والمواضيع المفعلة التي لم تعد مستخدمة.",
+      "headerTitle": "تدقيق المواضيع غير المستخدمة",
+      "scanButton": "البحث عن الإمكانيات غير المستخدمة",
+      "scanPlaceholder": "انقر على \"البحث عن الإمكانيات غير المستخدمة\" لتحليل جميع لوحات المعلومات المحفوظة.",
+      "apiNotReady": "لا تزال واجهة برمجة التطبيقات قيد التهيئة. يرجى المحاولة مرة أخرى بعد لحظات.",
+      "scanning": "جارٍ فحص لوحات المعلومات...",
+      "analyzing": "تحليل كافة لوحات المعلومات واستخراج روابط المواضيع...",
+      "auditFailed": "فشل التدقيق",
+      "scanFailed": "فشل فحص لوحات المعلومات: __error__",
+      "removedDevice": "جهاز تمت إزالته (__id__)",
+      "zoneDefault": "افتراضي",
+      "zoneUnknown": "غير معروف",
+      "removedTag": "تمت إزالته من Home Assistant",
+      "allUsedTitle": "التكوين محسن بالكامل",
+      "allUsedHeadline": "جميع الإمكانيات المفعلة مستخدمة حالياً!",
+      "allUsedBody": "لم يتم العثور على أي إمكانيات غير مستخدمة (تم فحص __dashboards__ لوحة معلومات). تكوينك محسن بالكامل.",
+      "foundOne": "تم العثور على إمكانية واحدة غير مستخدمة",
+      "foundMany": "تم العثور على __count__ من الإمكانيات غير المستخدمة",
+      "bannerOne": "إمكانية واحدة مفعلة لا يتم الرجوع إليها في لوحات المعلومات المحفوظة (__dashboards__ تم فحصها).",
+      "bannerMany": "هناك __count__ من الإمكانيات المفعلة لا يتم الرجوع إليها في لوحات المعلومات المحفوظة (__dashboards__ تم فحصها).",
+      "hint": "حدد الإمكانيات التي تريد تعطيلها، ثم انقر فوق \"تعطيل الإمكانيات المحددة\".",
+      "selectAll": "تحديد الكل",
+      "deselectAll": "إلغاء تحديد الكل",
+      "selectedCount": "تم تحديد __selected__ من __total__",
+      "filterPlaceholder": "تصفية القائمة...",
+      "disableButton": "تعطيل الإمكانيات المحددة (__count__)",
+      "selectOne": "يرجى تحديد إمكانية واحدة على الأقل لتعطيلها.",
+      "confirmOne": "هل أنت متأكد أنك تريد تعطيل إمكانية واحدة غير مستخدمة؟",
+      "confirmMany": "هل أنت متأكد أنك تريد تعطيل __count__ من الإمكانيات غير المستخدمة؟",
+      "confirmButtonOne": "تعطيل إمكانية واحدة",
+      "confirmButtonMany": "تعطيل __count__ من الإمكانيات",
+      "successOne": "تم تعطيل إمكانية واحدة غير مستخدمة بنجاح.",
+      "successMany": "تم تعطيل __count__ من الإمكانيات غير المستخدمة بنجاح."
     }
   },
   "words": {

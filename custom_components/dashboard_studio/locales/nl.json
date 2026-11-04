@@ -62,7 +62,8 @@
       "clearAllSnapshots": "Alle snapshots wissen"
     },
     "confirm": {
-      "deleteNamed": "„__name__“ verwijderen? Dit kan niet ongedaan worden gemaakt."
+      "deleteNamed": "„__name__“ verwijderen? Dit kan niet ongedaan worden gemaakt.",
+      "clearAllSnapshotsMsg": "Alle snapshot-geschiedenis voor alle dashboards verwijderen? Dit kan niet ongedaan worden gemaakt."
     },
     "alert": {
       "saveSettingsFailed": "Instellingen opslaan mislukt.",
@@ -72,13 +73,13 @@
       "defaultIconBindingsLoad": "Standaard icoonkoppelingen laden mislukt: __detail__",
       "deleteFileFailed": "Bestand verwijderen mislukt.",
       "deleteImageFailed": "Afbeelding verwijderen mislukt.",
-      "deleteAudioFailed": "Failed to delete audio.",
-      "backupComplete": "Backup complete. Please note that actual dashboards, themes, and images are not included in this backup and must be exported manually from the editor.",
-      "restoreComplete": "Restore complete. Restored __restored__ devices.__failedMsg__",
-      "restoreFailedList": "\\nFailed to restore __count__ devices (not found): __list__",
-      "invalidBackupFormat": "Invalid backup file format.",
-      "restoreFailed": "Failed to restore settings.",
-      "parseBackupFailed": "Failed to parse backup file."
+      "deleteAudioFailed": "Verwijderen van audiobestand mislukt.",
+      "backupComplete": "Back-up voltooid. Let op: werkelijke dashboards, thema's en afbeeldingen zijn niet inbegrepen in deze back-up en moeten apart vanuit de editor worden geëxporteerd.",
+      "restoreComplete": "Herstel voltooid. __restored__ apparaten hersteld.__failedMsg__",
+      "restoreFailedList": "\nHerstellen van __count__ apparaten mislukt (niet gevonden): __list__",
+      "invalidBackupFormat": "Ongeldig back-upformaat.",
+      "restoreFailed": "Herstellen van instellingen mislukt.",
+      "parseBackupFailed": "Kan back-upbestand niet verwerken."
     },
     "cleanup": {
       "sectionTitle": "Opschonen van capabilities en topics",
@@ -214,7 +215,7 @@
       "EventIconTime": "Gebeurtenis, Icoon, Tijd",
       "ClearStateCache": "Status-cache wissen",
       "ClearStateCacheDesc": "Wist de in het geheugen opgeslagen laatst bekende waarden. Forceert verse statusupdates bij de volgende herlaadbeurt.",
-      "TopicEcho": "Topic Echo",
+      "TopicEcho": "Topic-echo",
       "TopicEchoDesc": "Weerspiegelt gepubliceerde topic-events naar verbonden WebSocket-clients voor live updates op het canvas.",
       "theme": "Thema",
       "themeAuto": "Automatisch",

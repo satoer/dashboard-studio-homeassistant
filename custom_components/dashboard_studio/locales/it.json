@@ -24,7 +24,15 @@
       "backup": "Backup",
       "restoreBackup": "Ripristina backup",
       "backupTooltip": "Esegue il backup solo delle impostazioni di Homey",
-      "restoreTooltip": "Ripristina solo le impostazioni di Homey"
+      "restoreTooltip": "Ripristina solo le impostazioni di Homey",
+      "downloadSettings": "Scarica impostazioni",
+      "downloadCapabilities": "Scarica capacità",
+      "clearCache": "Cancella cache di stato",
+      "close": "Chiudi",
+      "copyToClipboard": "Copia negli appunti",
+      "copied": "Copiato!",
+      "selectFile": "Seleziona file…",
+      "restoreHelp": "Incolla il JSON di backup qui sotto o seleziona un file .json dal tuo computer."
     },
     "feedback": {
       "saved": "Salvato!"
@@ -32,7 +40,8 @@
     "modal": {
       "cancel": "Annulla",
       "delete": "Elimina",
-      "ok": "OK"
+      "ok": "OK",
+      "confirm": "Conferma"
     },
     "files": {
       "dashboards": "Dashboard",
@@ -48,10 +57,13 @@
       "loadAudioError": "Error loading audio.",
       "nameColumn": "Nome",
       "actionColumn": "Azione",
-      "defaultTag": "Integrato"
+      "defaultTag": "Integrato",
+      "presets": "Preimpostazioni widget",
+      "clearAllSnapshots": "Cancella tutte le istantanee"
     },
     "confirm": {
-      "deleteNamed": "Eliminare «__name__»? Operazione irreversibile."
+      "deleteNamed": "Eliminare «__name__»? Operazione irreversibile.",
+      "clearAllSnapshotsMsg": "Eliminare tutta la cronologia delle istantanee per tutti i cruscotti? Questa operazione non può essere annullata."
     },
     "alert": {
       "saveSettingsFailed": "Impossibile salvare le impostazioni.",
@@ -75,7 +87,17 @@
       "loadFailed": "Impossibile caricare i dati:",
       "apiInitializing": "L'API si sta ancora avviando. Aggiorna questa pagina tra un momento.",
       "noDevices": "Nessun dispositivo trovato.",
-      "filterCapability": "Filtra per funzionalità…"
+      "filterCapability": "Filtra per funzionalità…",
+      "expandAll": "Espandi tutto",
+      "collapseAll": "Comprimi tutto",
+      "entitiesByAreaTitle": "Entità per area",
+      "entitiesByAreaDesc": "Entità Home Assistant organizzate per area. Spunta le capacità per pubblicare aggiornamenti di stato in tempo reale su Dashboard Studio.",
+      "systemTitle": "Aiutanti, automazioni e scene",
+      "systemDesc": "Aiutanti Home Assistant (variabili), automazioni/script (flussi) e scene (stati)",
+      "copyTopic": "Copia topic",
+      "copyTopicButton": "Copia topic",
+      "copyTopicDone": "Copiato",
+      "copyTopicFailed": "Impossibile copiare il topic negli appunti."
     },
     "dashboard": {
       "access": "Apri la dashboard locale:",
@@ -84,7 +106,8 @@
       "urlNotDetected": "Impossibile rilevare automaticamente l'URL della dashboard.",
       "manualStep1": "1. Nell'app Homey: Sistema → Generale.",
       "manualStep2": "2. In Informazioni di sistema annota l'indirizzo (ad es. 192.168.1.10).",
-      "manualStep3BeforeUrl": "3. Nel browser apri:"
+      "manualStep3BeforeUrl": "3. Nel browser apri:",
+      "openDashboard": "Apri cruscotto"
     },
     "ui": {
       "DashboardPort": "Porta dashboard",
@@ -153,7 +176,53 @@
       "BackupNoticeTitle": "Backup & Restore Information:",
       "BackupNoticeDesc": "This backup only includes Dashboard Studio app settings and enabled device capabilities (MQTT topics). Dashboard designs, themes, uploaded images, and audio files are stored separately and are not included.",
       "BackupSettingsTitle": "Backs up app settings and enabled device capabilities",
-      "RestoreSettingsTitle": "Restores app settings and enabled device capabilities"
+      "RestoreSettingsTitle": "Restores app settings and enabled device capabilities",
+      "ClearStateCache": "Cancella cache di stato",
+      "ClearStateCacheDesc": "Cancella la cache in memoria degli ultimi valori noti. Forza nuovi aggiornamenti al prossimo ricaricamento.",
+      "TopicEcho": "Eco topic",
+      "TopicEchoDesc": "Invia gli eventi dei topic pubblicati ai client WebSocket connessi per aggiornamenti in tempo reale.",
+      "theme": "Tema",
+      "themeAuto": "Automatico",
+      "themeDark": "Scuro",
+      "themeLight": "Chiaro",
+      "servicesCalendarNoticeTitle": "Servizi Home Assistant & Markdown Calendario:",
+      "servicesCalendarNoticeDesc": "Configura le regole di formattazione per i servizi Calendario e Markdown RSS."
+    },
+    "cleanup": {
+      "sectionTitle": "Pulizia capacità e topic",
+      "sectionDesc": "Esamina tutti i cruscotti salvati per trovare capacità e topic abilitati che non sono più usati da alcun widget o formula.",
+      "headerTitle": "Controllo topic non utilizzati",
+      "scanButton": "Cerca capacità non utilizzate",
+      "scanPlaceholder": "Fai clic su \"Cerca capacità non utilizzate\" per analizzare tutti i cruscotti.",
+      "apiNotReady": "L'API è in fase di avvio. Riprova tra poco.",
+      "scanning": "Scansione cruscotti...",
+      "analyzing": "Analisi di tutti i cruscotti e recupero dei collegamenti ai topic...",
+      "auditFailed": "Verifica non riuscita",
+      "scanFailed": "Scansione cruscotti non riuscita: __error__",
+      "removedDevice": "Dispositivo rimosso (__id__)",
+      "zoneDefault": "Predefinito",
+      "zoneUnknown": "Sconosciuto",
+      "removedTag": "Rimosso da Home Assistant",
+      "allUsedTitle": "Configurazione completamente ottimizzata",
+      "allUsedHeadline": "Tutte le capacità abilitate sono attualmente in uso!",
+      "allUsedBody": "Nessuna capacità inutilizzata rilevata (__dashboards__ cruscotti scansionati). La configurazione è ottimizzata.",
+      "foundOne": "Trovata 1 capacità non utilizzata",
+      "foundMany": "Trovate __count__ capacità non utilizzate",
+      "bannerOne": "1 capacità abilitata non è referenziata nei tuoi cruscotti salvati (__dashboards__ scansionati).",
+      "bannerMany": "__count__ capacità abilitate non sono referenziate nei tuoi cruscotti salvati (__dashboards__ scansionati).",
+      "hint": "Seleziona le capacità che desideri disabilitare e fai clic su \"Disabilita capacità selezionate\".",
+      "selectAll": "Seleziona tutto",
+      "deselectAll": "Deseleziona tutto",
+      "selectedCount": "__selected__ di __total__ selezionate",
+      "filterPlaceholder": "Filtra elenco...",
+      "disableButton": "Disabilita capacità selezionate (__count__)",
+      "selectOne": "Seleziona almeno una capacità da disabilitare.",
+      "confirmOne": "Sei sicuro di voler disabilitare 1 capacità non utilizzata?",
+      "confirmMany": "Sei sicuro di voler disabilitare __count__ capacità non utilizzate?",
+      "confirmButtonOne": "Disabilita 1 capacità",
+      "confirmButtonMany": "Disabilita __count__ capacità",
+      "successOne": "Disabilitata con successo 1 capacità non utilizzata.",
+      "successMany": "Disabilitate con successo __count__ capacità non utilizzate."
     }
   },
   "words": {
