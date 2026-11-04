@@ -75,6 +75,7 @@ function readParentAccessToken() {
 function readStoredHassTokens() {
     try {
         var raw = localStorage.getItem('hassTokens');
+        if (!raw) raw = sessionStorage.getItem('hassTokens');
         if (!raw) return null;
         var parsed = JSON.parse(raw);
         if (parsed && typeof parsed === 'object') return parsed;
@@ -123,6 +124,7 @@ function dashboardStudioReturnUrl() {
     current.searchParams.delete('code');
     current.searchParams.delete('state');
     current.searchParams.delete('auth_callback');
+    current.hash = '';
     return current.toString();
 }
 
@@ -147,10 +149,15 @@ function exchangeAuthorizationCode() {
     var code = params.get('code');
     if (!code) return Promise.resolve(false);
     var clientId = window.location.origin + '/';
+    var redirectUri = dashboardStudioReturnUrl();
+    var body = 'grant_type=authorization_code'
+        + '&code=' + encodeURIComponent(code)
+        + '&client_id=' + encodeURIComponent(clientId)
+        + '&redirect_uri=' + encodeURIComponent(redirectUri);
     return fetch('/auth/token', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: 'grant_type=authorization_code&code=' + encodeURIComponent(code) + '&client_id=' + encodeURIComponent(clientId)
+        body: body
     }).then(function (res) {
         if (!res.ok) throw new Error('authorization code rejected');
         return res.json();
@@ -182,7 +189,19 @@ function ensureHomeAssistantAccessToken() {
             return String(tokens.access_token);
         }
         return refreshHomeAssistantToken();
-    }).catch(function () {
+    }).catch(function (err) {
+        console.warn('Dashboard Studio: could not obtain HA access token:', err);
+        var hasCode = false;
+        try { hasCode = !!(new URLSearchParams(window.location.search).get('code')); } catch (e) {}
+        if (hasCode) {
+            try {
+                var clean = new URL(dashboardStudioReturnUrl());
+                if (window.history && window.history.replaceState) {
+                    window.history.replaceState(null, '', clean.pathname + clean.search + clean.hash);
+                }
+            } catch (e2) {}
+            return '';
+        }
         if (window.parent === window) {
             redirectToHomeAssistantLogin();
         }

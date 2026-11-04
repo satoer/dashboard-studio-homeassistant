@@ -7,148 +7,1751 @@
     <style>
         :root {
             color-scheme: dark;
-            --bg: #111318;
-            --panel: #1c1f27;
-            --line: #313644;
-            --text: #e7e9ee;
-            --muted: #9aa3b2;
-            --accent: #4f8cff;
-            --ok: #3dd68c;
+            --bg-page: #0b0f19;
+            --bg-card: #131b2e;
+            --bg-card-subtle: #0f172a;
+            --bg-card-hover: #1e293b;
+            --bg-input: #0a0e17;
+            --border-color: #243049;
+            --border-subtle: #192338;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-emerald: #10b981;
+            --accent-emerald-hover: #059669;
+            --accent-emerald-bg: rgba(16, 185, 129, 0.12);
+            --accent-blue: #0ea5e9;
+            --accent-blue-hover: #0284c7;
+            --accent-blue-bg: rgba(14, 165, 233, 0.12);
+            --accent-amber: #f59e0b;
+            --accent-amber-bg: rgba(245, 158, 11, 0.12);
+            --accent-red: #ef4444;
+            --accent-red-hover: #dc2626;
+            --accent-red-bg: rgba(239, 68, 68, 0.12);
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.35);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.45);
         }
+
+        [data-theme="light"],
+        @media (prefers-color-scheme: light) {
+            :root:not([data-theme="dark"]) {
+                color-scheme: light;
+                --bg-page: #f8fafc;
+                --bg-card: #ffffff;
+                --bg-card-subtle: #f1f5f9;
+                --bg-card-hover: #f8fafc;
+                --bg-input: #ffffff;
+                --border-color: #e2e8f0;
+                --border-subtle: #f1f5f9;
+                --text-primary: #0f172a;
+                --text-secondary: #475569;
+                --text-muted: #94a3b8;
+                --accent-emerald-bg: #ecfdf5;
+                --accent-blue-bg: #f0f9ff;
+                --accent-amber-bg: #fffbeb;
+                --accent-red-bg: #fef2f2;
+                --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+                --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+            }
+        }
+
         * { box-sizing: border-box; }
-        body { margin: 0; font: 14px/1.45 Segoe UI, sans-serif; background: var(--bg); color: var(--text); }
-        header { display: flex; justify-content: space-between; gap: 16px; align-items: center; padding: 16px 20px; border-bottom: 1px solid var(--line); }
-        h1 { margin: 0; font-size: 18px; }
-        nav { display: flex; gap: 8px; padding: 12px 20px 0; }
-        button, input, select, textarea { font: inherit; color: inherit; }
-        .tab, button { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; cursor: pointer; }
-        .tab.active, button.primary { background: var(--accent); border-color: var(--accent); color: white; }
-        main { padding: 16px 20px 32px; }
-        section { display: none; }
-        section.active { display: block; }
-        .row { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0; }
-        input[type="search"], input[type="text"], select, textarea { background: #0d0f14; border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; }
-        input[type="search"] { min-width: 220px; }
-        textarea { width: 100%; min-height: 140px; }
-        details { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; margin: 8px 0; padding: 8px 12px; }
-        summary { cursor: pointer; font-weight: 600; }
-        label.cap { display: flex; gap: 8px; align-items: center; padding: 4px 0; }
-        .topic { color: var(--muted); font-family: Consolas, monospace; font-size: 12px; }
-        .dot { width: 8px; height: 8px; border-radius: 50%; background: #555; display: inline-block; }
-        .dot.on { background: var(--ok); }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
-        .card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px; }
-        .files button { margin-right: 6px; }
-        .status { color: var(--muted); min-height: 1.2em; }
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg-page);
+            color: var(--text-primary);
+            max-width: 960px;
+            margin: 0 auto;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Top Header Bar */
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+            flex-wrap: wrap;
+        }
+        .brand-wrap {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .brand-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-md);
+            background: linear-gradient(135deg, #10b981 0%, #0ea5e9 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.35);
+            flex-shrink: 0;
+        }
+        .brand-title {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: var(--text-primary);
+            line-height: 1.2;
+        }
+        .brand-subtitle {
+            margin: 2px 0 0 0;
+            font-size: 12px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 999px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--text-muted);
+            transition: all 0.3s ease;
+        }
+        .status-dot.active, .status-dot.ready {
+            background: var(--accent-emerald);
+            box-shadow: 0 0 6px rgba(16, 185, 129, 0.6);
+        }
+        .status-dot.busy {
+            background: var(--accent-amber);
+            box-shadow: 0 0 6px rgba(245, 158, 11, 0.6);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .lang-select {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            padding: 6px 10px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            outline: none;
+            transition: border-color 0.15s ease;
+        }
+        .lang-select:focus {
+            border-color: var(--accent-emerald);
+        }
+        .theme-toggle-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            color: var(--text-secondary);
+            padding: 6px 10px;
+            font-size: 13px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.15s ease;
+        }
+        .theme-toggle-btn:hover {
+            color: var(--text-primary);
+            border-color: var(--accent-blue);
+        }
+        .btn-open-dashboard {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 7px 14px;
+            border-radius: var(--radius-sm);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.15s ease;
+        }
+        .btn-open-dashboard:hover {
+            border-color: var(--accent-emerald);
+            color: var(--accent-emerald);
+            transform: translateY(-1px);
+        }
+        .btn-primary-save {
+            background: var(--accent-emerald);
+            border: 1px solid var(--accent-emerald);
+            color: #ffffff;
+            padding: 7px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.15s ease;
+            box-shadow: 0 1px 3px rgba(16, 185, 129, 0.3);
+        }
+        .btn-primary-save:hover {
+            background: var(--accent-emerald-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 6px rgba(16, 185, 129, 0.4);
+        }
+        .btn-primary-save:active {
+            transform: translateY(0);
+        }
+
+        /* Local Dashboard URL Banner */
+        .dashboard-url-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 14px 18px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+        .dashboard-url-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .dashboard-url-row p {
+            margin: 0;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        .dashboard-link {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--accent-blue);
+            text-decoration: none;
+            word-break: break-all;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .dashboard-link:hover {
+            text-decoration: underline;
+        }
+        .manual-instruction {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed var(--border-color);
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+        .manual-instruction code {
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: var(--accent-emerald);
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        }
+
+        /* Tabs Bar */
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid var(--border-color);
+            margin-bottom: 22px;
+            gap: 8px;
+            overflow-x: auto;
+        }
+        .tab {
+            padding: 10px 16px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 13px;
+            letter-spacing: 0.02em;
+            white-space: nowrap;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            user-select: none;
+        }
+        .tab:hover {
+            color: var(--text-primary);
+        }
+        .tab.active {
+            color: var(--accent-emerald);
+            border-bottom-color: var(--accent-emerald);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.15s ease-in-out;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(2px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Filter Box */
+        .filter-box {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: var(--bg-page);
+            padding: 6px 0 12px 0;
+        }
+        .filter-input-wrap {
+            position: relative;
+            flex: 1;
+            min-width: 220px;
+        }
+        .filter-input {
+            width: 100%;
+            padding: 10px 14px 10px 36px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            background: var(--bg-card);
+            color: var(--text-primary);
+            outline: none;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+        .filter-input:focus {
+            border-color: var(--accent-emerald);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+        }
+        .filter-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+        .filter-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .btn-filter-action {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            color: var(--text-secondary);
+            padding: 8px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.15s ease;
+        }
+        .btn-filter-action:hover {
+            border-color: var(--accent-blue);
+            color: var(--text-primary);
+        }
+
+        /* Section Separator */
+        .config-section-separator {
+            margin: 28px 0 14px 0;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-color);
+        }
+        .config-devices-separator {
+            margin: 6px 0 14px 0;
+            padding-top: 0;
+            border-top: none;
+        }
+        .config-section-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+        .config-section-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 3px;
+            margin-bottom: 14px;
+        }
+
+        /* Area Group Card (<details>) */
+        .zone-group {
+            margin-bottom: 14px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            background: var(--bg-card);
+            box-shadow: var(--shadow-sm);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .zone-group:hover {
+            border-color: var(--accent-blue);
+        }
+        summary {
+            padding: 12px 16px;
+            cursor: pointer;
+            font-weight: 600;
+            background: var(--bg-card-subtle);
+            color: var(--text-primary);
+            outline: none;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            user-select: none;
+            border-bottom: 1px solid transparent;
+            transition: background 0.15s ease;
+        }
+        summary:hover {
+            background: var(--bg-card-hover);
+        }
+        summary::-webkit-details-marker {
+            display: none;
+        }
+        summary::after {
+            content: '+';
+            font-size: 1.3em;
+            color: var(--text-muted);
+            font-weight: 300;
+            transition: transform 0.2s ease;
+        }
+        details[open] summary::after {
+            content: '-';
+        }
+        details[open] summary {
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .zone-header-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .zone-dot {
+            height: 10px;
+            width: 10px;
+            background: var(--border-color);
+            border-radius: 50%;
+            border: 2px solid var(--bg-card);
+            box-shadow: 0 0 0 1px var(--border-color);
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+        .active-zone .zone-dot {
+            background: var(--accent-emerald);
+            box-shadow: 0 0 0 1px var(--accent-emerald), 0 0 8px rgba(16, 185, 129, 0.5);
+        }
+        .active-zone summary {
+            background: var(--accent-emerald-bg);
+            color: var(--accent-emerald);
+        }
+
+        /* Device Items List */
+        .item-group {
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            flex-direction: column;
+        }
+        .item-group:last-child {
+            border-bottom: none;
+        }
+        .item-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            padding: 11px 16px;
+            background: var(--bg-card);
+            transition: background 0.15s ease;
+            user-select: none;
+        }
+        .item-header:hover {
+            background: var(--bg-card-hover);
+        }
+        .device-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+            min-width: 0;
+        }
+        .device-info b {
+            color: var(--text-primary);
+            font-size: 13.5px;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .device-entity-id {
+            color: var(--text-muted);
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 11px;
+            margin-left: 6px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .item-status-dot {
+            height: 8px;
+            width: 8px;
+            background: var(--border-color);
+            border-radius: 50%;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+        .active-item .item-status-dot {
+            background: var(--accent-emerald);
+            box-shadow: 0 0 6px rgba(16, 185, 129, 0.7);
+            transform: scale(1.15);
+        }
+        .active-item b {
+            color: var(--accent-emerald);
+        }
+        .device-arrow {
+            display: inline-block;
+            color: var(--text-muted);
+            font-size: 11px;
+            transition: transform 0.2s ease;
+            user-select: none;
+            margin-left: 12px;
+            flex-shrink: 0;
+        }
+        .item-header.open .device-arrow {
+            transform: rotate(90deg);
+            color: var(--accent-emerald);
+        }
+
+        /* Capabilities Container inside Device */
+        .capabilities-list {
+            display: none;
+            background: var(--bg-input);
+            padding: 4px 16px 8px 36px;
+            border-top: 1px solid var(--border-subtle);
+        }
+        .capabilities-list.open {
+            display: block;
+        }
+        .cap-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dashed var(--border-subtle);
+            gap: 12px;
+        }
+        .cap-item:last-child {
+            border-bottom: none;
+        }
+        .cap-item-main {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+            min-width: 0;
+        }
+        .cap-item input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--accent-emerald);
+            cursor: pointer;
+            margin: 0;
+        }
+        .cap-item label {
+            cursor: pointer;
+            font-size: 13px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+            user-select: none;
+        }
+        .cap-id {
+            color: var(--text-muted);
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 11.5px;
+        }
+        .btn-copy {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 4px 10px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+            white-space: nowrap;
+            transition: all 0.15s ease;
+            flex-shrink: 0;
+        }
+        .btn-copy:hover {
+            border-color: var(--accent-emerald);
+            color: var(--accent-emerald);
+            background: var(--accent-emerald-bg);
+        }
+        .btn-copy.copied {
+            background: var(--accent-emerald);
+            border-color: var(--accent-emerald);
+            color: #ffffff;
+        }
+
+        /* Settings Tab Rows */
+        .settings-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 20px 24px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 24px;
+        }
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+            padding-bottom: 18px;
+            border-bottom: 1px dashed var(--border-color);
+            gap: 16px;
+        }
+        .setting-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .setting-info {
+            flex: 1;
+        }
+        .setting-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 3px;
+        }
+        .setting-desc {
+            display: block;
+            font-size: 12.5px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        .setting-input {
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 8px 12px;
+            font-size: 13px;
+            color: var(--text-primary);
+            outline: none;
+            transition: border-color 0.15s ease;
+        }
+        .setting-input:focus {
+            border-color: var(--accent-emerald);
+        }
+        select.setting-input {
+            cursor: pointer;
+            min-width: 160px;
+        }
+        .setting-row-cache {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        .setting-row-cache .setting-input-cache {
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        /* Custom Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 48px;
+            height: 26px;
+            flex-shrink: 0;
+        }
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: var(--border-color);
+            transition: .25s ease;
+            border-radius: 26px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .25s ease;
+            border-radius: 50%;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+        input:checked + .slider {
+            background-color: var(--accent-emerald);
+        }
+        input:checked + .slider:before {
+            transform: translateX(22px);
+        }
+        input:disabled + .slider {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Topic Cleanup Card */
+        .cleanup-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 18px 20px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 24px;
+        }
+        .cleanup-header-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .cleanup-header-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .cleanup-status-indicator {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: var(--text-muted);
+            transition: all 0.3s ease;
+        }
+        .cleanup-status-indicator.scanning {
+            background: var(--accent-blue);
+            box-shadow: 0 0 8px rgba(14, 165, 233, 0.7);
+        }
+        .cleanup-status-indicator.clean {
+            background: var(--accent-emerald);
+            box-shadow: 0 0 8px rgba(16, 185, 129, 0.7);
+        }
+        .cleanup-status-indicator.warning {
+            background: var(--accent-amber);
+            box-shadow: 0 0 8px rgba(245, 158, 11, 0.7);
+        }
+        .cleanup-header-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        .btn-cleanup-scan {
+            background: var(--accent-blue);
+            border: 1px solid var(--accent-blue);
+            color: white;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .btn-cleanup-scan:hover {
+            background: var(--accent-blue-hover);
+        }
+        .btn-cleanup-scan:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .cleanup-content-area {
+            margin-top: 16px;
+        }
+        .cleanup-placeholder-text {
+            color: var(--text-muted);
+            font-size: 13px;
+            padding: 12px 14px;
+            background: var(--bg-card-subtle);
+            border-radius: var(--radius-sm);
+            border: 1px dashed var(--border-color);
+        }
+        .cleanup-banner-clean {
+            background: var(--accent-emerald-bg);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: var(--radius-sm);
+            padding: 14px 18px;
+            color: var(--accent-emerald);
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        .cleanup-banner-warning {
+            background: var(--accent-amber-bg);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: var(--radius-sm);
+            padding: 14px 18px;
+            color: var(--accent-amber);
+            font-size: 13px;
+            line-height: 1.5;
+            margin-bottom: 14px;
+        }
+        .cleanup-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .cleanup-list-box {
+            max-height: 340px;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            background: var(--bg-input);
+        }
+        .cleanup-item-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border-subtle);
+            gap: 12px;
+        }
+        .cleanup-item-row:last-child {
+            border-bottom: none;
+        }
+        .btn-cleanup-disable {
+            background: var(--accent-red);
+            border: 1px solid var(--accent-red);
+            color: white;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .btn-cleanup-disable:hover {
+            background: var(--accent-red-hover);
+        }
+
+        /* Files Section */
+        .file-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 18px 20px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 20px;
+        }
+        .file-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .file-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        .file-table th {
+            text-align: left;
+            padding: 8px 12px;
+            color: var(--text-muted);
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .file-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border-subtle);
+            color: var(--text-primary);
+            word-break: break-all;
+        }
+        .btn-del {
+            background: var(--accent-red-bg);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: var(--accent-red);
+            padding: 5px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .btn-del:hover {
+            background: var(--accent-red);
+            color: white;
+        }
+        .empty-msg {
+            padding: 16px;
+            text-align: center;
+            color: var(--text-muted);
+            font-style: italic;
+            font-size: 13px;
+        }
+
+        /* Calendar / Services Tab */
+        .calendar-icon-bindings-textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 10px 12px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 12.5px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            outline: none;
+            resize: vertical;
+            line-height: 1.5;
+        }
+        .calendar-icon-bindings-textarea:focus {
+            border-color: var(--accent-emerald);
+        }
+        .calendar-icon-bindings-textarea.has-error {
+            border-color: var(--accent-red);
+        }
+        .calendar-icon-bindings-validation {
+            margin-top: 8px;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+        .calendar-icon-bindings-validation .err-line { color: var(--accent-red); }
+        .calendar-icon-bindings-validation .warn-line { color: var(--accent-amber); }
+        .calendar-icon-bindings-validation .ok-line { color: var(--accent-emerald); }
+        .icon-bindings-actions {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+        }
+        .icon-bindings-reset-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 6px 14px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.15s ease;
+        }
+        .icon-bindings-reset-btn:hover {
+            border-color: var(--accent-blue);
+            color: var(--text-primary);
+        }
+
+        /* Modal Dialogs */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.75);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+        .modal-overlay.show {
+            display: flex;
+        }
+        .modal-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            width: 440px;
+            max-width: 90%;
+            box-shadow: var(--shadow-md);
+        }
+        .modal-text {
+            color: var(--text-primary);
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        .modal-btn {
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid transparent;
+            transition: all 0.15s ease;
+        }
+        .modal-btn-cancel {
+            background: var(--bg-card-subtle);
+            border-color: var(--border-color);
+            color: var(--text-secondary);
+        }
+        .modal-btn-cancel:hover {
+            color: var(--text-primary);
+            background: var(--bg-card-hover);
+        }
+        .modal-btn-confirm {
+            background: var(--accent-emerald);
+            color: white;
+        }
+        .modal-btn-confirm.danger {
+            background: var(--accent-red);
+        }
+
+        /* Toast notifications */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 12px 20px;
+            box-shadow: var(--shadow-md);
+            color: var(--text-primary);
+            font-size: 13px;
+            font-weight: 600;
+            z-index: 10001;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: none;
+        }
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Access tags (RW, R, W) */
+        .access-tag {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            font-weight: 800;
+            border-radius: 3px;
+            padding: 1px 5px;
+            letter-spacing: 0.5px;
+            color: white;
+            flex-shrink: 0;
+        }
+        .access-rw { background: #059669; }
+        .access-r  { background: #d97706; }
+        .access-w  { background: #0891b2; }
+
+        .domain-badge {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 1px 6px;
+            border-radius: 4px;
+            background: var(--bg-card-subtle);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
     </style>
 </head>
 <body>
-    <header>
-        <div>
-            <h1>Dashboard Studio Setup</h1>
-            <div class="status" id="status">Loading</div>
+    <header class="top-bar">
+        <div class="brand-wrap">
+            <div class="brand-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="9" rx="1"></rect>
+                    <rect x="14" y="3" width="7" height="5" rx="1"></rect>
+                    <rect x="14" y="12" width="7" height="9" rx="1"></rect>
+                    <rect x="3" y="16" width="7" height="5" rx="1"></rect>
+                </svg>
+            </div>
+            <div>
+                <h1 class="brand-title">Dashboard Studio Setup</h1>
+                <div class="brand-subtitle">
+                    <span class="status-badge">
+                        <span class="status-dot ready" id="status-dot"></span>
+                        <span id="status-text">Ready</span>
+                    </span>
+                    <span id="ha-version-pill" class="domain-badge">HA Native</span>
+                </div>
+            </div>
         </div>
-        <button class="primary" id="save">Save</button>
+        <div class="header-actions">
+            <select id="ui-language-select" class="lang-select" title="Select Language">
+                <option value="en">English</option>
+                <option value="nl">Nederlands</option>
+                <option value="de">Deutsch</option>
+                <option value="fr">Français</option>
+                <option value="es">Español</option>
+                <option value="it">Italiano</option>
+                <option value="sv">Svenska</option>
+                <option value="no">Norsk</option>
+                <option value="da">Dansk</option>
+                <option value="pl">Polski</option>
+                <option value="ru">Русский</option>
+                <option value="ko">한국어</option>
+                <option value="ar">العربية</option>
+            </select>
+            <button type="button" id="theme-toggle-btn" class="theme-toggle-btn" title="Toggle Theme">
+                <span id="theme-icon">&#9681;</span>
+                <span id="theme-label">Theme</span>
+            </button>
+            <a id="btn-top-open-dashboard" href="/dashboard_studio/" target="_blank" class="btn-open-dashboard">
+                <span>Open Dashboard</span>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            </a>
+            <button type="button" id="btn-top-save" class="btn-primary-save" data-translate="settings.actions.saveSettings">Save Settings</button>
+        </div>
     </header>
-    <nav>
-        <button class="tab active" data-tab="devices">Devices</button>
-        <button class="tab" data-tab="cleanup">Topic Cleanup</button>
-        <button class="tab" data-tab="settings">Settings</button>
-        <button class="tab" data-tab="files">Files</button>
-    </nav>
-    <main>
-        <section id="devices" class="active">
-            <div class="row">
-                <input id="name-filter" type="search" placeholder="Search by name">
-                <input id="cap-filter" type="search" placeholder="Search by capability">
-            </div>
-            <div id="device-tree"></div>
-        </section>
-        <section id="cleanup">
-            <div class="row">
-                <button id="scan">Scan Dashboards</button>
-                <button id="disable-selected">Disable Selected</button>
-            </div>
-            <div id="unused"></div>
-        </section>
-        <section id="settings">
-            <div class="grid">
-                <label class="card">Cache mode
-                    <select id="cacheValues">
-                        <option value="all">All</option>
-                        <option value="optimized">Optimized</option>
-                        <option value="devices">Devices</option>
-                        <option value="none">None</option>
-                    </select>
-                </label>
-                <label class="card">Snapshot retention
-                    <input id="dashboardFileHistoryMax" type="text" value="10">
-                </label>
-                <label class="card"><input id="keepDashboardFileHistory" type="checkbox"> Keep snapshot history</label>
-                <label class="card"><input id="hideEditor" type="checkbox"> Viewer only</label>
-                <label class="card"><input id="warnWhenDriverOffline" type="checkbox"> Warn when the driver is offline</label>
-                <label class="card"><input id="autoEcho" type="checkbox"> Auto echo</label>
-                <label class="card"><input id="topicEcho" type="checkbox"> Topic echo</label>
-            </div>
-            <h2>Services and Calendar</h2>
-            <div class="grid">
-                <label class="card">Date format <input id="calendarDateFormat" type="text" value="dd-mm-yyyy"></label>
-                <label class="card">Week start
-                    <select id="calendarWeekStart"><option value="monday">Monday</option><option value="sunday">Sunday</option></select>
-                </label>
-                <label class="card">List style
-                    <select id="calendarListStyle"><option value="list">List</option><option value="week">Week</option><option value="day">Day</option></select>
-                </label>
-                <label class="card">Event order
-                    <select id="calendarEventOrder">
-                        <option value="icon_time_title">Icon, time, title</option>
-                        <option value="time_title">Time, title</option>
-                        <option value="title_time">Title, time</option>
-                    </select>
-                </label>
-                <label class="card">Color blocks
-                    <select id="calendarColorBlockMode"><option value="event_type">Event type</option><option value="source">Source</option><option value="none">None</option></select>
-                </label>
-                <label class="card"><input id="calendarWrapEventsInBlocks" type="checkbox"> Wrap events in blocks</label>
-                <label class="card"><input id="calendarGroupByTimeOfDay" type="checkbox"> Group by time of day</label>
-                <label class="card"><input id="calendarShowIcons" type="checkbox"> Show icons</label>
-                <label class="card"><input id="calendarUseDefaultIcon" type="checkbox"> Use default icon</label>
-                <label class="card">Default icon <input id="calendarDefaultIcon" type="text" value="ph-calendar"></label>
-            </div>
-            <label class="card">Icon bindings
-                <textarea id="calendarIconBindingsText" placeholder="dentist=ph-tooth"></textarea>
-            </label>
-            <label class="card">Source bindings
-                <textarea id="calendarSourceBlockBindingsText" placeholder="Family=Family calendar"></textarea>
-            </label>
-            <div class="row">
-                <button id="clear-cache">Clear State Cache</button>
-                <button id="download-backup">Download Backup</button>
-                <button id="download-settings">Download Settings</button>
-                <button id="download-capabilities">Download Capabilities</button>
-                <label class="card">Restore <input id="restore-file" type="file" accept="application/json"></label>
-            </div>
-        </section>
-        <section id="files">
-            <div class="row">
-                <select id="file-type">
-                    <option value="dashboards">Dashboards</option>
-                    <option value="themes">Themes</option>
-                    <option value="presets">Presets</option>
-                    <option value="snapshots">Snapshots</option>
-                    <option value="images">Images</option>
-                    <option value="audio">Audio</option>
-                </select>
-                <button id="refresh-files">Refresh</button>
-            </div>
-            <div id="file-list" class="files"></div>
-        </section>
-    </main>
-    <script>
-        var enabled = {};
-        var settings = {};
-        var devices = [];
 
+    <div class="dashboard-url-box">
+        <div class="dashboard-url-row">
+            <p data-translate="settings.dashboard.access">Open your local dashboard:</p>
+            <a id="dashboard-link" class="dashboard-link" href="/dashboard_studio/" target="_blank">Loading dashboard URL…</a>
+        </div>
+        <div id="manual-help" class="manual-instruction">
+            <strong data-translate="settings.dashboard.cantAccess">Can't open the link?</strong><br>
+            <span data-translate="settings.dashboard.manualStep1">1. In Home Assistant, go to Settings → System → Network to find your local IP address.</span><br>
+            <span><span data-translate="settings.dashboard.manualStep3BeforeUrl">2. In your browser or tablet, open:</span> <code id="manual-port-display">http://[Address]:8123/dashboard_studio/</code></span>
+        </div>
+    </div>
+
+    <nav class="tabs">
+        <div class="tab active" data-tab="config" data-translate="settings.tabs.configuration">Configuration</div>
+        <div class="tab" data-tab="settings" data-translate="settings.tabs.settings">Settings</div>
+        <div class="tab" data-tab="files" data-translate="settings.tabs.fileManager">File Manager</div>
+        <div class="tab" data-tab="calendar" data-translate="settings.tabs.calendar">Services &amp; Calendar</div>
+    </nav>
+
+    <!-- TAB 1: CONFIGURATION (DEVICES + CLEANUP) -->
+    <div id="tab-config" class="tab-content active">
+        <div class="filter-box">
+            <div class="filter-input-wrap">
+                <svg class="filter-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input type="text" id="device-filter" class="filter-input" placeholder="Filter by entity name…" oninput="filterDevices()" onkeyup="filterDevices()">
+            </div>
+            <div class="filter-input-wrap">
+                <svg class="filter-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input type="text" id="capability-filter" class="filter-input" placeholder="Filter by capability / attribute…" oninput="filterDevices()" onkeyup="filterDevices()">
+            </div>
+            <div class="filter-actions">
+                <button type="button" class="btn-filter-action" onclick="toggleAllZones(true)">Expand All</button>
+                <button type="button" class="btn-filter-action" onclick="toggleAllZones(false)">Collapse All</button>
+            </div>
+        </div>
+
+        <div id="device-list">
+            <div class="empty-msg" id="device-list-loading" data-translate="settings.config.loading">Loading entities…</div>
+        </div>
+
+        <!-- Capability & Topic Cleanup Section -->
+        <div class="config-section-separator config-cleanup-separator">
+            <div class="config-section-title" data-translate="settings.cleanup.sectionTitle">Capability &amp; Topic Cleanup</div>
+            <div class="config-section-desc" data-translate="settings.cleanup.sectionDesc">Audit all saved dashboards to find enabled capabilities and topics that are no longer used by any widget, menu, slider, switch, formula, or markdown template.</div>
+        </div>
+
+        <div id="topic-cleanup-container" class="cleanup-card">
+            <div class="cleanup-header-bar">
+                <div class="cleanup-header-info">
+                    <span class="cleanup-status-indicator" id="cleanup-status-dot"></span>
+                    <span class="cleanup-header-title" id="cleanup-header-title" data-translate="settings.cleanup.headerTitle">Unused Topics Audit</span>
+                </div>
+                <button type="button" id="btn-scan-unused-topics" class="btn-cleanup-scan" onclick="startUnusedCapabilitiesScan()" data-translate="settings.cleanup.scanButton">Scan for Unused Capabilities</button>
+            </div>
+            <div id="cleanup-content-area" class="cleanup-content-area">
+                <div class="cleanup-placeholder-text" data-translate="settings.cleanup.scanPlaceholder">Click "Scan for Unused Capabilities" to analyze all saved dashboards against currently enabled topics.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 2: SETTINGS -->
+    <div id="tab-settings" class="tab-content">
+        <div class="settings-section">
+            <div class="setting-row setting-row-cache">
+                <div class="setting-info">
+                    <span class="setting-label" data-translate="settings.ui.StateCaching">State Caching</span>
+                    <span class="setting-desc" data-translate="settings.ui.Keepthelastknownvaluesinmemory">Keeps the last known values in memory so a reload can fill the dashboard right away. Full keeps devices and events. Optimized skips events larger than 16 KB. Devices and variables only keeps devices and variables. Disabled stores nothing.</span>
+                </div>
+                <select id="setting-cache-values" class="setting-input setting-input-cache" onchange="saveSettingsDebounced()">
+                    <option value="all" data-translate="settings.ui.StateCacheAll">Full (Devices &amp; all events)</option>
+                    <option value="optimized" data-translate="settings.ui.StateCacheOptimized">Optimized (&lt; 16 KB events)</option>
+                    <option value="devices" data-translate="settings.ui.StateCacheDevices">Devices &amp; variables only</option>
+                    <option value="none" data-translate="settings.ui.StateCacheNone">Disabled (No caching)</option>
+                </select>
+            </div>
+
+            <div class="setting-row">
+                <div class="setting-info">
+                    <span class="setting-label">Clear State Cache</span>
+                    <span class="setting-desc">Clears the in-memory cache of last known values. Forces fresh state updates on next reload.</span>
+                </div>
+                <button type="button" id="btn-clear-cache" class="btn-filter-action" onclick="clearStateCache()">Clear State Cache</button>
+            </div>
+
+            <div class="setting-row">
+                <div class="setting-info">
+                    <span class="setting-label" data-translate="settings.ui.ViewerModeOnly">Viewer mode only</span>
+                    <span class="setting-desc" data-translate="settings.ui.ViewerModeOnlyDesc">Opens the lightweight dashboard viewer instead of the editor when you use the main dashboard link. Ideal for wall tablets and kiosks.</span>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="setting-hide-editor" onchange="saveSettingsDebounced()">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="setting-row">
+                <div class="setting-info">
+                    <span class="setting-label" data-translate="settings.ui.KeepDashboardFileHistory">Keep Dashboard File History</span>
+                    <span class="setting-desc" data-translate="settings.ui.Whensavingoveranexistingdashbo">When saving over an existing dashboard, the previous file is kept as a timestamped snapshot (hidden from the normal file list). Snapshots are not a full backup: export dashboards if you need copies outside Home Assistant. If you uninstall Dashboard Studio, all user dashboard files in Home Assistant are removed.</span>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="setting-keep-dashboard-history" onchange="updateHistoryMaxDisabledState(); saveSettingsDebounced();">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="setting-row" id="setting-dashboard-history-max-row">
+                <div class="setting-info">
+                    <span class="setting-label" data-translate="settings.ui.MaximumSnapshotsToKeep">Maximum Snapshots to Keep</span>
+                    <span class="setting-desc" data-translate="settings.ui.Perdashboardoldestsnapshotsare">Per dashboard, oldest snapshots are removed when this limit is exceeded (1–50).</span>
+                </div>
+                <input type="number" id="setting-dashboard-history-max" class="setting-input" min="1" max="50" step="1" style="width:100px; text-align:center;" onchange="saveSettingsDebounced()">
+            </div>
+
+            <div class="setting-row">
+                <div class="setting-info">
+                    <span class="setting-label" data-translate="settings.ui.ShowConnectionWarningonDisconn">Show Connection Warning on Disconnect</span>
+                    <span class="setting-desc" data-translate="settings.ui.Showsafriendlydashboardnoticew">Shows a friendly dashboard notice when the active data driver goes offline. It hides automatically when the connection returns.</span>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="setting-warn-offline" onchange="saveSettingsDebounced()">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="setting-row">
+                <div class="setting-info">
+                    <span class="setting-label" data-translate="settings.ui.EnableTopicAutoEcho">Enable Topic Auto-Echo</span>
+                    <span class="setting-desc" data-translate="settings.ui.Automaticallyreflectssenttopic">Automatically reflects sent topics back to the dashboard. Keeps multiple open screens perfectly in sync.</span>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="setting-auto-echo" onchange="saveSettingsDebounced()">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="setting-row">
+                <div class="setting-info">
+                    <span class="setting-label">Topic Echo</span>
+                    <span class="setting-desc">Echoes published topic events to connected WebSocket clients for live canvas updates.</span>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="setting-topic-echo" onchange="saveSettingsDebounced()">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="manual-instruction" style="margin-top:24px; margin-bottom:16px; background:var(--bg-card-subtle); border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:12px 16px;">
+                <strong style="color:var(--text-primary);" data-translate="settings.ui.BackupNoticeTitle">Backup &amp; Restore Information:</strong><br>
+                <span data-translate="settings.ui.BackupNoticeDesc">This backup only includes Dashboard Studio app settings and enabled device capabilities (MQTT topics). Dashboard designs, themes, uploaded images, and audio files are stored separately and are not included.</span>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-top:16px;">
+                <div style="display:inline-flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                    <button type="button" id="btn-backup-settings" onclick="backupSettings()" class="btn-filter-action" data-translate="settings.actions.backup">Backup</button>
+                    <button type="button" id="btn-backup-settings-only" onclick="downloadSettingsOnly()" class="btn-filter-action">Download Settings</button>
+                    <button type="button" id="btn-backup-caps-only" onclick="downloadCapabilitiesOnly()" class="btn-filter-action">Download Capabilities</button>
+                    <button type="button" id="btn-restore-settings" onclick="openRestoreModal()" class="btn-filter-action" data-translate="settings.actions.restoreBackup">Restore Backup</button>
+                    <input type="file" id="restore-file-input" style="display:none;" accept=".json" onchange="restoreSettings(event)">
+                </div>
+                <button type="button" id="btn-save-settings-main" onclick="saveSettingsExplicit()" class="btn-primary-save" data-translate="settings.actions.saveSettings">Save Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 3: FILE MANAGER -->
+    <div id="tab-files" class="tab-content">
+        <div class="file-section">
+            <div class="file-header">
+                <span data-translate="settings.files.dashboards">Dashboards</span>
+                <button type="button" class="btn-del" onclick="clearAllSnapshotsConfirm()">Clear All Snapshots</button>
+            </div>
+            <div id="list-dashboards" class="empty-msg" data-translate="settings.files.loadingList">Loading…</div>
+        </div>
+        <div class="file-section">
+            <div class="file-header" data-translate="settings.files.templates">Themes</div>
+            <div id="list-templates" class="empty-msg" data-translate="settings.files.loadingList">Loading…</div>
+        </div>
+        <div class="file-section">
+            <div class="file-header">Widget Presets</div>
+            <div id="list-presets" class="empty-msg" data-translate="settings.files.loadingList">Loading…</div>
+        </div>
+        <div class="file-section">
+            <div class="file-header" data-translate="settings.files.images">Images</div>
+            <div id="list-images" class="empty-msg" data-translate="settings.files.loadingList">Loading…</div>
+        </div>
+        <div class="file-section">
+            <div class="file-header" data-translate="settings.files.audio">Audio</div>
+            <div id="list-audio" class="empty-msg" data-translate="settings.files.loadingList">Loading…</div>
+        </div>
+    </div>
+
+    <!-- TAB 4: SERVICES & CALENDAR -->
+    <div id="tab-calendar" class="tab-content">
+        <div class="settings-section">
+            <div class="manual-instruction" style="margin-top:0; margin-bottom:18px; background:var(--bg-card-subtle); border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:12px 16px;">
+                <strong style="color:var(--text-primary);">Home Assistant Services &amp; Calendar Markdown:</strong><br>
+                <span>Configure formatting rules for the Calendar &amp; RSS Markdown services. These determine how calendar events and RSS feeds are rendered in Text and Markdown widgets.</span>
+            </div>
+
+            <div class="setting-row">
+                <div class="setting-info">
+                    <span class="setting-label" data-translate="settings.ui.DateFormat">Date Format (Calendar &amp; RSS)</span>
+                    <span class="setting-desc" data-translate="settings.ui.Usedwhentheflowcardshowsdatesa">Used when Calendar and RSS services show dates in Markdown tables.</span>
+                </div>
+                <select id="setting-calendar-date-format" class="setting-input" onchange="saveSettingsDebounced()">
+                    <option value="dd-mm-yyyy" data-translate="settings.ui.DDMMYYYY">DD-MM-YYYY</option>
+                    <option value="mm-dd-yyyy" data-translate="settings.ui.MMDDYYYY">MM-DD-YYYY</option>
+                    <option value="yyyy-mm-dd" data-translate="settings.ui.YYYYMMDD">YYYY-MM-DD</option>
+                </select>
+            </div>
+
+            <div class="setting-row">
+                <div class="setting-info">
+                    <span class="setting-label" data-translate="settings.ui.CalendarWeekStart">Calendar Week Start</span>
+                    <span class="setting-desc" data-translate="settings.ui.Firstdayoftheweekforweekandmon">First day of the week for week and month grids. Monday (Europe), Sunday (Americas / Japan), Saturday (Middle East).</span>
+                </div>
+                <select id="setting-calendar-week-start" class="setting-input" onchange="saveSettingsDebounced()">
+                    <option value="monday" data-translate="settings.ui.Monday">Monday</option>
+                    <option value="sunday" data-translate="settings.ui.Sunday">Sunday</option>
+                    <option value="saturday" data-translate="settings.ui.Saturday">Saturday</option>
+                </select>
+            </div>
+
+            <div class="setting-row">
+                <div class="setting-info">
+                    <span class="setting-label" data-translate="settings.ui.EventOrder">Event Order</span>
+                    <span class="setting-desc" data-translate="settings.ui.Orderoficontokentimelabelandsu">Order of icon token, time label, and summary in Convert iCal JSON to Markdown (week/month cells; day view keeps time in the Time column and icon + summary in Event).</span>
+                </div>
+                <select id="setting-calendar-event-order" class="setting-input" onchange="saveSettingsDebounced()">
+                    <option value="icon_time_title" data-translate="settings.ui.IconTimeEvent">Icon, Time, Event</option>
+                    <option value="icon_title_time" data-translate="settings.ui.IconEventTime">Icon, Event, Time</option>
+                    <option value="time_title_icon" data-translate="settings.ui.TimeEventIcon">Time, Event, Icon</option>
+                    <option value="time_icon_title" data-translate="settings.ui.TimeIconEvent">Time, Icon, Event</option>
+                    <option value="title_time_icon" data-translate="settings.ui.EventTimeIcon">Event, Time, Icon</option>
+                    <option value="title_icon_time" data-translate="settings.ui.EventIconTime">Event, Icon, Time</option>
+                </select>
+            </div>
+
+            <div class="setting-row">
+                <div class="setting-info">
+                    <span class="setting-label" data-translate="settings.ui.WrapEventsinColorBlocks">Wrap Events in Color Blocks</span>
+                    <span class="setting-desc" data-translate="settings.ui.WrapEventsinColorBlocksDesc">When enabled, each event is wrapped in a <code>[block1:]</code>…<code>[block4:]</code> strip (Text widget callout style). When disabled, calendar markdown uses plain text lines.</span>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="setting-calendar-wrap-blocks" onchange="updateCalendarSourceBlockUiState(); saveSettingsDebounced();">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="setting-row" id="setting-calendar-color-block-mode-row">
+                <div class="setting-info">
+                    <span class="setting-label" data-translate="settings.ui.ColorBlockGrouping">Color Block Grouping</span>
+                    <span class="setting-desc" data-translate="settings.ui.Chooseshowblock1toblock4tintsm">Chooses how <code>[block1:]</code>…<code>[block4:]</code> tints map to rows. By event type follows Load &amp; Filter behaviour (timed, all-day, multi-day, recurring). By calendar source assigns a stable tint per feed (<code>calendarId</code>).</span>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:8px;">
+                    <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:13px;">
+                        <input type="radio" name="setting-calendar-color-block-mode" id="setting-calendar-color-block-event-type" value="event_type" onchange="updateCalendarSourceBlockUiState(); saveSettingsDebounced();">
+                        <span data-translate="settings.ui.ColorBlockModeByEventType">By event type</span>
+                    </label>
+                    <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:13px;">
+                        <input type="radio" name="setting-calendar-color-block-mode" id="setting-calendar-color-block-calendar-source" value="calendar_source" onchange="updateCalendarSourceBlockUiState(); saveSettingsDebounced();">
+                        <span data-translate="settings.ui.ColorBlockModeByCalendarSource">By calendar source</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="setting-row" id="setting-calendar-source-block-bindings-panel" style="flex-direction:column; align-items:stretch;">
+                <div class="setting-info" style="margin-bottom:10px;">
+                    <span class="setting-label" data-translate="settings.ui.CalendarSourceBlocks">Calendar Source Blocks</span>
+                    <span class="setting-desc" data-translate="settings.ui.OnebindingperlinecalendarIdspa">One binding per line: <code>calendarId</code>, space, then block <code>1</code>, <code>2</code>, <code>3</code>, or <code>4</code>. Read <code>calendarId</code> from the Load &amp; Filter iCal payload. Lines starting with <code>#</code> are comments. When you run Convert iCal JSON to Markdown, new sources get the least-used block (ties pick the lowest number). Duplicate IDs are invalid.</span>
+                </div>
+                <textarea id="setting-calendar-source-block-bindings-text" class="calendar-icon-bindings-textarea" wrap="off" spellcheck="false" placeholder="calendar.family 1&#10;calendar.work 2"></textarea>
+                <div id="calendar-source-block-bindings-validation" class="calendar-icon-bindings-validation" role="status"></div>
+                <div class="icon-bindings-actions">
+                    <button type="button" class="icon-bindings-reset-btn" data-translate="settings.calendar.sourceBlockBindings.resetToDefault" onclick="resetCalendarSourceBlockBindingsToDefault();">Reset to example</button>
+                </div>
+            </div>
+
+            <div class="setting-row">
+                <div class="setting-info">
+                    <span class="setting-label" data-translate="settings.ui.GroupTimedEventsbyTimeofDay">Group Timed Events by Time of Day</span>
+                    <span class="setting-desc" data-translate="settings.ui.Whenenabledweekstyleviewsaddse">When enabled, week-style views add section labels such as <b>Night</b>, <b>Morning</b>, <b>Afternoon</b>, <b>Evening</b> (and <b>All Day</b>). When disabled, events are listed without those headers.</span>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="setting-calendar-group-dayparts" onchange="saveSettingsDebounced();">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="setting-row">
+                <div class="setting-info">
+                    <span class="setting-label" data-translate="settings.ui.ShowIconsInCalendar">Show Icons In Calendar</span>
+                    <span class="setting-desc" data-translate="settings.ui.Whendisabledcalendarmarkdownco">When disabled, calendar markdown contains no <code>:ph-…:</code> icon tokens and Icon Bindings are ignored.</span>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="setting-calendar-show-icons" onchange="updateCalendarIconUiState(); saveSettingsDebounced();">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="setting-row" id="setting-calendar-use-default-icon-row">
+                <div class="setting-info">
+                    <span class="setting-label" data-translate="settings.ui.UseDefaultCalendarIcon">Use Default Calendar Icon</span>
+                    <span class="setting-desc" data-translate="settings.ui.Whenenabledeventswithoutamatch">When enabled, events with no Icon Bindings match use the default icon.</span>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="setting-calendar-use-default-icon" onchange="updateCalendarIconUiState(); saveSettingsDebounced();">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="setting-row" id="setting-calendar-default-icon-row">
+                <div class="setting-info">
+                    <span class="setting-label" data-translate="settings.ui.DefaultCalendarIcon">Default Calendar Icon</span>
+                    <span class="setting-desc" data-translate="settings.ui.UsedwhennokeywordmatchesPhosph">Used when no keyword matches. Phosphor icon name (with ph-). Leave empty to reserve width. Default: ph-calendar.</span>
+                </div>
+                <input type="text" id="setting-calendar-default-icon" class="setting-input" style="width:200px; text-align:left;" placeholder="ph-calendar" oninput="updateCalendarIconUiState()" onchange="saveSettingsDebounced()">
+            </div>
+
+            <div class="setting-row" style="flex-direction:column; align-items:stretch;">
+                <div class="setting-info" style="margin-bottom:10px;">
+                    <span class="setting-label" data-translate="settings.ui.IconBindings">Icon Bindings</span>
+                    <span class="setting-desc" data-translate="settings.ui.OnelinepericonfullPhosphorname">One line per icon: full Phosphor name (with <code>ph-</code>), a colon, then comma-separated keywords matched against event titles (case-insensitive). Lines starting with <code>#</code> are comments. Example: <code>ph-cake: birthday, bday, verjaardag</code>. If no keyword matches, Convert iCal JSON to Markdown uses the default icon above, or <code>:ph-spacer:</code> when that field is empty.</span>
+                </div>
+                <textarea id="setting-calendar-icon-bindings-text" class="calendar-icon-bindings-textarea" wrap="off" spellcheck="false" placeholder="ph-cake: birthday, bday&#10;ph-trash: trash, garbage"></textarea>
+                <div id="calendar-icon-bindings-validation" class="calendar-icon-bindings-validation" role="status"></div>
+                <div class="icon-bindings-actions">
+                    <button type="button" class="icon-bindings-reset-btn" data-translate="settings.calendar.iconBindings.resetToDefault" onclick="resetCalendarIconBindingsToDefault();">Reset to default</button>
+                </div>
+            </div>
+
+            <div style="text-align:right; margin-top:16px;">
+                <button type="button" id="btn-save-settings-calendar" onclick="saveSettingsExplicit()" class="btn-primary-save" data-translate="settings.actions.saveSettings">Save Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="custom-modal" class="modal-overlay">
+        <div class="modal-box">
+            <div id="custom-modal-text" class="modal-text">Message</div>
+            <div class="modal-buttons">
+                <button type="button" id="custom-modal-cancel" class="modal-btn modal-btn-cancel" data-translate="settings.modal.cancel">Cancel</button>
+                <button type="button" id="custom-modal-confirm" class="modal-btn modal-btn-confirm" data-translate="settings.modal.delete">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="backup-modal" class="modal-overlay">
+        <div class="modal-box" style="width: 540px;">
+            <div class="modal-text">
+                <strong data-translate="settings.actions.backupSettings" style="font-size:16px; font-weight:700;">Backup Settings</strong>
+                <p id="backup-modal-desc" style="font-size:12.5px; color:var(--text-secondary); margin:6px 0 12px;"></p>
+                <textarea id="backup-textarea" style="width:100%; height:200px; padding:10px; font-family:ui-monospace, monospace; font-size:12px; border:1px solid var(--border-color); border-radius:var(--radius-sm); background:var(--bg-input); color:var(--text-primary); resize:none;" readonly></textarea>
+            </div>
+            <div class="modal-buttons">
+                <button type="button" class="modal-btn modal-btn-cancel" onclick="document.getElementById('backup-modal').classList.remove('show')">Close</button>
+                <button type="button" class="modal-btn modal-btn-confirm" onclick="copyBackupToClipboard()">Copy to Clipboard</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="restore-modal" class="modal-overlay">
+        <div class="modal-box" style="width: 540px;">
+            <div class="modal-text">
+                <strong data-translate="settings.actions.restoreSettings" style="font-size:16px; font-weight:700;">Restore Settings</strong>
+                <p style="font-size:12.5px; color:var(--text-secondary); margin:6px 0 12px;">Paste your backup JSON text below, or select a .json file from your computer.</p>
+                <textarea id="restore-textarea" placeholder="Paste your backup JSON here..." style="width:100%; height:200px; padding:10px; font-family:ui-monospace, monospace; font-size:12px; border:1px solid var(--border-color); border-radius:var(--radius-sm); background:var(--bg-input); color:var(--text-primary); resize:none;"></textarea>
+            </div>
+            <div class="modal-buttons" style="justify-content:space-between;">
+                <button type="button" class="modal-btn modal-btn-cancel" onclick="document.getElementById('restore-file-input').click();">Select File…</button>
+                <div style="display:flex; gap:10px;">
+                    <button type="button" class="modal-btn modal-btn-cancel" onclick="document.getElementById('restore-modal').classList.remove('show')">Cancel</button>
+                    <button type="button" class="modal-btn modal-btn-confirm" onclick="processRestoreText()">Restore</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast">
+        <span id="toast-icon">&#10003;</span>
+        <span id="toast-message">Notification</span>
+    </div>
+
+    <script>
+        /* =========================================================================
+           DEFAULT EMBEDDED LOCALE DICTIONARY (English fallback)
+           ========================================================================= */
+        var DEFAULT_LOCALE_FLAT = {
+            "settings.tabs.configuration": "Configuration",
+            "settings.tabs.settings": "Settings",
+            "settings.tabs.fileManager": "File Manager",
+            "settings.tabs.calendar": "Services & Calendar",
+            "settings.actions.saveSettings": "Save Settings",
+            "settings.actions.backup": "Backup",
+            "settings.actions.restoreBackup": "Restore Backup",
+            "settings.actions.backupSettings": "Backup Settings",
+            "settings.actions.restoreSettings": "Restore Settings",
+            "settings.feedback.saved": "Saved!",
+            "settings.modal.cancel": "Cancel",
+            "settings.modal.delete": "Delete",
+            "settings.modal.ok": "OK",
+            "settings.files.dashboards": "Dashboards",
+            "settings.files.templates": "Themes",
+            "settings.files.images": "Images",
+            "settings.files.audio": "Audio",
+            "settings.files.loadingList": "Loading…",
+            "settings.files.noFiles": "No files saved.",
+            "settings.files.noImages": "No images found.",
+            "settings.files.noAudio": "No audio found.",
+            "settings.files.nameColumn": "Name",
+            "settings.files.actionColumn": "Action",
+            "settings.files.defaultTag": "Built-in",
+            "settings.cleanup.sectionTitle": "Capability & Topic Cleanup",
+            "settings.cleanup.sectionDesc": "Audit all saved dashboards to find enabled capabilities and topics that are no longer used by any widget, menu, slider, switch, formula, or markdown template.",
+            "settings.cleanup.headerTitle": "Unused Topics Audit",
+            "settings.cleanup.scanButton": "Scan for Unused Capabilities",
+            "settings.cleanup.scanPlaceholder": "Click \"Scan for Unused Capabilities\" to analyze all saved dashboards against currently enabled topics.",
+            "settings.cleanup.scanning": "Scanning Dashboards...",
+            "settings.cleanup.analyzing": "Analyzing all saved dashboards and extracting topic bindings...",
+            "settings.cleanup.auditFailed": "Audit Failed",
+            "settings.cleanup.allUsedTitle": "Configuration Fully Optimized",
+            "settings.cleanup.allUsedHeadline": "All enabled capabilities are currently in use!",
+            "settings.cleanup.allUsedBody": "No unused capabilities were detected (__dashboards__ saved dashboards scanned). Your configuration is fully optimized.",
+            "settings.cleanup.foundOne": "Found 1 Unused Capability",
+            "settings.cleanup.foundMany": "Found __count__ Unused Capabilities",
+            "settings.cleanup.bannerOne": "1 enabled capability is not referenced in your saved dashboards (__dashboards__ scanned).",
+            "settings.cleanup.bannerMany": "__count__ enabled capabilities are not referenced in your saved dashboards (__dashboards__ scanned).",
+            "settings.cleanup.hint": "Tick the capabilities you want to disable, then click \"Disable Selected Capabilities\". Dashboard Studio will stop publishing updates for them, which reduces network traffic.",
+            "settings.cleanup.selectAll": "Select All",
+            "settings.cleanup.deselectAll": "Deselect All",
+            "settings.cleanup.selectedCount": "__selected__ of __total__ selected",
+            "settings.cleanup.filterPlaceholder": "Filter unused list...",
+            "settings.cleanup.disableButton": "Disable Selected Capabilities (__count__)",
+            "settings.cleanup.selectOne": "Please select at least one capability to disable.",
+            "settings.cleanup.confirmOne": "Are you sure you want to disable 1 unused capability? Dashboard Studio will stop publishing updates for it. You can re-enable it anytime from the device list above.",
+            "settings.cleanup.confirmMany": "Are you sure you want to disable __count__ unused capabilities? Dashboard Studio will stop publishing updates for them. You can re-enable them anytime from the device list above.",
+            "settings.cleanup.confirmButtonOne": "Disable 1 Capability",
+            "settings.cleanup.confirmButtonMany": "Disable __count__ Capabilities",
+            "settings.cleanup.successOne": "Successfully disabled 1 unused capability. Configuration updated.",
+            "settings.cleanup.successMany": "Successfully disabled __count__ unused capabilities. Configuration updated.",
+            "settings.config.filter": "Filter by entity name…",
+            "settings.config.filterCapability": "Filter by capability / attribute…",
+            "settings.config.loading": "Loading entities…",
+            "settings.config.loadFailed": "Failed to load data:",
+            "settings.config.noDevices": "No entities found.",
+            "settings.config.copyTopic": "Copy topic",
+            "settings.config.copyTopicButton": "Copy Topic",
+            "settings.config.copyTopicDone": "Copied",
+            "settings.config.copyTopicFailed": "Could not copy topic to clipboard.",
+            "settings.dashboard.access": "Open your local dashboard:",
+            "settings.dashboard.loading": "Loading dashboard URL…",
+            "settings.dashboard.cantAccess": "Can't open the link?",
+            "settings.dashboard.manualStep1": "1. In Home Assistant, go to Settings → System → Network to find your local IP address.",
+            "settings.dashboard.manualStep3BeforeUrl": "2. In your browser or wall tablet, open:",
+            "settings.ui.ViewerModeOnly": "Viewer mode only",
+            "settings.ui.ViewerModeOnlyDesc": "Opens the lightweight dashboard viewer instead of the editor when you use the main dashboard link. Ideal for wall tablets and kiosks.",
+            "settings.ui.KeepDashboardFileHistory": "Keep Dashboard File History",
+            "settings.ui.Whensavingoveranexistingdashbo": "When you save over an existing dashboard, the previous file is kept as a timestamped snapshot (hidden from the normal file list). Snapshots are not a full backup: export dashboards if you need copies outside Home Assistant. If you uninstall Dashboard Studio, all user dashboard files in Home Assistant are removed.",
+            "settings.ui.MaximumSnapshotsToKeep": "Maximum Snapshots to Keep",
+            "settings.ui.Perdashboardoldestsnapshotsare": "Per dashboard, the oldest snapshots are removed when this limit is exceeded (1–50).",
+            "settings.ui.StateCaching": "State Caching",
+            "settings.ui.Keepthelastknownvaluesinmemory": "Keeps the last known values in memory so a reload can fill the dashboard right away. Full keeps devices and events. Optimized skips events larger than 16 KB. Devices and variables only keeps devices and variables. Disabled stores nothing.",
+            "settings.ui.StateCacheAll": "Full (Devices & all events)",
+            "settings.ui.StateCacheOptimized": "Optimized (< 16 KB events)",
+            "settings.ui.StateCacheDevices": "Devices & variables only",
+            "settings.ui.StateCacheNone": "Disabled (No caching)",
+            "settings.ui.ShowConnectionWarningonDisconn": "Show Connection Warning on Disconnect",
+            "settings.ui.Showsafriendlydashboardnoticew": "Shows a notice on the dashboard when the active data driver goes offline. It hides automatically when the connection returns.",
+            "settings.ui.EnableTopicAutoEcho": "Enable Topic Auto-Echo",
+            "settings.ui.Automaticallyreflectssenttopic": "Reflects published MQTT topics back to the dashboard so multiple open screens stay in sync.",
+            "settings.ui.BackupNoticeTitle": "Backup & Restore Information:",
+            "settings.ui.BackupNoticeDesc": "This backup only includes Dashboard Studio app settings and enabled device capabilities (MQTT topics). Dashboard designs, themes, uploaded images, and audio files are stored separately and are not included.",
+            "settings.ui.DateFormat": "Date Format (Calendar & RSS)",
+            "settings.ui.Usedwhentheflowcardshowsdatesa": "Used when Calendar and RSS services show dates in Markdown tables.",
+            "settings.ui.CalendarWeekStart": "Calendar Week Start",
+            "settings.ui.Firstdayoftheweekforweekandmon": "First day of the week for week and month grids. Monday (Europe), Sunday (Americas / Japan), Saturday (Middle East).",
+            "settings.ui.EventOrder": "Event Order",
+            "settings.ui.Orderoficontokentimelabelandsu": "Order of icon token, time label, and summary in Convert iCal JSON to Markdown (week/month cells; day view keeps time in the Time column and icon + summary in Event).",
+            "settings.ui.WrapEventsinColorBlocks": "Wrap Events in Color Blocks",
+            "settings.ui.WrapEventsinColorBlocksDesc": "When enabled, each event is wrapped in a [block1:]…[block4:] strip (Text widget callout style). When disabled, calendar markdown uses plain text lines.",
+            "settings.ui.ColorBlockGrouping": "Color Block Grouping",
+            "settings.ui.ColorBlockModeByEventType": "By event type",
+            "settings.ui.ColorBlockModeByCalendarSource": "By calendar source",
+            "settings.ui.CalendarSourceBlocks": "Calendar Source Blocks",
+            "settings.ui.OnebindingperlinecalendarIdspa": "One binding per line: calendarId, space, then block 1, 2, 3, or 4. Read calendarId from the Load & Filter iCal payload. Lines starting with # are comments. When you run Convert iCal JSON to Markdown, new sources get the least-used block (ties pick the lowest number). Duplicate IDs are invalid.",
+            "settings.ui.GroupTimedEventsbyTimeofDay": "Group Timed Events by Time of Day",
+            "settings.ui.Whenenabledweekstyleviewsaddse": "When enabled, week-style views add section labels such as Night, Morning, Afternoon, Evening (and All Day). When disabled, events are listed without those headers.",
+            "settings.ui.ShowIconsInCalendar": "Show Icons in Calendar",
+            "settings.ui.Whendisabledcalendarmarkdownco": "When disabled, calendar markdown contains no :ph-…: icon tokens and Icon Bindings are ignored.",
+            "settings.ui.UseDefaultCalendarIcon": "Use Default Calendar Icon",
+            "settings.ui.Whenenabledeventswithoutamatch": "When enabled, events with no Icon Bindings match use the default icon.",
+            "settings.ui.DefaultCalendarIcon": "Default Calendar Icon",
+            "settings.ui.UsedwhennokeywordmatchesPhosph": "Used when no keyword matches. Phosphor icon name (with ph-). Leave empty to reserve width. Default: ph-calendar.",
+            "settings.ui.IconBindings": "Icon Bindings",
+            "settings.ui.OnelinepericonfullPhosphorname": "One line per icon: full Phosphor name (with ph-), a colon, then comma-separated keywords matched against event titles (case-insensitive). Lines starting with # are comments. Example: ph-cake: birthday, bday, verjaardag. If no keyword matches, Convert iCal JSON to Markdown uses the default icon above, or :ph-spacer: when that field is empty.",
+            "settings.calendar.sourceBlockBindings.resetToDefault": "Reset to example",
+            "settings.calendar.iconBindings.resetToDefault": "Reset to default",
+            "settings.confirm.deleteNamed": "Delete \"__name__\"? This cannot be undone.",
+            "settings.alert.saveSettingsFailed": "Failed to save settings.",
+            "settings.alert.invalidBackupFormat": "Invalid backup file format.",
+            "settings.alert.restoreFailed": "Failed to restore settings.",
+            "settings.alert.backupComplete": "Backup complete. Please note that actual dashboards, themes, and images are stored separately.",
+            "settings.ui.DDMMYYYY": "DD-MM-YYYY",
+            "settings.ui.MMDDYYYY": "MM-DD-YYYY",
+            "settings.ui.YYYYMMDD": "YYYY-MM-DD",
+            "settings.ui.Monday": "Monday",
+            "settings.ui.Sunday": "Sunday",
+            "settings.ui.Saturday": "Saturday",
+            "settings.ui.IconTimeEvent": "Icon, Time, Event",
+            "settings.ui.IconEventTime": "Icon, Event, Time",
+            "settings.ui.TimeEventIcon": "Time, Event, Icon",
+            "settings.ui.TimeIconEvent": "Time, Icon, Event",
+            "settings.ui.EventTimeIcon": "Event, Time, Icon",
+            "settings.ui.EventIconTime": "Event, Icon, Time"
+        };
+
+        var DEFAULT_CALENDAR_SOURCE_BLOCKS = "# Calendar source ID from Load & Filter (iCal calendarId), then space, then color block 1–4.\n# Lines starting with # are ignored.\ncalendar.family 1\ncalendar.work 2\ncalendar.holidays 3\n";
+        var DEFAULT_CALENDAR_ICON_BINDINGS = "# One line per ph-* icon, then comma-separated keywords (case-insensitive). Lines starting with # are ignored.\nph-trash: trash, garbage, recycle, recycling, bin, dump, waste, disposal, rubbish\nph-drop: water, plants, rain, sprinkler, flowers, gardening\nph-barbell: gym, workout, run, sports, fitness, training, soccer, football, tennis, yoga, bootcamp, match, game, exercise\nph-money: bill, pay, bank, taxes, salary, mortgage, invoice, finances, rent, venmo, accounting\nph-confetti: party, bbq, drinks, festival, visit, dinner, wedding, housewarming, celebration, gathering, meetup\nph-first-aid: doctor, dentist, medical, hospital, physio, pharmacy, appointment, checkup, specialist, ortho, health, clinic\nph-cake: birthday, bday, cake, anniversary, celebration\nph-car: car, garage, gas, wash, tires, trip, drive, maintenance, mechanic, oil change, commute, carpool\nph-briefcase: work, office, meeting, interview, shift, course, conference, sync, 1on1, presentation\nph-graduation-cap: school, study, college, university, exam, test, homework, class, lecture, pta\nph-airplane: vacation, flight, fly, airport, trip, getaway, hotel, travel, holiday\nph-shopping-cart: groceries, supermarket, shopping, mall, market, hardware store, target, walmart, costco\nph-house: chores, window cleaner, plumber, painter, renovation, realtor, moving, viewing, landlord, open house\nph-broom: clean, cleaning, vacuum, wash, maid, housekeeping, tidy, sweep\nph-wrench: handyman, mechanic, repair, fixing, maintenance, electrician, hvac\nph-fork-knife: eat, lunch, breakfast, restaurant, cook, meal, brunch, dinner, takeout, food\nph-paw-print: dog, cat, pet, walk, groomer, shelter, riding, puppy\nph-baby: babysitter, daycare, nanny, childcare, playdate, pediatrician, nursery\nph-waves: swim, pool, swimming, beach\nph-scissors: hair, haircut, salon, beautician, nails, manicure, pedicure, massage, spa\nph-package: package, delivery, mail, post, amazon, fedex, ups, usps, order, return\nph-coffee: coffee, tea, cafe, catch up, starbucks\nph-film-strip: cinema, movies, theater, musical, concert, gig, netflix, show\nph-train: train, subway, transit, bus, tram, travel, metro, tube\nph-game-controller: game, gaming, board game, dnd, lan, xbox, playstation, nintendo\nph-eyeglasses: optician, glasses, contacts, eye doctor, vision, optometrist\nph-buildings: city hall, passport, license, notary, government, municipality, courthouse\nph-heart: date, romantic, quality time, valentine, anniversary\nph-pill: medication, meds, pill, pharmacy, prescription, vitamins, supplements\nph-bell: reminder, deadline, cancel, renew, alarm, alert\nph-phone-call: call, phone, zoom, teams, meet, conference, facetime\nph-calendar-star: pto, day off, holiday, leave, vacation, out of office, ooo";
+
+        /* State objects */
+        var config = {};
+        var appSettings = {};
+        var cachedDevices = [];
+        var currentUnusedItems = [];
+        var activeLocaleStrings = Object.assign({}, DEFAULT_LOCALE_FLAT);
+
+        /* Translation function */
+        function __(key, args) {
+            var s = (activeLocaleStrings && Object.prototype.hasOwnProperty.call(activeLocaleStrings, key))
+                ? String(activeLocaleStrings[key])
+                : (DEFAULT_LOCALE_FLAT[key] || key);
+            args = args || {};
+            return s.replace(/__([a-zA-Z0-9_]+)__/g, function (match, token) {
+                return Object.prototype.hasOwnProperty.call(args, token) ? String(args[token]) : match;
+            });
+        }
+
+        function applyLocaleToDom() {
+            document.querySelectorAll('[data-translate]').forEach(function (el) {
+                var key = el.getAttribute('data-translate');
+                if (key) {
+                    var s = __(key);
+                    if (s.indexOf('<') !== -1) el.innerHTML = s;
+                    else el.textContent = s;
+                }
+            });
+            document.querySelectorAll('[data-translate-title]').forEach(function (el) {
+                var key = el.getAttribute('data-translate-title');
+                if (key) el.setAttribute('title', __(key));
+            });
+            var devFilter = document.getElementById('device-filter');
+            if (devFilter) devFilter.setAttribute('placeholder', __('settings.config.filter'));
+            var capFilter = document.getElementById('capability-filter');
+            if (capFilter) capFilter.setAttribute('placeholder', __('settings.config.filterCapability'));
+        }
+
+        function loadLocale(lang) {
+            var clean = (lang || 'en').split('-')[0].split('_')[0].toLowerCase();
+            return api('locale?lang=' + clean).then(function (res) {
+                if (res && res.strings && typeof res.strings === 'object') {
+                    activeLocaleStrings = Object.assign({}, DEFAULT_LOCALE_FLAT, res.strings);
+                    applyLocaleToDom();
+                }
+            }).catch(function (e) {
+                console.warn('Locale load warning:', e);
+                applyLocaleToDom();
+            });
+        }
+
+        /* Status & Toast */
+        function setStatus(text, type) {
+            var dot = document.getElementById('status-dot');
+            var txt = document.getElementById('status-text');
+            if (txt) txt.textContent = text;
+            if (dot) {
+                dot.className = 'status-dot ' + (type || 'ready');
+            }
+        }
+
+        var toastTimer = null;
+        function showToast(message, isError) {
+            var toast = document.getElementById('toast');
+            var msg = document.getElementById('toast-message');
+            var icon = document.getElementById('toast-icon');
+            if (!toast || !msg) return;
+            msg.textContent = message;
+            if (icon) icon.innerHTML = isError ? '&#9888;' : '&#10003;';
+            toast.style.borderColor = isError ? 'var(--accent-red)' : 'var(--accent-emerald)';
+            toast.classList.add('show');
+            if (toastTimer) clearTimeout(toastTimer);
+            toastTimer = setTimeout(function () {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        function showAlert(message) {
+            showToast(message, true);
+        }
+
+        /* Token and API Bridge */
         function readParentAccessToken() {
             try {
                 if (!window.parent || window.parent === window) return '';
@@ -182,18 +1785,23 @@
             } catch (e) {}
             return '';
         }
+
         function readStoredHassTokens() {
             try {
-                var parsed = JSON.parse(localStorage.getItem('hassTokens') || 'null');
+                var raw = localStorage.getItem('hassTokens');
+                if (!raw) raw = sessionStorage.getItem('hassTokens');
+                var parsed = JSON.parse(raw || 'null');
                 if (parsed && typeof parsed === 'object') return parsed;
             } catch (e) {}
             return null;
         }
+
         function tokenIsExpired(tokens) {
             if (!tokens || !tokens.access_token) return true;
             if (!tokens.expires) return false;
             return Number(tokens.expires) <= Date.now() + 60000;
         }
+
         function refreshHomeAssistantToken() {
             var tokens = readStoredHassTokens();
             if (!tokens || !tokens.refresh_token) return Promise.reject(new Error('no refresh token'));
@@ -218,90 +1826,32 @@
                 return next.access_token;
             });
         }
-        var loginRedirectStarted = false;
-        function returnUrl() {
-            var current = new URL(window.location.href);
-            current.searchParams.delete('code');
-            current.searchParams.delete('state');
-            current.searchParams.delete('auth_callback');
-            return current.toString();
-        }
-        function redirectToLogin() {
-            if (loginRedirectStarted) return;
-            loginRedirectStarted = true;
-            var clientId = window.location.origin + '/';
-            var redirectUri = returnUrl();
-            var state = String(Date.now());
-            try { sessionStorage.setItem('dashboardStudioAuthState', state); } catch (e) {}
-            window.location.replace(
-                '/auth/authorize?response_type=code'
-                + '&client_id=' + encodeURIComponent(clientId)
-                + '&redirect_uri=' + encodeURIComponent(redirectUri)
-                + '&state=' + encodeURIComponent(state)
-            );
-        }
-        function exchangeAuthorizationCode() {
-            var params;
-            try { params = new URLSearchParams(window.location.search); } catch (e) { return Promise.resolve(false); }
-            var code = params.get('code');
-            if (!code) return Promise.resolve(false);
-            var clientId = window.location.origin + '/';
-            return fetch('/auth/token', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: 'grant_type=authorization_code&code=' + encodeURIComponent(code) + '&client_id=' + encodeURIComponent(clientId)
-            }).then(function (res) {
-                if (!res.ok) throw new Error('authorization code rejected');
-                return res.json();
-            }).then(function (data) {
-                var next = {
-                    access_token: data.access_token,
-                    token_type: data.token_type || 'Bearer',
-                    refresh_token: data.refresh_token || '',
-                    expires: Date.now() + ((Number(data.expires_in) || 1800) * 1000),
-                    clientId: clientId,
-                    hassUrl: window.location.origin
-                };
-                localStorage.setItem('hassTokens', JSON.stringify(next));
-                var clean = new URL(returnUrl());
-                if (window.history && window.history.replaceState) {
-                    window.history.replaceState(null, '', clean.pathname + clean.search + clean.hash);
-                }
-                return true;
-            });
-        }
+
         function ensureToken() {
             var parentToken = readParentAccessToken();
             if (parentToken) return Promise.resolve(parentToken);
-            return exchangeAuthorizationCode().then(function () {
-                var tokens = readStoredHassTokens();
-                if (tokens && tokens.access_token && !tokenIsExpired(tokens)) return Promise.resolve(String(tokens.access_token));
-                return refreshHomeAssistantToken();
-            }).catch(function (err) {
-                if (window.parent === window) redirectToLogin();
+            var tokens = readStoredHassTokens();
+            if (tokens && tokens.access_token && !tokenIsExpired(tokens)) return Promise.resolve(String(tokens.access_token));
+            return refreshHomeAssistantToken().catch(function () {
                 return '';
             });
         }
+
         function api(path, options) {
             return ensureToken().then(function (token) {
-                if (!token) return null;
                 var opts = options || {};
                 opts.headers = opts.headers || {};
-                opts.headers.Authorization = 'Bearer ' + token;
+                if (token) opts.headers.Authorization = 'Bearer ' + token;
                 return fetch('/api/dashboard_studio/admin/' + path, opts).then(function (res) {
                     if (res.status === 401) {
                         return refreshHomeAssistantToken().then(function (next) {
                             opts.headers.Authorization = 'Bearer ' + next;
                             return fetch('/api/dashboard_studio/admin/' + path, opts);
-                        }).catch(function () {
-                            if (window.parent === window) redirectToLogin();
-                            return null;
                         });
                     }
                     return res;
                 });
             }).then(function (res) {
-                if (!res) return {};
                 if (!res.ok) {
                     return res.text().then(function (text) {
                         var msg = 'Request failed (' + res.status + ')';
@@ -309,7 +1859,7 @@
                             var json = JSON.parse(text);
                             if (json && json.error) msg += ': ' + json.error;
                         } catch (e) {
-                            if (text && text.length < 80) msg += ': ' + text;
+                            if (text && text.length < 120) msg += ': ' + text;
                         }
                         throw new Error(msg);
                     });
@@ -317,208 +1867,990 @@
                 return res.json();
             });
         }
-        function setStatus(text) { document.getElementById('status').textContent = text; }
-        function selectedCaps(id) { return Array.isArray(enabled[id]) ? enabled[id] : []; }
-        function deviceMatches(device) {
-            var nameQuery = document.getElementById('name-filter').value.toLowerCase();
-            var capQuery = document.getElementById('cap-filter').value.toLowerCase();
-            var name = ((device.name || '') + ' ' + (device.zoneName || '')).toLowerCase();
-            if (nameQuery && name.indexOf(nameQuery) === -1) return false;
-            if (!capQuery) return true;
-            var caps = device.capabilities || [];
-            for (var i = 0; i < caps.length; i++) {
-                var title = ((caps[i].title || '') + ' ' + (caps[i].id || '')).toLowerCase();
-                if (title.indexOf(capQuery) !== -1) return true;
+
+        /* Escape Helpers */
+        function escapeHtml(str) {
+            return String(str || '').replace(/[&<>"']/g, function (m) {
+                return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[m];
+            });
+        }
+
+        function createAccessTag(getable, setable) {
+            if (getable && setable) return '<span class="access-tag access-rw" title="Read & Write">RW</span>';
+            if (getable) return '<span class="access-tag access-r" title="Read Only">R</span>';
+            if (setable) return '<span class="access-tag access-w" title="Write Only">W</span>';
+            return '';
+        }
+
+        /* Tab Switching */
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab').forEach(function (t) {
+                t.classList.toggle('active', t.getAttribute('data-tab') === tabId);
+            });
+            document.querySelectorAll('.tab-content').forEach(function (tc) {
+                tc.classList.toggle('active', tc.id === 'tab-' + tabId);
+            });
+            if (tabId === 'files') loadFiles();
+        }
+
+        document.querySelectorAll('.tab').forEach(function (button) {
+            button.addEventListener('click', function () {
+                switchTab(this.getAttribute('data-tab'));
+            });
+        });
+
+        /* =========================================================================
+           TAB 1: DEVICES & CAPABILITIES (NO RE-RENDER ON CHECKBOX TOGGLE!)
+           ========================================================================= */
+        function renderDevicesTree(items) {
+            cachedDevices = items || [];
+            var container = document.getElementById('device-list');
+            if (!container) return;
+
+            if (!items || items.length === 0) {
+                container.innerHTML = '<div class="empty-msg">' + __('settings.config.noDevices') + '</div>';
+                return;
             }
-            return false;
-        }
-        function renderDevices() {
-            var groups = { Devices: [], Variables: [], Flows: [], Moods: [] };
-            devices.forEach(function (device) {
-                var zone = device.zoneName || 'Devices';
-                if (zone === 'Helpers' || zone === 'Variables') groups.Variables.push(device);
-                else if (zone === 'Flows') groups.Flows.push(device);
-                else if (zone === 'Moods' || zone === 'Scenes') groups.Moods.push(device);
-                else groups.Devices.push(device);
-            });
-            var html = '';
-            Object.keys(groups).forEach(function (section) {
-                var areas = {};
-                groups[section].forEach(function (device) {
-                    if (!deviceMatches(device)) return;
-                    var area = device.zoneName && section === 'Devices' ? device.zoneName : section;
-                    if (!areas[area]) areas[area] = [];
-                    areas[area].push(device);
+
+            var zones = {};
+            items.forEach(function (item) {
+                var z = item.zoneName || 'Unassigned';
+                if (!zones[z]) zones[z] = [];
+                var caps = Array.isArray(item.capabilities) ? item.capabilities : [];
+                item.capabilities = caps;
+                caps.sort(function (a, b) {
+                    var ta = String(a.title || a.id || '').toLowerCase();
+                    var tb = String(b.title || b.id || '').toLowerCase();
+                    return ta.localeCompare(tb);
                 });
-                Object.keys(areas).sort().forEach(function (area) {
-                    html += '<details open><summary>' + escapeHtml(area) + '</summary>';
-                    areas[area].forEach(function (device) {
-                        var caps = selectedCaps(device.id);
-                        var active = caps.length ? 'on' : '';
-                        html += '<details><summary><span class="dot ' + active + '"></span> ' + escapeHtml(device.name || device.id) + '</summary>';
-                        (device.capabilities || []).forEach(function (cap) {
-                            var checked = caps.indexOf(cap.id) !== -1 ? ' checked' : '';
-                            html += '<label class="cap"><input type="checkbox" data-device="' + escapeAttr(device.id) + '" data-cap="' + escapeAttr(cap.id) + '"' + checked + '> ' + escapeHtml(cap.title || cap.id) + '</label>';
-                            html += '<div class="topic">' + escapeHtml(cap.topic || '') + ' <button type="button" data-copy="' + escapeAttr(cap.topic || '') + '">Copy Topic</button></div>';
+                zones[z].push(item);
+            });
+
+            var specialZones = ['Helpers', 'Variables', 'Flows', 'Moods', 'Scenes'];
+            var regularZoneNames = Object.keys(zones).filter(function (z) {
+                return specialZones.indexOf(z) === -1;
+            }).sort(function (a, b) { return a.toLowerCase().localeCompare(b.toLowerCase()); });
+
+            var activeSpecialZones = Object.keys(zones).filter(function (z) {
+                return specialZones.indexOf(z) !== -1;
+            }).sort();
+
+            container.innerHTML = '';
+
+            if (regularZoneNames.length > 0) {
+                var devSep = document.createElement('div');
+                devSep.className = 'config-section-separator config-devices-separator';
+                devSep.innerHTML = '<div class="config-section-title">Entities by Area</div><div class="config-section-desc">Home Assistant entities organized by Area. Tick capabilities to publish live state updates to Dashboard Studio.</div>';
+                container.appendChild(devSep);
+                regularZoneNames.forEach(function (zName) {
+                    container.appendChild(createZoneElement(zName, zones[zName]));
+                });
+            }
+
+            if (activeSpecialZones.length > 0) {
+                var specSep = document.createElement('div');
+                specSep.className = 'config-section-separator';
+                specSep.innerHTML = '<div class="config-section-title">Helpers, Automations &amp; Scenes</div><div class="config-section-desc">Home Assistant Helpers (Variables), Automations/Scripts (Flows), and Scenes (Moods)</div>';
+                container.appendChild(specSep);
+                activeSpecialZones.forEach(function (zName) {
+                    container.appendChild(createZoneElement(zName, zones[zName]));
+                });
+            }
+
+            filterDevices();
+        }
+
+        function createZoneElement(zoneName, devices) {
+            var details = document.createElement('details');
+            details.className = 'zone-group';
+            details.open = true; // Open areas by default for quick access
+
+            var hasActiveCaps = devices.some(function (d) {
+                return config[d.id] && config[d.id].length > 0;
+            });
+            if (hasActiveCaps) details.classList.add('active-zone');
+
+            var summary = document.createElement('summary');
+            summary.innerHTML = '<div class="zone-header-wrap">' +
+                '<span class="zone-dot"></span>' +
+                '<span>' + escapeHtml(zoneName) + ' <small style="color:var(--text-muted);font-weight:normal;">(' + devices.length + ')</small></span>' +
+                '</div>';
+            details.appendChild(summary);
+
+            devices.forEach(function (dev) {
+                details.appendChild(createDeviceItemElement(dev, details));
+            });
+
+            return details;
+        }
+
+        function createDeviceItemElement(dev, zoneDetailsEl) {
+            var itemDiv = document.createElement('div');
+            itemDiv.className = 'item-group';
+            itemDiv.setAttribute('data-name', (dev.name || '') + ' ' + (dev.id || ''));
+
+            var isDevActive = config[dev.id] && config[dev.id].length > 0;
+
+            var header = document.createElement('div');
+            header.className = 'item-header' + (isDevActive ? ' active-item' : '');
+
+            var domain = (dev.id || '').split('.')[0] || 'device';
+            header.innerHTML = '<div class="device-info">' +
+                '<span class="item-status-dot"></span>' +
+                '<b>' + escapeHtml(dev.name || dev.id) + '</b>' +
+                '<span class="domain-badge">' + escapeHtml(domain) + '</span>' +
+                '<span class="device-entity-id">' + escapeHtml(dev.id) + '</span>' +
+                '</div>' +
+                '<span class="device-arrow">&#9654;</span>';
+
+            var capsList = document.createElement('div');
+            capsList.className = 'capabilities-list';
+
+            header.onclick = function (e) {
+                var isOpen = capsList.classList.toggle('open');
+                header.classList.toggle('open', isOpen);
+            };
+
+            (dev.capabilities || []).forEach(function (cap) {
+                var row = document.createElement('div');
+                row.className = 'cap-item';
+                row.setAttribute('data-cap-name', (cap.title || '') + ' ' + (cap.id || ''));
+
+                var main = document.createElement('div');
+                main.className = 'cap-item-main';
+
+                var cb = document.createElement('input');
+                cb.type = 'checkbox';
+                cb.id = 'cap-' + dev.id + '-' + cap.id;
+                var isChecked = Array.isArray(config[dev.id]) && config[dev.id].indexOf(cap.id) !== -1;
+                cb.checked = isChecked;
+
+                var lbl = document.createElement('label');
+                lbl.htmlFor = cb.id;
+                var accessTag = createAccessTag(cap.getable, cap.setable);
+                var unitTag = cap.units ? (' <small style="color:var(--text-muted); font-size:11px;">(' + escapeHtml(cap.units) + ')</small>') : '';
+                lbl.innerHTML = escapeHtml(cap.title || cap.id) + ' <span class="cap-id">[' + escapeHtml(cap.id) + ']</span>' + unitTag + ' ' + accessTag;
+
+                var topic = cap.topic || ('homeassistant/' + dev.id + '/' + cap.id);
+                var copyBtn = document.createElement('button');
+                copyBtn.type = 'button';
+                copyBtn.className = 'btn-copy';
+                copyBtn.textContent = __('settings.config.copyTopicButton');
+                copyBtn.style.display = isChecked ? 'inline-flex' : 'none';
+
+                copyBtn.onclick = function (e) {
+                    e.stopPropagation();
+                    if (navigator.clipboard) {
+                        navigator.clipboard.writeText(topic).then(function () {
+                            copyBtn.textContent = __('settings.config.copyTopicDone');
+                            copyBtn.classList.add('copied');
+                            showToast('Topic copied to clipboard: ' + topic);
+                            setTimeout(function () {
+                                copyBtn.textContent = __('settings.config.copyTopicButton');
+                                copyBtn.classList.remove('copied');
+                            }, 1200);
+                        }).catch(function () {
+                            showToast(__('settings.config.copyTopicFailed'), true);
                         });
-                        html += '</details>';
+                    }
+                };
+
+                /* CRITICAL: Checkbox toggles in-place WITHOUT closing the device! */
+                cb.onchange = function (e) {
+                    e.stopPropagation();
+                    var checked = e.target.checked;
+                    updateCapabilityState(dev.id, cap.id, checked, header, zoneDetailsEl, copyBtn);
+                };
+
+                main.appendChild(cb);
+                main.appendChild(lbl);
+                row.appendChild(main);
+                row.appendChild(copyBtn);
+                capsList.appendChild(row);
+            });
+
+            itemDiv.appendChild(header);
+            itemDiv.appendChild(capsList);
+            return itemDiv;
+        }
+
+        function updateCapabilityState(devId, capId, checked, headerEl, zoneDetailsEl, copyBtn) {
+            if (!Array.isArray(config[devId])) config[devId] = [];
+            var idx = config[devId].indexOf(capId);
+            if (checked && idx === -1) {
+                config[devId].push(capId);
+            } else if (!checked && idx !== -1) {
+                config[devId].splice(idx, 1);
+            }
+            if (config[devId].length === 0) {
+                delete config[devId];
+            }
+
+            if (copyBtn) {
+                copyBtn.style.display = checked ? 'inline-flex' : 'none';
+            }
+
+            var hasDevCaps = Array.isArray(config[devId]) && config[devId].length > 0;
+            headerEl.classList.toggle('active-item', hasDevCaps);
+
+            if (zoneDetailsEl) {
+                var activeChildren = zoneDetailsEl.querySelectorAll('.active-item');
+                zoneDetailsEl.classList.toggle('active-zone', activeChildren.length > 0);
+            }
+
+            saveSettingsDebounced();
+        }
+
+        /* Filter devices without re-rendering */
+        function filterDevices() {
+            var nameQuery = (document.getElementById('device-filter').value || '').trim().toLowerCase();
+            var capQuery = (document.getElementById('capability-filter').value || '').trim().toLowerCase();
+
+            document.querySelectorAll('.zone-group').forEach(function (zoneEl) {
+                var zoneVisibleCount = 0;
+                zoneEl.querySelectorAll('.item-group').forEach(function (itemEl) {
+                    var devText = (itemEl.getAttribute('data-name') || '').toLowerCase();
+                    var devMatch = !nameQuery || devText.indexOf(nameQuery) !== -1;
+
+                    var capItems = itemEl.querySelectorAll('.cap-item');
+                    var capMatchCount = 0;
+                    capItems.forEach(function (capRow) {
+                        var capText = (capRow.getAttribute('data-cap-name') || '').toLowerCase();
+                        var match = !capQuery || capText.indexOf(capQuery) !== -1;
+                        capRow.style.display = match ? 'flex' : 'none';
+                        if (match) capMatchCount++;
                     });
-                    html += '</details>';
+
+                    var isVisible = devMatch && (!capQuery || capMatchCount > 0);
+                    itemEl.style.display = isVisible ? 'flex' : 'none';
+                    if (isVisible) zoneVisibleCount++;
+                });
+
+                zoneEl.style.display = zoneVisibleCount > 0 ? 'block' : 'none';
+            });
+        }
+
+        function toggleAllZones(openState) {
+            document.querySelectorAll('.zone-group').forEach(function (d) { d.open = openState; });
+        }
+
+        /* =========================================================================
+           TOPIC CLEANUP LOGIC
+           ========================================================================= */
+        function startUnusedCapabilitiesScan() {
+            var btn = document.getElementById('btn-scan-unused-topics');
+            var content = document.getElementById('cleanup-content-area');
+            var dot = document.getElementById('cleanup-status-dot');
+            if (!content) return;
+
+            if (btn) {
+                btn.disabled = true;
+                btn.textContent = __('settings.cleanup.scanning');
+            }
+            if (dot) dot.className = 'cleanup-status-indicator scanning';
+            content.innerHTML = '<div style="display:flex;align-items:center;gap:12px;padding:16px;background:var(--bg-card-subtle);border-radius:var(--radius-sm);color:var(--text-secondary);font-size:13px;">' +
+                '<span class="status-dot busy" style="width:10px;height:10px;"></span>' +
+                '<span>' + escapeHtml(__('settings.cleanup.analyzing')) + '</span></div>';
+
+            api('scan').then(function (report) {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.textContent = __('settings.cleanup.scanButton');
+                }
+                currentUnusedItems = report.unused || [];
+                renderCleanupUI(currentUnusedItems, report.dashboardsScanned || 0);
+            }).catch(function (err) {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.textContent = __('settings.cleanup.scanButton');
+                }
+                if (dot) dot.className = 'cleanup-status-indicator warning';
+                content.innerHTML = '<div style="color:var(--accent-red);padding:14px;background:var(--accent-red-bg);border:1px solid rgba(239,68,68,0.3);border-radius:var(--radius-sm);font-size:13px;">' +
+                    escapeHtml(err.message || 'Scan failed') + '</div>';
+            });
+        }
+
+        function renderCleanupUI(unusedItems, dashboardCount) {
+            var content = document.getElementById('cleanup-content-area');
+            var dot = document.getElementById('cleanup-status-dot');
+            var titleEl = document.getElementById('cleanup-header-title');
+            if (!content) return;
+
+            if (!unusedItems || unusedItems.length === 0) {
+                if (dot) dot.className = 'cleanup-status-indicator clean';
+                if (titleEl) titleEl.textContent = __('settings.cleanup.allUsedTitle');
+                content.innerHTML = '<div class="cleanup-banner-clean">' +
+                    '<b>' + escapeHtml(__('settings.cleanup.allUsedHeadline')) + '</b><br>' +
+                    escapeHtml(__('settings.cleanup.allUsedBody', { dashboards: dashboardCount })) +
+                    '</div>';
+                return;
+            }
+
+            if (dot) dot.className = 'cleanup-status-indicator warning';
+            var count = unusedItems.length;
+            if (titleEl) titleEl.textContent = (count === 1 ? __('settings.cleanup.foundOne') : __('settings.cleanup.foundMany', { count: count }));
+
+            var bannerText = (count === 1
+                ? __('settings.cleanup.bannerOne', { dashboards: dashboardCount })
+                : __('settings.cleanup.bannerMany', { count: count, dashboards: dashboardCount }));
+
+            var html = '<div class="cleanup-banner-warning">' +
+                '<b>' + escapeHtml(bannerText) + '</b><br>' +
+                escapeHtml(__('settings.cleanup.hint')) +
+                '</div>' +
+                '<div class="cleanup-toolbar">' +
+                '<div style="display:flex;align-items:center;gap:10px;">' +
+                '<button type="button" class="btn-filter-action" onclick="toggleAllCleanupCheckboxes(true)">' + escapeHtml(__('settings.cleanup.selectAll')) + '</button>' +
+                '<button type="button" class="btn-filter-action" onclick="toggleAllCleanupCheckboxes(false)">' + escapeHtml(__('settings.cleanup.deselectAll')) + '</button>' +
+                '<span class="domain-badge" id="cleanup-counter-badge">' + count + ' of ' + count + ' selected</span>' +
+                '</div>' +
+                '<button type="button" id="btn-disable-unused" class="btn-cleanup-disable" onclick="disableSelectedUnusedPrompt()">' +
+                escapeHtml(__('settings.cleanup.disableButton', { count: count })) +
+                '</button>' +
+                '</div>' +
+                '<div class="cleanup-list-box" id="cleanup-items-box">';
+
+            unusedItems.forEach(function (item, idx) {
+                html += '<div class="cleanup-item-row">' +
+                    '<label style="display:flex;align-items:center;gap:10px;cursor:pointer;flex:1;min-width:0;">' +
+                    '<input type="checkbox" class="cleanup-cb" checked data-idx="' + idx + '" onchange="updateCleanupSelectionCount()">' +
+                    '<div>' +
+                    '<div style="font-weight:600;font-size:13px;color:var(--text-primary);">' + escapeHtml(item.deviceName) + ' &middot; ' + escapeHtml(item.capTitle) + ' <span class="cap-id">[' + escapeHtml(item.capId) + ']</span></div>' +
+                    '<div style="font-family:ui-monospace,monospace;font-size:11px;color:var(--text-muted);">' + escapeHtml(item.topic) + '</div>' +
+                    '</div>' +
+                    '</label>' +
+                    (!item.deviceExists ? '<span class="domain-badge" style="color:var(--accent-red);border-color:rgba(239,68,68,0.3);">Removed Entity</span>' : '<span class="domain-badge">' + escapeHtml(item.zoneName || 'Area') + '</span>') +
+                    '</div>';
+            });
+
+            html += '</div>';
+            content.innerHTML = html;
+        }
+
+        function toggleAllCleanupCheckboxes(state) {
+            document.querySelectorAll('.cleanup-cb').forEach(function (cb) { cb.checked = state; });
+            updateCleanupSelectionCount();
+        }
+
+        function updateCleanupSelectionCount() {
+            var total = currentUnusedItems.length;
+            var selected = document.querySelectorAll('.cleanup-cb:checked').length;
+            var badge = document.getElementById('cleanup-counter-badge');
+            var btn = document.getElementById('btn-disable-unused');
+            if (badge) badge.textContent = selected + ' of ' + total + ' selected';
+            if (btn) {
+                btn.textContent = __('settings.cleanup.disableButton', { count: selected });
+                btn.disabled = selected === 0;
+            }
+        }
+
+        function disableSelectedUnusedPrompt() {
+            var selectedBoxes = Array.from(document.querySelectorAll('.cleanup-cb:checked'));
+            var count = selectedBoxes.length;
+            if (count === 0) return showAlert(__('settings.cleanup.selectOne'));
+
+            var msg = count === 1 ? __('settings.cleanup.confirmOne') : __('settings.cleanup.confirmMany', { count: count });
+            showConfirmModal(msg, count === 1 ? __('settings.cleanup.confirmButtonOne') : __('settings.cleanup.confirmButtonMany', { count: count }), true, function () {
+                selectedBoxes.forEach(function (cb) {
+                    var idx = parseInt(cb.getAttribute('data-idx'), 10);
+                    var item = currentUnusedItems[idx];
+                    if (item && config[item.deviceId]) {
+                        config[item.deviceId] = config[item.deviceId].filter(function (c) { return c !== item.capId; });
+                        if (config[item.deviceId].length === 0) delete config[item.deviceId];
+                    }
+                });
+
+                saveSettingsExplicit().then(function () {
+                    showToast(count === 1 ? __('settings.cleanup.successOne') : __('settings.cleanup.successMany', { count: count }));
+                    startUnusedCapabilitiesScan();
+                    api('devices').then(function (res) {
+                        renderDevicesTree(res.devices || []);
+                    });
                 });
             });
-            document.getElementById('device-tree').innerHTML = html || '<p>No matching devices.</p>';
         }
-        function escapeHtml(value) {
-            return String(value || '').replace(/[&<>"]/g, function (ch) {
-                return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[ch];
-            });
+
+        /* =========================================================================
+           TAB 2: SETTINGS MANAGEMENT
+           ========================================================================= */
+        function readSettingsFromUi() {
+            appSettings.cacheValues = document.getElementById('setting-cache-values').value || 'all';
+            appSettings.hideEditor = document.getElementById('setting-hide-editor').checked;
+            appSettings.keepDashboardFileHistory = document.getElementById('setting-keep-dashboard-history').checked;
+            var maxHist = parseInt(document.getElementById('setting-dashboard-history-max').value, 10);
+            appSettings.dashboardFileHistoryMax = isNaN(maxHist) ? 10 : Math.min(50, Math.max(1, maxHist));
+            appSettings.warnWhenDriverOffline = document.getElementById('setting-warn-offline').checked;
+            appSettings.autoEcho = document.getElementById('setting-auto-echo').checked;
+            appSettings.topicEcho = document.getElementById('setting-topic-echo').checked;
+
+            var calDateFormatEl = document.getElementById('setting-calendar-date-format');
+            if (calDateFormatEl) appSettings.calendarDateFormat = calDateFormatEl.value;
+
+            var calWeekStartEl = document.getElementById('setting-calendar-week-start');
+            if (calWeekStartEl) appSettings.calendarWeekStart = calWeekStartEl.value;
+
+            var calEventOrderEl = document.getElementById('setting-calendar-event-order');
+            if (calEventOrderEl) appSettings.calendarEventOrder = calEventOrderEl.value;
+
+            var calWrapEl = document.getElementById('setting-calendar-wrap-blocks');
+            if (calWrapEl) appSettings.calendarWrapEventsInBlocks = calWrapEl.checked;
+
+            var blockModeRb = document.querySelector('input[name="setting-calendar-color-block-mode"]:checked');
+            appSettings.calendarColorBlockMode = (blockModeRb && blockModeRb.value === 'calendar_source') ? 'calendar_source' : 'event_type';
+
+            var calSourceTaEl = document.getElementById('setting-calendar-source-block-bindings-text');
+            if (calSourceTaEl) appSettings.calendarSourceBlockBindingsText = calSourceTaEl.value || '';
+
+            var calDaypartsEl = document.getElementById('setting-calendar-group-dayparts');
+            if (calDaypartsEl) appSettings.calendarGroupByTimeOfDay = calDaypartsEl.checked;
+
+            var calShowIconsEl = document.getElementById('setting-calendar-show-icons');
+            if (calShowIconsEl) appSettings.calendarShowIcons = calShowIconsEl.checked;
+
+            var calUseDefIconEl = document.getElementById('setting-calendar-use-default-icon');
+            if (calUseDefIconEl) appSettings.calendarUseDefaultIcon = calUseDefIconEl.checked;
+
+            var calDefIconEl = document.getElementById('setting-calendar-default-icon');
+            if (calDefIconEl) appSettings.calendarDefaultIcon = (calDefIconEl.value || '').trim();
+
+            var calIconTaEl = document.getElementById('setting-calendar-icon-bindings-text');
+            if (calIconTaEl) appSettings.calendarIconBindingsText = calIconTaEl.value || '';
         }
-        function escapeAttr(value) { return escapeHtml(value).replace(/'/g, '&#39;'); }
-        function readSettingsForm() {
-            ['cacheValues', 'dashboardFileHistoryMax', 'calendarDateFormat', 'calendarWeekStart', 'calendarListStyle', 'calendarEventOrder', 'calendarColorBlockMode', 'calendarDefaultIcon', 'calendarIconBindingsText', 'calendarSourceBlockBindingsText'].forEach(function (key) {
-                settings[key] = document.getElementById(key).value;
-            });
-            settings.dashboardFileHistoryMax = parseInt(settings.dashboardFileHistoryMax, 10) || 10;
-            ['keepDashboardFileHistory', 'hideEditor', 'warnWhenDriverOffline', 'autoEcho', 'topicEcho', 'calendarWrapEventsInBlocks', 'calendarGroupByTimeOfDay', 'calendarShowIcons', 'calendarUseDefaultIcon'].forEach(function (key) {
-                settings[key] = document.getElementById(key).checked;
-            });
+
+        function populateSettingsUi(settings) {
+            appSettings = settings || {};
+            var cacheSelect = document.getElementById('setting-cache-values');
+            if (cacheSelect && appSettings.cacheValues != null) cacheSelect.value = appSettings.cacheValues;
+
+            document.getElementById('setting-hide-editor').checked = !!appSettings.hideEditor;
+            document.getElementById('setting-keep-dashboard-history').checked = appSettings.keepDashboardFileHistory !== false;
+            document.getElementById('setting-dashboard-history-max').value = appSettings.dashboardFileHistoryMax || 10;
+            document.getElementById('setting-warn-offline').checked = appSettings.warnWhenDriverOffline !== false;
+            document.getElementById('setting-auto-echo').checked = appSettings.autoEcho !== false;
+            document.getElementById('setting-topic-echo').checked = appSettings.topicEcho !== false;
+
+            updateHistoryMaxDisabledState();
+
+            var calDateFormatEl = document.getElementById('setting-calendar-date-format');
+            if (calDateFormatEl && appSettings.calendarDateFormat) calDateFormatEl.value = appSettings.calendarDateFormat;
+
+            var calWeekStartEl = document.getElementById('setting-calendar-week-start');
+            if (calWeekStartEl && appSettings.calendarWeekStart) calWeekStartEl.value = appSettings.calendarWeekStart;
+
+            var calEventOrderEl = document.getElementById('setting-calendar-event-order');
+            if (calEventOrderEl && appSettings.calendarEventOrder) calEventOrderEl.value = appSettings.calendarEventOrder;
+
+            var calWrapEl = document.getElementById('setting-calendar-wrap-blocks');
+            if (calWrapEl) calWrapEl.checked = appSettings.calendarWrapEventsInBlocks !== false;
+
+            if (appSettings.calendarColorBlockMode === 'calendar_source') {
+                var rbSrc = document.getElementById('setting-calendar-color-block-calendar-source');
+                if (rbSrc) rbSrc.checked = true;
+            } else {
+                var rbEvt = document.getElementById('setting-calendar-color-block-event-type');
+                if (rbEvt) rbEvt.checked = true;
+            }
+
+            var calSourceTaEl = document.getElementById('setting-calendar-source-block-bindings-text');
+            if (calSourceTaEl) calSourceTaEl.value = appSettings.calendarSourceBlockBindingsText || DEFAULT_CALENDAR_SOURCE_BLOCKS;
+
+            var calDaypartsEl = document.getElementById('setting-calendar-group-dayparts');
+            if (calDaypartsEl) calDaypartsEl.checked = appSettings.calendarGroupByTimeOfDay !== false;
+
+            var calShowIconsEl = document.getElementById('setting-calendar-show-icons');
+            if (calShowIconsEl) calShowIconsEl.checked = appSettings.calendarShowIcons !== false;
+
+            var calUseDefIconEl = document.getElementById('setting-calendar-use-default-icon');
+            if (calUseDefIconEl) calUseDefIconEl.checked = appSettings.calendarUseDefaultIcon !== false;
+
+            var calDefIconEl = document.getElementById('setting-calendar-default-icon');
+            if (calDefIconEl) calDefIconEl.value = appSettings.calendarDefaultIcon || 'ph-calendar';
+
+            var calIconTaEl = document.getElementById('setting-calendar-icon-bindings-text');
+            if (calIconTaEl) calIconTaEl.value = appSettings.calendarIconBindingsText || DEFAULT_CALENDAR_ICON_BINDINGS;
+
+            updateCalendarIconUiState();
+            updateCalendarSourceBlockUiState();
+            updateIconBindingsValidation();
+            updateSourceBlockBindingsValidation();
         }
-        function fillSettingsForm() {
-            ['cacheValues', 'calendarDateFormat', 'calendarWeekStart', 'calendarListStyle', 'calendarEventOrder', 'calendarColorBlockMode', 'calendarDefaultIcon', 'calendarIconBindingsText', 'calendarSourceBlockBindingsText'].forEach(function (key) {
-                if (document.getElementById(key) && settings[key] != null) document.getElementById(key).value = settings[key];
-            });
-            document.getElementById('dashboardFileHistoryMax').value = settings.dashboardFileHistoryMax || 10;
-            ['keepDashboardFileHistory', 'hideEditor', 'warnWhenDriverOffline', 'autoEcho', 'topicEcho', 'calendarWrapEventsInBlocks', 'calendarGroupByTimeOfDay', 'calendarShowIcons', 'calendarUseDefaultIcon'].forEach(function (key) {
-                document.getElementById(key).checked = settings[key] !== false && settings[key] !== 0;
-                if (settings[key] === false) document.getElementById(key).checked = false;
-            });
+
+        function updateHistoryMaxDisabledState() {
+            var keepHistory = document.getElementById('setting-keep-dashboard-history').checked;
+            var maxInput = document.getElementById('setting-dashboard-history-max');
+            var maxRow = document.getElementById('setting-dashboard-history-max-row');
+            if (maxInput) maxInput.disabled = !keepHistory;
+            if (maxRow) maxRow.style.opacity = keepHistory ? '1' : '0.45';
         }
-        function save() {
-            readSettingsForm();
+
+        var saveTimeout = null;
+        function saveSettingsDebounced() {
+            setStatus('Saving…', 'busy');
+            if (saveTimeout) clearTimeout(saveTimeout);
+            saveTimeout = setTimeout(function () {
+                saveSettingsExplicit();
+            }, 600);
+        }
+
+        function saveSettingsExplicit() {
+            readSettingsFromUi();
+            setStatus('Saving…', 'busy');
             return api('config', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ enabled_capabilities: enabled, app_settings: settings })
-            }).then(function () { setStatus('Saved'); });
-        }
-        function download(name, data) {
-            var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-            var link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = name;
-            link.click();
-        }
-        function loadFiles() {
-            var type = document.getElementById('file-type').value;
-            var path = (type === 'images' || type === 'audio') ? ('media?kind=' + type) : ('files?type=' + type);
-            api(path).then(function (data) {
-                var files = data.files || [];
-                var html = files.map(function (file) {
-                    return '<div class="card">' + escapeHtml(file.name) + ' <button type="button" data-delete="' + escapeAttr(file.name) + '">Delete</button></div>';
-                }).join('');
-                document.getElementById('file-list').innerHTML = html || '<p>No files.</p>';
-            }).catch(function (err) { setStatus(err.message || 'Could not list files'); });
-        }
-        document.querySelectorAll('.tab').forEach(function (button) {
-            button.addEventListener('click', function () {
-                document.querySelectorAll('.tab').forEach(function (item) { item.classList.remove('active'); });
-                document.querySelectorAll('main section').forEach(function (item) { item.classList.remove('active'); });
-                button.classList.add('active');
-                document.getElementById(button.getAttribute('data-tab')).classList.add('active');
+                body: JSON.stringify({
+                    enabled_capabilities: config,
+                    app_settings: appSettings
+                })
+            }).then(function () {
+                setStatus('Ready', 'ready');
+                showToast(__('settings.feedback.saved'));
+                var btn1 = document.getElementById('btn-top-save');
+                var btn2 = document.getElementById('btn-save-settings-main');
+                var btn3 = document.getElementById('btn-save-settings-calendar');
+                [btn1, btn2, btn3].forEach(function (btn) {
+                    if (btn) {
+                        var orig = btn.textContent;
+                        btn.textContent = __('settings.feedback.saved');
+                        setTimeout(function () { btn.textContent = orig; }, 1400);
+                    }
+                });
+            }).catch(function (err) {
+                setStatus('Error', 'busy');
+                showAlert(__('settings.alert.saveSettingsFailed') + ' ' + (err.message || ''));
             });
-        });
-        document.getElementById('device-tree').addEventListener('change', function (event) {
-            var input = event.target;
-            if (!input.getAttribute || !input.getAttribute('data-cap')) return;
-            var id = input.getAttribute('data-device');
-            var cap = input.getAttribute('data-cap');
-            var list = selectedCaps(id).slice();
-            var index = list.indexOf(cap);
-            if (input.checked && index === -1) list.push(cap);
-            if (!input.checked && index !== -1) list.splice(index, 1);
-            if (list.length) enabled[id] = list;
-            else delete enabled[id];
-            renderDevices();
-        });
-        document.getElementById('device-tree').addEventListener('click', function (event) {
-            var topic = event.target.getAttribute && event.target.getAttribute('data-copy');
-            if (!topic || !navigator.clipboard) return;
-            navigator.clipboard.writeText(topic).then(function () { setStatus('Topic copied'); });
-        });
-        document.getElementById('name-filter').addEventListener('input', renderDevices);
-        document.getElementById('cap-filter').addEventListener('input', renderDevices);
-        document.getElementById('save').addEventListener('click', function () { save().catch(function (err) { setStatus(err.message); }); });
-        document.getElementById('scan').addEventListener('click', function () {
-            api('scan').then(function (report) {
-                var unused = report.unused || [];
-                document.getElementById('unused').innerHTML = unused.map(function (item) {
-                    var topic = item.topic || item;
-                    return '<label class="cap"><input type="checkbox" data-unused="' + escapeAttr(item.deviceId || '') + '" data-cap="' + escapeAttr(item.capId || '') + '"> ' + escapeHtml(topic) + '</label>';
-                }).join('') || '<p>No unused topics.</p>';
-                setStatus((report.dashboardsScanned || 0) + ' dashboards scanned');
-            });
-        });
-        document.getElementById('disable-selected').addEventListener('click', function () {
-            document.querySelectorAll('#unused input:checked').forEach(function (input) {
-                var id = input.getAttribute('data-unused');
-                var cap = input.getAttribute('data-cap');
-                if (!id || !Array.isArray(enabled[id])) return;
-                enabled[id] = enabled[id].filter(function (item) { return item !== cap; });
-                if (!enabled[id].length) delete enabled[id];
-            });
-            save().then(renderDevices);
-        });
-        document.getElementById('clear-cache').addEventListener('click', function () {
-            api('clear-cache', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' }).then(function () { setStatus('State cache cleared'); });
-        });
-        document.getElementById('download-backup').addEventListener('click', function () {
-            api('backup').then(function (data) { download('dashboard-studio-backup.json', data); });
-        });
-        document.getElementById('download-settings').addEventListener('click', function () {
-            api('backup').then(function (data) { download('dashboard-studio-settings.json', { app_settings: data.app_settings || {} }); });
-        });
-        document.getElementById('download-capabilities').addEventListener('click', function () {
-            api('backup').then(function (data) { download('dashboard-studio-capabilities.json', { enabled_capabilities: data.enabled_capabilities || {} }); });
-        });
-        document.getElementById('restore-file').addEventListener('change', function (event) {
+        }
+
+        function clearStateCache() {
+            api('clear-cache', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' })
+                .then(function () {
+                    showToast('State cache cleared successfully');
+                }).catch(function (err) {
+                    showAlert('Failed to clear cache: ' + err.message);
+                });
+        }
+
+        /* Backup & Restore */
+        function downloadJson(filename, obj) {
+            var blob = new Blob([JSON.stringify(obj, null, 2)], { type: 'application/json' });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function backupSettings() {
+            readSettingsFromUi();
+            var payload = {
+                version: "2.3.2",
+                platform: "homeassistant",
+                created: new Date().toISOString(),
+                enabled_capabilities: config,
+                app_settings: appSettings
+            };
+            document.getElementById('backup-textarea').value = JSON.stringify(payload, null, 2);
+            document.getElementById('backup-modal-desc').textContent = __('settings.alert.backupComplete');
+            document.getElementById('backup-modal').classList.add('show');
+        }
+
+        function downloadSettingsOnly() {
+            readSettingsFromUi();
+            downloadJson('dashboard-studio-settings.json', { app_settings: appSettings });
+        }
+
+        function downloadCapabilitiesOnly() {
+            downloadJson('dashboard-studio-capabilities.json', { enabled_capabilities: config });
+        }
+
+        function copyBackupToClipboard() {
+            var text = document.getElementById('backup-textarea').value;
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(function () {
+                    showToast('Backup copied to clipboard!');
+                    document.getElementById('backup-modal').classList.remove('show');
+                });
+            }
+        }
+
+        function openRestoreModal() {
+            document.getElementById('restore-textarea').value = '';
+            document.getElementById('restore-modal').classList.add('show');
+        }
+
+        function processRestoreText() {
+            var txt = (document.getElementById('restore-textarea').value || '').trim();
+            if (!txt) return showAlert(__('settings.alert.invalidBackupFormat'));
+            try {
+                var data = JSON.parse(txt);
+                applyRestoredData(data);
+                document.getElementById('restore-modal').classList.remove('show');
+            } catch (e) {
+                showAlert(__('settings.alert.invalidBackupFormat'));
+            }
+        }
+
+        function restoreSettings(event) {
             var file = event.target.files && event.target.files[0];
             if (!file) return;
             var reader = new FileReader();
-            reader.onload = function () {
-                var backup = JSON.parse(String(reader.result || '{}'));
-                api('restore', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ backup: backup }) }).then(function () {
-                    return api('config');
-                }).then(function (config) {
-                    enabled = config.enabled_capabilities || {};
-                    settings = config.app_settings || {};
-                    fillSettingsForm();
-                    renderDevices();
-                    setStatus('Backup restored');
-                });
+            reader.onload = function (e) {
+                try {
+                    var data = JSON.parse(String(e.target.result || '{}'));
+                    applyRestoredData(data);
+                    document.getElementById('restore-modal').classList.remove('show');
+                } catch (err) {
+                    showAlert(__('settings.alert.invalidBackupFormat'));
+                }
             };
             reader.readAsText(file);
-        });
-        document.getElementById('refresh-files').addEventListener('click', loadFiles);
-        document.getElementById('file-type').addEventListener('change', loadFiles);
-        document.getElementById('file-list').addEventListener('click', function (event) {
-            var name = event.target.getAttribute && event.target.getAttribute('data-delete');
-            if (!name) return;
-            var type = document.getElementById('file-type').value;
-            api('delete-file', {
+            event.target.value = '';
+        }
+
+        function applyRestoredData(data) {
+            var caps = data.enabled_capabilities || (data.backup && data.backup.enabled_capabilities) || {};
+            var sets = data.app_settings || (data.backup && data.backup.app_settings) || (data.appSettings) || {};
+
+            api('restore', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ type: type, name: name })
-            }).then(loadFiles);
-        });
+                body: JSON.stringify({ backup: { enabled_capabilities: caps, app_settings: sets } })
+            }).then(function () {
+                config = caps;
+                populateSettingsUi(sets);
+                renderDevicesTree(cachedDevices);
+                showToast('Backup restored successfully!');
+            }).catch(function (err) {
+                showAlert(__('settings.alert.restoreFailed') + ' ' + err.message);
+            });
+        }
+
+        /* =========================================================================
+           TAB 3: FILE MANAGER
+           ========================================================================= */
+        function loadFiles() {
+            ['dashboards', 'templates', 'presets'].forEach(function (type) {
+                api('files?type=' + type).then(function (res) {
+                    renderFileTable(type, res.files || []);
+                }).catch(function () {});
+            });
+            ['images', 'audio'].forEach(function (kind) {
+                api('media?kind=' + kind).then(function (res) {
+                    renderMediaTable(kind, res.files || []);
+                }).catch(function () {});
+            });
+        }
+
+        function renderFileTable(type, files) {
+            var containerId = type === 'templates' ? 'list-templates' : ('list-' + type);
+            var container = document.getElementById(containerId);
+            if (!container) return;
+
+            if (!files || files.length === 0) {
+                container.innerHTML = '<div class="empty-msg">' + __('settings.files.noFiles') + '</div>';
+                return;
+            }
+
+            var html = '<table class="file-table"><thead><tr>' +
+                '<th>' + __('settings.files.nameColumn') + '</th>' +
+                '<th style="width:120px;text-align:right;">' + __('settings.files.actionColumn') + '</th>' +
+                '</tr></thead><tbody>';
+
+            files.forEach(function (file) {
+                var fileName = file.name || file;
+                var isBuiltin = !!file.builtin;
+                var badge = isBuiltin ? '<span class="domain-badge" style="margin-left:8px;">Built-in</span>' : '';
+                var delBtn = isBuiltin ? '' : '<button type="button" class="btn-del" onclick="deleteFileConfirm(\'' + escapeHtml(type) + '\', \'' + escapeHtml(fileName) + '\')">' + __('settings.modal.delete') + '</button>';
+
+                html += '<tr>' +
+                    '<td><b>' + escapeHtml(fileName) + '</b>' + badge + '</td>' +
+                    '<td style="text-align:right;">' + delBtn + '</td>' +
+                    '</tr>';
+            });
+
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        function renderMediaTable(kind, files) {
+            var container = document.getElementById('list-' + kind);
+            if (!container) return;
+
+            if (!files || files.length === 0) {
+                container.innerHTML = '<div class="empty-msg">' + (kind === 'images' ? __('settings.files.noImages') : __('settings.files.noAudio')) + '</div>';
+                return;
+            }
+
+            var html = '<table class="file-table"><thead><tr>' +
+                '<th>' + __('settings.files.nameColumn') + '</th>' +
+                '<th style="width:140px;text-align:right;">' + __('settings.files.actionColumn') + '</th>' +
+                '</tr></thead><tbody>';
+
+            files.forEach(function (file) {
+                var fileName = file.name || file;
+                var preview = '';
+                if (kind === 'images') {
+                    preview = '<img src="/dashboard_studio/images/' + encodeURIComponent(fileName) + '" style="width:28px;height:28px;object-fit:cover;border-radius:4px;vertical-align:middle;margin-right:8px;" onerror="this.style.display=\'none\'">';
+                } else {
+                    preview = '<audio controls src="/dashboard_studio/audio/' + encodeURIComponent(fileName) + '" style="height:24px;width:120px;vertical-align:middle;margin-right:8px;"></audio>';
+                }
+
+                html += '<tr>' +
+                    '<td>' + preview + '<b>' + escapeHtml(fileName) + '</b></td>' +
+                    '<td style="text-align:right;"><button type="button" class="btn-del" onclick="deleteFileConfirm(\'' + escapeHtml(kind) + '\', \'' + escapeHtml(fileName) + '\')">' + __('settings.modal.delete') + '</button></td>' +
+                    '</tr>';
+            });
+
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        function deleteFileConfirm(type, name) {
+            var msg = __('settings.confirm.deleteNamed', { name: name });
+            showConfirmModal(msg, __('settings.modal.delete'), true, function () {
+                api('delete-file', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type: type, name: name })
+                }).then(function () {
+                    showToast('Deleted ' + name);
+                    loadFiles();
+                }).catch(function (err) {
+                    showAlert('Delete failed: ' + err.message);
+                });
+            });
+        }
+
+        function clearAllSnapshotsConfirm() {
+            showConfirmModal('Delete all snapshot history for all dashboards? This cannot be undone.', 'Clear All', true, function () {
+                api('clear-snapshots', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: '{}'
+                }).then(function (res) {
+                    showToast('Cleared ' + (res.removed || 0) + ' snapshots');
+                    loadFiles();
+                }).catch(function (err) {
+                    showAlert('Clear failed: ' + err.message);
+                });
+            });
+        }
+
+        /* =========================================================================
+           TAB 4: CALENDAR & ICON BINDINGS VALIDATION
+           ========================================================================= */
+        function updateCalendarIconUiState() {
+            var showIcons = document.getElementById('setting-calendar-show-icons').checked;
+            var useDefIcon = document.getElementById('setting-calendar-use-default-icon').checked;
+            var defIconRow = document.getElementById('setting-calendar-default-icon-row');
+            var useDefRow = document.getElementById('setting-calendar-use-default-icon-row');
+
+            if (useDefRow) useDefRow.style.opacity = showIcons ? '1' : '0.45';
+            if (defIconRow) defIconRow.style.opacity = (showIcons && useDefIcon) ? '1' : '0.45';
+        }
+
+        function updateCalendarSourceBlockUiState() {
+            var wrap = document.getElementById('setting-calendar-wrap-blocks').checked;
+            var modeRow = document.getElementById('setting-calendar-color-block-mode-row');
+            var panel = document.getElementById('setting-calendar-source-block-bindings-panel');
+            var isBySource = document.getElementById('setting-calendar-color-block-calendar-source').checked;
+
+            if (modeRow) modeRow.style.opacity = wrap ? '1' : '0.45';
+            if (panel) panel.style.display = (wrap && isBySource) ? 'flex' : 'none';
+        }
+
+        function updateIconBindingsValidation() {
+            var ta = document.getElementById('setting-calendar-icon-bindings-text');
+            var box = document.getElementById('calendar-icon-bindings-validation');
+            if (!ta || !box) return;
+
+            var lines = (ta.value || '').split('\n');
+            var validCount = 0;
+            var errors = [];
+
+            lines.forEach(function (line, idx) {
+                var trimmed = line.trim();
+                if (!trimmed || trimmed.indexOf('#') === 0) return;
+                var parts = trimmed.split(':');
+                if (parts.length < 2 || !parts[0].trim() || !parts[1].trim()) {
+                    errors.push('Line ' + (idx + 1) + ': Invalid format. Expected "ph-icon: keyword1, keyword2"');
+                } else {
+                    validCount++;
+                }
+            });
+
+            ta.classList.toggle('has-error', errors.length > 0);
+            if (errors.length > 0) {
+                box.innerHTML = '<div class="err-line">' + errors.slice(0, 3).map(escapeHtml).join('<br>') + (errors.length > 3 ? '<br>...' : '') + '</div>';
+            } else if (validCount > 0) {
+                box.innerHTML = '<div class="ok-line">&#10003; ' + validCount + ' icon bindings parsed correctly</div>';
+            } else {
+                box.innerHTML = '';
+            }
+        }
+
+        function updateSourceBlockBindingsValidation() {
+            var ta = document.getElementById('setting-calendar-source-block-bindings-text');
+            var box = document.getElementById('calendar-source-block-bindings-validation');
+            if (!ta || !box) return;
+
+            var lines = (ta.value || '').split('\n');
+            var validCount = 0;
+            var errors = [];
+
+            lines.forEach(function (line, idx) {
+                var trimmed = line.trim();
+                if (!trimmed || trimmed.indexOf('#') === 0) return;
+                var tokens = trimmed.split(/\s+/);
+                if (tokens.length < 2 || ['1', '2', '3', '4'].indexOf(tokens[1]) === -1) {
+                    errors.push('Line ' + (idx + 1) + ': Invalid format. Expected "calendarId [1-4]"');
+                } else {
+                    validCount++;
+                }
+            });
+
+            ta.classList.toggle('has-error', errors.length > 0);
+            if (errors.length > 0) {
+                box.innerHTML = '<div class="err-line">' + errors.slice(0, 3).map(escapeHtml).join('<br>') + '</div>';
+            } else if (validCount > 0) {
+                box.innerHTML = '<div class="ok-line">&#10003; ' + validCount + ' calendar source blocks valid</div>';
+            } else {
+                box.innerHTML = '';
+            }
+        }
+
+        function resetCalendarSourceBlockBindingsToDefault() {
+            var ta = document.getElementById('setting-calendar-source-block-bindings-text');
+            if (ta) {
+                ta.value = DEFAULT_CALENDAR_SOURCE_BLOCKS;
+                updateSourceBlockBindingsValidation();
+                saveSettingsDebounced();
+            }
+        }
+
+        function resetCalendarIconBindingsToDefault() {
+            var ta = document.getElementById('setting-calendar-icon-bindings-text');
+            var defIcon = document.getElementById('setting-calendar-default-icon');
+            if (ta) ta.value = DEFAULT_CALENDAR_ICON_BINDINGS;
+            if (defIcon) defIcon.value = 'ph-calendar';
+            updateIconBindingsValidation();
+            updateCalendarIconUiState();
+            saveSettingsDebounced();
+        }
+
+        var calIconTa = document.getElementById('setting-calendar-icon-bindings-text');
+        if (calIconTa) {
+            calIconTa.addEventListener('input', updateIconBindingsValidation);
+        }
+        var calSrcTa = document.getElementById('setting-calendar-source-block-bindings-text');
+        if (calSrcTa) {
+            calSrcTa.addEventListener('input', updateSourceBlockBindingsValidation);
+        }
+
+        /* Generic Confirmation Modal */
+        var confirmCallback = null;
+        function showConfirmModal(message, confirmText, isDanger, onConfirm) {
+            var modal = document.getElementById('custom-modal');
+            var textEl = document.getElementById('custom-modal-text');
+            var btnConfirm = document.getElementById('custom-modal-confirm');
+            var btnCancel = document.getElementById('custom-modal-cancel');
+
+            textEl.textContent = message;
+            btnConfirm.textContent = confirmText || 'Confirm';
+            btnConfirm.className = 'modal-btn modal-btn-confirm' + (isDanger ? ' danger' : '');
+            confirmCallback = onConfirm;
+            modal.classList.add('show');
+        }
+
+        document.getElementById('custom-modal-cancel').onclick = function () {
+            document.getElementById('custom-modal').classList.remove('show');
+            confirmCallback = null;
+        };
+        document.getElementById('custom-modal-confirm').onclick = function () {
+            document.getElementById('custom-modal').classList.remove('show');
+            if (confirmCallback) confirmCallback();
+            confirmCallback = null;
+        };
+
+        /* Top Bar Direct Actions */
+        document.getElementById('btn-top-save').onclick = function () {
+            saveSettingsExplicit();
+        };
+
+        /* Language Switcher */
+        var langSelect = document.getElementById('ui-language-select');
+        var initialLang = localStorage.getItem('dashboard_studio_lang') || navigator.language || 'en';
+        var cleanLang = initialLang.split('-')[0].split('_')[0].toLowerCase();
+        if (langSelect) {
+            langSelect.value = cleanLang;
+            if (!langSelect.value) langSelect.value = 'en';
+            langSelect.addEventListener('change', function () {
+                var chosen = this.value;
+                localStorage.setItem('dashboard_studio_lang', chosen);
+                loadLocale(chosen);
+            });
+        }
+
+        /* Theme Toggle */
+        var themeToggleBtn = document.getElementById('theme-toggle-btn');
+        var currentTheme = localStorage.getItem('dashboard_studio_theme') || 'auto';
+        function applyTheme(theme) {
+            currentTheme = theme;
+            localStorage.setItem('dashboard_studio_theme', theme);
+            if (theme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.getElementById('theme-label').textContent = 'Dark';
+            } else if (theme === 'light') {
+                document.documentElement.setAttribute('data-theme', 'light');
+                document.getElementById('theme-label').textContent = 'Light';
+            } else {
+                document.documentElement.removeAttribute('data-theme');
+                document.getElementById('theme-label').textContent = 'Auto';
+            }
+        }
+        if (themeToggleBtn) {
+            themeToggleBtn.addEventListener('click', function () {
+                if (currentTheme === 'auto') applyTheme('dark');
+                else if (currentTheme === 'dark') applyTheme('light');
+                else applyTheme('auto');
+            });
+            applyTheme(currentTheme);
+        }
+
+        /* Update local dashboard links */
+        function updateDashboardLinks() {
+            var origin = window.location.origin;
+            var dashUrl = origin + '/dashboard_studio/';
+            var linkEl = document.getElementById('dashboard-link');
+            var topBtn = document.getElementById('btn-top-open-dashboard');
+            var manualCode = document.getElementById('manual-port-display');
+            if (linkEl) {
+                linkEl.textContent = dashUrl;
+                linkEl.href = dashUrl;
+            }
+            if (topBtn) topBtn.href = dashUrl;
+            if (manualCode) manualCode.textContent = dashUrl;
+        }
+
+        /* =========================================================================
+           INITIAL BOOTSTRAP
+           ========================================================================= */
+        setStatus('Loading…', 'busy');
+        updateDashboardLinks();
+        loadLocale(cleanLang);
+
         Promise.all([api('config'), api('devices')]).then(function (results) {
-            enabled = results[0].enabled_capabilities || {};
-            settings = results[0].app_settings || {};
-            devices = results[1].devices || [];
-            fillSettingsForm();
-            renderDevices();
-            loadFiles();
-            setStatus('Ready');
-        }).catch(function (err) { setStatus(err.message || 'Could not load setup'); });
+            var cfg = results[0] || {};
+            config = cfg.enabled_capabilities || {};
+            populateSettingsUi(cfg.app_settings || {});
+            renderDevicesTree((results[1] && results[1].devices) || []);
+            setStatus('Ready', 'ready');
+        }).catch(function (err) {
+            console.error('Failed to boot setup:', err);
+            setStatus('Error', 'busy');
+            showAlert('Could not load configuration: ' + err.message);
+        });
     </script>
 </body>
 </html>

@@ -159,6 +159,10 @@ class DashboardStudioAdminView(HomeAssistantView):
             kind = "audio" if request.query.get("kind") == "audio" else "images"
             files = await request.app["hass"].async_add_executor_job(_list_admin_media, runtime, kind)
             return web.json_response({"files": files})
+        if action == "locale":
+            lang = str(request.query.get("lang") or "en")
+            flat = await request.app["hass"].async_add_executor_job(_load_locale_flat, lang)
+            return web.json_response({"locale": lang, "strings": flat})
         return web.json_response({"error": "unknown_action"}, status=404)
 
     async def post(self, request: web.Request, action: str) -> web.Response:
@@ -215,6 +219,25 @@ class DashboardStudioAdminView(HomeAssistantView):
             runtime.clear_state_cache()
             await runtime.async_refresh_enabled(broadcast=True)
             return web.json_response({"ok": True})
+        if action == "clear-snapshots":
+            from .storage_files import clear_snapshots
+
+            base = str(body.get("base") or "")
+            if base:
+                removed = await hass.async_add_executor_job(clear_snapshots, runtime.root, base)
+            else:
+                def _clear_all_snaps() -> int:
+                    folder = runtime.root / "snapshots"
+                    count = 0
+                    if folder.is_dir():
+                        for p in folder.glob("*.json"):
+                            if p.is_file():
+                                p.unlink()
+                                count += 1
+                    return count
+
+                removed = await hass.async_add_executor_job(_clear_all_snaps)
+            return web.json_response({"ok": True, "removed": removed})
         return web.json_response({"error": "unknown_action"}, status=404)
 
 
@@ -252,6 +275,82 @@ def _safe_join(root: Path, relative: str) -> Path | None:
     except ValueError:
         return None
     return candidate
+
+
+def _deep_merge_dict(base: dict[str, Any], over: dict[str, Any]) -> dict[str, Any]:
+    out = dict(base)
+    for k, v in over.items():
+        if isinstance(v, dict) and isinstance(out.get(k), dict):
+            out[k] = _deep_merge_dict(out[k], v)
+        else:
+            out[k] = v
+    return out
+
+
+def _flatten_leaves_dict(tree: dict[str, Any], prefix: str = "") -> dict[str, str]:
+    out: dict[str, str] = {}
+    if not isinstance(tree, dict):
+        return out
+    for k, v in tree.items():
+        next_key = f"{prefix}.{k}" if prefix else k
+        if isinstance(v, str):
+            out[next_key] = v
+        elif isinstance(v, dict):
+            out.update(_flatten_leaves_dict(v, next_key))
+    return out
+
+
+def _adapt_platform_text(text: str) -> str:
+    return (
+        text.replace("Removed from Homey", "Removed from Home Assistant")
+        .replace("Verwijderd uit Homey", "Verwijderd uit Home Assistant")
+        .replace("Homey-app", "Home Assistant")
+        .replace("Homey app", "Home Assistant")
+        .replace("Homey API", "Home Assistant API")
+        .replace("Homey will stop publishing updates", "Dashboard Studio will stop publishing updates")
+        .replace("all user dashboard files on Homey are removed", "all user dashboard files in Home Assistant are removed")
+        .replace("outside Homey", "outside Home Assistant")
+        .replace("buiten Homey", "buiten Home Assistant")
+        .replace("op Homey", "op Home Assistant")
+        .replace("van Homey", "van Home Assistant")
+        .replace("Only backups the Homey settings", "Only backs up the Home Assistant configuration")
+        .replace("Only restores the Homey settings", "Only restores the Home Assistant configuration")
+        .replace("Flow-kaarten", "Diensten & Agenda")
+        .replace("Flow cards", "Services & Calendar")
+        .replace("Flow Cards", "Services & Calendar")
+        .replace("flow cards", "services")
+        .replace("flow card", "service")
+        .replace("flow-kaart", "dienst")
+        .replace("Homey devices organized by zone", "Home Assistant entities organized by area")
+        .replace("Homey User Variables, Flows, and Zone Moods", "Home Assistant Helpers, Automations/Scripts, and Scenes")
+        .replace("Homey", "Home Assistant")
+    )
+
+
+def _load_locale_flat(lang: str) -> dict[str, str]:
+    locales_dir = Path(__file__).resolve().parent / "locales"
+    en_file = locales_dir / "en.json"
+    en_data: dict[str, Any] = {}
+    if en_file.is_file():
+        try:
+            en_data = json.loads(en_file.read_text(encoding="utf-8"))
+        except Exception:
+            en_data = {}
+
+    clean_lang = "".join(ch for ch in str(lang or "en").split("-")[0].split("_")[0].lower() if ch.isalpha())
+    user_file = locales_dir / f"{clean_lang}.json" if clean_lang else en_file
+    user_data: dict[str, Any] = {}
+    if user_file.is_file() and clean_lang != "en":
+        try:
+            user_data = json.loads(user_file.read_text(encoding="utf-8"))
+        except Exception:
+            user_data = {}
+
+    merged_settings = _deep_merge_dict(en_data.get("settings") or {}, user_data.get("settings") or {})
+    flat = _flatten_leaves_dict(merged_settings, "settings")
+    for k, v in list(flat.items()):
+        flat[k] = _adapt_platform_text(v)
+    return flat
 
 
 def register_views(hass: HomeAssistant) -> None:
