@@ -76,6 +76,36 @@ wget -qO- https://raw.githubusercontent.com/satoer/dashboard-studio-homeassistan
 
 ---
 
+## Updating Dashboard Studio
+
+To update an existing installation to the latest version:
+
+### Option 1: Single-Command Update (Linux / Docker / Supervised)
+
+Run the exact same automated command on your server:
+
+```bash
+curl -sSL https://raw.githubusercontent.com/satoer/dashboard-studio-homeassistant/main/install.sh | sudo bash
+```
+
+*(or with wget)*:
+
+```bash
+wget -qO- https://raw.githubusercontent.com/satoer/dashboard-studio-homeassistant/main/install.sh | sudo bash
+```
+
+### Option 2: HACS
+If installed via HACS, navigate to **HACS -> Integrations**, click **Update** on Dashboard Studio, and restart Home Assistant.
+
+### Option 3: Manual Update
+Replace the `custom_components/dashboard_studio/` folder with the new release files and restart Home Assistant.
+
+> [!NOTE]
+> **User files are 100% protected during updates.**
+> All dashboards, uploaded images, audio files, custom themes, presets, version snapshots, and capability settings are stored in `/config/dashboard_studio/` and `/config/.storage/`. Updates only replace the integration code in `/config/custom_components/dashboard_studio/` and never touch or overwrite your personal data.
+
+---
+
 ## Getting Started
 
 1. **Enable Devices & Capabilities:**

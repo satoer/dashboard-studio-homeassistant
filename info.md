@@ -8,10 +8,11 @@ There is no external server, Docker container, or Node.js process to maintain, a
 
 ## Quick Setup
 
-### One-Command Installer (Linux / Docker / Supervised)
+### One-Command Installer & Updater (Linux / Docker / Supervised)
 ```bash
 curl -sSL https://raw.githubusercontent.com/satoer/dashboard-studio-homeassistant/main/install.sh | sudo bash
 ```
+*Note: Run the same command at any time to update. User dashboards, media, snapshots, and settings in `/config/dashboard_studio/` are never overwritten or touched.*
 
 ### Or via HACS
 1. Add custom repository: `https://github.com/satoer/dashboard-studio-homeassistant` (category: Integration).
