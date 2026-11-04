@@ -612,16 +612,10 @@ class DashboardStudioRuntime:
             await self._call(call["domain"], call["service"], call["data"])
 
     def register_panels(self) -> None:
-        async_register_built_in_panel(
-            self.hass,
-            "iframe",
-            sidebar_title="Dashboard Studio",
-            sidebar_icon="mdi:view-dashboard",
-            frontend_url_path=PANEL_APP,
-            config={"url": "/dashboard_studio/index.html"},
-            require_admin=False,
-            update=True,
-        )
+        try:
+            async_remove_panel(self.hass, PANEL_APP)
+        except Exception:  # noqa: BLE001
+            pass
         async_register_built_in_panel(
             self.hass,
             "iframe",
