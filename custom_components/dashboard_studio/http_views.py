@@ -50,10 +50,13 @@ def resolve_platform_config() -> Path | None:
 async def async_user_from_token(hass: HomeAssistant, token: str):
     if not token:
         return None
-    refresh = await hass.auth.async_validate_access_token(token)
-    if refresh is None:
+    try:
+        refresh = await hass.auth.async_validate_access_token(token)
+        if refresh is None:
+            return None
+        return getattr(refresh, "user", None)
+    except Exception:
         return None
-    return refresh.user
 
 
 def token_from_request(request: web.Request) -> str:
@@ -129,8 +132,10 @@ class DashboardStudioAdminView(HomeAssistantView):
     requires_auth = False
 
     async def get(self, request: web.Request, action: str) -> web.Response:
-        user = await async_user_from_token(request.app["hass"], token_from_request(request))
-        if user is None or not user.is_admin:
+        user = request.get("hass_user")
+        if user is None:
+            user = await async_user_from_token(request.app["hass"], token_from_request(request))
+        if user is None or not (getattr(user, "is_admin", False) or getattr(user, "is_owner", False)):
             return web.json_response({"error": "admin_required"}, status=401)
         runtime = get_runtime(request.app["hass"])
         if runtime is None:
@@ -164,8 +169,10 @@ class DashboardStudioAdminView(HomeAssistantView):
 
     async def post(self, request: web.Request, action: str) -> web.Response:
         hass: HomeAssistant = request.app["hass"]
-        user = await async_user_from_token(hass, token_from_request(request))
-        if user is None or not user.is_admin:
+        user = request.get("hass_user")
+        if user is None:
+            user = await async_user_from_token(hass, token_from_request(request))
+        if user is None or not (getattr(user, "is_admin", False) or getattr(user, "is_owner", False)):
             return web.json_response({"error": "admin_required"}, status=401)
         runtime = get_runtime(hass)
         if runtime is None:

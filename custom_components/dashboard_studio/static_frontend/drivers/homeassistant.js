@@ -41,8 +41,26 @@ function applyHomeAssistantAppSettingsFromSocket(payload) {
 function readParentAccessToken() {
     try {
         if (!window.parent || window.parent === window) return '';
-        var auth = window.parent.hass && window.parent.hass.auth && window.parent.hass.auth.data;
-        if (auth && auth.access_token) return String(auth.access_token);
+        var pDoc = window.parent.document;
+        if (pDoc) {
+            var ha = pDoc.querySelector('home-assistant') || pDoc.querySelector('hc-main');
+            if (ha && ha.hass && ha.hass.auth) {
+                var t = ha.hass.auth.accessToken || (ha.hass.auth.data && ha.hass.auth.data.access_token);
+                if (t) return String(t);
+            }
+        }
+        var pHass = window.parent.hass;
+        if (pHass && pHass.auth) {
+            var t2 = pHass.auth.accessToken || (pHass.auth.data && pHass.auth.data.access_token);
+            if (t2) return String(t2);
+        }
+        if (window.parent.hassConnection) {
+            var conn = window.parent.hassConnection;
+            if (conn && conn.options && conn.options.auth) {
+                var t3 = conn.options.auth.accessToken || (conn.options.auth.data && conn.options.auth.data.access_token);
+                if (t3) return String(t3);
+            }
+        }
     } catch (e) { /* cross-origin parent */ }
     return '';
 }
@@ -66,7 +84,7 @@ function tokenIsExpired(tokens) {
 function refreshHomeAssistantToken() {
     var tokens = readStoredHassTokens();
     if (!tokens || !tokens.refresh_token) return Promise.reject(new Error('no refresh token'));
-    var clientId = tokens.clientId || tokens.client_id || '';
+    var clientId = tokens.clientId || tokens.client_id || (window.location.origin + '/');
     var body = 'grant_type=refresh_token&refresh_token=' + encodeURIComponent(tokens.refresh_token);
     if (clientId) body += '&client_id=' + encodeURIComponent(clientId);
     return fetch('/auth/token', {

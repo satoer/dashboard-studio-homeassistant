@@ -152,8 +152,26 @@
         function readParentAccessToken() {
             try {
                 if (!window.parent || window.parent === window) return '';
-                var auth = window.parent.hass && window.parent.hass.auth && window.parent.hass.auth.data;
-                if (auth && auth.access_token) return String(auth.access_token);
+                var pDoc = window.parent.document;
+                if (pDoc) {
+                    var ha = pDoc.querySelector('home-assistant') || pDoc.querySelector('hc-main');
+                    if (ha && ha.hass && ha.hass.auth) {
+                        var t = ha.hass.auth.accessToken || (ha.hass.auth.data && ha.hass.auth.data.access_token);
+                        if (t) return String(t);
+                    }
+                }
+                var pHass = window.parent.hass;
+                if (pHass && pHass.auth) {
+                    var t2 = pHass.auth.accessToken || (pHass.auth.data && pHass.auth.data.access_token);
+                    if (t2) return String(t2);
+                }
+                if (window.parent.hassConnection) {
+                    var conn = window.parent.hassConnection;
+                    if (conn && conn.options && conn.options.auth) {
+                        var t3 = conn.options.auth.accessToken || (conn.options.auth.data && conn.options.auth.data.access_token);
+                        if (t3) return String(t3);
+                    }
+                }
             } catch (e) {}
             return '';
         }
@@ -172,7 +190,7 @@
         function refreshHomeAssistantToken() {
             var tokens = readStoredHassTokens();
             if (!tokens || !tokens.refresh_token) return Promise.reject(new Error('no refresh token'));
-            var clientId = tokens.clientId || tokens.client_id || '';
+            var clientId = tokens.clientId || tokens.client_id || (window.location.origin + '/');
             var body = 'grant_type=refresh_token&refresh_token=' + encodeURIComponent(tokens.refresh_token);
             if (clientId) body += '&client_id=' + encodeURIComponent(clientId);
             return fetch('/auth/token', {
@@ -252,8 +270,8 @@
                 var tokens = readStoredHassTokens();
                 if (tokens && tokens.access_token && !tokenIsExpired(tokens)) return Promise.resolve(String(tokens.access_token));
                 return refreshHomeAssistantToken();
-            }).catch(function () {
-                redirectToLogin();
+            }).catch(function (err) {
+                if (window.parent === window) redirectToLogin();
                 return '';
             });
         }
@@ -269,7 +287,7 @@
                             opts.headers.Authorization = 'Bearer ' + next;
                             return fetch('/api/dashboard_studio/admin/' + path, opts);
                         }).catch(function () {
-                            redirectToLogin();
+                            if (window.parent === window) redirectToLogin();
                             return null;
                         });
                     }
@@ -277,7 +295,18 @@
                 });
             }).then(function (res) {
                 if (!res) return {};
-                if (!res.ok) throw new Error('Request failed');
+                if (!res.ok) {
+                    return res.text().then(function (text) {
+                        var msg = 'Request failed (' + res.status + ')';
+                        try {
+                            var json = JSON.parse(text);
+                            if (json && json.error) msg += ': ' + json.error;
+                        } catch (e) {
+                            if (text && text.length < 80) msg += ': ' + text;
+                        }
+                        throw new Error(msg);
+                    });
+                }
                 return res.json();
             });
         }
