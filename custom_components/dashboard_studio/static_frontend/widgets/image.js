@@ -1,6 +1,6 @@
 class ImageWidget extends BaseWidget {
     static get metadata() {
-        return { label: "Image", shortName: "Image", icon: "ph-image", category: "Graphics", color_dark: "hsl(30, 80%, 65%)", color_light: "hsl(30, 85%, 35%)", version: "2.3.1", date: "2026-11-02" };
+        return { label: "Image", shortName: "Image", icon: "ph-image", category: "Graphics", color_dark: "hsl(30, 80%, 65%)", color_light: "hsl(30, 85%, 35%)", version: "2.3.3", date: "2026-11-04" };
     }
 
     static get IMAGE_LABEL_LEGACY_TYPO_KEYS() {
@@ -394,6 +394,8 @@ class ImageWidget extends BaseWidget {
         this._refreshInFlight = false;
         this._refreshInFlightTimer = null;
         this._loadedSourceUrl = undefined;
+        this._cachedSourceUrl = undefined;
+        this._noCorsUrl = null;
         this._blobLoadGen = 0;
         this._directStreamUrl = null;
         this._refreshSeq = 0;
@@ -893,37 +895,28 @@ class ImageWidget extends BaseWidget {
     /**
      * A URL can be snapshotted into one revocable blob when fetch and createObjectURL exist.
      * blob: sources are already object URLs and must be assigned directly.
+     * Skips fetch for endpoints already identified as non-CORS to avoid failing network requests.
      */
     _canBlobLoad(sourceUrl) {
         if (!sourceUrl || sourceUrl.indexOf('blob:') === 0) return false;
         if (typeof fetch !== 'function') return false;
         if (typeof URL === 'undefined' || typeof URL.createObjectURL !== 'function') return false;
+        if (this._noCorsUrl === sourceUrl) return false;
         return true;
     }
 
     /**
-     * Firefox and Chromium keep every distinct image URL in the decoded-image cache until the
-     * process exits. WebKit does not, and a snapshot that could not be read as a blob still
-     * needs a fresh query there or a live camera paints the first frame forever.
-     */
-    _needsFreshImageQuery() {
-        const ua = (typeof navigator !== 'undefined' && navigator.userAgent) ? navigator.userAgent : '';
-        if (ua.indexOf('Firefox') !== -1) return false;
-        if (ua.indexOf('Chrome') !== -1 || ua.indexOf('Chromium') !== -1 || ua.indexOf('Edg/') !== -1) return false;
-        return ua.indexOf('AppleWebKit') !== -1;
-    }
-
-    /**
-     * Last resort when the snapshot body never arrives (a continuous MJPEG stream, or a host
-     * that returns an empty opaque body). Firefox keeps this exact URL so decoded frames cannot
-     * pile up. WebKit appends one fresh query, matching the previous live-refresh look.
+     * Direct image source assignment for non-CORS camera snapshots and streams.
+     * For periodic snapshots, appends a unique query parameter (_ds_cb) so intermediate
+     * and browser HTTP caches return fresh frames on every tick.
+     * Sticky streams (e.g. MJPEG multipart feeds) keep a single stable address.
      */
     _useDirectImageSource(src, sticky) {
-        if (!sticky && this._needsFreshImageQuery() && src.indexOf('data:') !== 0 && src.indexOf('blob:') !== 0) {
+        if (!sticky && src.indexOf('data:') !== 0 && src.indexOf('blob:') !== 0) {
             this._directStreamUrl = null;
             this._refreshSeq = ((this._refreshSeq || 0) + 1) % 1000000;
             const sep = src.indexOf('?') !== -1 ? '&' : '?';
-            this._maybeAnimatedSetSrc(src + sep + '_t=' + Date.now() + '_' + this._refreshSeq);
+            this._maybeAnimatedSetSrc(src + sep + '_ds_cb=' + Date.now() + '_' + this._refreshSeq);
             return;
         }
         if (sticky) this._directStreamUrl = src;
@@ -951,9 +944,9 @@ class ImageWidget extends BaseWidget {
 
     /**
      * Loads one frame as a blob and revokes the previous blob after the new frame is shown.
-     * Cross-origin cameras use no-cors so a missing Access-Control-Allow-Origin header still
-     * yields bytes. data: frames are fetched as same-origin blobs and are never assigned to
-     * img.src, so a changing camera payload does not accumulate decoded surfaces.
+     * Uses standard CORS fetch so same-origin, Homey local proxy, and CORS-enabled camera feeds
+     * load real image bytes into ephemeral blobs with immediate revocation upon replacement.
+     * Endpoints lacking CORS headers gracefully fall back to direct <img src> with cache-busting.
      */
     _startBlobImageLoad(sourceUrl, force) {
         const src = typeof sourceUrl === 'string' ? sourceUrl : '';
@@ -990,13 +983,14 @@ class ImageWidget extends BaseWidget {
         }, 15000);
 
         const fetchOpts = { cache: 'no-store', credentials: 'same-origin' };
-        if (src.indexOf('data:') !== 0) fetchOpts.mode = 'no-cors';
         if (controller) fetchOpts.signal = controller.signal;
 
         fetch(src, fetchOpts)
             .then(function (res) {
                 if (widget._blobLoadGen !== gen) return null;
-                if (!res) return null;
+                if (!res || !res.ok) {
+                    throw new Error(res ? ('HTTP ' + res.status) : 'No response');
+                }
                 return res.blob();
             })
             .then(function (blob) {
@@ -1008,12 +1002,7 @@ class ImageWidget extends BaseWidget {
                     widget._refreshInFlightTimer = null;
                 }
                 if (!blob || !blob.size) {
-                    if (src.indexOf('data:') === 0) {
-                        widget._handlePrimaryImageError();
-                        return;
-                    }
-                    widget._useDirectImageSource(src, false);
-                    return;
+                    throw new Error('Empty blob');
                 }
                 if (typeof Dashboard !== 'undefined' && !Dashboard.isEditMode && widget.elements && widget.elements.wrapper && widget.elements.wrapper.style.display === 'none') {
                     widget._loadedSourceUrl = undefined;
@@ -1034,6 +1023,7 @@ class ImageWidget extends BaseWidget {
                     widget._handlePrimaryImageError();
                     return;
                 }
+                widget._noCorsUrl = src;
                 widget._useDirectImageSource(src, !!(err && err.name === 'AbortError'));
             });
     }
@@ -1171,6 +1161,8 @@ class ImageWidget extends BaseWidget {
             this._lastAppliedUrl = undefined;
             this._lastAppliedSvgRaw = undefined;
             this._loadedSourceUrl = undefined;
+            this._cachedSourceUrl = undefined;
+            this._noCorsUrl = null;
             this._directStreamUrl = null;
             this._cancelContentSwap();
             this._releaseAllBlobs();
@@ -1204,6 +1196,12 @@ class ImageWidget extends BaseWidget {
         }
 
         if (sourceType === 'url') {
+            const rawUrl = c.url || '';
+            if (this._cachedSourceUrl !== rawUrl) {
+                this._cachedSourceUrl = rawUrl;
+                this._noCorsUrl = null;
+            }
+
             const fallbackSig = Object.prototype.hasOwnProperty.call(this.overrides, 'fallbackUrl')
                 ? String(__nullish(this.overrides.fallbackUrl, ''))
                 : '\x1e' + String(__nullish(c.defaultImageFallbackUrl, 'images/brokenlink.png'));
@@ -1257,6 +1255,8 @@ class ImageWidget extends BaseWidget {
         this._releaseAllBlobs();
         this._cachedLiveRefreshSig = undefined;
         this._loadedSourceUrl = undefined;
+        this._cachedSourceUrl = undefined;
+        this._noCorsUrl = null;
         this._directStreamUrl = null;
         this._lastUrlImageLoadAt = undefined;
         super.onRemove();

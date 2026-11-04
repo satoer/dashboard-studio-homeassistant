@@ -44,6 +44,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     if not hass.data[DOMAIN].get("views_registered"):
         register_views(hass)
         hass.data[DOMAIN]["views_registered"] = True
+    try:
+        from homeassistant.components.frontend import add_extra_js_url
+        add_extra_js_url(hass, "/dashboard_studio/ds-iconset.js")
+    except Exception as err:
+        _LOGGER.debug("Could not register ds-iconset with frontend: %s", err)
     runtime.register_panels()
     async_register_services(hass)
 

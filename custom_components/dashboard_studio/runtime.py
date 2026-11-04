@@ -620,7 +620,7 @@ class DashboardStudioRuntime:
             self.hass,
             "iframe",
             sidebar_title="Dashboard Studio Setup",
-            sidebar_icon="mdi:cog",
+            sidebar_icon="ds:icon",
             frontend_url_path=PANEL_SETUP,
             config={"url": "/dashboard_studio/setup"},
             require_admin=True,
