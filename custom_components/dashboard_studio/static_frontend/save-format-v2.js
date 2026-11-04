@@ -79,6 +79,7 @@
         warnWhenDriverOffline: ['connection', 'warnWhenDriverOffline'],
 
         editorMode: ['environment', 'editorMode'],
+        editorTooltips: ['environment', 'editorTooltips'],
         editorZoom: ['environment', 'editorZoom'],
         resetLookOnThemeApply: ['environment', 'resetLookOnThemeApply'],
         widgetLabelMode: ['environment', 'widgetLabelMode'],
@@ -595,6 +596,8 @@
     addWD('graph', 'defaultGraphTimeFormat', ['timeFormat']);
     addWD('graph', 'defaultGraphTime24h', ['time24h']);
     addWD('graph', 'defaultGraphDateFormat', ['dateFormat']);
+    addWD('graph', 'defaultGraphConvertToLocalTime', ['convertToLocalTime']);
+    addWD('graph', 'defaultGraphTimeOffset', ['timeOffset']);
     addWD('graph', 'defaultGraphTimezoneConvert', ['timezoneConvert']);
     addWD('graph', 'defaultGraphCategoryLabelRotation', ['categoryLabelRotation']);
     addWD('graph', 'defaultGraphValueLabelRotation', ['valueLabelRotation']);

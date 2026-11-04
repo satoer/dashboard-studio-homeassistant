@@ -183,6 +183,7 @@ const MasterLayout = {
         'defaultGraphDecimals', 'defaultGraphRoundingMode', 'defaultGraphHeadroom',
         'defaultGraphShowAxisX', 'defaultGraphShowAxisY',
         'defaultGraphTimeFormat', 'defaultGraphTime24h', 'defaultGraphDateFormat',
+        'defaultGraphConvertToLocalTime', 'defaultGraphTimeOffset',
         'defaultGraphTimezoneConvert', 'defaultGraphLinearTimeScale',
         'defaultGraphAutoAxisResX', 'defaultGraphAutoAxisResY',
         'defaultGraphAxisResX', 'defaultGraphAxisResY',

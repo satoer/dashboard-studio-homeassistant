@@ -22,6 +22,8 @@ const MASTER_SETTINGS = {
 
     /** Editor inspector complexity: `basic` | `advanced` (persisted under environment). */
     editorMode: 'advanced',
+    /** Whether descriptive flyout tooltips show on setting hover in the editor. */
+    editorTooltips: true,
     /**
      * Edit-mode view scale in percent (20-200). Saved with the dashboard.
      * Not a live setting: changing it does not mark the file unsaved, and it cannot be bound.
@@ -770,6 +772,8 @@ const MASTER_SETTINGS = {
     defaultGraphTimeFormat: "Datapoints",
     defaultGraphTime24h: true,
     defaultGraphDateFormat: "DD-MM-YYYY",
+    defaultGraphConvertToLocalTime: true,
+    defaultGraphTimeOffset: 0,
     defaultGraphTimezoneConvert: false,
     defaultGraphShowAxisY: false,
     defaultGraphAxisResX: 5,
@@ -1011,12 +1015,16 @@ const MASTER_SCHEMA = [
         id: 'm_editor', title: 'Editor Environment', icon: 'ph-gear', editorTier: 'both',
         fields: [
             {
-                key: 'editorMode', type: 'select', label: 'Editor Mode', cols: 12, editorTier: 'both',
+                key: 'editorMode', type: 'select', label: 'Editor Mode', cols: 6, editorTier: 'both',
                 options: [
                     { value: 'basic', text: 'Basic' },
                     { value: 'advanced', text: 'Advanced' }
                 ],
                 hint: 'Basic hides advanced inspector sections and styling controls. Advanced shows the full editor.'
+            },
+            {
+                key: 'editorTooltips', type: 'checkbox', label: 'Editor Setting Tooltips', cols: 6, default: true, editorTier: 'both',
+                hint: 'Shows descriptive flyout tooltips and help links when hovering above settings labels in the editor.'
             },
             {
                 key: 'quickToolbarVisibility', type: 'select', label: 'Quick Toolbar',

@@ -796,84 +796,31 @@ class GraphWidget extends BaseWidget {
             return !hover;
         };
         const intervalDeps = pointValuesDeps.concat(isMaster ? ['defaultGraphPointValuesHoverOnly'] : ['pointValuesHoverOnly', 'defaultGraphPointValuesHoverOnly']);
-        const distKey = isMaster ? 'defaultGraphPointValuesDistribution' : 'pointValuesDistribution';
-        const distDeps = intervalDeps.concat(isMaster ? ['defaultGraphPointValuesDistribution'] : ['pointValuesDistribution', 'defaultGraphPointValuesDistribution']);
-        const distField = {
-            key: distKey,
-            type: 'select',
-            label: 'Point Value Distribution',
-            options: [
-                { value: 'timeHighLow', text: 'Time (Peaks & Troughs)' },
-                { value: 'timeUniform', text: 'Time (Uniform)' },
-                { value: 'pointStep', text: 'Point Step (Every N Points)' }
-            ],
-            cols: 12,
-            ...dk('defaultGraphPointValuesDistribution')
-        };
-        GraphWidget.attachGraphFieldVisibleWhen(distField, intervalVisible, intervalDeps);
-        fields.push(distField);
-
-        const isPointStepMode = function (values) {
-            const dist = values[distKey] !== undefined
-                ? values[distKey]
-                : (typeof MASTER_SETTINGS !== 'undefined' && MASTER_SETTINGS.defaultGraphPointValuesDistribution
-                    ? MASTER_SETTINGS.defaultGraphPointValuesDistribution
-                    : 'timeHighLow');
-            return dist === 'pointStep';
-        };
-
         const autoIntervalKey = isMaster ? 'defaultGraphAutoPointValuesInterval' : 'autoPointValuesInterval';
-        const isAutoActive = function (values) {
-            const a = values[autoIntervalKey] !== undefined
-                ? values[autoIntervalKey]
-                : (typeof MASTER_SETTINGS !== 'undefined' && MASTER_SETTINGS.defaultGraphAutoPointValuesInterval === true);
-            return !!a;
-        };
-        const autoDeps = distDeps.concat(isMaster ? [autoIntervalKey] : [autoIntervalKey, 'defaultGraphAutoPointValuesInterval']);
-
         const autoIntervalField = {
             key: autoIntervalKey,
             type: 'checkbox',
             label: 'Auto Interval',
-            cols: 6,
+            cols: 12,
             ...dk('defaultGraphAutoPointValuesInterval')
         };
         GraphWidget.attachGraphFieldVisibleWhen(autoIntervalField, intervalVisible, intervalDeps);
         fields.push(autoIntervalField);
-
-        const timeWidthKey = isMaster ? 'defaultGraphPointValuesTimeWidth' : 'pointValuesTimeWidth';
-        const timeWidthField = {
-            key: timeWidthKey,
+        const manualIntervalField = {
+            key: isMaster ? 'defaultGraphPointValuesInterval' : 'pointValuesInterval',
             type: 'number',
-            min: 1,
-            step: 1,
-            label: 'Time Section Width (px)',
-            cols: 6,
-            disableWhen: isAutoActive,
-            ...dk('defaultGraphPointValuesTimeWidth')
+            min: 0.001,
+            step: 0.001,
+            label: 'Interval',
+            cols: 12,
+            ...dk('defaultGraphPointValuesInterval')
         };
-        GraphWidget.attachGraphFieldVisibleWhen(timeWidthField, function (values) {
+        GraphWidget.attachGraphFieldVisibleWhen(manualIntervalField, function (values) {
             if (!intervalVisible(values)) return false;
-            return !isPointStepMode(values);
-        }, autoDeps);
-        fields.push(timeWidthField);
-
-        const stepKey = isMaster ? 'defaultGraphPointValuesStep' : 'pointValuesStep';
-        const pointStepField = {
-            key: stepKey,
-            type: 'number',
-            min: 1,
-            step: 1,
-            label: 'Point Step',
-            cols: 6,
-            disableWhen: isAutoActive,
-            ...dk('defaultGraphPointValuesStep')
-        };
-        GraphWidget.attachGraphFieldVisibleWhen(pointStepField, function (values) {
-            if (!intervalVisible(values)) return false;
-            return isPointStepMode(values);
-        }, autoDeps);
-        fields.push(pointStepField);
+            const auto = values[autoIntervalKey] !== undefined ? values[autoIntervalKey] : (typeof MASTER_SETTINGS !== 'undefined' && MASTER_SETTINGS.defaultGraphAutoPointValuesInterval === true);
+            return !auto;
+        }, intervalDeps.concat(isMaster ? [autoIntervalKey] : [autoIntervalKey, 'defaultGraphAutoPointValuesInterval']));
+        fields.push(manualIntervalField);
         return fields;
     }
 
@@ -883,6 +830,8 @@ class GraphWidget extends BaseWidget {
         const timeKey = isMaster ? 'defaultGraphTimeFormat' : 'timeFormat';
         const dateKey = isMaster ? 'defaultGraphDateFormat' : 'dateFormat';
         const time24Key = isMaster ? 'defaultGraphTime24h' : 'time24h';
+        const convertLocalKey = isMaster ? 'defaultGraphConvertToLocalTime' : 'convertToLocalTime';
+        const timeOffsetKey = isMaster ? 'defaultGraphTimeOffset' : 'timeOffset';
         const tzKey = isMaster ? 'defaultGraphTimezoneConvert' : 'timezoneConvert';
         const resXKey = isMaster ? 'defaultGraphAxisResX' : 'axisResX';
         const offYKey = isMaster ? 'defaultGraphAxisOffY' : 'axisOffY';
@@ -956,8 +905,15 @@ class GraphWidget extends BaseWidget {
             return GraphWidget.graphTimeFormatShowsTime(GraphWidget.resolvedGraphTimeFormat(values, isGlobal));
         }, timeFmtDeps, 12);
         pushField(catFields, {
-            key: tzKey, type: 'checkbox', label: 'Convert UTC',
-            ...dk('defaultGraphTimezoneConvert')
+            key: convertLocalKey, type: 'checkbox', label: 'Convert to Local Time',
+            ...dk('defaultGraphConvertToLocalTime')
+        }, function (values, isGlobal) {
+            if (!catVisible(values)) return false;
+            return GraphWidget.graphTimeFormatUsesTimestamp(GraphWidget.resolvedGraphTimeFormat(values, isGlobal));
+        }, timeFmtDeps, 12);
+        pushField(catFields, {
+            key: timeOffsetKey, type: 'number', label: 'Manual Time Offset (Minutes)',
+            ...dk('defaultGraphTimeOffset')
         }, function (values, isGlobal) {
             if (!catVisible(values)) return false;
             return GraphWidget.graphTimeFormatUsesTimestamp(GraphWidget.resolvedGraphTimeFormat(values, isGlobal));
@@ -1420,6 +1376,8 @@ class GraphWidget extends BaseWidget {
             defaultGraphTimeFormat: "Datapoints",
             defaultGraphTime24h: true,
             defaultGraphDateFormat: "DD-MM-YYYY",
+            defaultGraphConvertToLocalTime: true,
+            defaultGraphTimeOffset: 0,
             defaultGraphTimezoneConvert: false,
             defaultGraphShowAxisY: false,
             defaultGraphAxisResX: 5,
@@ -1437,9 +1395,7 @@ class GraphWidget extends BaseWidget {
             defaultGraphAxisXFontBold: false,
             defaultGraphShowPointValues: false,
             defaultGraphPointValuesHoverOnly: false,
-            defaultGraphPointValuesDistribution: 'timeHighLow',
-            defaultGraphPointValuesTimeWidth: 48,
-            defaultGraphPointValuesStep: 1,
+            defaultGraphPointValuesInterval: 1,
             defaultGraphPointValuesDecimals: 0,
             defaultGraphPointValuesAbbreviate: true,
             defaultGraphPointValFont: "'Inter', sans-serif",
@@ -2158,17 +2114,13 @@ class GraphWidget extends BaseWidget {
         if (!this._seriesState) this._seriesState = {};
         if (!this._sessionVisible) this._sessionVisible = {};
         if (this._timelineTimer === undefined) this._timelineTimer = null;
-        if (this._timelineRaf === undefined) this._timelineRaf = null;
-        if (this._timelineMode === undefined) this._timelineMode = null;
-        if (this._timelineTimerMs === undefined) this._timelineTimerMs = null;
-        if (this._lastTimelineTick === undefined) this._lastTimelineTick = 0;
-        if (this._boundTimelineTick === undefined) this._boundTimelineTick = null;
-        if (this._boundTimelineTimer === undefined) this._boundTimelineTimer = null;
         if (this._plotView === undefined) this._plotView = null;
         if (!this.renderedPoints) this.renderedPoints = [];
         if (!this._activeAnimations) this._activeAnimations = {};
         if (!this._lastPlacedPointValues) this._lastPlacedPointValues = {};
         if (!this._pendingAnimationUpdates) this._pendingAnimationUpdates = {};
+        if (this._lastObservedPlotW === undefined) this._lastObservedPlotW = null;
+        if (this._lastObservedPlotH === undefined) this._lastObservedPlotH = null;
         if (this._animRaf === undefined) this._animRaf = null;
         if (this._cachedPlotLayout === undefined) this._cachedPlotLayout = null;
         if (!this._boundAnimTick) this._boundAnimTick = this._tickGraphAnimation.bind(this);
@@ -2366,6 +2318,12 @@ class GraphWidget extends BaseWidget {
             timeFormat: c.timeFormat || c.defaultGraphTimeFormat || "Datapoints",
             time24h: c.time24h !== undefined && c.time24h !== null ? c.time24h : (c.defaultGraphTime24h !== undefined ? c.defaultGraphTime24h : true),
             dateFormat: c.dateFormat || c.defaultGraphDateFormat || "DD-MM-YYYY",
+            convertToLocalTime: c.convertToLocalTime !== undefined && c.convertToLocalTime !== null
+                ? c.convertToLocalTime
+                : (c.defaultGraphConvertToLocalTime !== undefined && c.defaultGraphConvertToLocalTime !== null ? c.defaultGraphConvertToLocalTime : true),
+            timeOffset: BaseWidget.clampNumber(c.timeOffset !== undefined && c.timeOffset !== null
+                ? c.timeOffset
+                : (c.defaultGraphTimeOffset !== undefined && c.defaultGraphTimeOffset !== null ? c.defaultGraphTimeOffset : 0), -1440, 1440),
             timezoneConvert: c.timezoneConvert !== undefined && c.timezoneConvert !== null ? c.timezoneConvert : (c.defaultGraphTimezoneConvert || false),
             showAxisY: c.showAxisY !== undefined && c.showAxisY !== null ? c.showAxisY : c.defaultGraphShowAxisY,
             axisResX: safeAxisResX,
@@ -2484,12 +2442,10 @@ class GraphWidget extends BaseWidget {
 
             showPointValues: c.showPointValues !== undefined && c.showPointValues !== null ? c.showPointValues : (c.defaultGraphShowPointValues !== undefined ? c.defaultGraphShowPointValues : false),
             pointValuesHoverOnly: hoverOnly,
-            pointValuesDistribution: c.pointValuesDistribution || (c.defaultGraphPointValuesDistribution || 'timeHighLow'),
             autoPointValuesInterval: c.autoPointValuesInterval !== undefined && c.autoPointValuesInterval !== null
                 ? (c.autoPointValuesInterval === true)
                 : (c.defaultGraphAutoPointValuesInterval === true),
-            pointValuesTimeWidth: Math.max(1, Math.round(BaseWidget.toFiniteNumber(c.pointValuesTimeWidth !== undefined && c.pointValuesTimeWidth !== null ? c.pointValuesTimeWidth : (c.defaultGraphPointValuesTimeWidth !== undefined ? c.defaultGraphPointValuesTimeWidth : 48), 48))),
-            pointValuesStep: Math.max(1, Math.round(BaseWidget.toFiniteNumber(c.pointValuesStep !== undefined && c.pointValuesStep !== null ? c.pointValuesStep : (c.defaultGraphPointValuesStep !== undefined ? c.defaultGraphPointValuesStep : 1), 1))),
+            pointValuesInterval: hoverOnly ? 1 : Math.max(0.001, BaseWidget.toFiniteNumber(c.pointValuesInterval !== undefined && c.pointValuesInterval !== null ? c.pointValuesInterval : (c.defaultGraphPointValuesInterval !== undefined ? c.defaultGraphPointValuesInterval : 1), 1)),
             pointValuesDecimals: Math.max(0, Math.floor(BaseWidget.toFiniteNumber(c.pointValuesDecimals !== undefined && c.pointValuesDecimals !== null ? c.pointValuesDecimals : (c.defaultGraphPointValuesDecimals !== undefined ? c.defaultGraphPointValuesDecimals : 0), 0))),
             pointValuesAbbreviate: c.pointValuesAbbreviate !== undefined && c.pointValuesAbbreviate !== null ? c.pointValuesAbbreviate : (c.defaultGraphPointValuesAbbreviate !== undefined ? c.defaultGraphPointValuesAbbreviate : true),
 
@@ -3060,10 +3016,7 @@ class GraphWidget extends BaseWidget {
             const w = wrap.clientWidth;
             const h = wrap.clientHeight;
             if (w >= 10 && h >= 10) {
-                if (!this._measuredPlotBox) this._measuredPlotBox = { w: 0, h: 0 };
-                this._measuredPlotBox.w = w;
-                this._measuredPlotBox.h = h;
-                return this._measuredPlotBox;
+                return { w: w, h: h };
             }
         }
         const c = this.config || {};
@@ -3114,6 +3067,12 @@ class GraphWidget extends BaseWidget {
         if (!wrap) return;
         const self = this;
         this._plotResizeObserver = new ResizeObserver(function () {
+            const w = Math.round(wrap.clientWidth);
+            const h = Math.round(wrap.clientHeight);
+            if (w === 0 && h === 0) return;
+            if (self._lastObservedPlotW === w && self._lastObservedPlotH === h) return;
+            self._lastObservedPlotW = w;
+            self._lastObservedPlotH = h;
             self._schedulePlotResizeRender();
         });
         this._plotResizeObserver.observe(wrap);
@@ -3177,6 +3136,8 @@ class GraphWidget extends BaseWidget {
         }
         this._animRaf = null;
         this._activeAnimations = {};
+        this._lastObservedPlotW = null;
+        this._lastObservedPlotH = null;
     }
 
     onRemove() {
@@ -3188,10 +3149,10 @@ class GraphWidget extends BaseWidget {
         }
         this._animRaf = null;
         this._activeAnimations = {};
+        this._lastObservedPlotW = null;
+        this._lastObservedPlotH = null;
         this._lastPlacedPointValues = null;
         this._boundAnimTick = null;
-        this._boundTimelineTick = null;
-        this._boundTimelineTimer = null;
         this._scaleState = null;
         this._cachedPlotLayout = null;
         if (this._legendPointerBinding && typeof this._legendPointerBinding.destroy === 'function') {
@@ -3483,9 +3444,6 @@ class GraphWidget extends BaseWidget {
     }
 
     _formatTimeScaleTick(ms, c, sampleTs) {
-        if (!c.timezoneConvert && typeof sampleTs === 'string' && sampleTs.charAt(sampleTs.length - 1) === 'Z') {
-            return this._formatTimestamp(new Date(ms).toISOString(), c);
-        }
         return this._formatTimestamp(ms, c);
     }
 
@@ -3585,76 +3543,139 @@ class GraphWidget extends BaseWidget {
         ];
     }
 
-    _findNextNeatTimestamp(t, unit, step) {
+    _findNextNeatTimestamp(t, unit, step, useLocal) {
         const d = new Date(t);
+        const local = useLocal !== false;
         if (unit === 'second') {
-            d.setMilliseconds(0);
-            const s = d.getSeconds();
-            const rem = s % step;
-            if (rem !== 0) d.setSeconds(s + (step - rem));
-            if (d.getTime() < t) d.setSeconds(d.getSeconds() + step);
+            if (local) {
+                d.setMilliseconds(0);
+                const s = d.getSeconds();
+                const rem = s % step;
+                if (rem !== 0) d.setSeconds(s + (step - rem));
+                if (d.getTime() < t) d.setSeconds(d.getSeconds() + step);
+            } else {
+                d.setUTCMilliseconds(0);
+                const s = d.getUTCSeconds();
+                const rem = s % step;
+                if (rem !== 0) d.setUTCSeconds(s + (step - rem));
+                if (d.getTime() < t) d.setUTCSeconds(d.getUTCSeconds() + step);
+            }
             return d.getTime();
         }
         if (unit === 'minute') {
-            d.setSeconds(0, 0);
-            const m = d.getMinutes();
-            const rem = m % step;
-            if (rem !== 0) d.setMinutes(m + (step - rem));
-            if (d.getTime() < t) d.setMinutes(d.getMinutes() + step);
+            if (local) {
+                d.setSeconds(0, 0);
+                const m = d.getMinutes();
+                const rem = m % step;
+                if (rem !== 0) d.setMinutes(m + (step - rem));
+                if (d.getTime() < t) d.setMinutes(d.getMinutes() + step);
+            } else {
+                d.setUTCSeconds(0, 0);
+                const m = d.getUTCMinutes();
+                const rem = m % step;
+                if (rem !== 0) d.setUTCMinutes(m + (step - rem));
+                if (d.getTime() < t) d.setUTCMinutes(d.getUTCMinutes() + step);
+            }
             return d.getTime();
         }
         if (unit === 'hour') {
-            d.setMinutes(0, 0, 0);
-            const h = d.getHours();
-            const rem = h % step;
-            if (rem !== 0) d.setHours(h + (step - rem));
-            if (d.getTime() < t) d.setHours(d.getHours() + step);
+            if (local) {
+                d.setMinutes(0, 0, 0);
+                const h = d.getHours();
+                const rem = h % step;
+                if (rem !== 0) d.setHours(h + (step - rem));
+                if (d.getTime() < t) d.setHours(d.getHours() + step);
+            } else {
+                d.setUTCMinutes(0, 0, 0);
+                const h = d.getUTCHours();
+                const rem = h % step;
+                if (rem !== 0) d.setUTCHours(h + (step - rem));
+                if (d.getTime() < t) d.setUTCHours(d.getUTCHours() + step);
+            }
             return d.getTime();
         }
         if (unit === 'day') {
-            d.setHours(0, 0, 0, 0);
-            if (step === 1) {
-                if (d.getTime() < t) d.setDate(d.getDate() + 1);
-            } else if (step === 7) {
-                const dayOfWeek = (d.getDay() + 6) % 7;
-                if (dayOfWeek !== 0) d.setDate(d.getDate() + (7 - dayOfWeek));
-                if (d.getTime() < t) d.setDate(d.getDate() + 7);
+            if (local) {
+                d.setHours(0, 0, 0, 0);
+                if (step === 1) {
+                    if (d.getTime() < t) d.setDate(d.getDate() + 1);
+                } else if (step === 7) {
+                    const dayOfWeek = (d.getDay() + 6) % 7;
+                    if (dayOfWeek !== 0) d.setDate(d.getDate() + (7 - dayOfWeek));
+                    if (d.getTime() < t) d.setDate(d.getDate() + 7);
+                } else {
+                    const day = d.getDate();
+                    const rem = (day - 1) % step;
+                    if (rem !== 0) d.setDate(day + (step - rem));
+                    if (d.getTime() < t) d.setDate(d.getDate() + step);
+                }
             } else {
-                const day = d.getDate();
-                const rem = (day - 1) % step;
-                if (rem !== 0) d.setDate(day + (step - rem));
-                if (d.getTime() < t) d.setDate(d.getDate() + step);
+                d.setUTCHours(0, 0, 0, 0);
+                if (step === 1) {
+                    if (d.getTime() < t) d.setUTCDate(d.getUTCDate() + 1);
+                } else if (step === 7) {
+                    const dayOfWeek = (d.getUTCDay() + 6) % 7;
+                    if (dayOfWeek !== 0) d.setUTCDate(d.getUTCDate() + (7 - dayOfWeek));
+                    if (d.getTime() < t) d.setUTCDate(d.getUTCDate() + 7);
+                } else {
+                    const day = d.getUTCDate();
+                    const rem = (day - 1) % step;
+                    if (rem !== 0) d.setUTCDate(day + (step - rem));
+                    if (d.getTime() < t) d.setUTCDate(d.getUTCDate() + step);
+                }
             }
             return d.getTime();
         }
         if (unit === 'month') {
-            d.setHours(0, 0, 0, 0);
-            d.setDate(1);
-            const m = d.getMonth();
-            const rem = m % step;
-            if (rem !== 0) d.setMonth(m + (step - rem));
-            if (d.getTime() < t) d.setMonth(d.getMonth() + step);
+            if (local) {
+                d.setHours(0, 0, 0, 0);
+                d.setDate(1);
+                const m = d.getMonth();
+                const rem = m % step;
+                if (rem !== 0) d.setMonth(m + (step - rem));
+                if (d.getTime() < t) d.setMonth(d.getMonth() + step);
+            } else {
+                d.setUTCHours(0, 0, 0, 0);
+                d.setUTCDate(1);
+                const m = d.getUTCMonth();
+                const rem = m % step;
+                if (rem !== 0) d.setUTCMonth(m + (step - rem));
+                if (d.getTime() < t) d.setUTCMonth(d.getUTCMonth() + step);
+            }
             return d.getTime();
         }
-        d.setHours(0, 0, 0, 0);
-        d.setMonth(0, 1);
-        if (d.getTime() < t) d.setFullYear(d.getFullYear() + step);
+        if (local) {
+            d.setHours(0, 0, 0, 0);
+            d.setMonth(0, 1);
+            if (d.getTime() < t) d.setFullYear(d.getFullYear() + step);
+        } else {
+            d.setUTCHours(0, 0, 0, 0);
+            d.setUTCMonth(0, 1);
+            if (d.getTime() < t) d.setUTCFullYear(d.getUTCFullYear() + step);
+        }
         return d.getTime();
     }
 
-    _advanceNeatTimestamp(date, unit, step) {
+    _advanceNeatTimestamp(date, unit, step, useLocal) {
+        const local = useLocal !== false;
         if (unit === 'second') {
-            date.setSeconds(date.getSeconds() + step);
+            if (local) date.setSeconds(date.getSeconds() + step);
+            else date.setUTCSeconds(date.getUTCSeconds() + step);
         } else if (unit === 'minute') {
-            date.setMinutes(date.getMinutes() + step);
+            if (local) date.setMinutes(date.getMinutes() + step);
+            else date.setUTCMinutes(date.getUTCMinutes() + step);
         } else if (unit === 'hour') {
-            date.setHours(date.getHours() + step);
+            if (local) date.setHours(date.getHours() + step);
+            else date.setUTCHours(date.getUTCHours() + step);
         } else if (unit === 'day') {
-            date.setDate(date.getDate() + step);
+            if (local) date.setDate(date.getDate() + step);
+            else date.setUTCDate(date.getUTCDate() + step);
         } else if (unit === 'month') {
-            date.setMonth(date.getMonth() + step);
+            if (local) date.setMonth(date.getMonth() + step);
+            else date.setUTCMonth(date.getUTCMonth() + step);
         } else if (unit === 'year') {
-            date.setFullYear(date.getFullYear() + step);
+            if (local) date.setFullYear(date.getFullYear() + step);
+            else date.setUTCFullYear(date.getUTCFullYear() + step);
         }
     }
 
@@ -3702,24 +3723,31 @@ class GraphWidget extends BaseWidget {
             }
         }
 
-        let curMs = this._findNextNeatTimestamp(t0, chosenStep.unit, chosenStep.step);
-        const curDate = new Date(curMs);
+        const offsetMin = (c && c.timeOffset !== undefined && c.timeOffset !== null) ? Number(c.timeOffset) : 0;
+        const offsetMs = isFinite(offsetMin) ? offsetMin * 60000 : 0;
+        const useLocal = !c || c.convertToLocalTime !== false;
+        const t0Effective = t0 + offsetMs;
+        const t1Effective = t1 + offsetMs;
+
+        let curEffectiveMs = this._findNextNeatTimestamp(t0Effective, chosenStep.unit, chosenStep.step, useLocal);
+        const curDate = new Date(curEffectiveMs);
         const ticks = [];
         let prevText = null;
 
-        while (curMs <= t1 + 1e-4) {
-            const frac = Math.max(0, Math.min(1, (curMs - t0) / span));
-            const text = this._formatTimeScaleTick(curMs, c, domain.sample);
+        while (curEffectiveMs <= t1Effective + 1e-4) {
+            const curRealMs = curEffectiveMs - offsetMs;
+            const frac = Math.max(0, Math.min(1, (curRealMs - t0) / span));
+            const text = this._formatTimeScaleTick(curRealMs, c, domain.sample);
             if (text !== '' && text !== prevText) {
                 ticks.push({
                     frac: frac,
-                    ms: curMs,
+                    ms: curRealMs,
                     text: text
                 });
                 prevText = text;
             }
-            this._advanceNeatTimestamp(curDate, chosenStep.unit, chosenStep.step);
-            curMs = curDate.getTime();
+            this._advanceNeatTimestamp(curDate, chosenStep.unit, chosenStep.step, useLocal);
+            curEffectiveMs = curDate.getTime();
         }
 
         if (ticks.length === 0) {
@@ -3912,23 +3940,19 @@ class GraphWidget extends BaseWidget {
         const plotSpan = horizontal ? geom.drawH : geom.drawW;
         if (plotSpan <= 0) return;
 
-        const distMode = c.pointValuesDistribution || 'timeHighLow';
-        const isPointStep = distMode === 'pointStep';
-        const isTimeUniform = distMode === 'timeUniform';
-
         let gridDivisions;
-        let timeTargetStep = 48;
+        let userInterval = 1;
         if (c.autoPointValuesInterval === true) {
-            timeTargetStep = 48;
             gridDivisions = Math.max(4, Math.min(24, Math.floor(plotSpan / 48)));
         } else {
-            timeTargetStep = Math.max(1, Math.round(Number(c.pointValuesTimeWidth) || 48));
-            gridDivisions = Math.max(2, Math.min(2000, Math.floor(plotSpan / timeTargetStep)));
+            userInterval = Math.max(0.001, Number(c.pointValuesInterval) || 1);
+            const targetStep = Math.max(0.05, 48 * userInterval);
+            gridDivisions = Math.max(2, Math.min(2000, Math.floor(plotSpan / targetStep)));
         }
         if (gridDivisions < 1) gridDivisions = 1;
 
         const fs = Number(c.type === 'bar' ? c.pointValBarFs : c.pointValFs) || 10;
-        const spacingFactor = (c.autoPointValuesInterval !== true && timeTargetStep < 48) ? Math.max(0, timeTargetStep / 48) : 1;
+        const spacingFactor = (c.autoPointValuesInterval !== true && userInterval < 1) ? Math.max(0, userInterval) : 1;
         const minSpacing = Math.max(0, Math.max(26, fs * 2.5) * spacingFactor);
         const minCrossSpacing = Math.max(0, Math.max(12, fs * 1.2) * spacingFactor);
         const placedLabels = [];
@@ -3944,12 +3968,9 @@ class GraphWidget extends BaseWidget {
             for (let i = 0; i < placedLabels.length; i++) {
                 const lbl = placedLabels[i];
                 if (lbl.seriesIdx === seriesIdx) {
-                    if (!isPointStep && Math.abs(candPos - lbl.pos) < minSpacing) return false;
-                    if (isPointStep && Math.abs(candPos - lbl.pos) < 0.5) return false;
+                    if (Math.abs(candPos - lbl.pos) < minSpacing) return false;
                 } else {
-                    const posDist = Math.abs(candPos - lbl.pos);
-                    const crossDist = Math.abs(candCross - lbl.cross);
-                    if (posDist < (isPointStep ? 6 : minSpacing) && crossDist < minCrossSpacing) {
+                    if (Math.abs(candPos - lbl.pos) < minSpacing && Math.abs(candCross - lbl.cross) < minCrossSpacing) {
                         return false;
                     }
                 }
@@ -4018,31 +4039,6 @@ class GraphWidget extends BaseWidget {
                 return getCoord(a) - getCoord(b);
             });
 
-            if (isPointStep) {
-                var step;
-                if (c.autoPointValuesInterval === true) {
-                    var maxFit = Math.max(1, Math.floor(plotSpan / 48));
-                    step = Math.max(1, Math.ceil(sortedPts.length / maxFit));
-                } else {
-                    step = Math.max(1, Math.round(Number(c.pointValuesStep) || 1));
-                }
-                for (let i = 0; i < sortedPts.length; i++) {
-                    const p = sortedPts[i];
-                    const nodeSeq = (p.seq != null && isFinite(p.seq))
-                        ? p.seq
-                        : (p.pt && p.pt.seq != null && isFinite(p.pt.seq)
-                            ? p.pt.seq
-                            : (p.index != null && isFinite(p.index) ? p.index : i));
-                    if (Math.abs(nodeSeq) % step === 0) {
-                        const pointKey = 'seq_' + nodeSeq;
-                        if (!labeledKeys[pointKey]) {
-                            tryPlaceLabel(p, spec, d, pointKey, labeledKeys);
-                        }
-                    }
-                }
-                continue;
-            }
-
             const seriesStep = isDuration
                 ? timeStep
                 : Math.max(0.001, Math.max(Number(c.maxPoints) || 20, sortedPts.length) / gridDivisions);
@@ -4073,26 +4069,22 @@ class GraphWidget extends BaseWidget {
                 let bestPoint = sortedPts[cellStartIdx];
 
                 if (cellEndIdx - cellStartIdx > 1) {
-                    let foundPeakOrTrough = false;
-                    if (!isTimeUniform) {
-                        let maxExtremum = -1;
-                        for (let i = cellStartIdx; i < cellEndIdx; i++) {
-                            const p = sortedPts[i];
-                            const prev = i > 0 ? sortedPts[i - 1].v : p.v;
-                            const next = i < sortedPts.length - 1 ? sortedPts[i + 1].v : p.v;
-                            const isPeak = p.v >= prev && p.v >= next && (p.v > prev || p.v > next);
-                            const isTrough = p.v <= prev && p.v <= next && (p.v < prev || p.v < next);
-                            if (isPeak || isTrough) {
-                                const score = Math.max(Math.abs(p.v - prev), Math.abs(p.v - next));
-                                if (score > maxExtremum) {
-                                    maxExtremum = score;
-                                    bestPoint = p;
-                                    foundPeakOrTrough = true;
-                                }
+                    let maxExtremum = -1;
+                    for (let i = cellStartIdx; i < cellEndIdx; i++) {
+                        const p = sortedPts[i];
+                        const prev = i > 0 ? sortedPts[i - 1].v : p.v;
+                        const next = i < sortedPts.length - 1 ? sortedPts[i + 1].v : p.v;
+                        const isPeak = p.v >= prev && p.v >= next && (p.v > prev || p.v > next);
+                        const isTrough = p.v <= prev && p.v <= next && (p.v < prev || p.v < next);
+                        if (isPeak || isTrough) {
+                            const score = Math.max(Math.abs(p.v - prev), Math.abs(p.v - next));
+                            if (score > maxExtremum) {
+                                maxExtremum = score;
+                                bestPoint = p;
                             }
                         }
                     }
-                    if (!foundPeakOrTrough) {
+                    if (maxExtremum < 0) {
                         let bestCenterDist = Infinity;
                         for (let i = cellStartIdx; i < cellEndIdx; i++) {
                             const dist = Math.abs(getCoord(sortedPts[i]) - cellCenter);
@@ -4282,23 +4274,25 @@ class GraphWidget extends BaseWidget {
     }
 
     _formatTimestamp(ts, c) {
-        if (!ts) return "";
-        let safeTs = ts;
-        if (!c.timezoneConvert && typeof ts === 'string' && ts.endsWith('Z')) {
-            safeTs = ts.slice(0, -1);
-        }
-        const date = new Date(safeTs);
+        if (ts === null || ts === undefined || ts === '') return "";
+        const rawMs = (typeof ts === 'number') ? ts : new Date(ts).getTime();
+        if (isNaN(rawMs)) return "";
+
+        const offsetMin = (c && c.timeOffset !== undefined && c.timeOffset !== null) ? Number(c.timeOffset) : 0;
+        const offsetMs = isFinite(offsetMin) ? offsetMin * 60000 : 0;
+        const date = new Date(rawMs + offsetMs);
         if (isNaN(date.getTime())) return "";
 
         const showsDate = GraphWidget.graphTimeFormatShowsDate(c.timeFormat);
         const showsTime = GraphWidget.graphTimeFormatShowsTime(c.timeFormat);
         const pad = (n) => n < 10 ? '0' + n : n;
+        const useLocal = !c || c.convertToLocalTime !== false;
 
         let timeStr = "";
         if (showsTime) {
-            let hours = date.getHours();
-            const minutes = date.getMinutes();
-            const seconds = date.getSeconds();
+            let hours = useLocal ? date.getHours() : date.getUTCHours();
+            const minutes = useLocal ? date.getMinutes() : date.getUTCMinutes();
+            const seconds = useLocal ? date.getSeconds() : date.getUTCSeconds();
             const rawHours = hours;
 
             if (!c.time24h) {
@@ -4322,9 +4316,9 @@ class GraphWidget extends BaseWidget {
 
         let dateStr = "";
         if (showsDate && c.dateFormat && c.dateFormat !== 'none') {
-            const day = pad(date.getDate());
-            const month = pad(date.getMonth() + 1);
-            const year = date.getFullYear();
+            const day = pad(useLocal ? date.getDate() : date.getUTCDate());
+            const month = pad((useLocal ? date.getMonth() : date.getUTCMonth()) + 1);
+            const year = useLocal ? date.getFullYear() : date.getUTCFullYear();
             switch (c.dateFormat) {
                 case 'DD-MM': dateStr = `${day}-${month}`; break;
                 case 'DD-MM-YYYY': dateStr = `${day}-${month}-${year}`; break;
@@ -5355,18 +5349,11 @@ class GraphWidget extends BaseWidget {
     }
 
     _clearTimelineTimer() {
-        if (this._timelineRaf != null && typeof cancelAnimationFrame === 'function') {
-            cancelAnimationFrame(this._timelineRaf);
-            this._timelineRaf = null;
-        }
-        if (this._timelineTimer != null) {
+        if (this._timelineTimer) {
             clearInterval(this._timelineTimer);
-            clearTimeout(this._timelineTimer);
             this._timelineTimer = null;
         }
-        this._timelineMode = null;
         this._timelineTimerMs = null;
-        this._lastTimelineTick = 0;
     }
 
     _graphIsOnPage() {
@@ -5388,7 +5375,7 @@ class GraphWidget extends BaseWidget {
 
     _syncTimelineTimer(c) {
         const isRealTime = c && c.bufferMode === 'duration' && c.timelineAdvance === 'time';
-        const onPage = this._graphIsOnPage() && !this._pausedInBackground;
+        const onPage = this._graphIsOnPage();
         if (!isRealTime || !onPage) {
             this._clearTimelineTimer();
             return;
@@ -5397,85 +5384,21 @@ class GraphWidget extends BaseWidget {
         const period = GraphWidget.durationMsFrom(c.durationPreset, c.durationCustomValue, c.durationCustomUnit);
         const plotW = Math.max(100, (this.canvas && this.canvas.clientWidth) || 400);
         const idealMs = Math.round((0.5 * period) / plotW);
+        const targetMs = Math.max(250, Math.min(2000, idealMs));
 
-        const isSmoothRafMode = idealMs <= 100;
-        const targetCadenceMs = isSmoothRafMode
-            ? Math.max(30, idealMs)
-            : Math.max(100, Math.min(2000, idealMs));
-
-        const targetMode = isSmoothRafMode ? 'raf' : 'timer';
-        if (this._timelineMode === targetMode && this._timelineTimerMs === targetCadenceMs) {
-            return;
-        }
-
+        if (this._timelineTimer && this._timelineTimerMs === targetMs) return;
         this._clearTimelineTimer();
-        this._timelineMode = targetMode;
-        this._timelineTimerMs = targetCadenceMs;
-        this._lastTimelineTick = 0;
 
-        if (isSmoothRafMode) {
-            if (!this._boundTimelineTick) {
-                this._boundTimelineTick = this._tickTimeline.bind(this);
-            }
-            if (typeof requestAnimationFrame === 'function') {
-                this._timelineRaf = requestAnimationFrame(this._boundTimelineTick);
-            }
-        } else {
-            if (!this._boundTimelineTimer) {
-                this._boundTimelineTimer = this._onTimelineTimerFired.bind(this);
-            }
-            this._timelineTimer = setInterval(this._boundTimelineTimer, targetCadenceMs);
-        }
-    }
-
-    _tickTimeline() {
-        this._timelineRaf = null;
-        if (!this._graphIsOnPage() || this._pausedInBackground) {
-            this._clearTimelineTimer();
-            return;
-        }
-        if (typeof document !== 'undefined' && document.hidden) {
-            if (typeof requestAnimationFrame === 'function') {
-                this._timelineRaf = requestAnimationFrame(this._boundTimelineTick);
-            }
-            return;
-        }
-
-        const now = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
-        const cadence = this._timelineTimerMs || 33;
-        const elapsed = now - (this._lastTimelineTick || 0);
-
-        if (elapsed >= cadence) {
-            this._lastTimelineTick = now;
-            if (!this._animRaf) {
-                this._renderPlotOnly();
-            }
-        }
-
-        if (typeof requestAnimationFrame === 'function') {
-            this._timelineRaf = requestAnimationFrame(this._boundTimelineTick);
-        }
-    }
-
-    _onTimelineTimerFired() {
-        if (!this._graphIsOnPage() || this._pausedInBackground) {
-            this._clearTimelineTimer();
-            return;
-        }
-        if (typeof document !== 'undefined' && document.hidden) return;
+        this._timelineTimerMs = targetMs;
         const self = this;
-        if (typeof requestAnimationFrame === 'function') {
-            requestAnimationFrame(function () {
-                if (!self._graphIsOnPage() || self._pausedInBackground) return;
-                if (!self._animRaf) {
-                    self._renderPlotOnly();
-                }
-            });
-        } else {
-            if (!this._animRaf) {
-                this._renderPlotOnly();
+        this._timelineTimer = setInterval(function () {
+            if (!self._graphIsOnPage()) {
+                self._clearTimelineTimer();
+                return;
             }
-        }
+            if (typeof document !== 'undefined' && document.hidden) return;
+            self._renderPlotOnly();
+        }, targetMs);
     }
 
     _syncSeriesSeeds(c) {
@@ -6673,8 +6596,7 @@ class GraphWidget extends BaseWidget {
         const estMin = effectiveLockMin != null ? effectiveLockMin : dataMin;
         const estMax = effectiveLockMax != null ? effectiveLockMax : dataMax;
 
-        const isRealTime = c && c.bufferMode === 'duration' && c.timelineAdvance === 'time';
-        const isAnimating = !!(this._activeAnimations && Object.keys(this._activeAnimations).length > 0) || isRealTime;
+        const isAnimating = !!(this._activeAnimations && Object.keys(this._activeAnimations).length > 0);
         const epochSig = this._renderInputsEpochSig ? this._renderInputsEpochSig() : null;
         let laid = null;
         let reserve = null;
