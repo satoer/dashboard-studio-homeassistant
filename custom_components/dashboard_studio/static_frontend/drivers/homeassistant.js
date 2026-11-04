@@ -61,6 +61,13 @@ function readParentAccessToken() {
                 if (t3) return String(t3);
             }
         }
+        try {
+            var pRaw = window.parent.localStorage.getItem('hassTokens');
+            if (pRaw) {
+                var pTokens = JSON.parse(pRaw);
+                if (pTokens && pTokens.access_token) return String(pTokens.access_token);
+            }
+        } catch (e2) {}
     } catch (e) { /* cross-origin parent */ }
     return '';
 }
@@ -176,7 +183,9 @@ function ensureHomeAssistantAccessToken() {
         }
         return refreshHomeAssistantToken();
     }).catch(function () {
-        redirectToHomeAssistantLogin();
+        if (window.parent === window) {
+            redirectToHomeAssistantLogin();
+        }
         return '';
     });
 }

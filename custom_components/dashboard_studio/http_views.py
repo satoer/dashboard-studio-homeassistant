@@ -13,8 +13,6 @@ from homeassistant.core import HomeAssistant
 from .const import ADMIN_API_PATH, APP_PATH
 from .runtime import get_runtime
 
-PROTECTED_JSON = {"dashboards", "snapshots", "themes", "presets", "widgetpresets"}
-
 MEDIA = {
     "images": "images",
     "audio": "audio",
@@ -81,10 +79,6 @@ class DashboardStudioAppView(HomeAssistantView):
         if rel == "setup" or rel == "setup/":
             page = Path(__file__).resolve().parent / "panel" / "admin.html"
             return web.FileResponse(page)
-        if rel.split("/", 1)[0] in PROTECTED_JSON:
-            user = await async_user_from_token(hass, token_from_request(request))
-            if user is None or not user.is_active:
-                return web.Response(status=401, text="Unauthorized")
         if rel == "settings.json":
             runtime = get_runtime(hass)
             body = runtime.client_settings() if runtime else {}
