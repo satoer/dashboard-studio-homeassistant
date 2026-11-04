@@ -126,14 +126,16 @@ class DashboardStudioAdminView(HomeAssistantView):
     requires_auth = False
 
     async def get(self, request: web.Request, action: str) -> web.Response:
-        user = request.get("hass_user")
-        if user is None:
-            user = await async_user_from_token(request.app["hass"], token_from_request(request))
-        if user is None or not (getattr(user, "is_admin", False) or getattr(user, "is_owner", False)):
-            return web.json_response({"error": "admin_required"}, status=401)
         runtime = get_runtime(request.app["hass"])
         if runtime is None:
             return web.json_response({"error": "not_running"}, status=503)
+        token = token_from_request(request)
+        is_session = bool(getattr(runtime, "session_token", None) and token == runtime.session_token)
+        user = request.get("hass_user")
+        if user is None and not is_session:
+            user = await async_user_from_token(request.app["hass"], token)
+        if not is_session and (user is None or not (getattr(user, "is_admin", False) or getattr(user, "is_owner", False))):
+            return web.json_response({"error": "admin_required"}, status=401)
         if action == "devices":
             runtime.rebuild_catalog()
             return web.json_response({"devices": runtime.catalog.get("devices") or []})
@@ -167,14 +169,16 @@ class DashboardStudioAdminView(HomeAssistantView):
 
     async def post(self, request: web.Request, action: str) -> web.Response:
         hass: HomeAssistant = request.app["hass"]
-        user = request.get("hass_user")
-        if user is None:
-            user = await async_user_from_token(hass, token_from_request(request))
-        if user is None or not (getattr(user, "is_admin", False) or getattr(user, "is_owner", False)):
-            return web.json_response({"error": "admin_required"}, status=401)
         runtime = get_runtime(hass)
         if runtime is None:
             return web.json_response({"error": "not_running"}, status=503)
+        token = token_from_request(request)
+        is_session = bool(getattr(runtime, "session_token", None) and token == runtime.session_token)
+        user = request.get("hass_user")
+        if user is None and not is_session:
+            user = await async_user_from_token(hass, token)
+        if not is_session and (user is None or not (getattr(user, "is_admin", False) or getattr(user, "is_owner", False))):
+            return web.json_response({"error": "admin_required"}, status=401)
         try:
             body: dict[str, Any] = await request.json()
         except json.JSONDecodeError:

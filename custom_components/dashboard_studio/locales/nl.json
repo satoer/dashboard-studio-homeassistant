@@ -14,17 +14,25 @@
       "configuration": "Configuratie",
       "settings": "Instellingen",
       "fileManager": "Bestandsbeheer",
-      "calendar": "Flow Cards"
+      "calendar": "Services & Kalender"
     },
     "actions": {
       "saveSettings": "Instellingen opslaan",
       "generateRandom": "Willekeurig genereren",
-      "backupSettings": "Backup Settings",
-      "restoreSettings": "Restore from backup",
-      "backup": "Backup",
-      "restoreBackup": "Backup herstellen",
+      "backupSettings": "Back-up instellingen",
+      "restoreSettings": "Herstellen uit back-up",
+      "backup": "Back-up",
+      "restoreBackup": "Back-up herstellen",
       "backupTooltip": "Maakt alleen een back-up van de Homey-instellingen",
-      "restoreTooltip": "Herstelt alleen de Homey-instellingen"
+      "restoreTooltip": "Herstelt alleen de Homey-instellingen",
+      "downloadSettings": "Instellingen downloaden",
+      "downloadCapabilities": "Capabilities downloaden",
+      "clearCache": "Status-cache wissen",
+      "close": "Sluiten",
+      "copyToClipboard": "Kopiëren naar klembord",
+      "copied": "Gekopieerd!",
+      "selectFile": "Bestand kiezen…",
+      "restoreHelp": "Plak hieronder je back-up-JSON of kies een .json-bestand van je computer."
     },
     "feedback": {
       "saved": "Opgeslagen!"
@@ -32,7 +40,8 @@
     "modal": {
       "cancel": "Annuleren",
       "delete": "Verwijderen",
-      "ok": "OK"
+      "ok": "OK",
+      "confirm": "Bevestigen"
     },
     "files": {
       "dashboards": "Dashboards",
@@ -42,13 +51,15 @@
       "loadingList": "Bezig met laden…",
       "noFiles": "Geen bestanden opgeslagen.",
       "noImages": "Geen afbeeldingen gevonden.",
-      "noAudio": "No audio found.",
+      "noAudio": "Geen audio gevonden.",
       "loadError": "Fout bij laden van bestanden.",
       "loadImagesError": "Fout bij laden van afbeeldingen.",
-      "loadAudioError": "Error loading audio.",
+      "loadAudioError": "Fout bij laden van audio.",
       "nameColumn": "Naam",
       "actionColumn": "Actie",
-      "defaultTag": "Ingebouwd"
+      "defaultTag": "Ingebouwd",
+      "presets": "Widget-voorinstellingen",
+      "clearAllSnapshots": "Alle snapshots wissen"
     },
     "confirm": {
       "deleteNamed": "„__name__“ verwijderen? Dit kan niet ongedaan worden gemaakt."
@@ -111,7 +122,17 @@
       "loading": "Apparaten laden…",
       "loadFailed": "Gegevens laden mislukt:",
       "apiInitializing": "De API start nog. Vernieuw deze pagina zo dadelijk.",
-      "noDevices": "Geen apparaten gevonden."
+      "noDevices": "Geen apparaten gevonden.",
+      "expandAll": "Alles uitvouwen",
+      "collapseAll": "Alles inklappen",
+      "entitiesByAreaTitle": "Entiteiten per ruimte",
+      "entitiesByAreaDesc": "Home Assistant-entiteiten georganiseerd per ruimte. Vink capabilities aan om live statusupdates naar Dashboard Studio te publiceren.",
+      "systemTitle": "Helpers, automatiseringen & scènes",
+      "systemDesc": "Home Assistant Helpers (variabelen), automatiseringen/scripts (flows) en scènes (moods)",
+      "copyTopic": "Kopieer topic",
+      "copyTopicButton": "Kopieer Topic",
+      "copyTopicDone": "Gekopieerd",
+      "copyTopicFailed": "Kopiëren van topic naar klembord mislukt."
     },
     "dashboard": {
       "access": "Open je lokale dashboard:",
@@ -120,11 +141,12 @@
       "urlNotDetected": "De dashboard-URL kon niet automatisch worden gedetecteerd.",
       "manualStep1": "1. In de Homey-app: Systeem → Algemeen.",
       "manualStep2": "2. Noteer onder Systeeminformatie het adres (bijvoorbeeld 192.168.1.10).",
-      "manualStep3BeforeUrl": "3. Open in je browser:"
+      "manualStep3BeforeUrl": "3. Open in je browser:",
+      "openDashboard": "Dashboard openen"
     },
     "ui": {
       "DashboardPort": "Dashboard Poort",
-      "ViewerModeOnly": "Viewer mode only",
+      "ViewerModeOnly": "Alleen viewer-modus",
       "KeepDashboardFileHistory": "Bewaar Dashboard Bestandsgeschiedenis",
       "MaximumSnapshotsToKeep": "Maximum aantal te bewaren snapshots",
       "StateCaching": "Status Caching",
@@ -189,7 +211,17 @@
       "TimeEventIcon": "Tid, Gebeurtenis, Icoon",
       "TimeIconEvent": "Tijd, Icoon, Gebeurtenis",
       "EventTimeIcon": "Gebeurtenis, Tijd, Icoon",
-      "EventIconTime": "Gebeurtenis, Icoon, Tijd"
+      "EventIconTime": "Gebeurtenis, Icoon, Tijd",
+      "ClearStateCache": "Status-cache wissen",
+      "ClearStateCacheDesc": "Wist de in het geheugen opgeslagen laatst bekende waarden. Forceert verse statusupdates bij de volgende herlaadbeurt.",
+      "TopicEcho": "Topic Echo",
+      "TopicEchoDesc": "Weerspiegelt gepubliceerde topic-events naar verbonden WebSocket-clients voor live updates op het canvas.",
+      "theme": "Thema",
+      "themeAuto": "Automatisch",
+      "themeDark": "Donker",
+      "themeLight": "Licht",
+      "servicesCalendarNoticeTitle": "Home Assistant Services & Kalender Markdown:",
+      "servicesCalendarNoticeDesc": "Configureer opmaakregels voor de Kalender- en RSS Markdown-services. Deze bepalen hoe agenda-afspraken en RSS-feeds worden weergegeven in Tekst- en Markdown-widgets."
     }
   },
   "words": {

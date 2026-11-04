@@ -1832,8 +1832,14 @@
             if (parentToken) return Promise.resolve(parentToken);
             var tokens = readStoredHassTokens();
             if (tokens && tokens.access_token && !tokenIsExpired(tokens)) return Promise.resolve(String(tokens.access_token));
-            return refreshHomeAssistantToken().catch(function () {
-                return '';
+            return fetch('/dashboard_studio/settings.json').then(function (res) {
+                if (!res.ok) throw new Error();
+                return res.json();
+            }).then(function (cfg) {
+                if (cfg && cfg.session_token) return String(cfg.session_token);
+                return refreshHomeAssistantToken().catch(function () { return ''; });
+            }).catch(function () {
+                return refreshHomeAssistantToken().catch(function () { return ''; });
             });
         }
 

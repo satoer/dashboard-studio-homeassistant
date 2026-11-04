@@ -24,7 +24,15 @@
       "backup": "Backup",
       "restoreBackup": "Restore Backup",
       "backupTooltip": "Only backups the Homey settings",
-      "restoreTooltip": "Only restores the Homey settings"
+      "restoreTooltip": "Only restores the Homey settings",
+      "downloadSettings": "Download Settings",
+      "downloadCapabilities": "Download Capabilities",
+      "clearCache": "Clear State Cache",
+      "close": "Close",
+      "copyToClipboard": "Copy to Clipboard",
+      "copied": "Copied!",
+      "selectFile": "Select File…",
+      "restoreHelp": "Paste your backup JSON text below, or select a .json file from your computer."
     },
     "feedback": {
       "saved": "Saved!"
@@ -32,7 +40,8 @@
     "modal": {
       "cancel": "Cancel",
       "delete": "Delete",
-      "ok": "OK"
+      "ok": "OK",
+      "confirm": "Confirm"
     },
     "files": {
       "dashboards": "Dashboards",
@@ -48,7 +57,9 @@
       "loadAudioError": "Error loading audio.",
       "nameColumn": "Name",
       "actionColumn": "Action",
-      "defaultTag": "Built-in"
+      "defaultTag": "Built-in",
+      "presets": "Widget Presets",
+      "clearAllSnapshots": "Clear All Snapshots"
     },
     "confirm": {
       "deleteNamed": "Delete \"__name__\"? This cannot be undone."
@@ -115,7 +126,13 @@
       "copyTopic": "Copy topic",
       "copyTopicButton": "Copy Topic",
       "copyTopicDone": "Copied",
-      "copyTopicFailed": "Could not copy the topic to the clipboard."
+      "copyTopicFailed": "Could not copy topic to clipboard.",
+      "expandAll": "Expand All",
+      "collapseAll": "Collapse All",
+      "entitiesByAreaTitle": "Entities by Area",
+      "entitiesByAreaDesc": "Home Assistant entities organized by Area. Tick capabilities to publish live state updates to Dashboard Studio.",
+      "systemTitle": "Helpers, Automations & Scenes",
+      "systemDesc": "Home Assistant Helpers (Variables), Automations/Scripts (Flows), and Scenes (Moods)"
     },
     "dashboard": {
       "access": "Open your local dashboard:",
@@ -124,7 +141,8 @@
       "urlNotDetected": "The dashboard URL could not be detected automatically.",
       "manualStep1": "1. In the Homey app, go to System → General.",
       "manualStep2": "2. Under System Information, note the Address (for example 192.168.1.10).",
-      "manualStep3BeforeUrl": "3. In your browser, open:"
+      "manualStep3BeforeUrl": "3. In your browser, open:",
+      "openDashboard": "Open Dashboard"
     },
     "ui": {
       "DashboardPort": "Dashboard Port",
@@ -193,7 +211,17 @@
       "TimeEventIcon": "Time, Event, Icon",
       "TimeIconEvent": "Time, Icon, Event",
       "EventTimeIcon": "Event, Time, Icon",
-      "EventIconTime": "Event, Icon, Time"
+      "EventIconTime": "Event, Icon, Time",
+      "ClearStateCache": "Clear State Cache",
+      "ClearStateCacheDesc": "Clears the in-memory cache of last known values. Forces fresh state updates on next reload.",
+      "TopicEcho": "Topic Echo",
+      "TopicEchoDesc": "Echoes published topic events to connected WebSocket clients for live canvas updates.",
+      "theme": "Theme",
+      "themeAuto": "Auto",
+      "themeDark": "Dark",
+      "themeLight": "Light",
+      "servicesCalendarNoticeTitle": "Home Assistant Services & Calendar Markdown:",
+      "servicesCalendarNoticeDesc": "Configure formatting rules for the Calendar & RSS Markdown services. These determine how calendar events and RSS feeds are rendered in Text and Markdown widgets."
     }
   },
   "words": {

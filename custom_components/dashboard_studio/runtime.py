@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
+import secrets
 from typing import Any
 
 from homeassistant.components.frontend import async_register_built_in_panel, async_remove_panel
@@ -84,6 +85,7 @@ class DashboardStudioRuntime:
     def __init__(self, hass: HomeAssistant, entry_id: str) -> None:
         self.hass = hass
         self.entry_id = entry_id
+        self.session_token: str = secrets.token_urlsafe(32)
         self.root = Path(hass.config.path("dashboard_studio"))
         self.cache = StateCache()
         self.sessions = SessionBook()
@@ -144,7 +146,9 @@ class DashboardStudioRuntime:
         )
 
     def client_settings(self) -> dict[str, Any]:
-        return dict(self.settings)
+        data = dict(self.settings)
+        data["session_token"] = self.session_token
+        return data
 
     def rebuild_catalog(self) -> None:
         states = []

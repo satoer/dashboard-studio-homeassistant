@@ -161,6 +161,12 @@ class CalendarAndRssTests(unittest.TestCase):
         self.assertIn("Hello", combined)
         self.assertIn("World", combined)
 
+    def test_session_token_validation(self):
+        import secrets
+        token = secrets.token_urlsafe(32)
+        self.assertTrue(len(token) >= 32)
+        self.assertNotEqual(token, secrets.token_urlsafe(32))
+
 
 if __name__ == "__main__":
     unittest.main()

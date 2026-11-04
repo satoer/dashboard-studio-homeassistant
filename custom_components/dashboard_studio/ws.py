@@ -53,8 +53,13 @@ class DashboardStudioWsView(HomeAssistantView):
                 if body.get("type") != "auth":
                     await socket.send_json({"type": "auth_invalid", "message": "Authenticate first"})
                     continue
-                user = await async_user_from_token(hass, str(body.get("access_token") or ""))
-                if user is None or not user.is_active:
+                token_str = str(body.get("access_token") or "")
+                runtime = get_runtime(hass)
+                if runtime is not None and getattr(runtime, "session_token", None) and token_str == runtime.session_token:
+                    user = "session"
+                else:
+                    user = await async_user_from_token(hass, token_str)
+                if user is None or (isinstance(user, object) and hasattr(user, "is_active") and not user.is_active):
                     await socket.send_json({"type": "auth_invalid", "message": "Invalid token"})
                     await socket.close()
                     return socket

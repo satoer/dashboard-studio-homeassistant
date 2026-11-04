@@ -129,18 +129,8 @@ function dashboardStudioReturnUrl() {
 }
 
 function redirectToHomeAssistantLogin() {
-    if (dashboardStudioLoginRedirectStarted) return;
-    dashboardStudioLoginRedirectStarted = true;
-    var clientId = window.location.origin + '/';
-    var redirectUri = dashboardStudioReturnUrl();
-    var state = String(Date.now());
-    try { sessionStorage.setItem('dashboardStudioAuthState', state); } catch (e) { /* private mode */ }
-    window.location.replace(
-        '/auth/authorize?response_type=code'
-        + '&client_id=' + encodeURIComponent(clientId)
-        + '&redirect_uri=' + encodeURIComponent(redirectUri)
-        + '&state=' + encodeURIComponent(state)
-    );
+    // Standalone mode uses the in-process session token from settings.json.
+    // Automatic redirects to /auth/authorize are disabled to avoid navigating away from the editor.
 }
 
 function exchangeAuthorizationCode() {
@@ -177,35 +167,35 @@ function exchangeAuthorizationCode() {
             window.history.replaceState(null, '', clean.pathname + clean.search + clean.hash);
         }
         return true;
+    }).catch(function () {
+        return false;
     });
 }
 
 function ensureHomeAssistantAccessToken() {
     var parentToken = readParentAccessToken();
     if (parentToken) return Promise.resolve(parentToken);
-    return exchangeAuthorizationCode().then(function () {
-        var tokens = readStoredHassTokens();
-        if (tokens && tokens.access_token && !tokenIsExpired(tokens)) {
-            return String(tokens.access_token);
+
+    if (window.APP_CONFIG && window.APP_CONFIG.session_token) {
+        return Promise.resolve(String(window.APP_CONFIG.session_token));
+    }
+
+    var tokens = readStoredHassTokens();
+    if (tokens && tokens.access_token && !tokenIsExpired(tokens)) {
+        return Promise.resolve(String(tokens.access_token));
+    }
+
+    return fetch('settings.json').then(function (res) {
+        if (!res.ok) throw new Error('settings fetch failed');
+        return res.json();
+    }).then(function (settings) {
+        if (settings && settings.session_token) {
+            if (window.APP_CONFIG) window.APP_CONFIG.session_token = settings.session_token;
+            return String(settings.session_token);
         }
-        return refreshHomeAssistantToken();
-    }).catch(function (err) {
-        console.warn('Dashboard Studio: could not obtain HA access token:', err);
-        var hasCode = false;
-        try { hasCode = !!(new URLSearchParams(window.location.search).get('code')); } catch (e) {}
-        if (hasCode) {
-            try {
-                var clean = new URL(dashboardStudioReturnUrl());
-                if (window.history && window.history.replaceState) {
-                    window.history.replaceState(null, '', clean.pathname + clean.search + clean.hash);
-                }
-            } catch (e2) {}
-            return '';
-        }
-        if (window.parent === window) {
-            redirectToHomeAssistantLogin();
-        }
-        return '';
+        return refreshHomeAssistantToken().catch(function () { return ''; });
+    }).catch(function () {
+        return refreshHomeAssistantToken().catch(function () { return ''; });
     });
 }
 
@@ -336,13 +326,12 @@ function createDashboardStudioSocket() {
                             try { ws.close(); } catch (e2) { /* reconnect on close */ }
                         }).catch(function () {
                             socket._manualClose = true;
-                            redirectToHomeAssistantLogin();
+                            socket._emitLocal('connect_error', { message: 'Authentication failed' });
                         });
                         return;
                     }
                     socket._manualClose = true;
                     socket._emitLocal('connect_error', { message: msg.message || 'Authentication failed' });
-                    redirectToHomeAssistantLogin();
                     return;
                 }
                 if (msg.type === 'ack' && socket._pendingAcks[msg.id]) {
