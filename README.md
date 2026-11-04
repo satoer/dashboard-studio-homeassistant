@@ -2,7 +2,7 @@
 
 A high-performance, fully customizable dashboard designer and viewer running natively inside Home Assistant.
 
-Dashboard Studio runs 100% in-process as a Home Assistant custom component. There is no external server, no Node.js process, no Docker container, and no port 5050 to maintain. Everything is served directly by Home Assistant over port 8123 using your active Home Assistant session.
+Dashboard Studio runs 100% in-process as a Home Assistant custom component. There is no external server, no Node.js process, and no background container to maintain. Everything is served directly by Home Assistant over port 8123 using your active Home Assistant session.
 
 ---
 
@@ -37,10 +37,8 @@ wget -qO- https://raw.githubusercontent.com/satoer/dashboard-studio-homeassistan
 
 **What the installer does automatically:**
 1. Detects your Home Assistant configuration directory (Docker container mount, Home Assistant OS/Supervised, or Core path).
-2. Stops and removes any obsolete `dashboard-studio` Docker container on port 5050.
-3. Downloads and installs `custom_components/dashboard_studio` into your Home Assistant `/config/custom_components/` directory.
-4. Migrates existing dashboards from `/opt/dashboard-studio/data` if present.
-5. Restarts Home Assistant.
+2. Downloads and installs `custom_components/dashboard_studio` into your Home Assistant `/config/custom_components/` directory.
+3. Restarts Home Assistant.
 
 ---
 

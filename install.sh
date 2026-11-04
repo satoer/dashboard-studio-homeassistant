@@ -27,7 +27,7 @@ SOURCE_COMPONENT=""
 if [ -n "${SCRIPT_DIR}" ] && [ -d "${SCRIPT_DIR}/custom_components/dashboard_studio" ]; then
   SOURCE_COMPONENT="${SCRIPT_DIR}/custom_components/dashboard_studio"
 else
-  echo "[1/5] Downloading latest release from GitHub..."
+  echo "[1/4] Downloading latest release from GitHub..."
   TMP_DIR="$(mktemp -d)"
   if command -v git >/dev/null 2>&1; then
     git clone --depth 1 "${REPO_URL}" "${TMP_DIR}/repo" >/dev/null 2>&1
@@ -51,22 +51,8 @@ if [ ! -d "${SOURCE_COMPONENT}" ]; then
   exit 1
 fi
 
-# 2. Stop and remove obsolete Docker container if it exists
-if command -v docker >/dev/null 2>&1; then
-  if docker ps -a --format '{{.Names}}' 2>/dev/null | grep -Eq '^dashboard-studio$'; then
-    echo "[2/5] Stopping and removing obsolete dashboard-studio Docker container..."
-    docker stop dashboard-studio >/dev/null 2>&1 || true
-    docker rm dashboard-studio >/dev/null 2>&1 || true
-    echo "      Removed old container on port 5050."
-  else
-    echo "[2/5] No old dashboard-studio container running."
-  fi
-else
-  echo "[2/5] Docker not found (skipping container cleanup)."
-fi
-
-# 3. Detect Home Assistant installation & config path
-echo "[3/5] Detecting Home Assistant configuration path..."
+# 2. Detect Home Assistant installation & config path
+echo "[2/4] Detecting Home Assistant configuration path..."
 HA_CONTAINER=""
 if command -v docker >/dev/null 2>&1; then
   HA_CONTAINER="$(docker ps --format '{{.Names}} {{.Image}}' 2>/dev/null | awk 'tolower($0) ~ /homeassistant|home-assistant/ {print $1; exit}' || true)"
@@ -116,20 +102,13 @@ if [ -z "${HA_CONFIG_HOST_DIR}" ] || [ ! -d "${HA_CONFIG_HOST_DIR}" ]; then
   fi
 fi
 
-# 4. Install custom component and migrate data
-echo "[4/5] Installing native custom component..."
+# 3. Install custom component
+echo "[3/4] Installing native custom component..."
 if [ -n "${HA_CONFIG_HOST_DIR}" ] && [ -d "${HA_CONFIG_HOST_DIR}" ]; then
   mkdir -p "${HA_CONFIG_HOST_DIR}/custom_components"
   rm -rf "${HA_CONFIG_HOST_DIR}/custom_components/dashboard_studio"
   cp -r "${SOURCE_COMPONENT}" "${HA_CONFIG_HOST_DIR}/custom_components/dashboard_studio"
   echo "      Installed into ${HA_CONFIG_HOST_DIR}/custom_components/dashboard_studio"
-
-  # Migrate old /opt/dashboard-studio/data if present
-  if [ -d "/opt/dashboard-studio/data" ]; then
-    mkdir -p "${HA_CONFIG_HOST_DIR}/dashboard_studio"
-    cp -rn /opt/dashboard-studio/data/* "${HA_CONFIG_HOST_DIR}/dashboard_studio/" 2>/dev/null || true
-    echo "      Migrated existing dashboards from /opt/dashboard-studio/data into ${HA_CONFIG_HOST_DIR}/dashboard_studio"
-  fi
 elif [ -n "${HA_CONTAINER}" ]; then
   docker exec "${HA_CONTAINER}" mkdir -p /config/custom_components
   docker cp "${SOURCE_COMPONENT}" "${HA_CONTAINER}:/config/custom_components/dashboard_studio"
@@ -140,8 +119,8 @@ else
   exit 1
 fi
 
-# 5. Restart Home Assistant
-echo "[5/5] Restarting Home Assistant..."
+# 4. Restart Home Assistant
+echo "[4/4] Restarting Home Assistant..."
 RESTARTED=0
 if [ -n "${HA_CONTAINER}" ]; then
   docker restart "${HA_CONTAINER}" >/dev/null 2>&1 && RESTARTED=1

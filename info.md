@@ -2,7 +2,7 @@
 
 Dashboard Studio is a fully customizable dashboard designer and viewer running natively inside Home Assistant Core.
 
-There is no external server, Docker container, or Node.js process to maintain, and no port 5050. Everything runs in-process on Home Assistant port 8123.
+Dashboard Studio runs 100% in-process as a Home Assistant custom component on port 8123.
 
 ---
 
