@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dashboard Studio Setup</title>
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg: #111318;
+            --panel: #1c1f27;
+            --line: #313644;
+            --text: #e7e9ee;
+            --muted: #9aa3b2;
+            --accent: #4f8cff;
+            --ok: #3dd68c;
+        }
+        * { box-sizing: border-box; }
+        body { margin: 0; font: 14px/1.45 Segoe UI, sans-serif; background: var(--bg); color: var(--text); }
+        header { display: flex; justify-content: space-between; gap: 16px; align-items: center; padding: 16px 20px; border-bottom: 1px solid var(--line); }
+        h1 { margin: 0; font-size: 18px; }
+        nav { display: flex; gap: 8px; padding: 12px 20px 0; }
+        button, input, select, textarea { font: inherit; color: inherit; }
+        .tab, button { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; cursor: pointer; }
+        .tab.active, button.primary { background: var(--accent); border-color: var(--accent); color: white; }
+        main { padding: 16px 20px 32px; }
+        section { display: none; }
+        section.active { display: block; }
+        .row { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0; }
+        input[type="search"], input[type="text"], select, textarea { background: #0d0f14; border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; }
+        input[type="search"] { min-width: 220px; }
+        textarea { width: 100%; min-height: 140px; }
+        details { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; margin: 8px 0; padding: 8px 12px; }
+        summary { cursor: pointer; font-weight: 600; }
+        label.cap { display: flex; gap: 8px; align-items: center; padding: 4px 0; }
+        .topic { color: var(--muted); font-family: Consolas, monospace; font-size: 12px; }
+        .dot { width: 8px; height: 8px; border-radius: 50%; background: #555; display: inline-block; }
+        .dot.on { background: var(--ok); }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+        .card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px; }
+        .files button { margin-right: 6px; }
+        .status { color: var(--muted); min-height: 1.2em; }
+    </style>
+</head>
+<body>
+    <header>
+        <div>
+            <h1>Dashboard Studio Setup</h1>
+            <div class="status" id="status">Loading</div>
+        </div>
+        <button class="primary" id="save">Save</button>
+    </header>
+    <nav>
+        <button class="tab active" data-tab="devices">Devices</button>
+        <button class="tab" data-tab="cleanup">Topic Cleanup</button>
+        <button class="tab" data-tab="settings">Settings</button>
+        <button class="tab" data-tab="files">Files</button>
+    </nav>
+    <main>
+        <section id="devices" class="active">
+            <div class="row">
+                <input id="name-filter" type="search" placeholder="Search by name">
+                <input id="cap-filter" type="search" placeholder="Search by capability">
+            </div>
+            <div id="device-tree"></div>
+        </section>
+        <section id="cleanup">
+            <div class="row">
+                <button id="scan">Scan Dashboards</button>
+                <button id="disable-selected">Disable Selected</button>
+            </div>
+            <div id="unused"></div>
+        </section>
+        <section id="settings">
+            <div class="grid">
+                <label class="card">Cache mode
+                    <select id="cacheValues">
+                        <option value="all">All</option>
+                        <option value="optimized">Optimized</option>
+                        <option value="devices">Devices</option>
+                        <option value="none">None</option>
+                    </select>
+                </label>
+                <label class="card">Snapshot retention
+                    <input id="dashboardFileHistoryMax" type="text" value="10">
+                </label>
+                <label class="card"><input id="keepDashboardFileHistory" type="checkbox"> Keep snapshot history</label>
+                <label class="card"><input id="hideEditor" type="checkbox"> Viewer only</label>
+                <label class="card"><input id="warnWhenDriverOffline" type="checkbox"> Warn when the driver is offline</label>
+                <label class="card"><input id="autoEcho" type="checkbox"> Auto echo</label>
+                <label class="card"><input id="topicEcho" type="checkbox"> Topic echo</label>
+            </div>
+            <h2>Services and Calendar</h2>
+            <div class="grid">
+                <label class="card">Date format <input id="calendarDateFormat" type="text" value="dd-mm-yyyy"></label>
+                <label class="card">Week start
+                    <select id="calendarWeekStart"><option value="monday">Monday</option><option value="sunday">Sunday</option></select>
+                </label>
+                <label class="card">List style
+                    <select id="calendarListStyle"><option value="list">List</option><option value="week">Week</option><option value="day">Day</option></select>
+                </label>
+                <label class="card">Event order
+                    <select id="calendarEventOrder">
+                        <option value="icon_time_title">Icon, time, title</option>
+                        <option value="time_title">Time, title</option>
+                        <option value="title_time">Title, time</option>
+                    </select>
+                </label>
+                <label class="card">Color blocks
+                    <select id="calendarColorBlockMode"><option value="event_type">Event type</option><option value="source">Source</option><option value="none">None</option></select>
+                </label>
+                <label class="card"><input id="calendarWrapEventsInBlocks" type="checkbox"> Wrap events in blocks</label>
+                <label class="card"><input id="calendarGroupByTimeOfDay" type="checkbox"> Group by time of day</label>
+                <label class="card"><input id="calendarShowIcons" type="checkbox"> Show icons</label>
+                <label class="card"><input id="calendarUseDefaultIcon" type="checkbox"> Use default icon</label>
+                <label class="card">Default icon <input id="calendarDefaultIcon" type="text" value="ph-calendar"></label>
+            </div>
+            <label class="card">Icon bindings
+                <textarea id="calendarIconBindingsText" placeholder="dentist=ph-tooth"></textarea>
+            </label>
+            <label class="card">Source bindings
+                <textarea id="calendarSourceBlockBindingsText" placeholder="Family=Family calendar"></textarea>
+            </label>
+            <div class="row">
+                <button id="clear-cache">Clear State Cache</button>
+                <button id="download-backup">Download Backup</button>
+                <button id="download-settings">Download Settings</button>
+                <button id="download-capabilities">Download Capabilities</button>
+                <label class="card">Restore <input id="restore-file" type="file" accept="application/json"></label>
+            </div>
+        </section>
+        <section id="files">
+            <div class="row">
+                <select id="file-type">
+                    <option value="dashboards">Dashboards</option>
+                    <option value="themes">Themes</option>
+                    <option value="presets">Presets</option>
+                    <option value="snapshots">Snapshots</option>
+                    <option value="images">Images</option>
+                    <option value="audio">Audio</option>
+                </select>
+                <button id="refresh-files">Refresh</button>
+            </div>
+            <div id="file-list" class="files"></div>
+        </section>
+    </main>
+    <script>
+        var enabled = {};
+        var settings = {};
+        var devices = [];
+
+        function readParentAccessToken() {
+            try {
+                if (!window.parent || window.parent === window) return '';
+                var auth = window.parent.hass && window.parent.hass.auth && window.parent.hass.auth.data;
+                if (auth && auth.access_token) return String(auth.access_token);
+            } catch (e) {}
+            return '';
+        }
+        function readStoredHassTokens() {
+            try {
+                var parsed = JSON.parse(localStorage.getItem('hassTokens') || 'null');
+                if (parsed && typeof parsed === 'object') return parsed;
+            } catch (e) {}
+            return null;
+        }
+        function tokenIsExpired(tokens) {
+            if (!tokens || !tokens.access_token) return true;
+            if (!tokens.expires) return false;
+            return Number(tokens.expires) <= Date.now() + 60000;
+        }
+        function refreshHomeAssistantToken() {
+            var tokens = readStoredHassTokens();
+            if (!tokens || !tokens.refresh_token) return Promise.reject(new Error('no refresh token'));
+            var clientId = tokens.clientId || tokens.client_id || '';
+            var body = 'grant_type=refresh_token&refresh_token=' + encodeURIComponent(tokens.refresh_token);
+            if (clientId) body += '&client_id=' + encodeURIComponent(clientId);
+            return fetch('/auth/token', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: body
+            }).then(function (res) {
+                if (res.status === 401 || !res.ok) throw new Error('refresh failed');
+                return res.json();
+            }).then(function (data) {
+                var next = {
+                    access_token: data.access_token,
+                    refresh_token: data.refresh_token || tokens.refresh_token,
+                    expires: Date.now() + ((Number(data.expires_in) || 1800) * 1000),
+                    clientId: clientId
+                };
+                localStorage.setItem('hassTokens', JSON.stringify(next));
+                return next.access_token;
+            });
+        }
+        var loginRedirectStarted = false;
+        function returnUrl() {
+            var current = new URL(window.location.href);
+            current.searchParams.delete('code');
+            current.searchParams.delete('state');
+            current.searchParams.delete('auth_callback');
+            return current.toString();
+        }
+        function redirectToLogin() {
+            if (loginRedirectStarted) return;
+            loginRedirectStarted = true;
+            var clientId = window.location.origin + '/';
+            var redirectUri = returnUrl();
+            var state = String(Date.now());
+            try { sessionStorage.setItem('dashboardStudioAuthState', state); } catch (e) {}
+            window.location.replace(
+                '/auth/authorize?response_type=code'
+                + '&client_id=' + encodeURIComponent(clientId)
+                + '&redirect_uri=' + encodeURIComponent(redirectUri)
+                + '&state=' + encodeURIComponent(state)
+            );
+        }
+        function exchangeAuthorizationCode() {
+            var params;
+            try { params = new URLSearchParams(window.location.search); } catch (e) { return Promise.resolve(false); }
+            var code = params.get('code');
+            if (!code) return Promise.resolve(false);
+            var clientId = window.location.origin + '/';
+            return fetch('/auth/token', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'grant_type=authorization_code&code=' + encodeURIComponent(code) + '&client_id=' + encodeURIComponent(clientId)
+            }).then(function (res) {
+                if (!res.ok) throw new Error('authorization code rejected');
+                return res.json();
+            }).then(function (data) {
+                var next = {
+                    access_token: data.access_token,
+                    token_type: data.token_type || 'Bearer',
+                    refresh_token: data.refresh_token || '',
+                    expires: Date.now() + ((Number(data.expires_in) || 1800) * 1000),
+                    clientId: clientId,
+                    hassUrl: window.location.origin
+                };
+                localStorage.setItem('hassTokens', JSON.stringify(next));
+                var clean = new URL(returnUrl());
+                if (window.history && window.history.replaceState) {
+                    window.history.replaceState(null, '', clean.pathname + clean.search + clean.hash);
+                }
+                return true;
+            });
+        }
+        function ensureToken() {
+            var parentToken = readParentAccessToken();
+            if (parentToken) return Promise.resolve(parentToken);
+            return exchangeAuthorizationCode().then(function () {
+                var tokens = readStoredHassTokens();
+                if (tokens && tokens.access_token && !tokenIsExpired(tokens)) return Promise.resolve(String(tokens.access_token));
+                return refreshHomeAssistantToken();
+            }).catch(function () {
+                redirectToLogin();
+                return '';
+            });
+        }
+        function api(path, options) {
+            return ensureToken().then(function (token) {
+                if (!token) return null;
+                var opts = options || {};
+                opts.headers = opts.headers || {};
+                opts.headers.Authorization = 'Bearer ' + token;
+                return fetch('/api/dashboard_studio/admin/' + path, opts).then(function (res) {
+                    if (res.status === 401) {
+                        return refreshHomeAssistantToken().then(function (next) {
+                            opts.headers.Authorization = 'Bearer ' + next;
+                            return fetch('/api/dashboard_studio/admin/' + path, opts);
+                        }).catch(function () {
+                            redirectToLogin();
+                            return null;
+                        });
+                    }
+                    return res;
+                });
+            }).then(function (res) {
+                if (!res) return {};
+                if (!res.ok) throw new Error('Request failed');
+                return res.json();
+            });
+        }
+        function setStatus(text) { document.getElementById('status').textContent = text; }
+        function selectedCaps(id) { return Array.isArray(enabled[id]) ? enabled[id] : []; }
+        function deviceMatches(device) {
+            var nameQuery = document.getElementById('name-filter').value.toLowerCase();
+            var capQuery = document.getElementById('cap-filter').value.toLowerCase();
+            var name = ((device.name || '') + ' ' + (device.zoneName || '')).toLowerCase();
+            if (nameQuery && name.indexOf(nameQuery) === -1) return false;
+            if (!capQuery) return true;
+            var caps = device.capabilities || [];
+            for (var i = 0; i < caps.length; i++) {
+                var title = ((caps[i].title || '') + ' ' + (caps[i].id || '')).toLowerCase();
+                if (title.indexOf(capQuery) !== -1) return true;
+            }
+            return false;
+        }
+        function renderDevices() {
+            var groups = { Devices: [], Variables: [], Flows: [], Moods: [] };
+            devices.forEach(function (device) {
+                var zone = device.zoneName || 'Devices';
+                if (zone === 'Helpers' || zone === 'Variables') groups.Variables.push(device);
+                else if (zone === 'Flows') groups.Flows.push(device);
+                else if (zone === 'Moods' || zone === 'Scenes') groups.Moods.push(device);
+                else groups.Devices.push(device);
+            });
+            var html = '';
+            Object.keys(groups).forEach(function (section) {
+                var areas = {};
+                groups[section].forEach(function (device) {
+                    if (!deviceMatches(device)) return;
+                    var area = device.zoneName && section === 'Devices' ? device.zoneName : section;
+                    if (!areas[area]) areas[area] = [];
+                    areas[area].push(device);
+                });
+                Object.keys(areas).sort().forEach(function (area) {
+                    html += '<details open><summary>' + escapeHtml(area) + '</summary>';
+                    areas[area].forEach(function (device) {
+                        var caps = selectedCaps(device.id);
+                        var active = caps.length ? 'on' : '';
+                        html += '<details><summary><span class="dot ' + active + '"></span> ' + escapeHtml(device.name || device.id) + '</summary>';
+                        (device.capabilities || []).forEach(function (cap) {
+                            var checked = caps.indexOf(cap.id) !== -1 ? ' checked' : '';
+                            html += '<label class="cap"><input type="checkbox" data-device="' + escapeAttr(device.id) + '" data-cap="' + escapeAttr(cap.id) + '"' + checked + '> ' + escapeHtml(cap.title || cap.id) + '</label>';
+                            html += '<div class="topic">' + escapeHtml(cap.topic || '') + ' <button type="button" data-copy="' + escapeAttr(cap.topic || '') + '">Copy Topic</button></div>';
+                        });
+                        html += '</details>';
+                    });
+                    html += '</details>';
+                });
+            });
+            document.getElementById('device-tree').innerHTML = html || '<p>No matching devices.</p>';
+        }
+        function escapeHtml(value) {
+            return String(value || '').replace(/[&<>"]/g, function (ch) {
+                return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[ch];
+            });
+        }
+        function escapeAttr(value) { return escapeHtml(value).replace(/'/g, '&#39;'); }
+        function readSettingsForm() {
+            ['cacheValues', 'dashboardFileHistoryMax', 'calendarDateFormat', 'calendarWeekStart', 'calendarListStyle', 'calendarEventOrder', 'calendarColorBlockMode', 'calendarDefaultIcon', 'calendarIconBindingsText', 'calendarSourceBlockBindingsText'].forEach(function (key) {
+                settings[key] = document.getElementById(key).value;
+            });
+            settings.dashboardFileHistoryMax = parseInt(settings.dashboardFileHistoryMax, 10) || 10;
+            ['keepDashboardFileHistory', 'hideEditor', 'warnWhenDriverOffline', 'autoEcho', 'topicEcho', 'calendarWrapEventsInBlocks', 'calendarGroupByTimeOfDay', 'calendarShowIcons', 'calendarUseDefaultIcon'].forEach(function (key) {
+                settings[key] = document.getElementById(key).checked;
+            });
+        }
+        function fillSettingsForm() {
+            ['cacheValues', 'calendarDateFormat', 'calendarWeekStart', 'calendarListStyle', 'calendarEventOrder', 'calendarColorBlockMode', 'calendarDefaultIcon', 'calendarIconBindingsText', 'calendarSourceBlockBindingsText'].forEach(function (key) {
+                if (document.getElementById(key) && settings[key] != null) document.getElementById(key).value = settings[key];
+            });
+            document.getElementById('dashboardFileHistoryMax').value = settings.dashboardFileHistoryMax || 10;
+            ['keepDashboardFileHistory', 'hideEditor', 'warnWhenDriverOffline', 'autoEcho', 'topicEcho', 'calendarWrapEventsInBlocks', 'calendarGroupByTimeOfDay', 'calendarShowIcons', 'calendarUseDefaultIcon'].forEach(function (key) {
+                document.getElementById(key).checked = settings[key] !== false && settings[key] !== 0;
+                if (settings[key] === false) document.getElementById(key).checked = false;
+            });
+        }
+        function save() {
+            readSettingsForm();
+            return api('config', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ enabled_capabilities: enabled, app_settings: settings })
+            }).then(function () { setStatus('Saved'); });
+        }
+        function download(name, data) {
+            var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            var link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = name;
+            link.click();
+        }
+        function loadFiles() {
+            var type = document.getElementById('file-type').value;
+            var path = (type === 'images' || type === 'audio') ? ('media?kind=' + type) : ('files?type=' + type);
+            api(path).then(function (data) {
+                var files = data.files || [];
+                var html = files.map(function (file) {
+                    return '<div class="card">' + escapeHtml(file.name) + ' <button type="button" data-delete="' + escapeAttr(file.name) + '">Delete</button></div>';
+                }).join('');
+                document.getElementById('file-list').innerHTML = html || '<p>No files.</p>';
+            }).catch(function (err) { setStatus(err.message || 'Could not list files'); });
+        }
+        document.querySelectorAll('.tab').forEach(function (button) {
+            button.addEventListener('click', function () {
+                document.querySelectorAll('.tab').forEach(function (item) { item.classList.remove('active'); });
+                document.querySelectorAll('main section').forEach(function (item) { item.classList.remove('active'); });
+                button.classList.add('active');
+                document.getElementById(button.getAttribute('data-tab')).classList.add('active');
+            });
+        });
+        document.getElementById('device-tree').addEventListener('change', function (event) {
+            var input = event.target;
+            if (!input.getAttribute || !input.getAttribute('data-cap')) return;
+            var id = input.getAttribute('data-device');
+            var cap = input.getAttribute('data-cap');
+            var list = selectedCaps(id).slice();
+            var index = list.indexOf(cap);
+            if (input.checked && index === -1) list.push(cap);
+            if (!input.checked && index !== -1) list.splice(index, 1);
+            if (list.length) enabled[id] = list;
+            else delete enabled[id];
+            renderDevices();
+        });
+        document.getElementById('device-tree').addEventListener('click', function (event) {
+            var topic = event.target.getAttribute && event.target.getAttribute('data-copy');
+            if (!topic || !navigator.clipboard) return;
+            navigator.clipboard.writeText(topic).then(function () { setStatus('Topic copied'); });
+        });
+        document.getElementById('name-filter').addEventListener('input', renderDevices);
+        document.getElementById('cap-filter').addEventListener('input', renderDevices);
+        document.getElementById('save').addEventListener('click', function () { save().catch(function (err) { setStatus(err.message); }); });
+        document.getElementById('scan').addEventListener('click', function () {
+            api('scan').then(function (report) {
+                var unused = report.unused || [];
+                document.getElementById('unused').innerHTML = unused.map(function (item) {
+                    var topic = item.topic || item;
+                    return '<label class="cap"><input type="checkbox" data-unused="' + escapeAttr(item.deviceId || '') + '" data-cap="' + escapeAttr(item.capId || '') + '"> ' + escapeHtml(topic) + '</label>';
+                }).join('') || '<p>No unused topics.</p>';
+                setStatus((report.dashboardsScanned || 0) + ' dashboards scanned');
+            });
+        });
+        document.getElementById('disable-selected').addEventListener('click', function () {
+            document.querySelectorAll('#unused input:checked').forEach(function (input) {
+                var id = input.getAttribute('data-unused');
+                var cap = input.getAttribute('data-cap');
+                if (!id || !Array.isArray(enabled[id])) return;
+                enabled[id] = enabled[id].filter(function (item) { return item !== cap; });
+                if (!enabled[id].length) delete enabled[id];
+            });
+            save().then(renderDevices);
+        });
+        document.getElementById('clear-cache').addEventListener('click', function () {
+            api('clear-cache', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' }).then(function () { setStatus('State cache cleared'); });
+        });
+        document.getElementById('download-backup').addEventListener('click', function () {
+            api('backup').then(function (data) { download('dashboard-studio-backup.json', data); });
+        });
+        document.getElementById('download-settings').addEventListener('click', function () {
+            api('backup').then(function (data) { download('dashboard-studio-settings.json', { app_settings: data.app_settings || {} }); });
+        });
+        document.getElementById('download-capabilities').addEventListener('click', function () {
+            api('backup').then(function (data) { download('dashboard-studio-capabilities.json', { enabled_capabilities: data.enabled_capabilities || {} }); });
+        });
+        document.getElementById('restore-file').addEventListener('change', function (event) {
+            var file = event.target.files && event.target.files[0];
+            if (!file) return;
+            var reader = new FileReader();
+            reader.onload = function () {
+                var backup = JSON.parse(String(reader.result || '{}'));
+                api('restore', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ backup: backup }) }).then(function () {
+                    return api('config');
+                }).then(function (config) {
+                    enabled = config.enabled_capabilities || {};
+                    settings = config.app_settings || {};
+                    fillSettingsForm();
+                    renderDevices();
+                    setStatus('Backup restored');
+                });
+            };
+            reader.readAsText(file);
+        });
+        document.getElementById('refresh-files').addEventListener('click', loadFiles);
+        document.getElementById('file-type').addEventListener('change', loadFiles);
+        document.getElementById('file-list').addEventListener('click', function (event) {
+            var name = event.target.getAttribute && event.target.getAttribute('data-delete');
+            if (!name) return;
+            var type = document.getElementById('file-type').value;
+            api('delete-file', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ type: type, name: name })
+            }).then(loadFiles);
+        });
+        Promise.all([api('config'), api('devices')]).then(function (results) {
+            enabled = results[0].enabled_capabilities || {};
+            settings = results[0].app_settings || {};
+            devices = results[1].devices || [];
+            fillSettingsForm();
+            renderDevices();
+            loadFiles();
+            setStatus('Ready');
+        }).catch(function (err) { setStatus(err.message || 'Could not load setup'); });
+    </script>
+</body>
+</html>

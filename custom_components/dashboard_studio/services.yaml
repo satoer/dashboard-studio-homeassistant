@@ -358,3 +358,38 @@ fetch_rss_markdown:
       example: "news/headlines"
       selector:
         text:
+    urls:
+      name: Additional Feed URLs
+      description: Extra RSS or Atom URLs, one per line. The Feed URL above is included as well.
+      required: false
+      selector:
+        text:
+          multiline: true
+    layout:
+      name: Layout
+      description: standard, full, compact, or headlines.
+      required: false
+      default: standard
+      selector:
+        select:
+          options:
+            - standard
+            - full
+            - compact
+            - headlines
+    date_format:
+      name: Date Format
+      description: Optional date pattern such as dd-mm-yyyy.
+      required: false
+      selector:
+        text:
+    image_width:
+      name: Image Width
+      description: Width in pixels for an extracted article image. Leave at 0 to skip the image tag.
+      required: false
+      default: 0
+      selector:
+        number:
+          min: 0
+          max: 1200
+          mode: box

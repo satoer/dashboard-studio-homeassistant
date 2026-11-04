@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="color-scheme" content="light dark">
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Dashboard">
+
+    <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="images/icon-192.png">
+    <link rel="manifest" href="manifest.json">
+
+    <title>Dashboard Studio</title>
+
+    <script>
+        (function () {
+            try {
+                var type = '';
+                if (typeof performance !== 'undefined' && performance.getEntriesByType) {
+                    var nav = performance.getEntriesByType('navigation')[0];
+                    if (nav) type = nav.type;
+                }
+                if (!type && typeof performance !== 'undefined' && performance.navigation && performance.navigation.type === 2) {
+                    type = 'back_forward';
+                }
+                if (type === 'back_forward') window.location.reload();
+            } catch (e) { }
+        })();
+    </script>
+
+    <!-- Warm up third-party origins before the deferred icon script and font CSS request them. -->
+    <link rel="preconnect" href="https://unpkg.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <script defer src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- UI chrome fonts, non-blocking (media swap); dashboard fonts load via Dashboard.loadFonts(). -->
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@500;700&display=swap"
+        media="print" onload="this.media='all'">
+
+    <link rel="stylesheet" href="tailwind.generated.css">
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="editor.css">
+    <style>
+        /* Logo Switching Logic */
+        .logo-light {
+            display: none;
+        }
+
+        .logo-dark {
+            display: block;
+        }
+
+        body.ui-light .logo-light {
+            display: block;
+        }
+
+        body.ui-light .logo-dark {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="editor-mesh-bg" aria-hidden="true">
+        <div class="editor-mesh-blob blob-1"></div>
+        <div class="editor-mesh-blob blob-2"></div>
+        <div class="editor-mesh-blob blob-3"></div>
+        <div class="editor-mesh-blob blob-4"></div>
+    </div>
+
+    <div id="editor-panel" class="glass-panel">
+        <div id="editor-fixed-header">
+            <div class="editor-header-layout">
+                <div class="editor-header-logo" role="button" tabindex="0" title="About &amp; Dashboard Statistics" onclick="ToolsMenu.runTool('dashboard-statistics')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();ToolsMenu.runTool('dashboard-statistics');}">
+                    <img src="images/dashboardstudio_logo_darkmode.svg" alt="Dashboard Studio" class="h-10 logo-dark">
+                    <img src="images/dashboardstudio_logo_lightmode.svg" alt="Dashboard Studio" class="h-10 logo-light">
+                </div>
+                <div class="editor-header-status" role="status" aria-live="polite">
+                    <div class="editor-header-status-row editor-header-status-row--system">
+                        <span id="app-version" class="header-status-version"></span>
+                        <span class="header-status-sep" aria-hidden="true"></span>
+                        <span id="nr-status" class="header-status-connection is-disconnected" title="Disconnected">
+                            <span class="header-status-dot" aria-hidden="true"></span>
+                            <span class="header-status-connection-label">Offline</span>
+                        </span>
+                    </div>
+                    <div class="editor-header-status-row editor-header-status-row--context">
+                        <span id="dashboard-filename-text" class="header-status-filename" title="Dashboard file">Untitled</span>
+                        <span id="header-page-indicator" class="header-status-page" title="Current page">P1</span>
+                        <span id="dashboard-file-tag" class="header-status-save file-status-tag hidden"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="editor-scroll-container">
+
+            <div id="editor-tools">
+                <div class="flex items-center justify-between">
+                    <h3 class="toolbar-label flex" style="margin-bottom:0;" data-editor-tooltip="editor-tools">
+                        <i class="ph-bold ph-pencil-simple"></i> Editor Tools
+                    </h3>
+                    <div class="flex">
+                        <button id="btn-gallery" class="btn-tool btn-tool-icon-only" title="Open Image Gallery to upload, manage, and copy image paths"
+                            onclick="ImageGallery.open()" style="display:none;">
+                            <i class="ph-bold ph-images-square"></i>
+                        </button>
+                        <button id="btn-audio-gallery" class="btn-tool btn-tool-icon-only" title="Open Audio Gallery to upload, manage, and play audio files"
+                            onclick="AudioGallery.open()" style="display:none;">
+                            <i class="ph-bold ph-music-notes"></i>
+                        </button>
+                        <div class="relative">
+                            <button id="btn-share" class="btn-tool btn-tool-icon-only" title="Share snippet" onclick="ShareMenu.toggle()">
+                                <i class="ph-bold ph-share"></i>
+                            </button>
+                            <div id="share-dropdown" class="share-dropdown">
+                                <button id="share-export-snippet" class="share-dropdown-item is-disabled" aria-disabled="true"
+                                    title="Export selected widget snippet as text code" onclick="Dashboard.exportSnippetLocal(); ShareMenu.close();">
+                                    <i class="ph-bold ph-brackets-curly"></i> Export Snippet
+                                </button>
+                                <button id="share-import-snippet" class="share-dropdown-item"
+                                    title="Import widget snippet from text code" onclick="Dashboard.importSnippetLocal(); ShareMenu.close();">
+                                    <i class="ph-bold ph-brackets-curly"></i> Import Snippet
+                                </button>
+                            </div>
+                        </div>
+                        <div class="relative">
+                            <button id="btn-tools" class="btn-tool btn-tool-icon-only" title="Tools: automated dashboard scripts"
+                                onclick="ToolsMenu.toggle()">
+                                <i class="ph-bold ph-hammer"></i>
+                            </button>
+                            <div id="tools-dropdown" class="tools-dropdown"></div>
+                        </div>
+                        <button id="btn-theme-toggle" class="btn-tool btn-tool-icon-only" title="Editor theme: Auto. Follows the dashboard background. Click for Light."
+                            aria-label="Editor theme: Auto. Follows the dashboard background. Click for Light."
+                            onclick="ThemeManager.toggle()">
+                            <i class="ph-bold ph-circle-half"></i>
+                        </button>
+                        <button id="btn-help" class="btn-tool btn-tool-icon-only" title="Open help and documentation" onclick="HelpSystem.toggle()" aria-pressed="false">
+                            <i class="ph-bold ph-question"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="editor-zoom" id="editor-zoom">
+                    <div class="editor-zoom-head">
+                        <label class="toolbar-label" for="editor-zoom-slider" data-editor-tooltip="editor-zoom">Edit Mode Zoom</label>
+                        <output class="editor-zoom-readout" id="editor-zoom-readout" for="editor-zoom-slider">100%</output>
+                    </div>
+                    <div class="editor-zoom-track-row">
+                        <span class="editor-zoom-end" aria-hidden="true">200%</span>
+                        <input type="range" id="editor-zoom-slider" class="editor-zoom-slider"
+                            min="0" max="200" step="1" value="100"
+                            aria-label="Edit Mode Zoom, 200 percent on the left, 100 percent in the center, 20 percent on the right"
+                            aria-valuemin="20" aria-valuemax="200" aria-valuenow="100" aria-valuetext="100%"
+                            title="Scales the dashboard in Edit Mode only. 200% is on the left, 100% is in the center, and 20% is on the right."
+                            oninput="Dashboard.setEditorZoomFromSlider(this)">
+                        <span class="editor-zoom-end" aria-hidden="true">20%</span>
+                        <button type="button" id="editor-zoom-reset" class="btn-tool btn-tool-icon-only"
+                            title="Reset Edit Mode Zoom to 100%" aria-label="Reset Edit Mode Zoom to 100%"
+                            disabled onclick="Dashboard.setEditorZoom(100)">
+                            <i class="ph-bold ph-arrow-counter-clockwise"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="toolbar-divider"></div>
+
+                <div class="toolbar-section">
+                    <label class="toolbar-label" for="dashboard-viewer-url-link" data-editor-tooltip="viewer-url">Viewer URL</label>
+                    <div class="dashboard-viewer-url-field is-disabled">
+                        <i class="ph-bold ph-arrow-square-out dashboard-viewer-url-icon" aria-hidden="true"></i>
+                        <a id="dashboard-viewer-url-link" class="dashboard-viewer-url-link" target="_blank"
+                            rel="noopener noreferrer" aria-disabled="true" title="Save the page first to generate a viewer URL">Save page first</a>
+                        <button type="button" id="btn-copy-viewer-url" class="dashboard-viewer-url-copy"
+                            disabled title="Save the page first to copy viewer URL" onclick="Dashboard.copyViewerUrlToClipboard()" aria-label="Copy viewer URL">
+                            <i class="ph-bold ph-copy"></i>
+                        </button>
+                    </div>
+                    <div class="flex flex-col">
+                        <div class="grid grid-cols-2">
+                            <div id="btn-group-dashboard-server" class="col-span-2 grid grid-cols-2" style="display:none;">
+                                <button class="btn-tool primary flex-1" title="Save the current dashboard to Homey"
+                                    onclick="ServerFileManager.open('dashboards', 'save')">
+                                    <i class="ph-bold ph-cloud-arrow-up"></i> Save to Homey
+                                </button>
+                                <button class="btn-tool flex-1" title="Load a dashboard from Homey" onclick="ServerFileManager.open('dashboards', 'load')">
+                                    <i class="ph-bold ph-cloud-arrow-down"></i> Load from Homey
+                                </button>
+                            </div>
+
+                            <div id="btn-group-dashboard-local" class="col-span-2 grid grid-cols-2">
+                                <button class="btn-tool flex-1" title="Export the current dashboard as a local JSON file"
+                                    onclick="Dashboard.exportDashboardLocal()">
+                                    <i class="ph-bold ph-download-simple"></i> Export Dashboard
+                                </button>
+                                <button class="btn-tool flex-1" title="Import a dashboard from a local JSON file"
+                                    onclick="Dashboard.importDashboardLocal()">
+                                    <i class="ph-bold ph-folder-open"></i> Import Dashboard
+                                </button>
+                            </div>
+
+                            <button id="btn-reset-canvas" class="btn-tool danger col-span-2" title="Reset the canvas and remove all widgets and settings"
+                                onclick="Dashboard.resetDashboard()">
+                                <i class="ph-bold ph-trash"></i> Reset Canvas
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="toolbar-section">
+                    <label class="toolbar-label" data-editor-tooltip="theme">Theme</label>
+                    <div class="toolbar-template-row">
+                        <button class="btn-tool btn-tool-icon-only" title="Load the previous theme in the list" onclick="Dashboard.prevTemplate()">
+                            <i class="ph-bold ph-caret-left"></i>
+                        </button>
+                        <div id="template-select-wrapper" class="ds-select-wrapper">
+                            <button id="template-select-btn" class="control-input ds-select-btn" type="button">
+                                <span id="template-select-label" class="editor-muted-text">Select Theme...</span>
+                                <i class="ph-bold ph-caret-down"></i>
+                            </button>
+                            <div id="template-select-menu" class="ds-select-menu hidden">
+                            </div>
+                        </div>
+                        <button class="btn-tool btn-tool-icon-only" title="Load the next theme in the list" onclick="Dashboard.nextTemplate()">
+                            <i class="ph-bold ph-caret-right"></i>
+                        </button>
+                        <button class="btn-tool btn-tool-icon-only" title="Browse theme previews" onclick="ThemeExplorer.openDialog()">
+                            <i class="ph-bold ph-squares-four"></i>
+                        </button>
+                    </div>
+                    <div class="flex justify-between">
+                        <div id="btn-group-template-server" class="flex flex-1" style="display:none;" data-editor-tier="advanced">
+                            <button class="btn-tool flex-1" title="Save current theme settings to the server"
+                                onclick="ServerFileManager.open('templates', 'save')"><i
+                                    class="ph-bold ph-cloud-arrow-up"></i> Save</button>
+                        </div>
+                        <div id="btn-group-template-local" class="flex flex-1" data-editor-tier="advanced">
+                            <button class="btn-tool flex-1" title="Export current theme settings as a local file"
+                                onclick="Dashboard.exportTemplateLocal()"><i class="ph-bold ph-download-simple"></i>
+                                Export</button>
+                            <button class="btn-tool flex-1" title="Import theme settings from a local file"
+                                onclick="Dashboard.importTemplateLocal()"><i class="ph-bold ph-folder-open"></i>
+                                Import</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="toolbar-section">
+                    <label class="toolbar-label" data-editor-tooltip="create-widget">Create Widget</label>
+                    <div class="flex">
+                        <div id="add-widget-type-wrap" class="relative flex-1 z-[60]"></div>
+                        <button class="btn-tool primary" title="Add the selected widget type to the center of the canvas" onclick="Dashboard.addWidgetFromUI()">
+                            <i class="ph-bold ph-plus"></i> Add
+                        </button>
+                    </div>
+                </div>
+
+                <div class="toolbar-section">
+                    <label class="toolbar-label" data-editor-tooltip="selected-widget">Selected Widget</label>
+
+                    <div id="editor-select-widget-wrap" class="relative w-full mb-2 z-50"></div>
+
+                    <div id="widget-toolbar"
+                        class="flex items-center justify-between transition-opacity flex-wrap gap-1">
+                        <div class="flex requires-selection is-disabled" aria-disabled="true">
+                            <button id="toolbar-btn-lock" class="btn-tool btn-tool-icon-only" data-editor-tier="advanced" title="Lock or unlock the selected widget or selected group" onclick="Dashboard.toggleWidgetLock()">
+                                <i class="ph-bold ph-lock-key"></i>
+                            </button>
+                            <button class="btn-tool btn-tool-icon-only requires-unlocked" title="Move the selected widget one layer forward" onclick="Dashboard.bringToFront()"><i
+                                    class="ph-bold ph-caret-double-up"></i></button>
+                            <button class="btn-tool btn-tool-icon-only requires-unlocked" title="Move the selected widget one layer backward" onclick="Dashboard.sendToBack()"><i
+                                    class="ph-bold ph-caret-double-down"></i></button>
+                        </div>
+
+                        <div class="flex" data-editor-tier="advanced">
+                            <button
+                                class="btn-tool requires-selection requires-unlocked is-disabled"
+                                aria-disabled="true"
+                                title="Reset selected widget colors to the current theme defaults" onclick="Dashboard.resetSelectedWidgetColors()">
+                                <i class="ph-bold ph-palette"></i> Current
+                            </button>
+                            <button class="btn-tool" title="Reset all widget colors to the current theme defaults"
+                                onclick="Dashboard.resetWidgetColors()">
+                                <i class="ph-bold ph-palette"></i> All
+                            </button>
+                        </div>
+
+                        <div class="flex requires-selection requires-unlocked is-disabled" aria-disabled="true">
+                            <button class="btn-tool btn-tool-icon-only" title="Move selected widget or widgets to one or more pages" onclick="Dashboard.moveSelectedWidgets()"><i
+                                    class="ph-bold ph-arrow-square-out"></i></button>
+                            <button class="btn-tool btn-tool-icon-only" title="Duplicate selected widget (Ctrl/Cmd+D)" onclick="Dashboard.duplicateWidget()"><i
+                                    class="ph-bold ph-stack-plus"></i></button>
+                            <button class="btn-tool btn-tool-icon-only danger" title="Delete selected widget or widgets (Delete/Backspace)"
+                                onclick="Dashboard.removeSelectedWidget()"><i class="ph-bold ph-trash"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="toolbar-divider"></div>
+
+                <div id="editor-universal-actions" class="toolbar-section">
+                    <label class="toolbar-label" data-editor-tooltip="universal-actions">Universal Actions</label>
+                    <div class="flex flex-col">
+                        <div class="grid grid-cols-3">
+                            <button id="toolbar-btn-copy" class="btn-tool flex-1 is-disabled" aria-disabled="true"
+                                title="Copy selected widget snippet to the internal clipboard (Ctrl/Cmd+C)" onclick="Dashboard.copySelectionToClipboard()">
+                                <i class="ph-bold ph-copy"></i> Copy
+                            </button>
+                            <button id="toolbar-btn-cut" class="btn-tool flex-1 is-disabled" aria-disabled="true"
+                                title="Cut selected widget snippet to the internal clipboard (Ctrl/Cmd+X)" onclick="Dashboard.cutSelectionToClipboard()">
+                                <i class="ph-bold ph-scissors"></i> Cut
+                            </button>
+                            <button id="toolbar-btn-paste" class="btn-tool flex-1 is-disabled" aria-disabled="true"
+                                title="Paste widget snippet from the internal clipboard (Ctrl/Cmd+V)" onclick="Dashboard.pasteFromClipboard()">
+                                <i class="ph-bold ph-clipboard-text"></i> Paste
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-2">
+                            <button id="toolbar-btn-undo" class="btn-tool flex-1 is-disabled" aria-disabled="true"
+                                title="Undo the last editor action (Ctrl/Cmd+Z)" onclick="Dashboard.undo()">
+                                <i class="ph-bold ph-arrow-counter-clockwise"></i> Undo
+                            </button>
+                            <button id="toolbar-btn-redo" class="btn-tool flex-1 is-disabled" aria-disabled="true"
+                                title="Redo the last undone editor action (Ctrl/Cmd+Y or Ctrl/Cmd+Shift+Z)" onclick="Dashboard.redo()">
+                                <i class="ph-bold ph-arrow-clockwise"></i> Redo
+                            </button>
+                        </div>
+                        <div id="universal-group-row" class="flex justify-between hidden">
+                            <button id="btn-group-create" class="btn-tool flex-1 hidden" title="Create a new group, or add widgets to an existing group in the same selection"
+                                onclick="Dashboard.groupPrimaryToolbarAction()">
+                                <i class="ph-bold ph-stack-simple"></i> Group
+                            </button>
+                            <button id="btn-group-ungroup" class="btn-tool danger flex-1 hidden" title="Remove the selected group and keep all member widgets"
+                                onclick="Dashboard.ungroupSelectedWidgets()">
+                                <i class="ph-bold ph-stack-minus"></i> Ungroup
+                            </button>
+                            <button id="btn-group-open" class="btn-tool flex-1 hidden" title="Open or close focus mode for the selected group"
+                                onclick="Dashboard.toggleOpenSelectedGroupView()">
+                                <i class="ph-bold ph-arrows-out-simple"></i> Open Group
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-2">
+                            <button class="btn-tool flex-1" title="Insert a new dashboard page at a chosen position" onclick="Dashboard.insertPage()">
+                                <i class="ph-bold ph-file-plus"></i> Insert Page
+                            </button>
+                            <button class="btn-tool danger flex-1" title="Delete an empty dashboard page at a chosen position"
+                                onclick="Dashboard.deletePage()">
+                                <i class="ph-bold ph-file-minus"></i> Delete Page
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="toolbar-divider"></div>
+
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <button id="editor-page-prev" class="btn-tool btn-tool-icon-only"
+                            title="Go to previous dashboard page" onclick="Dashboard.stepEditorPage(-1)">
+                            <i class="ph-bold ph-caret-left"></i>
+                        </button>
+                        <div id="editor-page-indicator"
+                            class="editor-page-indicator"
+                            title="Current dashboard page">
+                            Page 1
+                        </div>
+                        <button id="editor-page-next" class="btn-tool btn-tool-icon-only"
+                            title="Go to next dashboard page" onclick="Dashboard.stepEditorPage(1)">
+                            <i class="ph-bold ph-caret-right"></i>
+                        </button>
+                    </div>
+                    <button class="btn-tool" title="Collapse or expand all settings groups in the editor panel"
+                        onclick="Editor.toggleAllGroups()">
+                        <i class="ph-bold ph-list-dashes"></i> Toggle Groups
+                    </button>
+                </div>
+            </div>
+
+            <div id="editor-content"></div>
+        </div>
+    </div>
+
+    <div id="quick-toolbar-host" hidden></div>
+
+    <div id="dashboard-wrapper">
+        <div id="dashboard-stage">
+            <div id="dashboard-canvas" class="show-grid"></div>
+        </div>
+    </div>
+
+    <button id="fab-mode-switch" title="Enter or exit Edit Mode (Ctrl+E)" onclick="Dashboard.toggleEditMode()">
+        <i class="ph ph-gear"></i>
+    </button>
+
+    <div id="icon-modal">
+        <div class="icon-browser">
+            <div class="ib-header">
+                <div class="ds-dialog-title">
+                    <i class="ph-bold ph-star ds-dialog-title-icon"></i>
+                    <span>Choose Icon</span>
+                </div>
+                <div class="ib-search-wrap">
+                    <i class="ph ph-magnifying-glass"></i>
+                    <input type="text" id="ib-search" class="control-input" placeholder="Search icons..."
+                        oninput="Dashboard.filterIcons(this.value)">
+                </div>
+                <button class="ds-dialog-close" title="Close"
+                    onclick="document.getElementById('icon-modal').classList.remove('open')">
+                    <i class="ph ph-x"></i>
+                </button>
+            </div>
+            <div id="ib-grid" class="ib-grid"></div>
+        </div>
+    </div>
+
+    <div id="help-panel">
+        <div id="help-resize-handle"></div>
+        <div id="help-header">
+            <div class="help-header-row">
+                <h2><i class="ph-bold ph-book-open-text"></i> Documentation</h2>
+                <div class="help-header-search" role="search">
+                    <div class="help-search-wrap">
+                        <i class="ph ph-magnifying-glass" aria-hidden="true"></i>
+                        <input type="text" id="help-search-input" class="control-input" placeholder="Search documentation..." autocomplete="off" spellcheck="false" aria-label="Search documentation" oninput="HelpSystem.onHelpSearchInput()" onkeydown="HelpSystem.onHelpSearchKey(event)">
+                        <button type="button" id="help-search-clear" class="help-search-clear" title="Clear search" aria-label="Clear search" hidden onclick="HelpSystem.clearHelpSearch()">
+                            <i class="ph ph-x" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="help-header-actions">
+                    <button type="button" id="help-nav-back" class="btn-tool btn-tool-icon-only" title="Previous topic" aria-label="Previous topic" disabled onclick="HelpSystem.historyBack()">
+                        <i class="ph-bold ph-caret-left"></i>
+                    </button>
+                    <button type="button" id="help-nav-forward" class="btn-tool btn-tool-icon-only" title="Next topic" aria-label="Next topic" disabled onclick="HelpSystem.historyForward()">
+                        <i class="ph-bold ph-caret-right"></i>
+                    </button>
+                    <button class="ds-dialog-close" title="Close Documentation" onclick="HelpSystem.toggle()"><i class="ph ph-x"></i></button>
+                </div>
+            </div>
+            <nav id="help-header-breadcrumb" class="help-header-breadcrumb" aria-label="Help location"></nav>
+        </div>
+        <div id="help-body">
+            <div id="help-toc"></div>
+            <div id="help-content-body"></div>
+        </div>
+    </div>
+
+
+    <div id="reset-canvas-wizard-modal" aria-hidden="true">
+        <div class="modal-content rcw-modal-content" role="dialog" aria-modal="true" aria-labelledby="rcw-dialog-title">
+            <div class="modal-header">
+                <h3 class="ds-dialog-title">
+                    <i class="ph-bold ph-magic-wand ds-dialog-title-icon"></i>
+                    <span id="rcw-dialog-title">Reset Canvas Wizard</span>
+                </h3>
+                <div class="rcw-step-meta">
+                    <div id="rcw-step-dots" class="rcw-step-dots" aria-hidden="true"></div>
+                    <span id="rcw-step-counter" class="rcw-step-counter">Step 1 of 4</span>
+                </div>
+                <button type="button" id="rcw-btn-close" class="ds-dialog-close" title="Close" aria-label="Close">
+                    <i class="ph-bold ph-x"></i>
+                </button>
+            </div>
+            <div class="modal-body rcw-modal-body">
+                <div id="rcw-topic-gate" class="rcw-topic-gate" hidden>
+                    <h2 class="rcw-heading" id="rcw-topic-gate-title">Enable Capabilities First</h2>
+                    <p class="rcw-lead" id="rcw-topic-gate-lead"></p>
+                    <p class="rcw-lead" id="rcw-topic-gate-detail"></p>
+                    <p class="rcw-topic-gate-link-row">
+                        <a id="rcw-topic-gate-link" class="rcw-help-link" href="help://Connecting%20Widgets%20%26%20Data%20%28Topics%29#homey-enabling-capabilities-homey-pro">
+                            <i class="ph-bold ph-book-open" aria-hidden="true"></i>
+                            <span id="rcw-topic-gate-link-label">How to enable capabilities</span>
+                        </a>
+                    </p>
+                </div>
+                <section class="rcw-section" data-rcw-step="editor" hidden>
+                    <h2 class="rcw-heading">Choose Your Editor Experience</h2>
+                    <p class="rcw-lead">
+                        Select how detailed you want your widget settings to be. For new creators,
+                        <strong>Basic Mode</strong> is highly recommended to get started quickly.
+                        You can switch between Basic and Advanced modes at any time from the editor
+                        without losing any of your configuration.
+                    </p>
+                    <div class="rcw-card-grid rcw-card-grid--2" role="radiogroup" aria-label="Editor Mode">
+                        <button type="button" class="rcw-card" data-rcw-editor="basic" role="radio" aria-checked="false">
+                            <span class="rcw-card-thumb">
+                                <img src="images/wizard/wizard-editor-basic.png" alt="Basic Mode editor" class="rcw-card-thumb-img">
+                            </span>
+                            <span class="rcw-card-meta">
+                                <span class="rcw-card-badge rcw-card-badge--accent">Recommended for beginners</span>
+                                <span class="rcw-card-radio" aria-hidden="true"><span class="rcw-card-radio-dot"></span></span>
+                            </span>
+                            <span class="rcw-card-title">Basic Mode</span>
+                            <span class="rcw-card-desc">A simplified, distraction-free editing experience. Widget settings are streamlined down to their most essential properties, including quick-start presets. Perfect for a fast and clean setup.</span>
+                        </button>
+                        <button type="button" class="rcw-card is-selected" data-rcw-editor="advanced" role="radio" aria-checked="true">
+                            <span class="rcw-card-thumb">
+                                <img src="images/wizard/wizard-editor-advanced.png" alt="Advanced Mode editor" class="rcw-card-thumb-img">
+                            </span>
+                            <span class="rcw-card-meta">
+                                <span class="rcw-card-badge">Full Control</span>
+                                <span class="rcw-card-radio" aria-hidden="true"><span class="rcw-card-radio-dot"></span></span>
+                            </span>
+                            <span class="rcw-card-title">Advanced Mode</span>
+                            <span class="rcw-card-desc">The complete, unconstrained editing environment. Provides full access to all slideouts, absolute positioning, custom style variables, animations, and complex data bindings.</span>
+                        </button>
+                    </div>
+                </section>
+
+                <section class="rcw-section" data-rcw-step="layout" hidden>
+                    <h2 class="rcw-heading">Choose Your Layout Mode</h2>
+                    <p class="rcw-lead">
+                        Select how your widgets will be positioned and how the canvas adapts to different screen sizes.
+                    </p>
+                    <div class="rcw-card-grid rcw-card-grid--3" role="radiogroup" aria-label="Layout Mode">
+                        <button type="button" class="rcw-card is-selected" data-rcw-layout="fixed" role="radio" aria-checked="true">
+                            <span class="rcw-card-thumb">
+                                <img src="images/wizard/wizard-layout-fixed.png" alt="Fixed Resolution layout" class="rcw-card-thumb-img">
+                            </span>
+                            <span class="rcw-card-meta">
+                                <span class="rcw-card-badge">Default</span>
+                                <span class="rcw-card-radio" aria-hidden="true"><span class="rcw-card-radio-dot"></span></span>
+                            </span>
+                            <span class="rcw-card-title">Fixed Resolution</span>
+                            <span class="rcw-card-desc">Place widgets freely with pixel-perfect, absolute coordinates. Best for tablets, dedicated wall-mounted monitors, or clocks where the screen size never changes.</span>
+                        </button>
+                        <button type="button" class="rcw-card" data-rcw-layout="scale" role="radio" aria-checked="false">
+                            <span class="rcw-card-thumb">
+                                <img src="images/wizard/wizard-layout-scale.png" alt="Scale to Fit Screen layout" class="rcw-card-thumb-img">
+                            </span>
+                            <span class="rcw-card-meta">
+                                <span class="rcw-card-badge">Preserves Aspect</span>
+                                <span class="rcw-card-radio" aria-hidden="true"><span class="rcw-card-radio-dot"></span></span>
+                            </span>
+                            <span class="rcw-card-title">Scale to Fit Screen</span>
+                            <span class="rcw-card-desc">Design on a fixed pixel grid that automatically scales up or down to fill the window. Keeps your exact layout and aspect ratio across all screen sizes.</span>
+                        </button>
+                        <button type="button" class="rcw-card" data-rcw-layout="responsive" role="radio" aria-checked="false">
+                            <span class="rcw-card-thumb">
+                                <img src="images/wizard/wizard-layout-responsive.png" alt="Responsive Columns layout" class="rcw-card-thumb-img">
+                            </span>
+                            <span class="rcw-card-meta">
+                                <span class="rcw-card-badge">Fluid Flow</span>
+                                <span class="rcw-card-radio" aria-hidden="true"><span class="rcw-card-radio-dot"></span></span>
+                            </span>
+                            <span class="rcw-card-title">Responsive Columns</span>
+                            <span class="rcw-card-desc">A fluid layout that divides the canvas into columns, automatically reflowing widgets to fit any viewport. Great for browser start pages, bookmarks, and sensor feeds.</span>
+                        </button>
+                    </div>
+                    <div id="rcw-size-panel" class="rcw-size-panel">
+                        <div class="rcw-size-head">
+                            <div class="rcw-size-heading">
+                                <i class="ph-bold ph-device-tablet" aria-hidden="true"></i>
+                                <span id="rcw-size-label">Resolution</span>
+                            </div>
+                            <span id="rcw-size-readout" class="rcw-size-readout">1180 × 820</span>
+                        </div>
+                        <p id="rcw-size-hint" class="rcw-size-hint">Pick a screen size for the canvas. Unlimited lets the canvas fill the window.</p>
+                        <div id="rcw-size-select" class="rcw-size-select"></div>
+                        <div id="rcw-size-custom" class="rcw-size-custom" hidden>
+                            <div class="rcw-size-field" id="rcw-size-width-field">
+                                <label class="control-label" for="rcw-size-width">Width</label>
+                                <input id="rcw-size-width" class="control-input" type="number" min="1" step="1" inputmode="numeric" autocomplete="off">
+                            </div>
+                            <div class="rcw-size-field" id="rcw-size-height-field">
+                                <label class="control-label" for="rcw-size-height">Height</label>
+                                <input id="rcw-size-height" class="control-input" type="number" min="1" step="1" inputmode="numeric" autocomplete="off">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="rcw-notice" role="note">
+                        <div class="rcw-notice-title">
+                            <i class="ph-bold ph-warning"></i>
+                            Important Layout Compatibility Notice
+                        </div>
+                        <ul class="rcw-notice-list">
+                            <li><strong>Fixed Resolution</strong> and <strong>Scale to Fit Screen</strong> share the same canvas layout engine. You can toggle between them instantly at any time without affecting your widget positions.</li>
+                            <li><strong>Responsive Columns</strong> uses a completely different column-based grid system. Switching between a fixed canvas mode and Responsive Columns later is supported, but will require you to completely rearrange and reposition your widgets.</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section class="rcw-section" data-rcw-step="theme" hidden>
+                    <h2 class="rcw-heading">Choose Your Theme Style</h2>
+                    <p class="rcw-lead">
+                        Select a visual theme for the new dashboard.
+                        You can change themes later from Theme.
+                    </p>
+                    <div id="rcw-theme-explorer" class="rcw-theme-explorer"></div>
+                </section>
+
+                <section class="rcw-section" data-rcw-step="populate" hidden>
+                    <h2 class="rcw-heading">Populate Your Canvas</h2>
+                    <p class="rcw-lead">
+                        Pick live widgets generated from your data stream.
+                        Checked widgets are added when you create the dashboard.
+                        Select nothing to start with a blank canvas.
+                    </p>
+                    <div class="rcw-platform-row" id="rcw-platform-row">
+                        <label class="control-label" id="rcw-platform-label">Platform</label>
+                        <div id="rcw-platform-select"></div>
+                    </div>
+                    <div id="rcw-auto-gallery" class="rcw-auto-gallery"></div>
+                </section>
+            </div>
+            <div class="ds-dialog-footer rcw-footer">
+                <div class="rcw-footer-left">
+                    <button type="button" id="rcw-btn-gate-ignore" class="btn-tool ds-dialog-button" hidden>Ignore</button>
+                    <button type="button" id="rcw-btn-skip" class="btn-tool ds-dialog-button" title="Skip the wizard and create with Advanced mode, Fixed Resolution, and Dark theme">Skip Wizard</button>
+                    <button type="button" id="rcw-btn-cancel" class="btn-tool ds-dialog-button">Cancel</button>
+                </div>
+                <div class="rcw-footer-right">
+                    <button type="button" id="rcw-btn-gate-ok" class="btn-tool ds-dialog-button primary" hidden>OK</button>
+                    <button type="button" id="rcw-btn-back" class="btn-tool ds-dialog-button" hidden>Back</button>
+                    <button type="button" id="rcw-btn-primary" class="btn-tool ds-dialog-button primary">
+                        <span id="rcw-btn-primary-label">Next</span>
+                        <i id="rcw-btn-primary-icon" class="ph-bold ph-caret-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="file-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title" class="ds-dialog-title">
+                    <i class="ph-bold ph-folder ds-dialog-title-icon"></i>
+                    <span>File Manager</span>
+                </h3>
+                <button onclick="ServerFileManager.close()" class="ds-dialog-close" title="Close">
+                    <i class="ph-bold ph-x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="modal-save-content" style="display:none;">
+                    <label
+                        class="control-label mb-1 block">Filename</label>
+                    <input id="save-filename" type="text" class="control-input mb-1" placeholder="Enter name...">
+                    <div id="save-filename-hint" class="editor-hint-text mb-3">Name it "dashboard" to load automatically.</div>
+                    <div id="save-template-preview-row" class="mb-3" hidden>
+                        <label class="control-label mb-1 block" for="save-template-preview">Preview Image (optional)</label>
+                        <input id="save-template-preview" type="text" class="control-input mb-1" placeholder="images/theme-preview/my_theme.jpg" autocomplete="off">
+                        <div class="editor-hint-text">Optional path to a preview image. Leave empty to show a placeholder.</div>
+                    </div>
+                    <div id="save-template-kind-row" class="mb-3" hidden>
+                        <div class="control-label mb-1">Theme Type</div>
+                        <div class="save-theme-kind-options" role="radiogroup" aria-label="Theme Type">
+                            <label class="save-theme-kind-option" for="save-theme-kind-full">
+                                <input type="radio" name="save-theme-kind" id="save-theme-kind-full" value="full" checked>
+                                <span>Full Theme - replaces the whole look</span>
+                            </label>
+                            <label class="save-theme-kind-option" for="save-theme-kind-adjustment">
+                                <input type="radio" name="save-theme-kind" id="save-theme-kind-adjustment" value="adjustment">
+                                <span>Adjustment Theme - overlays stored values only</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="control-label mb-1">Existing Files</div>
+                    <div id="save-file-list" class="ds-scroll-box ds-scroll-box--compact mb-3"></div>
+
+                    <button type="button" onclick="ServerFileManager.performSave()"
+                        class="btn-tool ds-dialog-button primary w-full justify-center">Save</button>
+                </div>
+                <div id="modal-load-content" style="display:none;">
+                    <div id="file-load-toolbar" class="file-load-toolbar mb-2" style="display:none;">
+                        <label class="control-label mb-1 block" for="file-load-filter">Filter</label>
+                        <input type="search" id="file-load-filter" class="control-input w-full" placeholder="Filter by name…" autocomplete="off" title="Filter dashboard and theme names">
+                    </div>
+                    <div id="file-list" class="ds-scroll-box"></div>
+                    <div id="no-files-msg" class="ds-file-list-empty py-4 hidden">No files found.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="widget-preset-picker-modal" class="ds-dialog-backdrop" aria-hidden="true">
+        <div class="modal-content wpp-modal-content" role="dialog" aria-modal="true" aria-labelledby="wpp-title">
+            <div class="modal-header">
+                <h3 class="ds-dialog-title">
+                    <i class="ph-bold ph-sliders-horizontal ds-dialog-title-icon"></i>
+                    <span id="wpp-title">Export Widget Preset</span>
+                </h3>
+                <button type="button" id="wpp-btn-close" class="ds-dialog-close" title="Close" aria-label="Close"
+                    onclick="WidgetPresetPicker.close(null)">
+                    <i class="ph-bold ph-x"></i>
+                </button>
+            </div>
+            <div class="modal-body wpp-modal-body">
+                <div class="wpp-name-row mb-1">
+                    <div class="wpp-name-field">
+                        <label class="control-label mb-1 block" for="wpp-name">Preset Name</label>
+                        <div class="wpp-name-combobox">
+                            <input id="wpp-name" type="text" class="control-input" placeholder="Type or pick preset..." autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="wpp-name-field">
+                        <label class="control-label mb-1 block" for="wpp-sub-name">Preset Sub Name (optional)</label>
+                        <div class="wpp-name-combobox">
+                            <input id="wpp-sub-name" type="text" class="control-input" placeholder="Type or pick sub..." autocomplete="off">
+                        </div>
+                    </div>
+                </div>
+
+                <div id="wpp-append-wrap" class="wpp-append-wrap mb-2" hidden>
+                    <button type="button" id="wpp-btn-append" class="btn-tool w-full justify-center">
+                        <i class="ph-bold ph-plus"></i> Append to Existing Preset
+                    </button>
+                </div>
+
+                <div id="wpp-existing-wrap" class="wpp-existing-wrap mb-3" hidden>
+                    <div class="flex items-center justify-between gap-2 mb-1">
+                        <span class="control-label">Presets</span>
+                        <span id="wpp-existing-hint" class="editor-hint-text">Click a row to select</span>
+                    </div>
+                    <div id="wpp-existing-list" class="wpp-existing-list ds-scroll-box ds-scroll-box--compact" role="tree" aria-label="Saved presets"></div>
+                </div>
+
+                <div class="control-label mb-1">Include Settings</div>
+                <div id="wpp-mode-group" class="wpp-mode-group mb-3" role="radiogroup" aria-label="Include Settings">
+                    <button type="button" class="wpp-mode-option is-selected" data-wpp-mode="changed" role="radio" aria-checked="true">
+                        <span class="wpp-mode-radio" aria-hidden="true"><span class="wpp-mode-radio-dot"></span></span>
+                        <span class="wpp-mode-copy">
+                            <span class="wpp-mode-title">All changed settings</span>
+                            <span class="wpp-mode-desc">Settings with a blue outline in the editor (non-default overrides).</span>
+                        </span>
+                    </button>
+                    <button type="button" class="wpp-mode-option" data-wpp-mode="custom" role="radio" aria-checked="false">
+                        <span class="wpp-mode-radio" aria-hidden="true"><span class="wpp-mode-radio-dot"></span></span>
+                        <span class="wpp-mode-copy">
+                            <span class="wpp-mode-title">Custom selection</span>
+                            <span class="wpp-mode-desc">Choose settings in a tree. Checking a default stores that value in the preset.</span>
+                        </span>
+                    </button>
+                </div>
+
+                <div id="wpp-custom-panel" class="wpp-custom-panel" hidden>
+                    <div class="wpp-filter-row mb-2">
+                        <i class="ph ph-magnifying-glass wpp-filter-icon" aria-hidden="true"></i>
+                        <input type="search" id="wpp-filter" class="control-input w-full" placeholder="Filter settings..." autocomplete="off">
+                    </div>
+                    <div id="wpp-tree" class="wpp-tree ds-scroll-box"></div>
+                    <div id="wpp-custom-actions" class="flex gap-2 mt-2">
+                        <button type="button" id="wpp-btn-select-none" class="btn-tool flex-1 justify-center"
+                            title="Uncheck all settings in the tree">
+                            Select None
+                        </button>
+                        <button type="button" id="wpp-btn-select-all" class="btn-tool flex-1 justify-center"
+                            title="Check all settings in the tree">
+                            Select All
+                        </button>
+                        <button type="button" id="wpp-btn-match-preset" class="btn-tool flex-1 justify-center is-disabled" aria-disabled="true"
+                            title="Check the same settings that exist in the preset selected in the Presets list above"
+                            disabled>
+                            <i class="ph-bold ph-checks"></i> Match Selected Preset
+                        </button>
+                    </div>
+                </div>
+
+                <div id="wpp-count" class="editor-hint-text mt-3">0 of 0 settings selected</div>
+            </div>
+            <div class="modal-footer wpp-modal-footer">
+                <button type="button" id="wpp-btn-cancel" class="btn-tool ds-dialog-button"
+                    onclick="WidgetPresetPicker.close(null)">Cancel</button>
+                <button type="button" id="wpp-btn-confirm" class="btn-tool ds-dialog-button primary"
+                    onclick="void WidgetPresetPicker.confirm()">
+                    <i class="ph-bold ph-download-simple"></i> Export
+                </button>
+            </div>
+            <div id="wpp-resize-handle" class="wpp-resize" aria-hidden="true" title="Resize"></div>
+        </div>
+    </div>
+
+    <div id="gallery-modal">
+        <div class="modal-content gallery-modal-content">
+            <div class="modal-header">
+                <h3 class="ds-dialog-title">
+                    <i class="ph-bold ph-images-square ds-dialog-title-icon"></i>
+                    <span>Image Gallery</span>
+                </h3>
+                <button type="button" onclick="ImageGallery.close()" class="ds-dialog-close" title="Close the Image Gallery"><i class="ph-bold ph-x"></i></button>
+            </div>
+            <div class="modal-body gallery-modal-body">
+                <div id="gallery-upload" class="upload-area" title="Click or drop image files here. Multiple files allowed; max 8MB each (under 600KB recommended).">
+                    <i class="ph-bold ph-cloud-arrow-up"></i>
+                    <div class="text-sm font-bold">Click or drag images here</div>
+                    <div class="text-xs opacity-70">Multiple files · Max 8MB each (recommend under 600KB)</div>
+                    <input type="file" id="gallery-input" class="hidden" accept="image/*" multiple>
+                </div>
+                <div id="gallery-toolbar" class="gallery-toolbar">
+                    <div class="gallery-toolbar-row gallery-toolbar-row-primary">
+                        <div class="gallery-toolbar-group">
+                            <button type="button" id="gallery-view-thumbs" class="btn-tool gallery-toggle is-active" title="Thumbnail grid: click to select, double-click for preview. Hold Ctrl or Shift to multi-select." aria-pressed="true">
+                                <i class="ph-bold ph-squares-four"></i>
+                            </button>
+                            <button type="button" id="gallery-view-list" class="btn-tool gallery-toggle" title="List with preview, name, size, and date. Click to select, double-click for preview. Hold Ctrl or Shift to multi-select." aria-pressed="false">
+                                <i class="ph-bold ph-list"></i>
+                            </button>
+                        </div>
+                        <input type="search" id="gallery-search" class="control-input gallery-search" placeholder="Search by filename…" autocomplete="off" title="Filter by filename (partial match, not case-sensitive)">
+                        <div id="gallery-sort-container" class="w-32 flex-shrink-0 relative"></div>
+                        <label class="gallery-thumb-label" id="gallery-thumb-label" title="Size for the current view only; list and thumbnails remember separate values">
+                            <span class="gallery-thumb-label-text" id="gallery-thumb-label-text">Thumb size</span>
+                            <input type="range" id="gallery-thumb-size" class="gallery-thumb-size" min="72" max="200" step="4" value="100" title="Preview or tile size from 72px to 200px (saved per view)">
+                        </label>
+                        <span id="gallery-total-size" class="gallery-total-size" title="Total storage used by all gallery images on Homey and how many files">—</span>
+                    </div>
+                    <div class="gallery-toolbar-row gallery-toolbar-row-actions">
+                        <button type="button" id="gallery-select-all" class="btn-tool ds-dialog-button" title="Select all images in the current filtered list (use with Delete)">Select all</button>
+                        <button type="button" id="gallery-clear-selection" class="btn-tool ds-dialog-button" title="Clear multi-selection (Ctrl/Shift selection only)">Clear selection</button>
+                        <button type="button" id="gallery-delete-selected" class="btn-tool ds-dialog-button danger" title="Permanently delete selected images from Homey. Widgets using those paths will break." disabled><i class="ph-bold ph-trash"></i> Delete</button>
+                    </div>
+                </div>
+                <div id="gallery-upload-progress" class="gallery-upload-progress is-hidden" aria-live="polite"></div>
+                <div id="gallery-items" class="gallery-items gallery-items--thumbnails"></div>
+            </div>
+            <div id="gallery-preview" class="gallery-preview is-hidden" aria-hidden="true">
+                <div class="gallery-preview-backdrop" id="gallery-preview-backdrop" aria-hidden="true"></div>
+                <button type="button" class="gallery-preview-close btn-tool" id="gallery-preview-close" title="Close preview (or press Escape)"><i class="ph-bold ph-x"></i></button>
+                <div class="gallery-preview-inner">
+                    <img id="gallery-preview-image" class="gallery-preview-image" alt="">
+                    <div class="gallery-preview-bar">
+                        <span id="gallery-preview-filename" class="gallery-preview-filename"></span>
+                        <div class="gallery-preview-actions">
+                            <button type="button" id="gallery-preview-insert" class="btn-tool ds-dialog-button is-hidden gallery-preview-insert-btn" title="Insert Markdown image into the text editor"><i class="ph-bold ph-plus"></i> Insert</button>
+                            <button type="button" id="gallery-preview-copy" class="btn-tool" title="Copy path for widgets (e.g. /images/name.png)"><i class="ph-bold ph-copy"></i></button>
+                            <button type="button" id="gallery-preview-download" class="btn-tool" title="Download this file to your device"><i class="ph-bold ph-download-simple"></i></button>
+                            <button type="button" id="gallery-preview-rename" class="btn-tool" title="Rename on Homey; update widgets that used the old filename"><i class="ph-bold ph-pencil-simple"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="audio-gallery-modal">
+        <div class="modal-content audio-library-modal">
+            <div class="modal-header">
+                <h3 class="ds-dialog-title">
+                    <i class="ph-bold ph-music-notes ds-dialog-title-icon"></i>
+                    <span>Audio Gallery</span>
+                </h3>
+                <button type="button" onclick="AudioGallery.close()" class="ds-dialog-close" title="Close the Audio Gallery"><i class="ph-bold ph-x"></i></button>
+            </div>
+            <div class="modal-body audio-library-body">
+                <div id="audio-gallery-upload" class="upload-area" title="Click or drop audio files here. Multiple files allowed; max 15MB each (under 3MB recommended).">
+                    <i class="ph-bold ph-cloud-arrow-up"></i>
+                    <div class="text-sm font-bold">Click or drag audio here</div>
+                    <div class="text-xs opacity-70">mp3, wav, ogg, m4a, aac, webm, flac · Max 15MB each (recommend under 3MB)</div>
+                    <input type="file" id="audio-gallery-input" class="hidden" accept="audio/*,.mp3,.wav,.ogg,.m4a,.aac,.webm,.flac" multiple>
+                </div>
+                <div class="audio-library-toolbar">
+                    <div class="audio-library-toolbar-row">
+                        <input type="search" id="audio-gallery-search" class="control-input audio-library-search" placeholder="Search audio…" autocomplete="off" title="Filter by filename (partial match, not case-sensitive)">
+                        <div id="audio-gallery-sort-container" class="audio-library-sort"></div>
+                        <span id="audio-gallery-total-size" class="audio-library-total" title="Total storage used by audio on Homey">-</span>
+                    </div>
+                    <div class="audio-library-toolbar-row audio-library-toolbar-row-actions">
+                        <div class="audio-library-prefs" title="Playback preferences">
+                            <button type="button" id="audio-gallery-loop" class="btn-tool audio-library-pref-btn" title="Loop off" aria-pressed="false"><i class="ph-bold ph-repeat"></i></button>
+                            <button type="button" id="audio-gallery-mute" class="btn-tool audio-library-pref-btn" title="Mute"><i class="ph-bold ph-speaker-high"></i></button>
+                            <label class="audio-library-volume-label" title="Volume">
+                                <input type="range" id="audio-gallery-volume" class="audio-library-volume" min="0" max="100" step="1" value="80">
+                            </label>
+                        </div>
+                        <div class="audio-library-bulk">
+                            <button type="button" id="audio-gallery-select-all" class="btn-tool ds-dialog-button" title="Select all uploaded tracks">Select all</button>
+                            <button type="button" id="audio-gallery-clear-selection" class="btn-tool ds-dialog-button" title="Clear selection">Clear</button>
+                            <button type="button" id="audio-gallery-delete-selected" class="btn-tool ds-dialog-button danger" title="Delete selected audio from Homey" disabled><i class="ph-bold ph-trash"></i> Delete</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="audio-gallery-upload-progress" class="audio-library-progress is-hidden" aria-live="polite"></div>
+                <div id="audio-gallery-items" class="audio-library-list" role="list"></div>
+            </div>
+        </div>
+    </div>
+
+        <div id="driver-offline-warning" aria-live="polite" aria-hidden="true">
+            <div class="cd-box">
+                <div class="ds-dialog-header">
+                    <div class="ds-dialog-title">
+                        <i class="ph-bold ph-plugs-connected ds-dialog-title-icon"></i>
+                        <span>Connection Lost</span>
+                    </div>
+                    <button type="button" id="driver-offline-warning-close" class="ds-dialog-close" title="Dismiss"
+                        aria-label="Dismiss" onclick="Dashboard._hideDriverOfflineWarning(true)">
+                        <i class="ph-bold ph-x"></i>
+                    </button>
+                </div>
+                <div class="cd-body">
+                    <div id="driver-offline-warning-message" class="cd-msg">
+                        Dashboard Studio temporarily lost connection to the active driver. It will reconnect automatically.
+                    </div>
+                </div>
+                <div class="ds-dialog-footer">
+                    <button type="button" class="btn-tool ds-dialog-button primary"
+                        onclick="Dashboard._hideDriverOfflineWarning(true)">OK</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="custom-dialog">
+            <div class="cd-box">
+                <div class="ds-dialog-header">
+                    <div class="ds-dialog-title">
+                        <i id="cd-title-icon" class="ph-bold ph-info ds-dialog-title-icon"></i>
+                        <span id="cd-title">Title</span>
+                    </div>
+                    <button type="button" id="cd-btn-close" class="ds-dialog-close" title="Close (Esc)" aria-label="Close">
+                        <i class="ph-bold ph-x"></i>
+                    </button>
+                </div>
+                <div class="cd-body">
+                    <div id="cd-msg" class="cd-msg">Message content goes here.</div>
+                    <div id="cd-choices" class="cd-choices" style="display: none;"></div>
+                    <input type="text" id="cd-input" class="control-input cd-input" placeholder="Enter value..." autocomplete="off" data-mp-ignore="true" data-lpignore="true" data-1p-ignore="true">
+                    <textarea id="cd-textarea" class="control-input cd-textarea" placeholder="Paste snippet code here..." autocomplete="off" data-mp-ignore="true" data-lpignore="true" data-1p-ignore="true"></textarea>
+                    <div id="cd-prompt-extras" class="cd-prompt-extras" style="display: none;"></div>
+                </div>
+                <div class="ds-dialog-footer">
+                    <button type="button" id="cd-btn-extra" class="btn-tool ds-dialog-button">Extra</button>
+                    <button type="button" id="cd-btn-cancel" class="btn-tool ds-dialog-button">Cancel</button>
+                    <button type="button" id="cd-btn-ok" class="btn-tool ds-dialog-button primary">OK</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="loading-overlay" class="show">
+            <div class="ds-loading-card">
+                <div class="ds-loading-spinner" aria-hidden="true">
+                    <span class="ds-loading-ch">
+                        <span class="ds-loading-clip"><span class="ds-loading-top"></span><span class="ds-loading-bot"></span></span>
+                        <span class="ds-loading-knob"></span>
+                    </span>
+                    <span class="ds-loading-ch">
+                        <span class="ds-loading-clip"><span class="ds-loading-top"></span><span class="ds-loading-bot"></span></span>
+                        <span class="ds-loading-knob"></span>
+                    </span>
+                    <span class="ds-loading-ch">
+                        <span class="ds-loading-clip"><span class="ds-loading-top"></span><span class="ds-loading-bot"></span></span>
+                        <span class="ds-loading-knob"></span>
+                    </span>
+                </div>
+                <div id="loading-overlay-text" class="ds-loading-text">Loading...</div>
+            </div>
+        </div>
+
+        <!-- Lean editor core: templates, markdown, help, and drivers download in one parallel
+             batch via widget-script-loader (runEditor) instead of blocking the HTML parser. -->
+        <script src="version.js"></script>
+        <script src="config-loader.js"></script>
+        <script src="storage/storage-base.js"></script>
+        <script src="storage/local-provider.js"></script>
+        <script src="storage/web-provider.js"></script>
+
+        <script src="theme-manager.js"></script>
+        <script src="worker-timer.js"></script>
+
+        <script src="topic-alias.js"></script>
+        <script src="data-driver-base.js"></script>
+
+        <script src="data-config.js"></script>
+        <script src="pointer-drag.js"></script>
+        <script src="utils.js"></script>
+        <script src="bindings-tree.js"></script>
+        <script src="formula-engine.js"></script>
+        <script src="widget-base.js"></script>
+        <script src="widget-animations.js"></script>
+        <script src="widget-script-loader.js"></script>
+</body>
+
+</html>

@@ -2,12 +2,8 @@
   "config": {
     "step": {
       "user": {
-        "title": "Connect to Dashboard Studio",
-        "description": "Configure the connection to your Dashboard Studio server or Add-on.",
-        "data": {
-          "server_url": "Dashboard Studio Server URL",
-          "api_token": "Security / API Token (Optional)"
-        }
+        "title": "Dashboard Studio",
+        "description": "Dashboard Studio runs inside Home Assistant. Submit to add it. No token or server URL is required. After it is added, open Dashboard Studio Setup in the sidebar to choose devices and capabilities."
       }
     },
     "abort": {
@@ -15,14 +11,8 @@
     }
   },
   "options": {
-    "step": {
-      "init": {
-        "title": "Dashboard Studio Options",
-        "data": {
-          "server_url": "Dashboard Studio Server URL",
-          "api_token": "Security / API Token (Optional)"
-        }
-      }
+    "abort": {
+      "use_sidebar": "Open Dashboard Studio Setup in the sidebar to choose areas, devices, and capabilities. That page is limited to Home Assistant administrators."
     }
   },
   "device_automation": {
