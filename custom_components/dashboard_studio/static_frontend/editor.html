@@ -110,42 +110,42 @@
                         <i class="ph-bold ph-pencil-simple"></i> Editor Tools
                     </h3>
                     <div class="flex">
-                        <button id="btn-gallery" class="btn-tool btn-tool-icon-only" title="Open Image Gallery to upload, manage, and copy image paths"
+                        <button id="btn-gallery" class="btn-tool btn-tool-icon-only" data-editor-tooltip="btn-gallery" title="Open Image Gallery to upload, manage, and copy image paths"
                             onclick="ImageGallery.open()" style="display:none;">
                             <i class="ph-bold ph-images-square"></i>
                         </button>
-                        <button id="btn-audio-gallery" class="btn-tool btn-tool-icon-only" title="Open Audio Gallery to upload, manage, and play audio files"
+                        <button id="btn-audio-gallery" class="btn-tool btn-tool-icon-only" data-editor-tooltip="btn-audio-gallery" title="Open Audio Gallery to upload, manage, and play audio files"
                             onclick="AudioGallery.open()" style="display:none;">
                             <i class="ph-bold ph-music-notes"></i>
                         </button>
                         <div class="relative">
-                            <button id="btn-share" class="btn-tool btn-tool-icon-only" title="Share snippet" onclick="ShareMenu.toggle()">
+                            <button id="btn-share" class="btn-tool btn-tool-icon-only" data-editor-tooltip="btn-share" title="Share snippet" onclick="ShareMenu.toggle()">
                                 <i class="ph-bold ph-share"></i>
                             </button>
                             <div id="share-dropdown" class="share-dropdown">
-                                <button id="share-export-snippet" class="share-dropdown-item is-disabled" aria-disabled="true"
+                                <button id="share-export-snippet" class="share-dropdown-item is-disabled" data-editor-tooltip="share-export-snippet" aria-disabled="true"
                                     title="Export selected widget snippet as text code" onclick="Dashboard.exportSnippetLocal(); ShareMenu.close();">
                                     <i class="ph-bold ph-brackets-curly"></i> Export Snippet
                                 </button>
-                                <button id="share-import-snippet" class="share-dropdown-item"
+                                <button id="share-import-snippet" class="share-dropdown-item" data-editor-tooltip="share-import-snippet"
                                     title="Import widget snippet from text code" onclick="Dashboard.importSnippetLocal(); ShareMenu.close();">
                                     <i class="ph-bold ph-brackets-curly"></i> Import Snippet
                                 </button>
                             </div>
                         </div>
                         <div class="relative">
-                            <button id="btn-tools" class="btn-tool btn-tool-icon-only" title="Tools: automated dashboard scripts"
+                            <button id="btn-tools" class="btn-tool btn-tool-icon-only" data-editor-tooltip="btn-tools" title="Tools: automated dashboard scripts"
                                 onclick="ToolsMenu.toggle()">
                                 <i class="ph-bold ph-hammer"></i>
                             </button>
                             <div id="tools-dropdown" class="tools-dropdown"></div>
                         </div>
-                        <button id="btn-theme-toggle" class="btn-tool btn-tool-icon-only" title="Editor theme: Auto. Follows the dashboard background. Click for Light."
+                        <button id="btn-theme-toggle" class="btn-tool btn-tool-icon-only" data-editor-tooltip="btn-theme-toggle" title="Editor theme: Auto. Follows the dashboard background. Click for Light."
                             aria-label="Editor theme: Auto. Follows the dashboard background. Click for Light."
                             onclick="ThemeManager.toggle()">
                             <i class="ph-bold ph-circle-half"></i>
                         </button>
-                        <button id="btn-help" class="btn-tool btn-tool-icon-only" title="Open help and documentation" onclick="HelpSystem.toggle()" aria-pressed="false">
+                        <button id="btn-help" class="btn-tool btn-tool-icon-only" data-editor-tooltip="btn-help" title="Open help and documentation" onclick="HelpSystem.toggle()" aria-pressed="false">
                             <i class="ph-bold ph-question"></i>
                         </button>
                     </div>
@@ -165,7 +165,7 @@
                             title="Scales the dashboard in Edit Mode only. 200% is on the left, 100% is in the center, and 20% is on the right."
                             oninput="Dashboard.setEditorZoomFromSlider(this)">
                         <span class="editor-zoom-end" aria-hidden="true">20%</span>
-                        <button type="button" id="editor-zoom-reset" class="btn-tool btn-tool-icon-only"
+                        <button type="button" id="editor-zoom-reset" class="btn-tool btn-tool-icon-only" data-editor-tooltip="editor-zoom-reset"
                             title="Reset Edit Mode Zoom to 100%" aria-label="Reset Edit Mode Zoom to 100%"
                             disabled onclick="Dashboard.setEditorZoom(100)">
                             <i class="ph-bold ph-arrow-counter-clockwise"></i>
@@ -181,7 +181,7 @@
                         <i class="ph-bold ph-arrow-square-out dashboard-viewer-url-icon" aria-hidden="true"></i>
                         <a id="dashboard-viewer-url-link" class="dashboard-viewer-url-link" target="_blank"
                             rel="noopener noreferrer" aria-disabled="true" title="Save the page first to generate a viewer URL">Save page first</a>
-                        <button type="button" id="btn-copy-viewer-url" class="dashboard-viewer-url-copy"
+                        <button type="button" id="btn-copy-viewer-url" class="dashboard-viewer-url-copy" data-editor-tooltip="btn-copy-viewer-url"
                             disabled title="Save the page first to copy viewer URL" onclick="Dashboard.copyViewerUrlToClipboard()" aria-label="Copy viewer URL">
                             <i class="ph-bold ph-copy"></i>
                         </button>
@@ -189,27 +189,27 @@
                     <div class="flex flex-col">
                         <div class="grid grid-cols-2">
                             <div id="btn-group-dashboard-server" class="col-span-2 grid grid-cols-2" style="display:none;">
-                                <button class="btn-tool primary flex-1" title="Save the current dashboard to Homey"
+                                <button class="btn-tool primary flex-1" data-editor-tooltip="dashboard-save-homey" title="Save the current dashboard to Homey"
                                     onclick="ServerFileManager.open('dashboards', 'save')">
                                     <i class="ph-bold ph-cloud-arrow-up"></i> Save to Homey
                                 </button>
-                                <button class="btn-tool flex-1" title="Load a dashboard from Homey" onclick="ServerFileManager.open('dashboards', 'load')">
+                                <button class="btn-tool flex-1" data-editor-tooltip="dashboard-load-homey" title="Load a dashboard from Homey" onclick="ServerFileManager.open('dashboards', 'load')">
                                     <i class="ph-bold ph-cloud-arrow-down"></i> Load from Homey
                                 </button>
                             </div>
 
                             <div id="btn-group-dashboard-local" class="col-span-2 grid grid-cols-2">
-                                <button class="btn-tool flex-1" title="Export the current dashboard as a local JSON file"
+                                <button class="btn-tool flex-1" data-editor-tooltip="dashboard-export" title="Export the current dashboard as a local JSON file"
                                     onclick="Dashboard.exportDashboardLocal()">
                                     <i class="ph-bold ph-download-simple"></i> Export Dashboard
                                 </button>
-                                <button class="btn-tool flex-1" title="Import a dashboard from a local JSON file"
+                                <button class="btn-tool flex-1" data-editor-tooltip="dashboard-import" title="Import a dashboard from a local JSON file"
                                     onclick="Dashboard.importDashboardLocal()">
                                     <i class="ph-bold ph-folder-open"></i> Import Dashboard
                                 </button>
                             </div>
 
-                            <button id="btn-reset-canvas" class="btn-tool danger col-span-2" title="Reset the canvas and remove all widgets and settings"
+                            <button id="btn-reset-canvas" class="btn-tool danger col-span-2" data-editor-tooltip="btn-reset-canvas" title="Reset the canvas and remove all widgets and settings"
                                 onclick="Dashboard.resetDashboard()">
                                 <i class="ph-bold ph-trash"></i> Reset Canvas
                             </button>
@@ -220,35 +220,35 @@
                 <div class="toolbar-section">
                     <label class="toolbar-label" data-editor-tooltip="theme">Theme</label>
                     <div class="toolbar-template-row">
-                        <button class="btn-tool btn-tool-icon-only" title="Load the previous theme in the list" onclick="Dashboard.prevTemplate()">
+                        <button class="btn-tool btn-tool-icon-only" data-editor-tooltip="theme-prev" title="Load the previous theme in the list" onclick="Dashboard.prevTemplate()">
                             <i class="ph-bold ph-caret-left"></i>
                         </button>
                         <div id="template-select-wrapper" class="ds-select-wrapper">
-                            <button id="template-select-btn" class="control-input ds-select-btn" type="button">
+                            <button id="template-select-btn" class="control-input ds-select-btn" data-editor-tooltip="template-select-btn" type="button">
                                 <span id="template-select-label" class="editor-muted-text">Select Theme...</span>
                                 <i class="ph-bold ph-caret-down"></i>
                             </button>
                             <div id="template-select-menu" class="ds-select-menu hidden">
                             </div>
                         </div>
-                        <button class="btn-tool btn-tool-icon-only" title="Load the next theme in the list" onclick="Dashboard.nextTemplate()">
+                        <button class="btn-tool btn-tool-icon-only" data-editor-tooltip="theme-next" title="Load the next theme in the list" onclick="Dashboard.nextTemplate()">
                             <i class="ph-bold ph-caret-right"></i>
                         </button>
-                        <button class="btn-tool btn-tool-icon-only" title="Browse theme previews" onclick="ThemeExplorer.openDialog()">
+                        <button class="btn-tool btn-tool-icon-only" data-editor-tooltip="theme-explorer-btn" title="Browse theme previews" onclick="ThemeExplorer.openDialog()">
                             <i class="ph-bold ph-squares-four"></i>
                         </button>
                     </div>
                     <div class="flex justify-between">
                         <div id="btn-group-template-server" class="flex flex-1" style="display:none;" data-editor-tier="advanced">
-                            <button class="btn-tool flex-1" title="Save current theme settings to the server"
+                            <button class="btn-tool flex-1" data-editor-tooltip="theme-save" title="Save current theme settings to the server"
                                 onclick="ServerFileManager.open('templates', 'save')"><i
                                     class="ph-bold ph-cloud-arrow-up"></i> Save</button>
                         </div>
                         <div id="btn-group-template-local" class="flex flex-1" data-editor-tier="advanced">
-                            <button class="btn-tool flex-1" title="Export current theme settings as a local file"
+                            <button class="btn-tool flex-1" data-editor-tooltip="theme-export" title="Export current theme settings as a local file"
                                 onclick="Dashboard.exportTemplateLocal()"><i class="ph-bold ph-download-simple"></i>
                                 Export</button>
-                            <button class="btn-tool flex-1" title="Import theme settings from a local file"
+                            <button class="btn-tool flex-1" data-editor-tooltip="theme-import" title="Import theme settings from a local file"
                                 onclick="Dashboard.importTemplateLocal()"><i class="ph-bold ph-folder-open"></i>
                                 Import</button>
                         </div>
@@ -259,7 +259,7 @@
                     <label class="toolbar-label" data-editor-tooltip="create-widget">Create Widget</label>
                     <div class="flex">
                         <div id="add-widget-type-wrap" class="relative flex-1 z-[60]"></div>
-                        <button class="btn-tool primary" title="Add the selected widget type to the center of the canvas" onclick="Dashboard.addWidgetFromUI()">
+                        <button class="btn-tool primary" data-editor-tooltip="create-widget-add" title="Add the selected widget type to the center of the canvas" onclick="Dashboard.addWidgetFromUI()">
                             <i class="ph-bold ph-plus"></i> Add
                         </button>
                     </div>
@@ -273,12 +273,12 @@
                     <div id="widget-toolbar"
                         class="flex items-center justify-between transition-opacity flex-wrap gap-1">
                         <div class="flex requires-selection is-disabled" aria-disabled="true">
-                            <button id="toolbar-btn-lock" class="btn-tool btn-tool-icon-only" data-editor-tier="advanced" title="Lock or unlock the selected widget or selected group" onclick="Dashboard.toggleWidgetLock()">
+                            <button id="toolbar-btn-lock" class="btn-tool btn-tool-icon-only" data-editor-tooltip="toolbar-btn-lock" data-editor-tier="advanced" title="Lock or unlock the selected widget or selected group" onclick="Dashboard.toggleWidgetLock()">
                                 <i class="ph-bold ph-lock-key"></i>
                             </button>
-                            <button class="btn-tool btn-tool-icon-only requires-unlocked" title="Move the selected widget one layer forward" onclick="Dashboard.bringToFront()"><i
+                            <button class="btn-tool btn-tool-icon-only requires-unlocked" data-editor-tooltip="bring-forward" title="Move the selected widget one layer forward" onclick="Dashboard.bringToFront()"><i
                                     class="ph-bold ph-caret-double-up"></i></button>
-                            <button class="btn-tool btn-tool-icon-only requires-unlocked" title="Move the selected widget one layer backward" onclick="Dashboard.sendToBack()"><i
+                            <button class="btn-tool btn-tool-icon-only requires-unlocked" data-editor-tooltip="send-backward" title="Move the selected widget one layer backward" onclick="Dashboard.sendToBack()"><i
                                     class="ph-bold ph-caret-double-down"></i></button>
                         </div>
 
@@ -286,21 +286,21 @@
                             <button
                                 class="btn-tool requires-selection requires-unlocked is-disabled"
                                 aria-disabled="true"
-                                title="Reset selected widget colors to the current theme defaults" onclick="Dashboard.resetSelectedWidgetColors()">
+                                data-editor-tooltip="reset-selected-colors" title="Reset selected widget colors to the current theme defaults" onclick="Dashboard.resetSelectedWidgetColors()">
                                 <i class="ph-bold ph-palette"></i> Current
                             </button>
-                            <button class="btn-tool" title="Reset all widget colors to the current theme defaults"
+                            <button class="btn-tool" data-editor-tooltip="reset-all-colors" title="Reset all widget colors to the current theme defaults"
                                 onclick="Dashboard.resetWidgetColors()">
                                 <i class="ph-bold ph-palette"></i> All
                             </button>
                         </div>
 
                         <div class="flex requires-selection requires-unlocked is-disabled" aria-disabled="true">
-                            <button class="btn-tool btn-tool-icon-only" title="Move selected widget or widgets to one or more pages" onclick="Dashboard.moveSelectedWidgets()"><i
+                            <button class="btn-tool btn-tool-icon-only" data-editor-tooltip="move-to-page" title="Move selected widget or widgets to one or more pages" onclick="Dashboard.moveSelectedWidgets()"><i
                                     class="ph-bold ph-arrow-square-out"></i></button>
-                            <button class="btn-tool btn-tool-icon-only" title="Duplicate selected widget (Ctrl/Cmd+D)" onclick="Dashboard.duplicateWidget()"><i
+                            <button class="btn-tool btn-tool-icon-only" data-editor-tooltip="duplicate" title="Duplicate selected widget (Ctrl/Cmd+D)" onclick="Dashboard.duplicateWidget()"><i
                                     class="ph-bold ph-stack-plus"></i></button>
-                            <button class="btn-tool btn-tool-icon-only danger" title="Delete selected widget or widgets (Delete/Backspace)"
+                            <button class="btn-tool btn-tool-icon-only danger" data-editor-tooltip="delete" title="Delete selected widget or widgets (Delete/Backspace)"
                                 onclick="Dashboard.removeSelectedWidget()"><i class="ph-bold ph-trash"></i></button>
                         </div>
                     </div>
@@ -312,48 +312,48 @@
                     <label class="toolbar-label" data-editor-tooltip="universal-actions">Universal Actions</label>
                     <div class="flex flex-col">
                         <div class="grid grid-cols-3">
-                            <button id="toolbar-btn-copy" class="btn-tool flex-1 is-disabled" aria-disabled="true"
+                            <button id="toolbar-btn-copy" class="btn-tool flex-1 is-disabled" data-editor-tooltip="toolbar-btn-copy" aria-disabled="true"
                                 title="Copy selected widget snippet to the internal clipboard (Ctrl/Cmd+C)" onclick="Dashboard.copySelectionToClipboard()">
                                 <i class="ph-bold ph-copy"></i> Copy
                             </button>
-                            <button id="toolbar-btn-cut" class="btn-tool flex-1 is-disabled" aria-disabled="true"
+                            <button id="toolbar-btn-cut" class="btn-tool flex-1 is-disabled" data-editor-tooltip="toolbar-btn-cut" aria-disabled="true"
                                 title="Cut selected widget snippet to the internal clipboard (Ctrl/Cmd+X)" onclick="Dashboard.cutSelectionToClipboard()">
                                 <i class="ph-bold ph-scissors"></i> Cut
                             </button>
-                            <button id="toolbar-btn-paste" class="btn-tool flex-1 is-disabled" aria-disabled="true"
+                            <button id="toolbar-btn-paste" class="btn-tool flex-1 is-disabled" data-editor-tooltip="toolbar-btn-paste" aria-disabled="true"
                                 title="Paste widget snippet from the internal clipboard (Ctrl/Cmd+V)" onclick="Dashboard.pasteFromClipboard()">
                                 <i class="ph-bold ph-clipboard-text"></i> Paste
                             </button>
                         </div>
                         <div class="grid grid-cols-2">
-                            <button id="toolbar-btn-undo" class="btn-tool flex-1 is-disabled" aria-disabled="true"
+                            <button id="toolbar-btn-undo" class="btn-tool flex-1 is-disabled" data-editor-tooltip="undo" aria-disabled="true"
                                 title="Undo the last editor action (Ctrl/Cmd+Z)" onclick="Dashboard.undo()">
                                 <i class="ph-bold ph-arrow-counter-clockwise"></i> Undo
                             </button>
-                            <button id="toolbar-btn-redo" class="btn-tool flex-1 is-disabled" aria-disabled="true"
+                            <button id="toolbar-btn-redo" class="btn-tool flex-1 is-disabled" data-editor-tooltip="redo" aria-disabled="true"
                                 title="Redo the last undone editor action (Ctrl/Cmd+Y or Ctrl/Cmd+Shift+Z)" onclick="Dashboard.redo()">
                                 <i class="ph-bold ph-arrow-clockwise"></i> Redo
                             </button>
                         </div>
                         <div id="universal-group-row" class="flex justify-between hidden">
-                            <button id="btn-group-create" class="btn-tool flex-1 hidden" title="Create a new group, or add widgets to an existing group in the same selection"
+                            <button id="btn-group-create" class="btn-tool flex-1 hidden" data-editor-tooltip="btn-group-create" title="Create a new group, or add widgets to an existing group in the same selection"
                                 onclick="Dashboard.groupPrimaryToolbarAction()">
                                 <i class="ph-bold ph-stack-simple"></i> Group
                             </button>
-                            <button id="btn-group-ungroup" class="btn-tool danger flex-1 hidden" title="Remove the selected group and keep all member widgets"
+                            <button id="btn-group-ungroup" class="btn-tool danger flex-1 hidden" data-editor-tooltip="btn-group-ungroup" title="Remove the selected group and keep all member widgets"
                                 onclick="Dashboard.ungroupSelectedWidgets()">
                                 <i class="ph-bold ph-stack-minus"></i> Ungroup
                             </button>
-                            <button id="btn-group-open" class="btn-tool flex-1 hidden" title="Open or close focus mode for the selected group"
+                            <button id="btn-group-open" class="btn-tool flex-1 hidden" data-editor-tooltip="btn-group-open" title="Open or close focus mode for the selected group"
                                 onclick="Dashboard.toggleOpenSelectedGroupView()">
                                 <i class="ph-bold ph-arrows-out-simple"></i> Open Group
                             </button>
                         </div>
                         <div class="grid grid-cols-2">
-                            <button class="btn-tool flex-1" title="Insert a new dashboard page at a chosen position" onclick="Dashboard.insertPage()">
+                            <button class="btn-tool flex-1" data-editor-tooltip="page-insert" title="Insert a new dashboard page at a chosen position" onclick="Dashboard.insertPage()">
                                 <i class="ph-bold ph-file-plus"></i> Insert Page
                             </button>
-                            <button class="btn-tool danger flex-1" title="Delete an empty dashboard page at a chosen position"
+                            <button class="btn-tool danger flex-1" data-editor-tooltip="page-delete" title="Delete an empty dashboard page at a chosen position"
                                 onclick="Dashboard.deletePage()">
                                 <i class="ph-bold ph-file-minus"></i> Delete Page
                             </button>
@@ -365,21 +365,22 @@
 
                 <div class="flex items-center justify-between">
                     <div class="flex items-center">
-                        <button id="editor-page-prev" class="btn-tool btn-tool-icon-only"
+                        <button id="editor-page-prev" class="btn-tool btn-tool-icon-only" data-editor-tooltip="page-prev"
                             title="Go to previous dashboard page" onclick="Dashboard.stepEditorPage(-1)">
                             <i class="ph-bold ph-caret-left"></i>
                         </button>
                         <div id="editor-page-indicator"
                             class="editor-page-indicator"
+                            data-editor-tooltip="page-indicator"
                             title="Current dashboard page">
                             Page 1
                         </div>
-                        <button id="editor-page-next" class="btn-tool btn-tool-icon-only"
+                        <button id="editor-page-next" class="btn-tool btn-tool-icon-only" data-editor-tooltip="page-next"
                             title="Go to next dashboard page" onclick="Dashboard.stepEditorPage(1)">
                             <i class="ph-bold ph-caret-right"></i>
                         </button>
                     </div>
-                    <button class="btn-tool" title="Collapse or expand all settings groups in the editor panel"
+                    <button class="btn-tool" data-editor-tooltip="toggle-all-groups" title="Collapse or expand all settings groups in the editor panel"
                         onclick="Editor.toggleAllGroups()">
                         <i class="ph-bold ph-list-dashes"></i> Toggle Groups
                     </button>
@@ -398,7 +399,7 @@
         </div>
     </div>
 
-    <button id="fab-mode-switch" title="Enter or exit Edit Mode (Ctrl+E)" onclick="Dashboard.toggleEditMode()">
+    <button id="fab-mode-switch" data-editor-tooltip="fab-mode-switch" title="Enter or exit Edit Mode (Ctrl+E)" onclick="Dashboard.toggleEditMode()">
         <i class="ph ph-gear"></i>
     </button>
 

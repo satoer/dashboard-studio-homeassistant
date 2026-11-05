@@ -4,6 +4,8 @@
  * Walks widget bindings, group bindings, and dashboard (global) bindings.
  * Each topic link is removed. When that topic has a live value, the setting
  * is set to that value (after the binding's payload formula or value map).
+ * Inline dynamic topics and formulas inside markdown text in text widgets
+ * are replaced with their current evaluated values as fixed text.
  * Color correction stays on the setting, so it is not baked in.
  * The whole run is one undo step.
  */
@@ -200,6 +202,12 @@
         if (trimmed && trimmed !== topic && Object.prototype.hasOwnProperty.call(Dashboard.liveData, trimmed)) {
             return Dashboard.liveData[trimmed];
         }
+        if (typeof HomeyTopicAlias !== 'undefined' && typeof HomeyTopicAlias.aliasOf === 'function') {
+            const alt = HomeyTopicAlias.aliasOf(trimmed || topic);
+            if (alt && Object.prototype.hasOwnProperty.call(Dashboard.liveData, alt)) {
+                return Dashboard.liveData[alt];
+            }
+        }
         return undefined;
     }
 
@@ -303,20 +311,144 @@
         return isVacantBinding(node) ? undefined : node;
     }
 
+    function isTextWidget(widget) {
+        if (!widget) return false;
+        if (widget.type === 'text') return true;
+        if (widget.constructor && widget.constructor.metadata && widget.constructor.metadata.type === 'text') return true;
+        if (typeof Dashboard !== 'undefined' && typeof Dashboard._getWidgetTypeByInstance === 'function') {
+            if (Dashboard._getWidgetTypeByInstance(widget) === 'text') return true;
+        }
+        return false;
+    }
+
+    function scanMarkdownTokens(src) {
+        if (!src || typeof src !== 'string' || src.indexOf('{{') === -1) return [];
+        if (typeof TextWidget !== 'undefined' && typeof TextWidget._scanMarkdownBraceTokens === 'function') {
+            return TextWidget._scanMarkdownBraceTokens(src);
+        }
+        if (typeof FormulaEngine !== 'undefined' && typeof FormulaEngine.scanDoubleBraceTokens === 'function') {
+            return FormulaEngine.scanDoubleBraceTokens(src);
+        }
+        const out = [];
+        const re = /\{\{\s*([^\{\}]+?)\s*\}\}/g;
+        let m;
+        while ((m = re.exec(src)) !== null) {
+            out.push({
+                start: m.index,
+                end: m.index + m[0].length,
+                inner: String(m[1])
+            });
+        }
+        return out;
+    }
+
+    function resolveMarkdownTokenValue(widget, inner) {
+        if (!inner) return '';
+        const trimmed = String(inner).trim();
+        if (!trimmed) return '';
+
+        const looksLikeFormula = (typeof TextWidget !== 'undefined' && typeof TextWidget._markdownLooksLikeFormula === 'function')
+            ? TextWidget._markdownLooksLikeFormula(trimmed)
+            : (typeof FormulaEngine !== 'undefined' && typeof FormulaEngine.looksLikeFormula === 'function' && FormulaEngine.looksLikeFormula(trimmed));
+
+        if (looksLikeFormula) {
+            if (widget && typeof widget._evaluateMarkdownFormula === 'function') {
+                const fVal = widget._evaluateMarkdownFormula(trimmed);
+                return (fVal === undefined || fVal === null) ? '-' : String(fVal);
+            }
+            if (typeof FormulaEngine !== 'undefined' && typeof FormulaEngine.evaluate === 'function') {
+                const ev = FormulaEngine.evaluate(trimmed, undefined, function (p) {
+                    const live = readLive(p);
+                    if (live !== undefined) {
+                        return typeof FormulaEngine.coerceValue === 'function'
+                            ? FormulaEngine.coerceValue(live)
+                            : { v: live, type: typeof live === 'number' ? 'number' : 'string' };
+                    }
+                    return { failed: true };
+                }, { disallowValue: true });
+                if (ev && !ev.failed && ev.value !== undefined && ev.value !== null) {
+                    return String(ev.value);
+                }
+            }
+            return '-';
+        }
+
+        if (widget && typeof widget._tryResolveMarkdownDataPath === 'function') {
+            const hit = widget._tryResolveMarkdownDataPath(trimmed);
+            if (hit && !hit.failed && hit.v !== undefined) {
+                if (typeof BaseWidget !== 'undefined' && typeof BaseWidget.displayText === 'function') {
+                    return BaseWidget.displayText(hit.v);
+                }
+                return String(hit.v);
+            }
+        }
+        const live = readLive(trimmed);
+        if (live !== undefined && live !== null) {
+            if (typeof BaseWidget !== 'undefined' && typeof BaseWidget.displayText === 'function') {
+                return BaseWidget.displayText(live);
+            }
+            return String(live);
+        }
+        if (widget && typeof widget.resolveValue === 'function') {
+            const primary = widget.resolveValue(trimmed, undefined);
+            if (primary !== undefined && primary !== null) {
+                if (typeof BaseWidget !== 'undefined' && typeof BaseWidget.displayText === 'function') {
+                    return BaseWidget.displayText(primary);
+                }
+                return String(primary);
+            }
+        }
+        return '-';
+    }
+
+    function freezeMarkdownText(widget, text) {
+        if (!text || typeof text !== 'string') return { text: text, count: 0 };
+        const tokens = scanMarkdownTokens(text);
+        if (!tokens.length) return { text: text, count: 0 };
+
+        let out = '';
+        let last = 0;
+        for (let i = 0; i < tokens.length; i++) {
+            const tok = tokens[i];
+            out += text.slice(last, tok.start);
+            let resolved = resolveMarkdownTokenValue(widget, tok.inner);
+            if (typeof TextWidget !== 'undefined' && typeof TextWidget.expandEscapedNewlines === 'function') {
+                resolved = TextWidget.expandEscapedNewlines(resolved);
+            }
+            out += resolved;
+            last = tok.end;
+        }
+        out += text.slice(last);
+        return { text: out, count: tokens.length };
+    }
+
     /**
      * Build the next overrides + bindings for one widget. Does not write them.
      * @returns {{ count: number, overrides: object|null, bindings: object|null }}
      */
     function prepareWidget(widget) {
         const empty = { count: 0, overrides: null, bindings: null };
-        if (!widget || !widget.bindings || typeof widget.bindings !== 'object') return empty;
+        if (!widget) return empty;
+
+        const isText = isTextWidget(widget);
         const leaves = [];
-        collectLeaves(widget.bindings, [], leaves);
+        if (widget.bindings && typeof widget.bindings === 'object') {
+            collectLeaves(widget.bindings, [], leaves);
+        }
         const userLeaves = [];
         for (let i = 0; i < leaves.length; i++) {
             if (!isInternalBinding(leaves[i].path)) userLeaves.push(leaves[i]);
         }
-        if (!userLeaves.length) return empty;
+
+        let initialInlineCount = 0;
+        if (isText) {
+            const currentText = (widget.overrides && widget.overrides.text !== undefined && widget.overrides.text !== null)
+                ? String(widget.overrides.text)
+                : '';
+            initialInlineCount = scanMarkdownTokens(currentText).length;
+        }
+
+        if (!userLeaves.length && !initialInlineCount) return empty;
 
         const overrides = cloneJson(widget.overrides || {});
         const bindings = cloneJson(widget.bindings || {});
@@ -327,6 +459,8 @@
         for (let i = 0; i < overlayKeys.length; i++) {
             if (!redirect[overlayKeys[i]]) redirect[overlayKeys[i]] = fromOverlay[overlayKeys[i]];
         }
+
+        let fixedCount = 0;
 
         for (let i = 0; i < userLeaves.length; i++) {
             const leaf = userLeaves[i];
@@ -359,6 +493,15 @@
             } else if (leaf.path.length === 1) {
                 delete bindings[leaf.path[0]];
             }
+            fixedCount++;
+        }
+
+        if (isText && overrides.text !== undefined && overrides.text !== null) {
+            const frozen = freezeMarkdownText(widget, String(overrides.text));
+            if (frozen.count > 0) {
+                overrides.text = frozen.text;
+                fixedCount += frozen.count;
+            }
         }
 
         const prunedBindings = pruneEmptyBindings(bindings) || {};
@@ -371,7 +514,7 @@
             : JSON.stringify(widget.bindings || {}) === JSON.stringify(prunedBindings);
 
         return {
-            count: userLeaves.length,
+            count: fixedCount,
             overrides: sameOverrides ? null : overrides,
             bindings: sameBindings ? null : prunedBindings
         };
@@ -680,7 +823,16 @@
                     break;
                 }
             }
-            if (!hasUser) continue;
+            let hasInlineTokens = false;
+            if (isTextWidget(widget)) {
+                const textVal = (widget.overrides && widget.overrides.text !== undefined && widget.overrides.text !== null)
+                    ? String(widget.overrides.text)
+                    : '';
+                if (textVal && textVal.indexOf('{{') !== -1 && scanMarkdownTokens(textVal).length > 0) {
+                    hasInlineTokens = true;
+                }
+            }
+            if (!hasUser && !hasInlineTokens) continue;
             jobs.push(function () {
                 const w = Dashboard.widgets[id];
                 if (!w) return { settings: 0, widgetSettings: 0, groupSettings: 0, dashboardSettings: 0 };
@@ -705,6 +857,11 @@
         renderProgress(ui.body, 0, jobs.length);
         await nextFrame();
 
+        if (typeof TextFullEditor !== 'undefined' && typeof TextFullEditor.isOpen === 'function' && TextFullEditor.isOpen()) {
+            if (typeof TextFullEditor.close === 'function') {
+                TextFullEditor.close();
+            }
+        }
         if (typeof Editor !== 'undefined' && typeof Editor.flushPendingTextPreview === 'function') {
             Editor.flushPendingTextPreview();
         }

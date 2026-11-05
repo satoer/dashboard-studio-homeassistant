@@ -765,12 +765,11 @@ body.edit-mode #editor-tools h3 i {
 }
 
 /* --- Editor Tooltip Flyout & Interactive Bridge --- */
-[data-editor-tooltip] {
-    cursor: help;
+body.editor-tooltips-active [data-editor-tooltip] {
     transition: color 0.15s ease;
 }
 
-[data-editor-tooltip]:hover {
+body.editor-tooltips-active [data-editor-tooltip]:hover {
     color: var(--accent, var(--ui-accent));
 }
 

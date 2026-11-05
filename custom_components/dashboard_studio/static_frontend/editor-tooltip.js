@@ -1,135 +1,123 @@
 /**
  * Dashboard Studio - Editor Tooltip Controller
  * Provides descriptive inspector flyout tooltips with interactive hover bridge,
- * 500ms fade-away grace period with hover rescue, and deep help integration.
+ * 500ms fade-away grace period with hover rescue, hardware-accelerated frosted glass blur,
+ * single-path vector frame, and deep links to Help documentation.
+ *
+ * Data dictionary is cleanly isolated in assets/editor-tooltip-data.js.
  */
 (function (global) {
     'use strict';
 
-    var SETTINGS_METADATA = {
-        'editor-tools': {
-            title: 'Editor Tools',
-            description: 'Global editor utilities and quick drawers: upload and manage media in Image and Audio Galleries, share snippets, run automated Tools scripts, cycle the editor theme, or open documentation.',
-            help: {
-                topic: 'Editor Interface Guide',
-                anchor: '2-editor-tools'
-            }
-        },
-        'editor-zoom': {
-            title: 'Edit Mode Zoom',
-            description: 'Scales the entire dashboard canvas between 20% and 200% while in Edit Mode. Fit larger layouts on compact laptop screens or zoom in for precision editing without affecting runtime view mode.',
-            help: {
-                topic: 'Editor Interface Guide',
-                anchor: '2-editor-tools'
-            }
-        },
-        'viewer-url': {
-            title: 'Viewer URL',
-            description: 'Direct browser link to run this dashboard in standalone view mode without editor chrome. Also provides actions to save or load with Homey, export or import local files, and reset the canvas.',
-            help: {
-                topic: 'Editor Interface Guide',
-                anchor: '3-viewer-url-dashboard-files'
-            }
-        },
-        'theme': {
-            title: 'Theme',
-            description: 'Active color palette and visual styling preset. Cycle through installed themes, browse live previews in the Theme Explorer dialog, or import and export theme files.',
-            help: {
-                topic: 'Editor Interface Guide',
-                anchor: '4-theme'
-            }
-        },
-        'create-widget': {
-            title: 'Create Widget',
-            description: 'Select any widget type (Switch, Slider, Gauge, Text, Clock, and more) from the dropdown and add a new widget instance directly to the center of your active canvas page.',
-            help: {
-                topic: 'Editor Interface Guide',
-                anchor: '5-create-widget'
-            }
-        },
-        'selected-widget': {
-            title: 'Selected Widget',
-            description: 'Quick actions for the currently selected widget: lock or unlock positioning, adjust layer order (bring forward or send back), reset colors to theme, move to page, duplicate, or delete.',
-            help: {
-                topic: 'Editor Interface Guide',
-                anchor: '6-selected-widget-tools'
-            }
-        },
-        'universal-actions': {
-            title: 'Universal Actions',
-            description: 'Global clipboard commands (Copy, Cut, Paste), step-by-step history (Undo, Redo), multi-widget grouping tools, and dashboard page insertion or deletion.',
-            help: {
-                topic: 'Editor Interface Guide',
-                anchor: '7-universal-actions'
-            }
+    var getMetadata = function () {
+        if (typeof EditorTooltipData !== 'undefined') return EditorTooltipData;
+        if (global && global.EditorTooltipData) return global.EditorTooltipData;
+        return {};
+    };
+
+    /** Registry type aliases. Container is registered as empty. List used to be textbox. */
+    var tooltipTypeAliases = function (widgetType) {
+        if (widgetType === 'empty' || widgetType === 'container') return ['empty', 'container'];
+        if (widgetType === 'list' || widgetType === 'textbox') return ['list', 'textbox'];
+        return widgetType ? [widgetType] : [];
+    };
+
+    var lookupTooltip = function (metadata, widgetType, key) {
+        if (!metadata || !key) return null;
+        var aliases = tooltipTypeAliases(widgetType);
+        var i;
+        for (i = 0; i < aliases.length; i++) {
+            var row = metadata[aliases[i] + '.' + key];
+            if (row) return row;
         }
+        return metadata[key] || null;
+    };
+
+    var widgetTypeFromInstance = function (widget) {
+        if (!widget) return null;
+        if (typeof WidgetRegistry !== 'undefined' && typeof WidgetRegistry.getTypeKeyForClass === 'function') {
+            var found = WidgetRegistry.getTypeKeyForClass(widget.constructor);
+            if (found) return found;
+        }
+        if (typeof Dashboard !== 'undefined' && typeof Dashboard._getWidgetTypeByInstance === 'function') {
+            return Dashboard._getWidgetTypeByInstance(widget) || null;
+        }
+        return null;
     };
 
     var EditorTooltip = {
-        HOVER_INTENT_MS: 180,
-        FADE_GRACE_MS: 500,
-
         _el: null,
-        _backdropEl: null,
+        _shadowEl: null,
+        _contentEl: null,
         _frameSvg: null,
         _framePath: null,
-        _contentEl: null,
         _titleEl: null,
         _bodyEl: null,
         _helpBtn: null,
-
-        _activeTarget: null,
         _activeHelpSpec: null,
+        _activeTarget: null,
         _showTimer: null,
         _fadeTimer: null,
         _isHoveringFlyout: false,
         _initialized: false,
 
-        /** Returns whether editor tooltips are enabled via master settings. */
+        HOVER_INTENT_MS: 180,
+        FADE_GRACE_MS: 500,
+
         isEnabled: function () {
-            if (typeof MASTER_SETTINGS !== 'undefined' && MASTER_SETTINGS.editorTooltips === false) {
-                return false;
+            if (typeof MASTER_SETTINGS !== 'undefined' && MASTER_SETTINGS.editorTooltips !== undefined) {
+                return Boolean(MASTER_SETTINGS.editorTooltips);
             }
             return true;
         },
 
-        /** Initialize the singleton tooltip DOM element and global listeners. */
+        syncState: function () {
+            var enabled = this.isEnabled();
+            if (typeof document !== 'undefined' && document.body) {
+                document.body.classList.toggle('editor-tooltips-active', enabled);
+            }
+            if (!enabled) {
+                this.hideImmediately();
+            }
+            return enabled;
+        },
+
         init: function () {
-            if (this._initialized) return;
-            if (typeof window === 'undefined' || window.IS_VIEWER === true) return;
-            if (!document.body) {
-                var self = this;
-                document.addEventListener('DOMContentLoaded', function () { self.init(); });
+            if (this._initialized) {
+                this.syncState();
                 return;
             }
-
             this._buildFlyoutDom();
-            this._bindGlobalEvents();
+            this._bindEvents();
+            this.syncState();
             this._initialized = true;
         },
 
         _buildFlyoutDom: function () {
             if (this._el) return;
 
+            var shadow = document.createElement('div');
+            shadow.className = 'editor-tooltip-shadow hidden';
+            shadow.setAttribute('aria-hidden', 'true');
+            document.body.appendChild(shadow);
+            this._shadowEl = shadow;
+
             var flyout = document.createElement('div');
-            flyout.id = 'editor-tooltip-flyout';
             flyout.className = 'editor-tooltip-flyout hidden';
             flyout.setAttribute('role', 'tooltip');
             flyout.setAttribute('aria-hidden', 'true');
 
-            var backdrop = document.createElement('div');
-            backdrop.className = 'editor-tooltip-backdrop';
-            backdrop.setAttribute('aria-hidden', 'true');
-            flyout.appendChild(backdrop);
+            var svgNs = 'http://www.w3.org/2000/svg';
+            var svg = document.createElementNS(svgNs, 'svg');
+            svg.setAttribute('class', 'editor-tooltip-frame');
+            svg.setAttribute('aria-hidden', 'true');
 
-            var frameSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-            frameSvg.setAttribute('class', 'editor-tooltip-frame');
-            frameSvg.setAttribute('aria-hidden', 'true');
-
-            var framePath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-            framePath.setAttribute('class', 'editor-tooltip-frame-path');
-            frameSvg.appendChild(framePath);
-            flyout.appendChild(frameSvg);
+            var path = document.createElementNS(svgNs, 'path');
+            path.setAttribute('class', 'editor-tooltip-frame-path');
+            svg.appendChild(path);
+            flyout.appendChild(svg);
+            this._frameSvg = svg;
+            this._framePath = path;
 
             var content = document.createElement('div');
             content.className = 'editor-tooltip-content';
@@ -149,28 +137,21 @@
             helpBtn.innerHTML = '<i class="ph-bold ph-question"></i>';
             header.appendChild(helpBtn);
 
-            content.appendChild(header);
-
             var body = document.createElement('div');
             body.className = 'editor-tooltip-body';
+
+            content.appendChild(header);
             content.appendChild(body);
-
             flyout.appendChild(content);
-
             document.body.appendChild(flyout);
 
             this._el = flyout;
-            this._backdropEl = backdrop;
-            this._frameSvg = frameSvg;
-            this._framePath = framePath;
             this._contentEl = content;
             this._titleEl = title;
             this._bodyEl = body;
             this._helpBtn = helpBtn;
 
             var self = this;
-
-            // Hover Bridge on the flyout itself (Rescue Window)
             flyout.addEventListener('mouseenter', function () {
                 self._isHoveringFlyout = true;
                 self._cancelFadeGrace();
@@ -185,7 +166,6 @@
                 e.preventDefault();
                 e.stopPropagation();
                 var spec = self._activeHelpSpec;
-                self.hideImmediately();
                 if (!spec || typeof HelpSystem === 'undefined') return;
 
                 if (typeof HelpSystem.openFromEditorSpec === 'function') {
@@ -196,42 +176,55 @@
             });
         },
 
-        _bindGlobalEvents: function () {
+        _bindEvents: function () {
             var self = this;
 
-            // Event delegation on mouseover / mouseout for elements with data-editor-tooltip
+            // Capture-phase mouseover strips browser native titles everywhere to prevent double tips
             document.addEventListener('mouseover', function (e) {
-                if (!self.isEnabled()) {
-                    self.hideImmediately();
-                    return;
-                }
-                var target = e.target ? e.target.closest('[data-editor-tooltip]') : null;
-                if (!target) return;
-
-                var tooltipKey = target.getAttribute('data-editor-tooltip');
-                if (!tooltipKey || !SETTINGS_METADATA[tooltipKey]) return;
-
-                if (self._activeTarget === target && self._el && !self._el.classList.contains('hidden')) {
-                    self._cancelFadeGrace();
-                    return;
+                var titledEl = e.target.closest ? e.target.closest('[title]') : null;
+                if (titledEl && titledEl !== self._helpBtn) {
+                    var t = titledEl.getAttribute('title');
+                    if (t) {
+                        titledEl.setAttribute('data-stored-title', t);
+                        titledEl.removeAttribute('title');
+                    }
                 }
 
-                self._onTargetEnter(target, tooltipKey);
-            });
+                if (!self.syncState()) {
+                    if (self._activeTarget) self._onTargetLeave();
+                    return;
+                }
+
+                if (self._el && self._el.contains(e.target)) {
+                    return;
+                }
+
+                var resolved = self.resolveTarget(e.target);
+                if (!resolved) {
+                    if (self._activeTarget && !self._activeTarget.contains(e.target)) {
+                        self._onTargetLeave();
+                    }
+                    return;
+                }
+
+                var target = resolved.el;
+                self._onTargetEnter(target, resolved.data);
+            }, true);
 
             document.addEventListener('mouseout', function (e) {
-                var target = e.target ? e.target.closest('[data-editor-tooltip]') : null;
-                if (!target) return;
+                if (!self._activeTarget) return;
 
-                // Moving to an element inside the same target does not count as leaving
-                if (e.relatedTarget && target.contains(e.relatedTarget)) return;
-
-                if (self._activeTarget === target) {
-                    self._onTargetLeave();
+                if (self._el && self._el.contains(e.relatedTarget)) {
+                    return;
                 }
+
+                if (self._activeTarget.contains(e.relatedTarget)) {
+                    return;
+                }
+
+                self._onTargetLeave();
             });
 
-            // Dismiss immediately on scroll so tooltip doesn't float detached
             var scrollContainer = document.getElementById('editor-scroll-container');
             if (scrollContainer) {
                 scrollContainer.addEventListener('scroll', function () {
@@ -239,7 +232,6 @@
                 }, { passive: true });
             }
 
-            // Dismiss immediately on click outside or escape key
             document.addEventListener('pointerdown', function (e) {
                 if (self._el && !self._el.contains(e.target) && (!self._activeTarget || !self._activeTarget.contains(e.target))) {
                     self.hideImmediately();
@@ -257,12 +249,91 @@
             }, { passive: true });
         },
 
-        _onTargetEnter: function (target, key) {
+        resolveTarget: function (rawTarget) {
+            if (!rawTarget || !rawTarget.closest) return null;
+
+            // Expand matching candidates to include buttons, controls, labels, and theme elements
+            var target = rawTarget.closest(
+                '[data-editor-tooltip], .control-label, [data-field-key], ' +
+                'button, .btn-tool, .btn-bind, .btn-reset, .editor-color-btn, ' +
+                '.dashboard-viewer-url-copy, .theme-correction-name, .toolbar-label, [data-bind-key], [data-reset-key]'
+            );
+            if (!target) return null;
+
+            // Do not trigger tooltip on flyout's own internal elements
+            if (this._el && this._el.contains(target)) return null;
+
+            var key = target.getAttribute('data-editor-tooltip');
+            var widgetType = target.getAttribute('data-widget-type');
+
+            if (!key) {
+                var fieldWrap = target.closest('[data-field-key]');
+                if (fieldWrap) {
+                    key = fieldWrap.getAttribute('data-field-key');
+                }
+            }
+
+            if (!widgetType) {
+                var typedEl = target.closest('[data-widget-type]');
+                if (typedEl) widgetType = typedEl.getAttribute('data-widget-type');
+            }
+
+            if (!widgetType) {
+                if (typeof Editor !== 'undefined' && Editor.currentId && typeof Dashboard !== 'undefined' && Dashboard.widgets) {
+                    widgetType = widgetTypeFromInstance(Dashboard.widgets[Editor.currentId]);
+                }
+            }
+
+            var metadata = getMetadata();
+
+            // Identify specialized button classes
+            if (!key) {
+                if (target.classList.contains('btn-bind') || target.hasAttribute('data-bind-key')) {
+                    key = 'button.bind';
+                } else if (target.classList.contains('btn-reset') || target.hasAttribute('data-reset-key')) {
+                    key = 'button.reset';
+                } else if (target.classList.contains('editor-color-btn')) {
+                    key = 'button.color-picker';
+                } else if (target.id && (metadata[target.id] || target.id.startsWith('btn-') || target.id.startsWith('toolbar-'))) {
+                    key = target.id;
+                }
+            }
+
+            if (!key && target.textContent && (target.classList.contains('control-label') || target.classList.contains('toolbar-label'))) {
+                key = target.textContent.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-');
+            }
+
+            var data = null;
+            if (key) {
+                data = lookupTooltip(metadata, widgetType, key);
+            }
+
+            // Fallback for buttons or elements with stored title or aria-label
+            if (!data) {
+                var hint = target.getAttribute('data-stored-title') || target.getAttribute('title') || target.getAttribute('aria-label') || target.getAttribute('data-field-hint');
+                if (hint) {
+                    var cleanHint = hint.replace(/[—;]/g, ', ').replace(/\s+/g, ' ').trim();
+                    var labelText = target.getAttribute('aria-label') || (target.textContent ? target.textContent.trim() : '');
+                    if (!labelText || labelText.length > 30) {
+                        labelText = target.tagName === 'BUTTON' ? 'Action' : (key || 'Setting');
+                    }
+                    data = {
+                        title: labelText,
+                        description: cleanHint,
+                        help: null
+                    };
+                }
+            }
+
+            return data ? { el: target, key: key || 'target', widgetType: widgetType, data: data } : null;
+        },
+
+        _onTargetEnter: function (target, data) {
             if (!this.isEnabled()) return;
             var self = this;
             clearTimeout(this._showTimer);
+            clearTimeout(this._fadeTimer);
 
-            var data = SETTINGS_METADATA[key];
             if (!data) return;
 
             var isAlreadyVisible = this._el && !this._el.classList.contains('hidden');
@@ -274,6 +345,7 @@
 
             this._activeTarget = target;
 
+            // Warm-switch immediately if already visible; apply hover-intent delay on cold starts
             if (isAlreadyVisible) {
                 this._cancelFadeGrace();
                 this._renderAndShow(target, data);
@@ -298,6 +370,7 @@
 
             clearTimeout(this._fadeTimer);
             this._el.classList.add('is-fading');
+            if (this._shadowEl) this._shadowEl.classList.add('is-fading');
 
             this._fadeTimer = setTimeout(function () {
                 if (!self._isHoveringFlyout) {
@@ -308,13 +381,12 @@
 
         _cancelFadeGrace: function () {
             clearTimeout(this._fadeTimer);
-            if (this._el) {
-                this._el.classList.remove('is-fading');
-            }
+            if (this._el) this._el.classList.remove('is-fading');
+            if (this._shadowEl) this._shadowEl.classList.remove('is-fading');
         },
 
         _renderAndShow: function (target, data) {
-            if (!this._el || !target || !data) return;
+            if (!this._el) return;
 
             this._titleEl.textContent = data.title || '';
             this._bodyEl.textContent = data.description || '';
@@ -335,6 +407,11 @@
             this._el.classList.remove('hidden', 'is-fading');
             this._el.classList.add('is-visible');
             this._el.setAttribute('aria-hidden', 'false');
+
+            if (this._shadowEl) {
+                this._shadowEl.classList.remove('hidden', 'is-fading');
+                this._shadowEl.classList.add('is-visible');
+            }
         },
 
         _buildPath: function (w, h, r, aw, ah, ay, hasArrow) {
@@ -434,9 +511,18 @@
             if (this._framePath) {
                 this._framePath.setAttribute('d', pathStr);
             }
-            if (this._backdropEl) {
-                this._backdropEl.style.clipPath = 'path("' + pathStr + '")';
-                this._backdropEl.style.webkitClipPath = 'path("' + pathStr + '")';
+
+            // Apply clipPath directly to the glass flyout element
+            flyout.style.clipPath = 'path("' + pathStr + '")';
+            flyout.style.webkitClipPath = 'path("' + pathStr + '")';
+
+            // Position sibling shadow element behind the card body
+            if (this._shadowEl) {
+                var shadowLeft = hasArrow ? (dockedPreferredLeft + arrowWidth) : left;
+                this._shadowEl.style.left = Math.round(shadowLeft) + 'px';
+                this._shadowEl.style.top = Math.round(clampedTop) + 'px';
+                this._shadowEl.style.width = cardWidth + 'px';
+                this._shadowEl.style.height = flyoutHeight + 'px';
             }
         },
 
@@ -451,17 +537,12 @@
                 this._el.classList.add('hidden');
                 this._el.setAttribute('aria-hidden', 'true');
             }
+            if (this._shadowEl) {
+                this._shadowEl.classList.remove('is-visible', 'is-fading');
+                this._shadowEl.classList.add('hidden');
+            }
         }
     };
 
     global.EditorTooltip = EditorTooltip;
-
-    // Auto-initialize on ready
-    if (typeof document !== 'undefined') {
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', function () { EditorTooltip.init(); });
-        } else {
-            EditorTooltip.init();
-        }
-    }
 })(typeof window !== 'undefined' ? window : this);

@@ -797,6 +797,13 @@ const Editor = {
         const addButtonLabel = options.addButtonLabel || 'Add Topic';
         const headerLabelBase = options.headerLabel || 'Output Topics';
         const withPayloads = panelMode === 'withPayloads';
+        const topicTipType = options.tooltipWidgetType || Editor._inspectorTooltipWidgetType(false);
+        const topicTipPrefix = options.tooltipPrefix || 'extra';
+        const stampTopicTip = (el, suffix) => {
+            if (!el || !suffix) return;
+            el.setAttribute('data-editor-tooltip', topicTipPrefix + '.' + suffix);
+            Editor._stampTooltipWidgetType(el, topicTipType);
+        };
 
         const render = () => {
             // Read mode flags per render: callers mutate `options` and call rerender() when the
@@ -827,6 +834,7 @@ const Editor = {
             tHeader.className = 'control-label flex justify-between items-center';
             tHeader.style.color = 'var(--ui-text-muted)';
             tHeader.innerHTML = '<span>' + headerLabelBase + ' (' + list.length + ')</span>';
+            stampTopicTip(tHeader, 'header');
             container.appendChild(tHeader);
 
             list.forEach((entry, tIdx) => {
@@ -859,6 +867,7 @@ const Editor = {
                             const lbl = document.createElement('label');
                             lbl.className = 'control-label';
                             lbl.textContent = labelText;
+                            stampTopicTip(lbl, propKey === 'topicOff' ? 'offTopic' : 'onTopic');
                             const cur = list[tIdx] || {};
                             const topicVal = cur[propKey] != null ? String(cur[propKey]) : '';
                             const dd = Editor.createTopicDropdown(topicVal, 'Select topic...', (val) => {
@@ -878,6 +887,7 @@ const Editor = {
                         const topicLblRow = document.createElement('label');
                         topicLblRow.className = 'control-label';
                         topicLblRow.textContent = 'Output Topic';
+                        stampTopicTip(topicLblRow, 'topic');
 
                         const tRowWrap = document.createElement('div');
                         tRowWrap.className = 'flex w-full flex-1 min-w-0';
@@ -908,6 +918,7 @@ const Editor = {
                         const lbl = document.createElement('label');
                         lbl.className = 'control-label';
                         lbl.textContent = labelText;
+                        stampTopicTip(lbl, propKey === 'onPayload' ? 'onValue' : 'offValue');
                         const inp = document.createElement('input');
                         inp.type = 'text';
                         inp.className = 'control-input w-full text-xs';
@@ -938,6 +949,7 @@ const Editor = {
                         holdLbl.className = 'control-label';
                         holdLbl.textContent = 'Hold to Activate';
                         holdLbl.title = holdHint;
+                        stampTopicTip(holdLbl, 'hold');
                         const holdChecked = !!(list[tIdx] && list[tIdx].holdToActivate === true);
                         const holdRow = Editor.createToggleStyleCheckboxRow(holdChecked, (checked) => {
                             ensurePayloadEntry(tIdx).holdToActivate = checked === true;
@@ -1249,6 +1261,7 @@ const Editor = {
         const allowLbl = document.createElement('div');
         allowLbl.className = 'control-label leading-snug';
         allowLbl.textContent = 'Allow empty selection';
+        allowLbl.setAttribute('data-editor-tooltip', 'selection.allowEmpty');
         allowLabelCell.appendChild(allowLbl);
         labelRow.appendChild(allowLabelCell);
 
@@ -1264,6 +1277,7 @@ const Editor = {
             const lbl = document.createElement('div');
             lbl.className = 'control-label leading-snug';
             lbl.textContent = spec.label;
+            if (spec.tooltipKey) lbl.setAttribute('data-editor-tooltip', spec.tooltipKey);
             lblCell.appendChild(lbl);
             labelRow.appendChild(lblCell);
 
@@ -1883,6 +1897,8 @@ const Editor = {
 
         const btn = document.createElement('div');
         btn.className = 'editor-collapse-header gap-4';
+        if (options.tooltipKey) btn.setAttribute('data-editor-tooltip', options.tooltipKey);
+        if (options.widgetType) btn.setAttribute('data-widget-type', options.widgetType);
 
         const previewSlot = document.createElement('span');
         previewSlot.className = 'flex-shrink-0 w-8 h-8 flex items-center justify-center pointer-events-none text-[var(--ui-accent)]';
@@ -2686,7 +2702,7 @@ const Editor = {
             LightGridWidget.ensureLightItemSwitchAction(light);
             light.switchAction[prop] = val;
         };
-        const attachBindHeader = (col, labelText, prop) => {
+        const attachBindHeader = (col, labelText, prop, tooltipKey) => {
             const bindPath = lightItemBindPath(prop);
             let topicAt = '';
             let isBound = false;
@@ -2700,6 +2716,11 @@ const Editor = {
             const lbl = document.createElement('span');
             lbl.className = 'control-label';
             lbl.textContent = labelText;
+            const lightTipKey = tooltipKey || prop;
+            if (lightTipKey) {
+                lbl.setAttribute('data-editor-tooltip', lightTipKey);
+                this._stampTooltipWidgetType(lbl, this._inspectorTooltipWidgetType(false));
+            }
             headerRow.appendChild(lbl);
             const controlsDiv = document.createElement('div');
             controlsDiv.className = 'control-header-actions' + (isBound ? ' control-header-actions--pinned' : '');
@@ -2814,7 +2835,7 @@ const Editor = {
 
         const nameCol = document.createElement('div');
         nameCol.className = 'flex flex-col gap-1';
-        const nameBh = attachBindHeader(nameCol, 'Name', 'name');
+        const nameBh = attachBindHeader(nameCol, 'Name', 'name', 'row.name');
         if (nameBh.isBound) {
             nameCol.appendChild(Editor.createTopicDropdown(nameBh.topicAt || '', 'msg.topic', (val) => {
                 const patch = {};
@@ -2836,7 +2857,7 @@ const Editor = {
 
         const modeCol = document.createElement('div');
         modeCol.className = 'flex flex-col gap-1';
-        const modeBh = attachBindHeader(modeCol, 'Output Mode', 'outputMode');
+        const modeBh = attachBindHeader(modeCol, 'Output Mode', 'outputMode', 'row.outputMode');
         if (modeBh.isBound) {
             modeCol.appendChild(Editor.createTopicDropdown(modeBh.topicAt || '', 'msg.topic', (val) => {
                 const patch = {};
@@ -2918,6 +2939,7 @@ const Editor = {
             entries: light.topics,
             headerLabel: 'Output Topics',
             addButtonLabel: 'Add Topic',
+            tooltipPrefix: 'row.topics',
             onSplit: typeof onSplitTopic === 'function' ? onSplitTopic : null,
             onChange: (list, persistImmediate) => {
                 light.topics = list;
@@ -2939,7 +2961,7 @@ const Editor = {
 
         const switchClickCol = document.createElement('div');
         switchClickCol.className = 'flex flex-col gap-1';
-        const clickBh = attachBindHeader(switchClickCol, 'On Click', 'actionType');
+        const clickBh = attachBindHeader(switchClickCol, 'On Click', 'actionType', 'row.actionType');
         if (clickBh.isBound) {
             switchClickCol.appendChild(Editor.createTopicDropdown(clickBh.topicAt || '', 'msg.topic', (val) => {
                 const patch = {};
@@ -2969,7 +2991,7 @@ const Editor = {
 
         const onPayloadCol = document.createElement('div');
         onPayloadCol.className = 'flex flex-col gap-1';
-        const onBh = attachBindHeader(onPayloadCol, 'On Value', 'onPayload');
+        const onBh = attachBindHeader(onPayloadCol, 'On Value', 'onPayload', 'row.onPayload');
         if (onBh.isBound) {
             onPayloadCol.appendChild(Editor.createTopicDropdown(onBh.topicAt || '', 'msg.topic', (val) => {
                 const patch = {};
@@ -2989,7 +3011,7 @@ const Editor = {
 
         const offPayloadCol = document.createElement('div');
         offPayloadCol.className = 'flex flex-col gap-1';
-        const offBh = attachBindHeader(offPayloadCol, 'Off Value', 'offPayload');
+        const offBh = attachBindHeader(offPayloadCol, 'Off Value', 'offPayload', 'row.offPayload');
         if (offBh.isBound) {
             offPayloadCol.appendChild(Editor.createTopicDropdown(offBh.topicAt || '', 'msg.topic', (val) => {
                 const patch = {};
@@ -3014,7 +3036,7 @@ const Editor = {
         switchStateRow.className = 'grid grid-cols-1 gap-2';
         const stateCol = document.createElement('div');
         stateCol.className = 'flex flex-col gap-1';
-        const stateBh = attachBindHeader(stateCol, 'State (On/Off)', 'state');
+        const stateBh = attachBindHeader(stateCol, 'State (On/Off)', 'state', 'row.state');
         if (light.state !== true) light.state = false;
         if (stateBh.isBound) {
             stateCol.appendChild(Editor.createTopicDropdown(stateBh.topicAt || '', 'msg.topic', (val) => {
@@ -3035,7 +3057,7 @@ const Editor = {
         switchPageRow.className = 'grid grid-cols-2 gap-2';
         const pageCol = document.createElement('div');
         pageCol.className = 'flex flex-col gap-1';
-        const pageBh = attachBindHeader(pageCol, 'Target Page #', 'pageTo');
+        const pageBh = attachBindHeader(pageCol, 'Target Page #', 'pageTo', 'row.pageTo');
         if (pageBh.isBound) {
             pageCol.appendChild(Editor.createTopicDropdown(pageBh.topicAt || '', 'msg.topic', (val) => {
                 const patch = {};
@@ -3059,7 +3081,7 @@ const Editor = {
         switchUrlRow.className = 'grid grid-cols-2 gap-2';
         const urlCol = document.createElement('div');
         urlCol.className = 'flex flex-col gap-1';
-        const urlBh = attachBindHeader(urlCol, 'Target URL', 'urlTo');
+        const urlBh = attachBindHeader(urlCol, 'Target URL', 'urlTo', 'row.urlTo');
         if (urlBh.isBound) {
             urlCol.appendChild(Editor.createTopicDropdown(urlBh.topicAt || '', 'msg.topic', (val) => {
                 const patch = {};
@@ -3080,7 +3102,7 @@ const Editor = {
 
         const urlNewTabCol = document.createElement('div');
         urlNewTabCol.className = 'flex flex-col gap-1';
-        const urlNewTabBh = attachBindHeader(urlNewTabCol, 'New tab', 'urlNewTab');
+        const urlNewTabBh = attachBindHeader(urlNewTabCol, 'New tab', 'urlNewTab', 'row.urlNewTab');
         if (urlNewTabBh.isBound) {
             urlNewTabCol.appendChild(Editor.createTopicDropdown(urlNewTabBh.topicAt || '', 'msg.topic', (val) => {
                 const patch = {};
@@ -3117,11 +3139,15 @@ const Editor = {
         const overrideLbl = document.createElement('span');
         overrideLbl.className = 'control-label';
         overrideLbl.innerText = 'Color Presets';
+        overrideLbl.setAttribute('data-editor-tooltip', 'row.colorPresets');
+        this._stampTooltipWidgetType(overrideLbl, this._inspectorTooltipWidgetType(false));
         const overrideToggleWrap = document.createElement('div');
         overrideToggleWrap.className = 'flex items-center gap-2';
         const overrideToggleLbl = document.createElement('span');
         overrideToggleLbl.className = 'editor-muted-text text-[10px] uppercase';
         overrideToggleLbl.innerText = 'Override Master';
+        overrideToggleLbl.setAttribute('data-editor-tooltip', 'row.overridePresets');
+        this._stampTooltipWidgetType(overrideToggleLbl, this._inspectorTooltipWidgetType(false));
         const overrideCheck = document.createElement('input');
         overrideCheck.type = 'checkbox';
         overrideCheck.checked = light.overridePresets === true;
@@ -3242,7 +3268,7 @@ const Editor = {
                 ? MenuWidget.menuItemBindingPath(lIdx, prop)
                 : null
         );
-        const attachBindHeader = (col, labelText, prop) => {
+        const attachBindHeader = (col, labelText, prop, tooltipKey) => {
             const bindPath = menuItemBindPath(prop);
             let topicAt = '';
             let isBound = false;
@@ -3257,6 +3283,11 @@ const Editor = {
             const lbl = document.createElement('span');
             lbl.className = 'control-label';
             lbl.textContent = labelText;
+            const menuTipKey = tooltipKey || prop;
+            if (menuTipKey) {
+                lbl.setAttribute('data-editor-tooltip', menuTipKey);
+                this._stampTooltipWidgetType(lbl, this._inspectorTooltipWidgetType(false));
+            }
             headerRow.appendChild(lbl);
             const controlsDiv = document.createElement('div');
             controlsDiv.className = 'control-header-actions' + (isBound ? ' control-header-actions--pinned' : '');
@@ -3374,7 +3405,7 @@ const Editor = {
 
         const modeCol = document.createElement('div');
         modeCol.className = 'flex flex-col gap-1 col-span-2';
-        const modeBh = attachBindHeader(modeCol, 'Mode', 'mode');
+        const modeBh = attachBindHeader(modeCol, 'Mode', 'mode', 'row.mode');
         if (modeBh.isBound) {
             modeCol.appendChild(Editor.createTopicDropdown(modeBh.topicAt || '', 'msg.topic', (val) => {
                 const patch = {};
@@ -3391,7 +3422,7 @@ const Editor = {
 
         const labelCol = document.createElement('div');
         labelCol.className = 'flex flex-col gap-1 col-span-2 grp-nonspacer';
-        const labelBh = attachBindHeader(labelCol, 'Label', 'label');
+        const labelBh = attachBindHeader(labelCol, 'Label', 'label', 'row.label');
         if (labelBh.isBound) {
             labelCol.appendChild(Editor.createTopicDropdown(labelBh.topicAt || '', 'msg.topic', (val) => {
                 const patch = {};
@@ -3409,7 +3440,7 @@ const Editor = {
 
         const actionCol = document.createElement('div');
         actionCol.className = 'flex flex-col gap-1 col-span-2 grp-nonspacer';
-        const actBh = attachBindHeader(actionCol, 'On Click Action', 'actionType');
+        const actBh = attachBindHeader(actionCol, 'On Click Action', 'actionType', 'row.actionType');
         if (actBh.isBound) {
             actionCol.appendChild(Editor.createTopicDropdown(actBh.topicAt || '', 'msg.topic', (val) => {
                 const patch = {};
@@ -3426,7 +3457,7 @@ const Editor = {
 
         const pageCol = document.createElement('div');
         pageCol.className = 'flex flex-col gap-1 col-span-2 grp-page hidden';
-        const pageBh = attachBindHeader(pageCol, 'Target Page #', 'pageTo');
+        const pageBh = attachBindHeader(pageCol, 'Target Page #', 'pageTo', 'row.pageTo');
         if (pageBh.isBound) {
             pageCol.appendChild(Editor.createTopicDropdown(pageBh.topicAt || '', 'msg.topic', (val) => {
                 const patch = {};
@@ -3444,7 +3475,7 @@ const Editor = {
 
         const urlCol = document.createElement('div');
         urlCol.className = 'flex flex-col gap-1 col-span-1 grp-url hidden';
-        const urlBh = attachBindHeader(urlCol, 'Target URL', 'urlTo');
+        const urlBh = attachBindHeader(urlCol, 'Target URL', 'urlTo', 'row.urlTo');
         if (urlBh.isBound) {
             urlCol.appendChild(Editor.createTopicDropdown(urlBh.topicAt || '', 'msg.topic', (val) => {
                 const patch = {};
@@ -3462,7 +3493,7 @@ const Editor = {
 
         const urlNewTabCol = document.createElement('div');
         urlNewTabCol.className = 'flex flex-col gap-1 col-span-1 grp-url hidden';
-        const urlNewTabBh = attachBindHeader(urlNewTabCol, 'New tab', 'urlNewTab');
+        const urlNewTabBh = attachBindHeader(urlNewTabCol, 'New tab', 'urlNewTab', 'row.urlNewTab');
         if (urlNewTabBh.isBound) {
             urlNewTabCol.appendChild(Editor.createTopicDropdown(urlNewTabBh.topicAt || '', 'msg.topic', (val) => {
                 const patch = {};
@@ -3483,11 +3514,11 @@ const Editor = {
 
         const sgHeadWrap = document.createElement('div');
         sgHeadWrap.className = 'flex flex-col gap-1 w-full';
-        const sgBh = attachBindHeader(sgHeadWrap, 'Selection Group ID', 'selectionGroup');
+        const sgBh = attachBindHeader(sgHeadWrap, 'Selection Group ID', 'selectionGroup', 'row.selectionGroup');
 
         const sendHeadWrap = document.createElement('div');
         sendHeadWrap.className = 'flex flex-col gap-1 w-full';
-        const sendBh = attachBindHeader(sendHeadWrap, 'Send Off When Turned Off by Group', 'sendOffOnGroupDeselect');
+        const sendBh = attachBindHeader(sendHeadWrap, 'Send Off When Turned Off by Group', 'sendOffOnGroupDeselect', 'row.sendOffOnGroupDeselect');
 
         let sendOffCheckbox = null;
         let sendOffRowWrap = null;
@@ -3531,6 +3562,7 @@ const Editor = {
             if (!sendBh.isBound) {
                 sgOpts.secondaryCheckboxes = [{
                     label: 'Send Off When Turned Off by Group',
+                    tooltipKey: 'row.sendOffOnGroupDeselect',
                     initialChecked: !!item.sendOffOnGroupDeselect,
                     onChange: (on) => {
                         item.sendOffOnGroupDeselect = on;
@@ -3560,7 +3592,7 @@ const Editor = {
 
         const topicOuter = document.createElement('div');
         topicOuter.className = 'flex flex-col gap-1 col-span-2 grp-topic';
-        const outTopicH = attachBindHeader(topicOuter, 'Output Topic (leave blank to use page/URL only)', 'outputTopic');
+        const outTopicH = attachBindHeader(topicOuter, 'Output Topic (leave blank to use page/URL only)', 'outputTopic', 'row.outputTopic');
         const topicWrap = document.createElement('div');
         topicWrap.className = 'mi-topic-wrap';
         const outBound = !!outTopicH.isBound;
@@ -3582,7 +3614,7 @@ const Editor = {
 
         const onCol = document.createElement('div');
         onCol.className = 'flex flex-col gap-1 col-span-1 grp-topic';
-        const onBh = attachBindHeader(onCol, 'On Value', 'onPayload');
+        const onBh = attachBindHeader(onCol, 'On Value', 'onPayload', 'row.onPayload');
         if (onBh.isBound) {
             onCol.appendChild(Editor.createTopicDropdown(onBh.topicAt || '', 'msg.topic', (val) => {
                 const patch = {};
@@ -3601,7 +3633,7 @@ const Editor = {
 
         const offCol = document.createElement('div');
         offCol.className = 'flex flex-col gap-1 col-span-1 grp-topic';
-        const offBh = attachBindHeader(offCol, 'Off Value', 'offPayload');
+        const offBh = attachBindHeader(offCol, 'Off Value', 'offPayload', 'row.offPayload');
         if (offBh.isBound) {
             offCol.appendChild(Editor.createTopicDropdown(offBh.topicAt || '', 'msg.topic', (val) => {
                 const patch = {};
@@ -3622,7 +3654,7 @@ const Editor = {
         const stateCol = document.createElement('div');
         stateCol.className = 'flex flex-col gap-1 col-span-2 grp-toggle hidden editor-section-divider py-2 mt-1';
         stateCol.title = stateTooltip;
-        const stBh = attachBindHeader(stateCol, 'State (On/Off)', 'state');
+        const stBh = attachBindHeader(stateCol, 'State (On/Off)', 'state', 'row.state');
         if (stBh.isBound) {
             stateCol.appendChild(Editor.createTopicDropdown(stBh.topicAt || '', 'msg.topic', (val) => {
                 const patch = {};
@@ -5899,6 +5931,7 @@ const Editor = {
             const nameLbl = document.createElement('span');
             nameLbl.className = 'control-label';
             nameLbl.textContent = 'Group Name';
+            nameLbl.setAttribute('data-editor-tooltip', 'group.name');
             nameHeader.appendChild(nameLbl);
             nameWrap.appendChild(nameHeader);
             const groupNameInput = document.createElement('input');
@@ -5930,6 +5963,7 @@ const Editor = {
             });
             const lockSpan = document.createElement('span');
             lockSpan.textContent = 'Group Locked';
+            lockLabel.setAttribute('data-editor-tooltip', 'group.locked');
             lockLabel.appendChild(groupLockInput);
             lockLabel.appendChild(lockSpan);
             lockWrap.appendChild(lockLabel);
@@ -5942,6 +5976,7 @@ const Editor = {
             const visLbl = document.createElement('span');
             visLbl.className = 'control-label';
             visLbl.textContent = 'Visibility';
+            visLbl.setAttribute('data-editor-tooltip', 'group.visible');
             visLbl.title = 'When disabled, the group is hidden in dashboard view. Optional MQTT topic overrides this value.';
             visHeader.appendChild(visLbl);
             const visControls = document.createElement('div');
@@ -6004,6 +6039,7 @@ const Editor = {
             const pageOvLbl = document.createElement('span');
             pageOvLbl.className = 'control-label';
             pageOvLbl.textContent = 'Override Page(s)';
+            pageOvLbl.setAttribute('data-editor-tooltip', 'group.overridePage');
             pageOvLbl.title = 'When set, all widgets in this group use this page spec for visibility only (comma-separated pages and ranges, same as Page(s) on a widget). Stored widget page values are not changed.';
             pageOvHeader.appendChild(pageOvLbl);
             const pageOvControls = document.createElement('div');
@@ -6067,6 +6103,7 @@ const Editor = {
             const dimLbl = document.createElement('span');
             dimLbl.className = 'control-label';
             dimLbl.textContent = 'Blur Background When Visible';
+            dimLbl.setAttribute('data-editor-tooltip', 'group.dimBackground');
             dimLbl.title = 'View mode only: frosted overlay over the rest of the page, blocks interaction behind the group, and stacks this group above other widgets.';
             dimHeader.appendChild(dimLbl);
             const dimControls = document.createElement('div');
@@ -6237,6 +6274,17 @@ const Editor = {
             lbl.className = 'control-label';
             lbl.textContent = f.label;
             if (f.hint) lbl.title = f.hint;
+            const groupLayoutTip = {
+                scaleMode: 'responsiveScaleMode',
+                order: 'responsiveOrder',
+                columnSpan: 'responsiveColumnSpan',
+                preferredColumn: 'responsivePreferredColumn',
+                cellHeightMode: 'responsiveCellHeightMode',
+                cellHeight: 'responsiveCellHeight',
+                minHeight: 'responsiveMinHeight',
+                padding: 'responsivePadding'
+            };
+            if (groupLayoutTip[f.prop]) lbl.setAttribute('data-editor-tooltip', groupLayoutTip[f.prop]);
             wrap.appendChild(lbl);
             let input;
             if (f.kind === 'select') {
@@ -8249,7 +8297,43 @@ const Editor = {
         return { wrap, renderGrid };
     },
 
+    /**
+     * Registry type for a live widget instance. Instances do not store `.type`
+     * (that key exists on saved JSON only).
+     */
+    _tooltipWidgetTypeFromInstance: function (widget) {
+        if (!widget) return null;
+        if (typeof WidgetRegistry !== 'undefined' && typeof WidgetRegistry.getTypeKeyForClass === 'function') {
+            const found = WidgetRegistry.getTypeKeyForClass(widget.constructor);
+            if (found) return found;
+        }
+        if (typeof Dashboard !== 'undefined' && typeof Dashboard._getWidgetTypeByInstance === 'function') {
+            return Dashboard._getWidgetTypeByInstance(widget) || null;
+        }
+        return null;
+    },
+
+    /**
+     * Widget type used to look up inspector tips (`menu.menuLayout`).
+     * Dashboard Settings groups (`global_menu`) stamp `_tooltipWidgetType` for the group,
+     * including nested typography and icon slideouts rendered while that stamp is active.
+     */
+    _inspectorTooltipWidgetType: function (isGlobal) {
+        if (!isGlobal && this.currentId && typeof Dashboard !== 'undefined' && Dashboard.widgets) {
+            const fromInstance = this._tooltipWidgetTypeFromInstance(Dashboard.widgets[this.currentId]);
+            if (fromInstance) return fromInstance;
+        }
+        return this._tooltipWidgetType || null;
+    },
+
+    _stampTooltipWidgetType: function (el, widgetType) {
+        if (el && widgetType) el.setAttribute('data-widget-type', widgetType);
+    },
+
     renderSchema: function (schema, values, overrides, bindings = {}, isGlobal = false) {
+        if (typeof EditorTooltip !== 'undefined' && typeof EditorTooltip.syncState === 'function') {
+            EditorTooltip.syncState();
+        }
         const currentBindings = isGlobal ? Dashboard.globalBindings : (bindings || {});
         let mergedStatic = null;
         if (!isGlobal && this.currentId && Dashboard.widgets[this.currentId]) {
@@ -8279,6 +8363,13 @@ const Editor = {
 
             if (!this.editorTierAllows(group, isGlobal)) {
                 return;
+            }
+
+            const prevTooltipWidgetType = this._tooltipWidgetType;
+            let stampedGlobalTooltipType = false;
+            if (isGlobal && gid.indexOf('global_') === 0) {
+                this._tooltipWidgetType = gid.slice('global_'.length);
+                stampedGlobalTooltipType = true;
             }
 
             const g = document.createElement('div');
@@ -8348,6 +8439,7 @@ const Editor = {
                 w.className = `col-span-${f.cols} flex flex-col justify-end`;
                 this._applyEditorFieldGridColumn(w, f);
                 w.dataset.fieldKey = f.key || '';
+                this._stampTooltipWidgetType(w, this._inspectorTooltipWidgetType(isGlobal));
                 // Deprecated `preserveGridSlot` collapses like any hidden field so
                 // it never reserves an empty slot (see equalizeInspectorGrid).
                 if (f.preserveGridSlot === true) w.setAttribute('data-preserve-grid-slot', 'true');
@@ -8484,10 +8576,12 @@ const Editor = {
                     const title = document.createElement('div');
                     title.className = 'toolbar-label';
                     title.textContent = 'Theme Corrections';
+                    title.setAttribute('data-editor-tooltip', 'theme-corrections');
                     const resetBtn = document.createElement('button');
                     resetBtn.type = 'button';
                     resetBtn.id = 'theme-hue-shift-reset';
                     resetBtn.className = 'btn-tool btn-tool-icon-only';
+                    resetBtn.setAttribute('data-editor-tooltip', 'theme-corrections-reset');
                     resetBtn.title = 'Reset Color Tone, Intensity, Contrast, and Brightness to center';
                     resetBtn.setAttribute('aria-label', 'Reset Color Tone, Intensity, Contrast, and Brightness to center');
                     resetBtn.disabled = true;
@@ -8518,10 +8612,16 @@ const Editor = {
                         name.className = 'toolbar-label theme-correction-name';
                         name.setAttribute('for', spec.id);
                         name.textContent = spec.name;
+                        if (spec.tooltipKey) {
+                            name.setAttribute('data-editor-tooltip', spec.tooltipKey);
+                        }
                         const input = document.createElement('input');
                         input.type = 'range';
                         input.id = spec.id;
                         input.className = 'editor-zoom-slider';
+                        if (spec.tooltipKey) {
+                            input.setAttribute('data-editor-tooltip', spec.tooltipKey);
+                        }
                         input.min = spec.min;
                         input.max = spec.max;
                         input.step = '1';
@@ -8547,6 +8647,7 @@ const Editor = {
                         name: 'Color Tone',
                         id: 'theme-hue-shift-slider',
                         readoutId: 'theme-hue-shift-readout',
+                        tooltipKey: 'theme-color-tone',
                         min: '-180',
                         max: '180',
                         value: hueNow,
@@ -8557,6 +8658,7 @@ const Editor = {
                         name: 'Color Intensity',
                         id: 'theme-saturation-shift-slider',
                         readoutId: 'theme-saturation-shift-readout',
+                        tooltipKey: 'theme-color-intensity',
                         min: '0',
                         max: '200',
                         value: satNow,
@@ -8567,6 +8669,7 @@ const Editor = {
                         name: 'Brightness',
                         id: 'theme-brightness-shift-slider',
                         readoutId: 'theme-brightness-shift-readout',
+                        tooltipKey: 'theme-brightness',
                         min: '0',
                         max: '200',
                         value: briNow,
@@ -8577,6 +8680,7 @@ const Editor = {
                         name: 'Contrast',
                         id: 'theme-contrast-shift-slider',
                         readoutId: 'theme-contrast-shift-readout',
+                        tooltipKey: 'theme-contrast',
                         min: '0',
                         max: '200',
                         value: contrastNow,
@@ -8603,6 +8707,7 @@ const Editor = {
                     const syncBtn = document.createElement('button');
                     syncBtn.type = 'button';
                     syncBtn.className = 'btn-tool flex-1 min-w-[10rem] justify-center';
+                    syncBtn.setAttribute('data-editor-tooltip', 'theme-reset-defaults-to-theme');
                     syncBtn.textContent = 'Reset all widget default colors to theme colors';
                     syncBtn.title = 'Reset widget default colors to match the factory theme file (@ tokens). Does not change per-widget overrides.';
                     syncBtn.onclick = () => {
@@ -8626,6 +8731,7 @@ const Editor = {
                     const label = document.createElement('label');
                     label.className = 'control-label';
                     label.textContent = 'Presets';
+                    label.setAttribute('data-editor-tooltip', 'widget-presets');
                     w.appendChild(label);
 
                     // Main row stays full width; sub-preset dropdown stacks below when multi-variant.
@@ -8640,6 +8746,7 @@ const Editor = {
                     const prevBtn = document.createElement('button');
                     prevBtn.type = 'button';
                     prevBtn.className = 'btn-tool btn-tool-icon-only';
+                    prevBtn.setAttribute('data-editor-tooltip', 'widget-presets-prev');
                     prevBtn.title = 'Load the previous main preset in the list';
                     prevBtn.innerHTML = '<i class="ph-bold ph-caret-left"></i>';
                     prevBtn.onclick = () => {
@@ -8655,6 +8762,7 @@ const Editor = {
                     const btn = document.createElement('button');
                     btn.id = 'widget-preset-select-btn';
                     btn.className = 'control-input ds-select-btn h-full';
+                    btn.setAttribute('data-editor-tooltip', 'widget-presets-menu');
                     btn.type = 'button';
                     btn.innerHTML = '<span id="widget-preset-select-label" class="editor-muted-text">Select Preset...</span><i class="ph-bold ph-caret-down"></i>';
 
@@ -8697,6 +8805,7 @@ const Editor = {
                     const subPrevBtn = document.createElement('button');
                     subPrevBtn.type = 'button';
                     subPrevBtn.className = 'btn-tool btn-tool-icon-only';
+                    subPrevBtn.setAttribute('data-editor-tooltip', 'widget-presets-sub-prev');
                     subPrevBtn.title = 'Load the previous sub-preset';
                     subPrevBtn.innerHTML = '<i class="ph-bold ph-caret-left"></i>';
                     subPrevBtn.onclick = () => {
@@ -8712,6 +8821,7 @@ const Editor = {
                     const subBtn = document.createElement('button');
                     subBtn.id = 'widget-preset-sub-select-btn';
                     subBtn.className = 'control-input ds-select-btn h-full';
+                    subBtn.setAttribute('data-editor-tooltip', 'widget-presets-sub-menu');
                     subBtn.type = 'button';
                     subBtn.innerHTML = '<span id="widget-preset-sub-select-label" class="editor-muted-text">Sub...</span><i class="ph-bold ph-caret-down"></i>';
 
@@ -8745,6 +8855,7 @@ const Editor = {
                     const nextBtn = document.createElement('button');
                     nextBtn.type = 'button';
                     nextBtn.className = 'btn-tool btn-tool-icon-only';
+                    nextBtn.setAttribute('data-editor-tooltip', 'widget-presets-next');
                     nextBtn.title = 'Load the next main preset in the list';
                     nextBtn.innerHTML = '<i class="ph-bold ph-caret-right"></i>';
                     nextBtn.onclick = () => {
@@ -8756,6 +8867,7 @@ const Editor = {
                     const subNextBtn = document.createElement('button');
                     subNextBtn.type = 'button';
                     subNextBtn.className = 'btn-tool btn-tool-icon-only';
+                    subNextBtn.setAttribute('data-editor-tooltip', 'widget-presets-sub-next');
                     subNextBtn.title = 'Load the next sub-preset';
                     subNextBtn.innerHTML = '<i class="ph-bold ph-caret-right"></i>';
                     subNextBtn.onclick = () => {
@@ -8801,6 +8913,7 @@ const Editor = {
                             const saveBtn = document.createElement('button');
                             saveBtn.type = 'button';
                             saveBtn.className = 'btn-tool flex-1';
+                            saveBtn.setAttribute('data-editor-tooltip', 'widget-presets-save');
                             saveBtn.title = 'Save current widget settings as a preset on Homey';
                             saveBtn.innerHTML = '<i class="ph-bold ph-cloud-arrow-up"></i> Save';
                             saveBtn.onclick = () => {
@@ -8814,6 +8927,7 @@ const Editor = {
                         const exportBtn = document.createElement('button');
                         exportBtn.type = 'button';
                         exportBtn.className = 'btn-tool flex-1';
+                        exportBtn.setAttribute('data-editor-tooltip', 'widget-presets-export');
                         exportBtn.title = 'Export current widget settings as a local preset file';
                         exportBtn.innerHTML = '<i class="ph-bold ph-download-simple"></i> Export';
                         exportBtn.onclick = () => {
@@ -8824,6 +8938,7 @@ const Editor = {
                         const importBtn = document.createElement('button');
                         importBtn.type = 'button';
                         importBtn.className = 'btn-tool flex-1';
+                        importBtn.setAttribute('data-editor-tooltip', 'widget-presets-import');
                         importBtn.title = 'Import a widget preset from a local file';
                         importBtn.innerHTML = '<i class="ph-bold ph-folder-open"></i> Import';
                         importBtn.onclick = () => {
@@ -8838,6 +8953,7 @@ const Editor = {
                         const resetBtn = document.createElement('button');
                         resetBtn.type = 'button';
                         resetBtn.className = 'btn-tool w-full justify-center';
+                        resetBtn.setAttribute('data-editor-tooltip', 'widget-presets-reset');
                         resetBtn.title = 'Reset style and behavior settings on this widget to defaults';
                         resetBtn.textContent = 'Reset to Default';
                         resetBtn.onclick = () => {
@@ -8866,6 +8982,7 @@ const Editor = {
                     const resetBtn = document.createElement('button');
                     resetBtn.type = 'button';
                     resetBtn.className = 'btn-tool flex-1 min-w-[10rem] justify-center';
+                    resetBtn.setAttribute('data-editor-tooltip', 'widget-defaults-reset');
                     resetBtn.textContent = 'Reset all widget default settings';
                     resetBtn.title = 'Restore all widget master defaults. Does not change Platform, Dashboard Environment, or driver/simulation settings.';
                     resetBtn.onclick = () => {
@@ -8953,6 +9070,7 @@ const Editor = {
                     galleryBtn.className = 'btn-tool w-full mb-2 justify-center';
                     galleryBtn.innerHTML = '<i class="ph-bold ph-squares-four"></i><span>Auto-Widget Gallery</span>';
                     galleryBtn.title = 'Generate and batch-add live widgets from incoming data streams.';
+                    galleryBtn.setAttribute('data-editor-tooltip', 'topic-monitor-dialog');
                     galleryBtn.addEventListener('click', function () {
                         if (typeof ToolsMenu === 'undefined' || typeof ToolsRegistry === 'undefined') return;
                         var spec = ToolsRegistry.get('auto-widget-gallery');
@@ -8975,10 +9093,12 @@ const Editor = {
                     const filterInput = document.createElement('input');
                     filterInput.className = 'control-input text-xs py-1 px-2 h-6 flex-1';
                     filterInput.placeholder = 'Filter topics...';
+                    filterInput.setAttribute('data-editor-tooltip', 'topic-monitor-filter');
 
                     const clearBtn = document.createElement('button');
                     clearBtn.className = 'btn-tool w-6 h-6 p-0 flex items-center justify-center';
                     clearBtn.innerHTML = '<i class="ph-bold ph-trash"></i>';
+                    clearBtn.setAttribute('data-editor-tooltip', 'topic-monitor-clear');
                     clearBtn.title = "Clear History";
 
                     const pauseBadge = document.createElement('div');
@@ -8999,6 +9119,7 @@ const Editor = {
                     const copyAllBtn = document.createElement('button');
                     copyAllBtn.type = 'button';
                     copyAllBtn.className = 'btn-tool flex-1 justify-center text-xs';
+                    copyAllBtn.setAttribute('data-editor-tooltip', 'topic-monitor-copy-all');
                     copyAllBtn.innerHTML = '<i class="ph-bold ph-copy"></i><span>Copy All Topic Names</span>';
                     copyAllBtn.title = 'Copy all known topic names to the clipboard, one per line';
                     const syncCopyAllEnabled = function () {
@@ -9034,6 +9155,7 @@ const Editor = {
                     const advExplorerBtn = document.createElement('button');
                     advExplorerBtn.type = 'button';
                     advExplorerBtn.className = 'btn-tool flex-1 justify-center text-xs';
+                    advExplorerBtn.setAttribute('data-editor-tooltip', 'topic-monitor-advanced-explorer');
                     advExplorerBtn.innerHTML = '<i class="ph-bold ph-chart-pie-slice"></i><span>Advanced Explorer</span>';
                     advExplorerBtn.title = 'Open Overview & Topic Intelligence in About & Dashboard Statistics';
                     advExplorerBtn.onclick = function () {
@@ -9262,8 +9384,12 @@ const Editor = {
                 const headerRow = document.createElement('div');
                 headerRow.className = 'control-header-row';
 
+                const curWidgetType = this._inspectorTooltipWidgetType(isGlobal);
+
                 const lblSpan = document.createElement('span');
                 lblSpan.className = 'control-label';
+                if (f.key) lblSpan.setAttribute('data-editor-tooltip', f.key);
+                if (curWidgetType) lblSpan.setAttribute('data-widget-type', curWidgetType);
                 if (f.labelHelpLink && typeof HelpSystem !== 'undefined' && typeof HelpSystem.appendEditorLabelWithHelpLink === 'function') {
                     lblSpan.textContent = '';
                     HelpSystem.appendEditorLabelWithHelpLink(lblSpan, labelText, {
@@ -9935,6 +10061,8 @@ const Editor = {
 
                         const btn = document.createElement('div');
                         btn.className = 'editor-collapse-header';
+                        if (f.key) btn.setAttribute('data-editor-tooltip', f.key);
+                        if (curWidgetType) btn.setAttribute('data-widget-type', curWidgetType);
 
                         const typoIcon = document.createElement('i');
                         typoIcon.className = 'ph-fill ph-text-t mr-3 flex-shrink-0 text-[var(--ui-accent)] text-lg pointer-events-none';
@@ -10001,6 +10129,8 @@ const Editor = {
                             titleLabel: f.label || '',
                             headerSuffix: f.iconStyleHeaderSuffix,
                             collapseStateKey: iconStateKey,
+                            tooltipKey: f.key,
+                            widgetType: curWidgetType,
                             cardClassName: 'editor-collapse-card editor-collapse-card--closed mt-1 w-full',
                             contentClassName: 'editor-collapse-content hidden flex flex-col gap-3',
                             chevronOpts: { chevronAccent: 'var(--ui-accent)' }
@@ -10261,6 +10391,10 @@ const Editor = {
                                 const rowLabel = document.createElement('label');
                                 rowLabel.className = 'control-label';
                                 rowLabel.textContent = item.label || ('Column ' + (idx + 1));
+                                if (f.key) {
+                                    rowLabel.setAttribute('data-editor-tooltip', f.key);
+                                    this._stampTooltipWidgetType(rowLabel, this._inspectorTooltipWidgetType(isGlobal));
+                                }
                                 const rowInput = document.createElement('input');
                                 rowInput.type = 'number';
                                 rowInput.className = 'control-input';
@@ -10379,6 +10513,7 @@ const Editor = {
                             showHoldToActivate: true,
                             headerLabel: 'Additional Output Topics',
                             addButtonLabel: 'Add Output topic',
+                            tooltipPrefix: 'extra',
                             onChange: (list, persistImmediate) => {
                                 const normalized = (typeof SwitchWidget !== 'undefined' && typeof SwitchWidget.normalizeExtraOutputTopics === 'function')
                                     ? SwitchWidget.normalizeExtraOutputTopics(list)
@@ -10431,6 +10566,8 @@ const Editor = {
                                 const topicLbl = document.createElement('label');
                                 topicLbl.className = 'control-label';
                                 topicLbl.textContent = 'Topic';
+                                topicLbl.setAttribute('data-editor-tooltip', 'audioTopic');
+                                this._stampTooltipWidgetType(topicLbl, this._inspectorTooltipWidgetType(isGlobal));
                                 const topicRow = document.createElement('div');
                                 topicRow.className = 'flex w-full';
                                 const dd = Editor.createTopicDropdown(row.topic || '', 'Select topic...', (val) => {
@@ -10455,6 +10592,8 @@ const Editor = {
                                 const urlLbl = document.createElement('label');
                                 urlLbl.className = 'control-label';
                                 urlLbl.textContent = 'Audio URL';
+                                urlLbl.setAttribute('data-editor-tooltip', 'audioUrl');
+                                this._stampTooltipWidgetType(urlLbl, this._inspectorTooltipWidgetType(isGlobal));
                                 const urlField = Editor.createAudioUrlFieldRow(row.url || '', (val) => {
                                     arr[idx].url = val;
                                     saveValue(arr.slice(), true);
@@ -10521,6 +10660,10 @@ const Editor = {
                             const lbl = document.createElement('label');
                             lbl.className = 'control-label';
                             lbl.textContent = resolveAudioTriggerLabel(t, values);
+                            if (t.key) {
+                                lbl.setAttribute('data-editor-tooltip', t.key);
+                                this._stampTooltipWidgetType(lbl, this._inspectorTooltipWidgetType(isGlobal));
+                            }
                             labelByKey[t.key] = lbl;
                             const urlField = Editor.createAudioUrlFieldRow(audioObj[t.key] || '', (val) => {
                                 audioObj = { ...audioObj, [t.key]: val };
@@ -11110,6 +11253,10 @@ const Editor = {
                                 lab.className = 'control-label';
                                 lab.textContent = label;
                                 if (hint) lab.title = hint;
+                                if (bind && bind.prop) {
+                                    lab.setAttribute('data-editor-tooltip', 'series.' + bind.prop);
+                                    this._stampTooltipWidgetType(lab, 'graph');
+                                }
                                 head.appendChild(lab);
                                 let resetIcon = null;
                                 let bound = false;
@@ -12093,6 +12240,7 @@ const Editor = {
                         if (bundleSendOff) {
                             sgOpts.secondaryCheckboxes = [{
                                 label: sendOffF.label || 'Send Off When Turned Off by Group',
+                                tooltipKey: sendOffF.key || 'sendOffOnGroupDeselect',
                                 initialChecked: Editor.ensureBool(sendOffRaw),
                                 visible: sendOffVisible,
                                 onChange: (checked) => {
@@ -12285,6 +12433,7 @@ const Editor = {
             content.appendChild(grid);
             g.appendChild(content);
             this.container.appendChild(g);
+            if (stampedGlobalTooltipType) this._tooltipWidgetType = prevTooltipWidgetType;
         });
 
         Editor.compactSchemaInspectorGrids(this.container);

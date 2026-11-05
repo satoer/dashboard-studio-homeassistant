@@ -8539,6 +8539,9 @@ const Dashboard = {
             this.resetThemeHueShift();
         }
         this._syncEditorChromeTheme(keys);
+        if (typeof EditorTooltip !== 'undefined' && typeof EditorTooltip.syncState === 'function') {
+            EditorTooltip.syncState();
+        }
         // Render-input generation for widget-level rebuild-skip signatures.
         this._globalConfigEpoch = (this._globalConfigEpoch || 0) + 1;
 
