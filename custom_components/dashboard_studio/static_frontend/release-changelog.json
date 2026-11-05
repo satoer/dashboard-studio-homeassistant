@@ -42,6 +42,19 @@
   },
   "releases": [
     {
+      "version": "2.3.4",
+      "date": "2026-11-05",
+      "changes": [
+        {
+          "title": "Fixed: Image Automatic Refresh & Camera Snapshots",
+          "description": "Resolved an issue where image automatic refresh and camera snapshots stopped updating.",
+          "tags": [
+            9
+          ]
+        }
+      ]
+    },
+    {
       "version": "2.3.3",
       "date": "2026-11-05",
       "changes": [
