@@ -6761,7 +6761,8 @@
         "title": "Theme Corrections",
         "description": "Fine-tune color tone, saturation intensity, contrast, and brightness across your active theme.",
         "help": {
-            "topic": "Appearance"
+            "topic": "Editor Interface Guide",
+            "anchor": "13-theme-colors"
         }
     },
     "theme-corrections-reset": {
@@ -6773,35 +6774,40 @@
         "title": "Color Tone",
         "description": "Rotate every theme color around the color wheel from minus 180 to plus 180 degrees. Zero keeps the current palette.",
         "help": {
-            "topic": "Appearance"
+            "topic": "Editor Interface Guide",
+            "anchor": "13-theme-colors"
         }
     },
     "theme-color-intensity": {
         "title": "Color Intensity",
         "description": "Scale color saturation from 0% monochrome to 200% vivid color. 100% keeps current theme palette intensity.",
         "help": {
-            "topic": "Appearance"
+            "topic": "Editor Interface Guide",
+            "anchor": "13-theme-colors"
         }
     },
     "theme-brightness": {
         "title": "Brightness",
         "description": "Scale overall theme lightness from 0% to 200%. 100% keeps current theme palette values intact.",
         "help": {
-            "topic": "Appearance"
+            "topic": "Editor Interface Guide",
+            "anchor": "13-theme-colors"
         }
     },
     "theme-contrast": {
         "title": "Contrast",
         "description": "Spread dark theme colors darker and light theme colors lighter from 0% to 200%. 100% preserves normal theme contrast.",
         "help": {
-            "topic": "Appearance"
+            "topic": "Editor Interface Guide",
+            "anchor": "13-theme-colors"
         }
     },
     "theme-reset-defaults-to-theme": {
         "title": "Reset Defaults to Theme",
         "description": "Restore all widget default colors to match active theme tokens without modifying per-widget customizations.",
         "help": {
-            "topic": "Appearance"
+            "topic": "Editor Interface Guide",
+            "anchor": "13-theme-colors"
         }
     },
     "widget-presets": {
@@ -6872,7 +6878,8 @@
         "title": "Topic Monitor",
         "description": "Open the real-time MQTT and smart home topic monitor to inspect incoming device telemetry and state changes.",
         "help": {
-            "topic": "Overview"
+            "topic": "Editor Interface Guide",
+            "anchor": "10-data-stream-explorer"
         }
     },
     "topic-monitor-clear": {
@@ -6889,7 +6896,8 @@
         "title": "Advanced Explorer",
         "description": "Open deep topic intelligence and system statistics to analyze message frequency and device payloads.",
         "help": {
-            "topic": "Overview"
+            "topic": "Editor Interface Guide",
+            "anchor": "10-data-stream-explorer"
         }
     },
     "topic-monitor-filter": {
@@ -6901,7 +6909,8 @@
         "title": "Data Binding",
         "description": "Connect this setting to a live smart home topic or entity from Homey, Home Assistant, or MQTT so it updates in real time.",
         "help": {
-            "topic": "Overview"
+            "topic": "Connecting Widgets & Data (Topics)",
+            "anchor": "binding-in-the-editor"
         }
     },
     "button.reset": {
@@ -6913,21 +6922,24 @@
         "title": "Color Picker",
         "description": "Open the color palette and picker to customize this color or select a theme token.",
         "help": {
-            "topic": "Appearance"
+            "topic": "Data Types & Formats",
+            "widgetSub": "colors",
+            "anchor": "theme-tokens"
         }
     },
     "btn-gallery": {
         "title": "Image Gallery",
         "description": "Open Image Gallery to upload, manage, and copy image file paths for background and icon widgets.",
         "help": {
-            "topic": "Overview"
+            "topic": "Image Gallery Manager",
+            "anchor": "opening-the-gallery"
         }
     },
     "btn-audio-gallery": {
         "title": "Audio Gallery",
         "description": "Open Audio Gallery to upload, preview, and assign audio alert sounds to widgets.",
         "help": {
-            "topic": "Overview"
+            "topic": "Audio Gallery"
         }
     },
     "btn-share": {
@@ -6949,7 +6961,7 @@
         "title": "Editor Tools",
         "description": "Access automated dashboard scripts, batch helpers, alignment utilities, and diagnostic tools.",
         "help": {
-            "topic": "Overview"
+            "topic": "Tools"
         }
     },
     "btn-theme-toggle": {
@@ -6961,7 +6973,8 @@
         "title": "Documentation",
         "description": "Open the interactive Dashboard Studio documentation guide with widget guides and keyboard shortcuts.",
         "help": {
-            "topic": "Overview"
+            "topic": "Editor Interface Guide",
+            "anchor": "2-editor-tools"
         }
     },
     "editor-zoom": {
@@ -7013,7 +7026,8 @@
         "title": "Theme",
         "description": "Select the active color palette and visual styling preset applied across dashboard widgets.",
         "help": {
-            "topic": "Appearance"
+            "topic": "Styling & Layering",
+            "anchor": "2-themes-theme-explorer"
         }
     },
     "theme-prev": {
@@ -7025,7 +7039,8 @@
         "title": "Theme Selector",
         "description": "Open dropdown list of installed themes to choose an overall color palette.",
         "help": {
-            "topic": "Appearance"
+            "topic": "Styling & Layering",
+            "anchor": "toolbar-theme-controls"
         }
     },
     "theme-next": {
@@ -7037,7 +7052,8 @@
         "title": "Theme Explorer",
         "description": "Browse visual live previews of installed themes and color schemes before selecting one.",
         "help": {
-            "topic": "Appearance"
+            "topic": "Styling & Layering",
+            "anchor": "the-theme-explorer-gallery"
         }
     },
     "theme-save": {
@@ -7085,7 +7101,8 @@
         "title": "Selected Widget",
         "description": "Select an active widget from the list to inspect and edit its properties in this panel.",
         "help": {
-            "topic": "Overview"
+            "topic": "Editor Interface Guide",
+            "anchor": "6-selected-widget-tools"
         }
     },
     "widget-select-btn": {
@@ -7097,7 +7114,8 @@
         "title": "Reset All Colors",
         "description": "Reset all widget color overrides across the dashboard back to current theme defaults.",
         "help": {
-            "topic": "Appearance"
+            "topic": "Editor Interface Guide",
+            "anchor": "6-selected-widget-tools"
         }
     },
     "move-to-page": {
@@ -7199,7 +7217,8 @@
         "title": "Editor Tools",
         "description": "Quick toolbar actions to manage galleries, snippets, helper scripts, and editor display modes.",
         "help": {
-            "topic": "Overview"
+            "topic": "Editor Interface Guide",
+            "anchor": "2-editor-tools"
         }
     },
     "menu.menuLabelFont": {

@@ -166,6 +166,7 @@
                 e.preventDefault();
                 e.stopPropagation();
                 var spec = self._activeHelpSpec;
+                self.hideImmediately();
                 if (!spec || typeof HelpSystem === 'undefined') return;
 
                 if (typeof HelpSystem.openFromEditorSpec === 'function') {

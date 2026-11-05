@@ -1606,6 +1606,12 @@ const HelpSystem = {
     /** Registry type → Widgets help slug when they differ (Container is registered as `empty`). */
     _WIDGET_HELP_SLUG_ALIASES: { empty: 'container' },
 
+    /** Tooltip links written against retired topic titles. */
+    _LEGACY_HELP_TOPICS: {
+        overview: 'Welcome & Introduction',
+        appearance: 'Styling & Layering'
+    },
+
     /**
      * Help slug for a widget registry type, or null when that type has no Widgets subpage.
      * When help JSON is not loaded yet, aliases and metadata.helpSlug are used; types with
@@ -2488,8 +2494,15 @@ const HelpSystem = {
         if (!want) return -1;
         let index = this.helpTopics.findIndex(function (t) { return t.title === titleOrIndex; });
         if (index >= 0) return index;
-        return this.helpTopics.findIndex(function (t) {
+        index = this.helpTopics.findIndex(function (t) {
             return HelpSystem._normalizeHelpTitle(t.title) === want;
+        });
+        if (index >= 0) return index;
+        const alias = this._LEGACY_HELP_TOPICS && this._LEGACY_HELP_TOPICS[want];
+        if (!alias) return -1;
+        const aliasWant = this._normalizeHelpTitle(alias);
+        return this.helpTopics.findIndex(function (t) {
+            return HelpSystem._normalizeHelpTitle(t.title) === aliasWant;
         });
     },
 

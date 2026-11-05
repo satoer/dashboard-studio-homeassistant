@@ -1164,16 +1164,27 @@ const DashboardMigrator = {
     _dropKeysWithCorrections: function (bag, keys) {
         if (!bag || typeof bag !== 'object') return false;
         let changed = false;
+        const suffixes = this.TYPOGRAPHY_AUX_SUFFIXES;
         for (let i = 0; i < keys.length; i++) {
             const key = keys[i];
             if (Object.prototype.hasOwnProperty.call(bag, key)) {
                 delete bag[key];
                 changed = true;
             }
-            // Color-correction siblings of a dropped color key are meaningless without it.
-            const prefix = key + '_correct_';
+            if (suffixes && suffixes.length) {
+                for (let s = 0; s < suffixes.length; s++) {
+                    const auxKey = key + suffixes[s];
+                    if (Object.prototype.hasOwnProperty.call(bag, auxKey)) {
+                        delete bag[auxKey];
+                        changed = true;
+                    }
+                }
+            }
+            // Sibling corrections and attached binding rules of a dropped key are meaningless without it.
+            const correctPrefix = key + '_correct_';
+            const bindPrefix = key + '_bind_';
             Object.keys(bag).forEach((k) => {
-                if (k.indexOf(prefix) === 0) {
+                if (k.indexOf(correctPrefix) === 0 || k.indexOf(bindPrefix) === 0) {
                     delete bag[k];
                     changed = true;
                 }
@@ -1213,6 +1224,30 @@ const DashboardMigrator = {
         return changed;
     },
 
+    _hasGraphColorAux: function (bag, key) {
+        if (!bag || typeof bag !== 'object' || !key) return false;
+        const suffixes = this.TYPOGRAPHY_AUX_SUFFIXES;
+        if (suffixes && suffixes.length) {
+            for (let s = 0; s < suffixes.length; s++) {
+                const auxKey = key + suffixes[s];
+                if (bag[auxKey] !== undefined && bag[auxKey] !== null && bag[auxKey] !== '') {
+                    return true;
+                }
+            }
+        }
+        const correctPrefix = key + '_correct_';
+        const bindPrefix = key + '_bind_';
+        const names = Object.keys(bag);
+        for (let i = 0; i < names.length; i++) {
+            const k = names[i];
+            if ((k.indexOf(correctPrefix) === 0 || k.indexOf(bindPrefix) === 0)
+                && bag[k] !== undefined && bag[k] !== null && bag[k] !== '') {
+                return true;
+            }
+        }
+        return false;
+    },
+
     _graphValuePresent: function (v) {
         return v !== undefined && v !== null && v !== '';
     },
@@ -1241,6 +1276,22 @@ const DashboardMigrator = {
                 changed = true;
             }
         }
+        const correctPrefix = srcKey + '_correct_';
+        const bindPrefix = srcKey + '_bind_';
+        const keys = Object.keys(src);
+        for (let k = 0; k < keys.length; k++) {
+            const fromKey = keys[k];
+            let suf = '';
+            if (fromKey.indexOf(correctPrefix) === 0) suf = fromKey.slice(srcKey.length);
+            else if (fromKey.indexOf(bindPrefix) === 0) suf = fromKey.slice(srcKey.length);
+            if (suf) {
+                const toKey = destKey + suf;
+                if (!Object.prototype.hasOwnProperty.call(dest, toKey)) {
+                    dest[toKey] = src[fromKey];
+                    changed = true;
+                }
+            }
+        }
         return changed;
     },
 
@@ -1263,7 +1314,8 @@ const DashboardMigrator = {
     _graphColorSource: function (o, bindings, bag, globalBindings, widgetKey, masterKeys, globalKey) {
         const present = this._graphValuePresent.bind(this);
         const widgetTopic = this._graphTopic(bindings, widgetKey);
-        if (widgetTopic || present(o && o[widgetKey])) {
+        const hasWidgetAux = this._hasGraphColorAux(o, widgetKey);
+        if (widgetTopic || present(o && o[widgetKey]) || hasWidgetAux) {
             return {
                 value: present(o && o[widgetKey]) ? o[widgetKey] : undefined,
                 topic: widgetTopic,
@@ -1280,8 +1332,9 @@ const DashboardMigrator = {
         for (let i = 0; i < keys.length; i++) {
             const key = keys[i];
             if (!bag || typeof bag !== 'object') break;
-            if (present(bag[key])) {
-                if (value === undefined) value = bag[key];
+            const hasMasterAux = this._hasGraphColorAux(bag, key);
+            if (present(bag[key]) || hasMasterAux) {
+                if (value === undefined && present(bag[key])) value = bag[key];
                 auxKeys.push(key);
             }
         }
@@ -1292,7 +1345,7 @@ const DashboardMigrator = {
                 if (topic) break;
             }
         }
-        if (value === undefined && !topic) return null;
+        if (value === undefined && !topic && !auxKeys.length) return null;
         return {
             value: value,
             topic: topic,
@@ -1483,7 +1536,7 @@ const DashboardMigrator = {
             const pointSrc = sourceFor('pointColor', ['pointColor', 'defaultGraphPointColor'], 'defaultGraphPointColor');
             const linkInherited = (prop, src) => {
                 if (!src) return;
-                const own = !!(src.clearBinding);
+                const own = (src.auxSrc === o);
                 const empty = !present(series[prop]);
                 const matches = src.value !== undefined && this._graphColorSame(series[prop], src.value);
                 const lightObject = chartType === 'bar' && prop === 'positiveColor'
@@ -3465,7 +3518,7 @@ const DashboardMigrator = {
                 found = true;
                 return;
             }
-            if (w.bindings && (w.bindings.data !== undefined || w.bindings.barColor !== undefined || w.bindings.lineColor !== undefined || w.bindings.fillCol !== undefined || w.bindings.negFillCol !== undefined || w.bindings.pointColor !== undefined || w.bindings.barOutlineColor !== undefined || w.bindings.negBarOutlineColor !== undefined)) {
+            if (w.bindings && (w.bindings.data !== undefined || w.bindings.barColor !== undefined || w.bindings.lineColor !== undefined || w.bindings.fillCol !== undefined || w.bindings.negFillCol !== undefined || w.bindings.pointColor !== undefined || w.bindings.barOutlineColor !== undefined || w.bindings.negBarOutlineColor !== undefined || w.bindings.autoMin !== undefined || w.bindings.min !== undefined || w.bindings.autoMax !== undefined || w.bindings.max !== undefined)) {
                 found = true;
                 return;
             }
@@ -3481,7 +3534,7 @@ const DashboardMigrator = {
         if (found) return true;
         const globals = data.globalBindings;
         if (globals && typeof globals === 'object') {
-            const legacyGlobals = ['defaultGraphBarColor', 'graphLineCol', 'graphFillCol', 'graphNegFillColor', 'defaultGraphPointColor'];
+            const legacyGlobals = ['defaultGraphBarColor', 'graphLineCol', 'graphFillCol', 'graphNegFillColor', 'defaultGraphPointColor', 'defaultGraphAutoMin', 'defaultGraphAutoMax'];
             for (let g = 0; g < legacyGlobals.length; g++) {
                 if (typeof globals[legacyGlobals[g]] === 'string' && globals[legacyGlobals[g]] !== '') return true;
             }
@@ -3558,28 +3611,49 @@ const DashboardMigrator = {
      * Graph: flat widgetLabel / axisX / dataText typography → nested `typography.*`.
      * Idempotent; reuses widget-label lift for `label*`.
      */
-    _migrateGraphScaleKeys: function (o) {
-        if (!o || typeof o !== 'object') return false;
+    _migrateGraphScaleKeys: function (wOrOverrides) {
+        if (!wOrOverrides || typeof wOrOverrides !== 'object') return false;
+        const w = (wOrOverrides.overrides && typeof wOrOverrides.overrides === 'object') ? wOrOverrides : null;
+        const o = w ? w.overrides : wOrOverrides;
+        const b = (w && w.bindings && typeof w.bindings === 'object') ? w.bindings : null;
         let changed = false;
-        if (o.autoMin !== undefined) {
-            if (o.dynamicFloor === undefined) o.dynamicFloor = o.autoMin;
-            delete o.autoMin;
-            changed = true;
-        }
-        if (o.min !== undefined) {
-            if (o.fixedFloor === undefined) o.fixedFloor = o.min;
-            delete o.min;
-            changed = true;
-        }
-        if (o.autoMax !== undefined) {
-            if (o.dynamicCeiling === undefined) o.dynamicCeiling = o.autoMax;
-            delete o.autoMax;
-            changed = true;
-        }
-        if (o.max !== undefined) {
-            if (o.fixedCeiling === undefined) o.fixedCeiling = o.max;
-            delete o.max;
-            changed = true;
+        const pairs = [
+            { from: 'autoMin', to: 'dynamicFloor' },
+            { from: 'min', to: 'fixedFloor' },
+            { from: 'autoMax', to: 'dynamicCeiling' },
+            { from: 'max', to: 'fixedCeiling' }
+        ];
+        const suffixes = this.TYPOGRAPHY_AUX_SUFFIXES;
+        for (let p = 0; p < pairs.length; p++) {
+            const pair = pairs[p];
+            if (o[pair.from] !== undefined) {
+                if (o[pair.to] === undefined) o[pair.to] = o[pair.from];
+                delete o[pair.from];
+                changed = true;
+            }
+            if (suffixes && suffixes.length) {
+                for (let s = 0; s < suffixes.length; s++) {
+                    const fromAux = pair.from + suffixes[s];
+                    const toAux = pair.to + suffixes[s];
+                    if (Object.prototype.hasOwnProperty.call(o, fromAux)) {
+                        if (!Object.prototype.hasOwnProperty.call(o, toAux)) {
+                            o[toAux] = o[fromAux];
+                        }
+                        delete o[fromAux];
+                        changed = true;
+                    }
+                }
+            }
+            if (b && typeof b[pair.from] === 'string' && b[pair.from] !== '') {
+                if (b[pair.to] === undefined || b[pair.to] === '') {
+                    b[pair.to] = b[pair.from];
+                }
+                delete b[pair.from];
+                changed = true;
+            } else if (b && b[pair.from] !== undefined) {
+                delete b[pair.from];
+                changed = true;
+            }
         }
         if (o.graphAnimation === 'draw') {
             o.graphAnimation = 'morph';
@@ -3596,6 +3670,28 @@ const DashboardMigrator = {
             delete o.pointValuesInterval;
             changed = true;
         }
+        if (suffixes && suffixes.length) {
+            for (let s = 0; s < suffixes.length; s++) {
+                const fromAux = 'pointValuesInterval' + suffixes[s];
+                const toAux = 'pointValuesTimeWidth' + suffixes[s];
+                if (Object.prototype.hasOwnProperty.call(o, fromAux)) {
+                    if (!Object.prototype.hasOwnProperty.call(o, toAux)) {
+                        o[toAux] = o[fromAux];
+                    }
+                    delete o[fromAux];
+                    changed = true;
+                }
+            }
+        }
+        if (b && b.pointValuesInterval !== undefined) {
+            if (typeof b.pointValuesInterval === 'string' && b.pointValuesInterval !== '') {
+                if (b.pointValuesTimeWidth === undefined || b.pointValuesTimeWidth === '') {
+                    b.pointValuesTimeWidth = b.pointValuesInterval;
+                }
+            }
+            delete b.pointValuesInterval;
+            changed = true;
+        }
         return changed;
     },
 
@@ -3604,25 +3700,33 @@ const DashboardMigrator = {
 
         let changed = this._migrateWidgetLabelTypographyOverridesToCanonical(o) === true;
 
-        if (o.autoMin !== undefined) {
-            if (o.dynamicFloor === undefined) o.dynamicFloor = o.autoMin;
-            delete o.autoMin;
-            changed = true;
-        }
-        if (o.min !== undefined) {
-            if (o.fixedFloor === undefined) o.fixedFloor = o.min;
-            delete o.min;
-            changed = true;
-        }
-        if (o.autoMax !== undefined) {
-            if (o.dynamicCeiling === undefined) o.dynamicCeiling = o.autoMax;
-            delete o.autoMax;
-            changed = true;
-        }
-        if (o.max !== undefined) {
-            if (o.fixedCeiling === undefined) o.fixedCeiling = o.max;
-            delete o.max;
-            changed = true;
+        const scalePairs = [
+            { from: 'autoMin', to: 'dynamicFloor' },
+            { from: 'min', to: 'fixedFloor' },
+            { from: 'autoMax', to: 'dynamicCeiling' },
+            { from: 'max', to: 'fixedCeiling' }
+        ];
+        const suffixes = this.TYPOGRAPHY_AUX_SUFFIXES;
+        for (let p = 0; p < scalePairs.length; p++) {
+            const pair = scalePairs[p];
+            if (o[pair.from] !== undefined) {
+                if (o[pair.to] === undefined) o[pair.to] = o[pair.from];
+                delete o[pair.from];
+                changed = true;
+            }
+            if (suffixes && suffixes.length) {
+                for (let s = 0; s < suffixes.length; s++) {
+                    const fromAux = pair.from + suffixes[s];
+                    const toAux = pair.to + suffixes[s];
+                    if (Object.prototype.hasOwnProperty.call(o, fromAux)) {
+                        if (!Object.prototype.hasOwnProperty.call(o, toAux)) {
+                            o[toAux] = o[fromAux];
+                        }
+                        delete o[fromAux];
+                        changed = true;
+                    }
+                }
+            }
         }
 
         const axisKeys = this.GRAPH_AXIS_X_FLAT_TYPO_KEYS;
@@ -5741,7 +5845,7 @@ const DashboardMigrator = {
             let graphChanged = false;
             const usedGraphGlobals = {};
             this._forEachWidget(migratedData, (w) => {
-                if (w && w.type === 'graph' && this._migrateGraphScaleKeys(w.overrides)) graphChanged = true;
+                if (w && w.type === 'graph' && this._migrateGraphScaleKeys(w)) graphChanged = true;
                 if (this._migrateGraphWidgetToSeries(w, graphBagPreNormalize, migratedData, usedGraphGlobals)) graphChanged = true;
             });
             if (migratedData.globalBindings && typeof migratedData.globalBindings === 'object') {
@@ -5750,6 +5854,22 @@ const DashboardMigrator = {
                     delete migratedData.globalBindings[key];
                     graphChanged = true;
                 });
+                const gb = migratedData.globalBindings;
+                if (gb.defaultGraphAutoMin !== undefined) {
+                    if (gb.defaultGraphDynamicFloor === undefined) gb.defaultGraphDynamicFloor = gb.defaultGraphAutoMin;
+                    delete gb.defaultGraphAutoMin;
+                    graphChanged = true;
+                }
+                if (gb.defaultGraphAutoMax !== undefined) {
+                    if (gb.defaultGraphDynamicCeiling === undefined) gb.defaultGraphDynamicCeiling = gb.defaultGraphAutoMax;
+                    delete gb.defaultGraphAutoMax;
+                    graphChanged = true;
+                }
+                if (gb.defaultGraphPointValuesInterval !== undefined) {
+                    if (gb.defaultGraphPointValuesTimeWidth === undefined) gb.defaultGraphPointValuesTimeWidth = gb.defaultGraphPointValuesInterval;
+                    delete gb.defaultGraphPointValuesInterval;
+                    graphChanged = true;
+                }
             }
             let masterGraphBag = this._graphMasterBag(migratedData);
             if (!masterGraphBag && graphBagPreNormalize && (graphBagPreNormalize.fill === false || graphBagPreNormalize.defaultGraphFill === false || (graphBagPreNormalize.fillOpacity != null && graphBagPreNormalize.fillOpacity !== '') || (graphBagPreNormalize.defaultGraphFillOpacity != null && graphBagPreNormalize.defaultGraphFillOpacity !== ''))) {
@@ -5769,6 +5889,26 @@ const DashboardMigrator = {
         if (migratedData.master && typeof migratedData.master === 'object') {
             const m = migratedData.master;
             let masterScaleChanged = false;
+            const masterPairs = [
+                { from: 'defaultGraphAutoMin', to: 'defaultGraphDynamicFloor' },
+                { from: 'defaultGraphAutoMax', to: 'defaultGraphDynamicCeiling' },
+                { from: 'defaultGraphPointValuesInterval', to: 'defaultGraphPointValuesTimeWidth' }
+            ];
+            const suffixes = this.TYPOGRAPHY_AUX_SUFFIXES;
+            for (let p = 0; p < masterPairs.length; p++) {
+                const pair = masterPairs[p];
+                for (let s = 0; s < suffixes.length; s++) {
+                    const fromKey = pair.from + suffixes[s];
+                    const toKey = pair.to + suffixes[s];
+                    if (Object.prototype.hasOwnProperty.call(m, fromKey)) {
+                        if (!Object.prototype.hasOwnProperty.call(m, toKey)) {
+                            m[toKey] = m[fromKey];
+                        }
+                        delete m[fromKey];
+                        masterScaleChanged = true;
+                    }
+                }
+            }
             if (m.defaultGraphAutoMin !== undefined) {
                 if (m.defaultGraphDynamicFloor === undefined) m.defaultGraphDynamicFloor = m.defaultGraphAutoMin;
                 delete m.defaultGraphAutoMin;
@@ -5796,6 +5936,17 @@ const DashboardMigrator = {
             }
             if (m.widgetDefaults && m.widgetDefaults.graph && typeof m.widgetDefaults.graph === 'object') {
                 const gDef = m.widgetDefaults.graph;
+                for (let s = 0; s < suffixes.length; s++) {
+                    const fromKey = 'pointValuesInterval' + suffixes[s];
+                    const toKey = 'pointValuesTimeWidth' + suffixes[s];
+                    if (Object.prototype.hasOwnProperty.call(gDef, fromKey)) {
+                        if (!Object.prototype.hasOwnProperty.call(gDef, toKey)) {
+                            gDef[toKey] = gDef[fromKey];
+                        }
+                        delete gDef[fromKey];
+                        masterScaleChanged = true;
+                    }
+                }
                 if (gDef.pointValuesInterval !== undefined) {
                     const oldVal = Number(gDef.pointValuesInterval);
                     if (gDef.pointValuesTimeWidth === undefined) {
@@ -5807,6 +5958,14 @@ const DashboardMigrator = {
                     delete gDef.pointValuesInterval;
                     masterScaleChanged = true;
                 }
+            }
+            const masterDroppedColorKeys = [
+                'lineColor', 'fillColor', 'negativeFillColor', 'fill', 'fillOpacity', 'barColor', 'pointColor', 'linearTimeScale',
+                'graphLineCol', 'graphFillCol', 'graphNegFillColor', 'defaultGraphFill', 'defaultGraphFillOpacity',
+                'defaultGraphBarColor', 'defaultGraphPointColor', 'defaultGraphLinearTimeScale'
+            ];
+            if (this._dropKeysWithCorrections(m, masterDroppedColorKeys)) {
+                masterScaleChanged = true;
             }
             if (masterScaleChanged) {
                 hasChanges = true;
