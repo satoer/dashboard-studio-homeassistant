@@ -4436,6 +4436,7 @@ const Editor = {
         let row = [];
         let colsUsed = 0;
         (children || []).forEach(function (el) {
+            if (Editor._eqIsHidden(el)) return;
             const span = (el && el.dataset && el.dataset.eqOrig != null)
                 ? Editor._eqOrigSpan(el)
                 : Editor._gridChildColSpan(el);
@@ -4500,6 +4501,13 @@ const Editor = {
                 if (el.style && el.style.gridColumn && el.dataset.eqStart == null) {
                     const m = String(el.style.gridColumn).match(/^(\d+)\s*\//);
                     if (m) el.dataset.eqStart = String(m[1]);
+                }
+            }
+            if (el && el.style && Editor._eqIsHidden(el)) {
+                if (el.style.display !== 'none') el.style.display = 'none';
+                if (el.style.visibility === 'hidden') el.style.visibility = '';
+                if (el.style.pointerEvents === 'none' && el.getAttribute('data-preserve-grid-slot') === 'true') {
+                    el.style.pointerEvents = '';
                 }
             }
         }
@@ -4676,9 +4684,31 @@ const Editor = {
                 if (wrapStyle.visibility !== '') wrapStyle.visibility = '';
                 if (wrapStyle.pointerEvents !== '') wrapStyle.pointerEvents = '';
 
-                if (typeof f.disableWhen === 'function' && reg.inputEl) {
+                if (typeof f.disableWhen === 'function') {
                     const nextDisabled = !!f.disableWhen(values, isGlobal);
-                    if (reg.inputEl.disabled !== nextDisabled) reg.inputEl.disabled = nextDisabled;
+                    if (reg.inputEl) {
+                        if (typeof reg.inputEl.setDisabled === 'function') {
+                            reg.inputEl.setDisabled(nextDisabled);
+                        } else if (reg.inputEl.disabled !== nextDisabled) {
+                            reg.inputEl.disabled = nextDisabled;
+                        }
+                    }
+                    if (reg.wrapperEl) {
+                        const targetOpacity = nextDisabled ? '0.5' : '';
+                        if (reg.wrapperEl.style.opacity !== targetOpacity) {
+                            reg.wrapperEl.style.opacity = targetOpacity;
+                        }
+                        const interactiveEls = reg.wrapperEl.querySelectorAll('input, select, textarea, button');
+                        interactiveEls.forEach(function (el) {
+                            if (el.disabled !== nextDisabled) {
+                                el.disabled = nextDisabled;
+                            }
+                        });
+                        const resetIcon = reg.wrapperEl.querySelector('.btn-reset');
+                        if (resetIcon) {
+                            resetIcon.style.pointerEvents = nextDisabled ? 'none' : '';
+                        }
+                    }
                 }
 
                 if (typeof f.dynamicOptions === 'function' && reg.inputEl && typeof reg.inputEl.setOptions === 'function') {
@@ -8480,6 +8510,7 @@ const Editor = {
 
                 if (f.type === 'column_split') {
                     w.classList.replace('col-span-' + f.cols, 'col-span-12');
+                    delete w.dataset.fieldKey;
                     const split = document.createElement('div');
                     split.className = 'editor-column-split';
                     const columns = Array.isArray(f.columns) ? f.columns : [];
@@ -12428,6 +12459,8 @@ const Editor = {
                     w.style.opacity = '0.5';
                     const inputs = w.querySelectorAll('input, select, textarea, button');
                     inputs.forEach(el => el.disabled = true);
+                    const resetIcon = w.querySelector('.btn-reset');
+                    if (resetIcon) resetIcon.style.pointerEvents = 'none';
                 }
             });
             content.appendChild(grid);

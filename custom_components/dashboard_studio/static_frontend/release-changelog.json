@@ -1,0 +1,4174 @@
+{
+  "tagLibrary": {
+    "1": "arrow_widget",
+    "2": "battery_widget",
+    "3": "clock_widget",
+    "4": "container_widget",
+    "5": "editbox_widget",
+    "6": "gauge_widget",
+    "7": "graph_widget",
+    "8": "icon_widget",
+    "9": "image_widget",
+    "10": "label_widget",
+    "11": "lightgrid_widget",
+    "12": "list_widget",
+    "13": "menu_widget",
+    "14": "slider_widget",
+    "15": "switch_widget",
+    "16": "text_widget",
+    "17": "videostream_widget",
+    "30": "flow",
+    "31": "homey_variables",
+    "32": "homey_moods",
+    "33": "homey_configuration",
+    "34": "calendar_ical",
+    "35": "rss_feeds",
+    "36": "theme_engine",
+    "37": "kiosk",
+    "38": "audio",
+    "39": "dialogs",
+    "40": "layout_modes",
+    "41": "formula_engine",
+    "42": "editor_core",
+    "43": "tools",
+    "44": "documentation",
+    "45": "performance",
+    "46": "diagnostics",
+    "47": "mqtt",
+    "48": "nodered",
+    "49": "bindings",
+    "50": "security",
+    "51": "backup_restore"
+  },
+  "releases": [
+    {
+      "version": "2.3.3",
+      "date": "2026-11-05",
+      "changes": [
+        {
+          "title": "New: Setting Tooltips",
+          "description": "Added helpful hover explanations for all settings, toolbar buttons, and theme controls across the editor to explain what each option does at a glance.",
+          "tags": [
+            42
+          ]
+        },
+        {
+          "title": "New: Graph Local Time & Manual Offset",
+          "description": "Added options to convert chart timestamps to local time and apply minute offsets so timeline graphs match your clock accurately.",
+          "tags": [
+            7
+          ]
+        },
+        {
+          "title": "New: Freeze Live Values in Markdown",
+          "description": "The Freeze Dynamic Values tool can now detect and convert live data placeholders and formulas inside Text widgets into fixed text.",
+          "tags": [
+            16,
+            43
+          ]
+        },
+        {
+          "title": "Improved: Smooth Graph Timeline Scrolling",
+          "description": "Real-time streaming charts now scroll more smoothly with clean point value labels that stay firmly anchored to their data points.",
+          "tags": [
+            7,
+            45
+          ]
+        },
+        {
+          "title": "Fixed: Live Camera & Web Image Refresh",
+          "description": "Resolved an issue where live camera streams and web images could stop refreshing or freeze on older frames.",
+          "tags": [
+            9
+          ]
+        },
+        {
+          "title": "Fixed: Kiosk Graph Redraw Stability",
+          "description": "Prevented unnecessary chart redraws during background display checks on wall-mounted kiosk screens.",
+          "tags": [
+            7,
+            37,
+            45
+          ]
+        }
+      ]
+    },
+    {
+      "version": "2.3.2",
+      "date": "2026-11-03",
+      "changes": [
+        {
+          "title": "Improved: Dashboard Load & Group Interaction",
+          "description": "Streamlined file loading to clear previous background timers, and optimized group operations to repaint only affected widgets.",
+          "tags": [
+            42,
+            45
+          ]
+        },
+        {
+          "title": "Fixed: Homey Flow & Event Topic Aliases",
+          "description": "Resolved an issue where dynamic page switches, visibility rules, and audio triggers failed to fire on bare Homey event topic names.",
+          "tags": [
+            30,
+            38,
+            49
+          ]
+        },
+        {
+          "title": "Fixed: Settings Reset & Preview Follower Sync",
+          "description": "In-place resets for typography, icons, and toolbar settings now refresh inherited preview controls and clear modified highlights immediately.",
+          "tags": [
+            42
+          ]
+        },
+        {
+          "title": "Fixed: Inspector Menus & Pickers Cleanup",
+          "description": "Improved action labels, prevented duplicate dropdowns, and ensured color pickers and portaled lists close cleanly when dismissed.",
+          "tags": [
+            42
+          ]
+        }
+      ]
+    },
+    {
+      "version": "2.3.1",
+      "date": "2026-11-03",
+      "changes": [
+        {
+          "title": "Fixed: Flow Event & Feed Updates",
+          "description": "Resolved an issue where widgets and feeds connected to Homey flow events were slow or failed to update.",
+          "tags": [
+            16,
+            30,
+            49
+          ]
+        }
+      ]
+    },
+    {
+      "version": "2.3.0",
+      "date": "2026-11-02",
+      "changes": [
+        {
+          "title": "New: Multiple Graphs in One Widget",
+          "description": "You can now plot several lines or bars together on the same graph. Each graph can have its own data topic, custom name, line and fill colors, and soft gradient, automatically styled with your dashboard theme colors.",
+          "tags": [
+            7,
+            36
+          ]
+        },
+        {
+          "title": "New: Pick Live Values",
+          "description": "Easily browse and connect live data to your graph with the new visual picker. It detects incoming Homey Insights, data streams, and device values, showing live mini preview charts and current readings so you can set up graphs with one click.",
+          "tags": [
+            7,
+            39,
+            42
+          ]
+        },
+        {
+          "title": "New: Smooth Graph Animations",
+          "description": "Graphs can now smoothly animate when opening a page or receiving live updates. Watch lines draw in across the screen, bars rise from the baseline, and data points smoothly glide into their new positions.",
+          "tags": [
+            7
+          ]
+        },
+        {
+          "title": "New: Move and Resize the Legend",
+          "description": "The legend can now be docked along any side of the graph or dragged anywhere on your canvas as a floating panel. You can resize it from any edge or corner, and clicking a graph in the legend toggles that line on and off.",
+          "tags": [
+            7,
+            42
+          ]
+        },
+        {
+          "title": "New: Stepped Line (Stairs) Style",
+          "description": "Added a stepped line chart style, perfect for showing on/off switches, relay states, and thermostat temperature targets.",
+          "tags": [
+            7
+          ]
+        },
+        {
+          "title": "New: Horizontal Bar Graphs",
+          "description": "You can now flip bar graphs horizontally to display values as sideways bars instead of vertical columns.",
+          "tags": [
+            7
+          ]
+        },
+        {
+          "title": "New: Real-Time Timeline",
+          "description": "Duration graphs can now continuously glide forward with the real clock, giving you a live view even if sensor readings only update every once in a while.",
+          "tags": [
+            7
+          ]
+        },
+        {
+          "title": "New: Reverse Direction",
+          "description": "Choose whether your timeline flows from left-to-right or right-to-left to suit your dashboard layout.",
+          "tags": [
+            7
+          ]
+        },
+        {
+          "title": "New: Clear Numbers with Custom Limits",
+          "description": "Setting a custom minimum or maximum now keeps the grid lines and axis numbers neat, clean, and evenly spaced.",
+          "tags": [
+            7
+          ]
+        },
+        {
+          "title": "New: Value Multipliers",
+          "description": "Multiply incoming numbers directly in the graph settings, making it easy to convert raw values like Watts into Kilowatts.",
+          "tags": [
+            7
+          ]
+        },
+        {
+          "title": "New: Gesture Controls",
+          "description": "Easily navigate your dashboard using swipe gestures on touchscreens or with your mouse. You can swipe to flip between pages, loop around continuously, jump to a specific page, or trigger custom actions and flows, with built-in protection so swipes never interfere with sliders or switches.",
+          "tags": [
+            40,
+            42
+          ]
+        },
+        {
+          "title": "New: Off-Canvas Editing",
+          "description": "In edit mode, widgets dragged partly or completely outside the screen boundary are no longer lost or trapped. A soft tinted background clearly shows widgets placed off-screen, and their selection boxes and resize handles remain fully usable so you can easily move them back into view.",
+          "tags": [
+            42
+          ]
+        },
+        {
+          "title": "New: Outlook and Exchange Calendars",
+          "description": "You can now connect published calendar links from Outlook.com and Microsoft Exchange. Recurring events stay on their exact scheduled times across Daylight Saving Time changes, and special calendar characters are cleaned up so events display neatly in your tables.",
+          "tags": [
+            34
+          ]
+        },
+        {
+          "title": "New: Widget Info Tab",
+          "description": "The Widget Arsenal tab in About & Statistics is now called Widget Info. It features an interactive table showing every widget's version, category, release date, and how many times it is used on your dashboard, with expandable rows showing the full update history for that widget.",
+          "tags": [
+            43,
+            46
+          ]
+        },
+        {
+          "title": "New: Redesigned Release Notes",
+          "description": "The website changelog and in-app release notes now feature clean category badges, prominent titles, and easy-to-read paragraphs.",
+          "tags": [
+            43,
+            44
+          ]
+        },
+        {
+          "title": "New: Axis Font Opacity",
+          "description": "You can now customize font opacity (0–100%) on graph axis labels.",
+          "tags": [
+            7
+          ]
+        },
+        {
+          "title": "Improved: Smarter Axis Steps",
+          "description": "Taller and wider graphs now automatically adjust the number of grid lines and values so the chart never feels crowded or empty.",
+          "tags": [
+            7
+          ]
+        },
+        {
+          "title": "Improved: Value Labels on Points",
+          "description": "Numbers shown above data points now glide smoothly with the graph and space themselves out to avoid overlapping one another.",
+          "tags": [
+            7
+          ]
+        },
+        {
+          "title": "Improved: Better Negative Values",
+          "description": "Negative readings can now be displayed as positive values in their own color, or hidden completely, across all chart styles.",
+          "tags": [
+            7
+          ]
+        },
+        {
+          "title": "Improved: Smoother Curves",
+          "description": "Smooth line graphs now flow with natural, silky curves without sharp or jagged corners.",
+          "tags": [
+            7
+          ]
+        },
+        {
+          "title": "Improved: Tilted Axis Labels",
+          "description": "You can now rotate date and time labels at an angle so longer labels fit comfortably without bumping into each other or getting clipped.",
+          "tags": [
+            7
+          ]
+        },
+        {
+          "title": "Improved: Neat Time and Date Steps",
+          "description": "Timelines now line up with natural calendar units, such as the top of the hour or midnight, without repeating identical times.",
+          "tags": [
+            7
+          ]
+        },
+        {
+          "title": "Improved: Cleaner Settings Layout",
+          "description": "Graph settings in the editor are organized into neat, balanced rows that are much easier to navigate.",
+          "tags": [
+            7,
+            42
+          ]
+        },
+        {
+          "title": "Improved: Presets Keep Your Data",
+          "description": "Applying a visual look from the preset catalog now updates the styling without erasing your configured data lines or topics.",
+          "tags": [
+            7,
+            42
+          ]
+        },
+        {
+          "title": "Improved: Kiosk & Wall Display Stability",
+          "description": "Improved stability and memory efficiency on 24/7 wall displays.",
+          "tags": [
+            37,
+            45
+          ]
+        },
+        {
+          "title": "Fixed: Bar Chart Labels Now Centered",
+          "description": "Labels and tick marks on bar graphs used to be pulled toward the far left and right edges. They now sit directly underneath the center of each bar.",
+          "tags": [
+            7
+          ]
+        },
+        {
+          "title": "Fixed: Automatic Minimum Fits Your Data",
+          "description": "Automatic graph scaling used to always force the bottom of the chart to zero, even when all your numbers were much higher (such as room temperatures between 19° and 23°). The scale now properly fits your actual lowest data value.",
+          "tags": [
+            7
+          ]
+        },
+        {
+          "title": "Fixed: Negative Values with Fixed Limits",
+          "description": "Setting a fixed minimum limit previously caused negative readings to disappear as blank gaps; they now correctly display as positive bars or lines in their configured negative color.",
+          "tags": [
+            7
+          ]
+        },
+        {
+          "title": "Fixed: Widget Title No Longer Cuts Off Bottom Labels",
+          "description": "Adding a title label to the graph widget previously pushed the chart down and cut off the dates, times, and tick marks along the bottom edge.",
+          "tags": [
+            7
+          ]
+        },
+        {
+          "title": "Fixed: Repeating Time Labels on the Axis",
+          "description": "The time axis no longer repeats identical hour or date numbers when spacing out timeline markers.",
+          "tags": [
+            7
+          ]
+        },
+        {
+          "title": "Fixed: Zero Baseline Overlapping Numbers",
+          "description": "The zero baseline grid line no longer clashes or overlaps with nearby axis numbers.",
+          "tags": [
+            7
+          ]
+        },
+        {
+          "title": "Fixed: Restored Widget Settings",
+          "description": "Restored several missing appearance controls in the editor, including Gradient Width on arrows, Focus Glow Color on edit boxes, Toggle Color (Off) on light grids, and Separator Gap on menus.",
+          "tags": [
+            1,
+            5,
+            11,
+            13,
+            42
+          ]
+        },
+        {
+          "title": "Fixed: Arrow and Line Colors",
+          "description": "Arrow and Line widgets no longer turn invisible or lose their color when connected to smart light data topics or custom color settings.",
+          "tags": [
+            1
+          ]
+        },
+        {
+          "title": "Fixed: Topic Page Switching",
+          "description": "Linking a widget's page setting to a live data topic now instantly moves the widget to the received page as soon as the value arrives.",
+          "tags": [
+            40,
+            49
+          ]
+        },
+        {
+          "title": "Fixed: Preserving Custom Canvas Sizes",
+          "description": "Upgrading older dashboards with custom resolutions no longer accidentally resets your screen size back to the default canvas size.",
+          "tags": [
+            40,
+            51
+          ]
+        },
+        {
+          "title": "Fixed: Toolbar Selection Clicking",
+          "description": "Clicking on the canvas right next to the toolbar now reliably deselects the current widget and returns you to main settings without an invisible dead zone.",
+          "tags": [
+            42
+          ]
+        },
+        {
+          "title": "Fixed: Analog Clock Midnight Spin",
+          "description": "Clock hands no longer spin backwards a full turn at midnight.",
+          "tags": [
+            3
+          ]
+        }
+      ]
+    },
+    {
+      "version": "2.2.0",
+      "date": "2026-10-24",
+      "changes": [
+        {
+          "title": "New: Fetch RSS Feed to Markdown",
+          "description": "Added a flow card to fetch and format single or multiple RSS feeds into clean Markdown for dashboards, and renamed the Calendar settings tab to Flow Cards.",
+          "tags": [
+            30,
+            33,
+            35
+          ]
+        },
+        {
+          "title": "New: Standardized Homey Topics",
+          "description": "Moods, flows, and variables now use clear homey/moods/, homey/flows/, and homey/variables/ topic prefixes with full backward compatibility for existing dashboards.",
+          "tags": [
+            30,
+            31,
+            32,
+            33
+          ]
+        },
+        {
+          "title": "New: Flow Card: Dashboard Opened Page",
+          "description": "Added a trigger card that fires when a dashboard opens or navigates to a page.",
+          "tags": [
+            30,
+            40
+          ]
+        },
+        {
+          "title": "New: Flow Card: Dashboard Is Open",
+          "description": "Added a condition card to check if a dashboard is currently open.",
+          "tags": [
+            30
+          ]
+        },
+        {
+          "title": "New: Flow Card: Dashboard Is Open on Page",
+          "description": "Added a condition card to check if a dashboard is open on a specific page.",
+          "tags": [
+            30,
+            40
+          ]
+        },
+        {
+          "title": "New: Capability & Topic Cleanup",
+          "description": "Added an audit tool in the app settings Configuration tab that scans all saved dashboards to find enabled Homey device capabilities and MQTT topics no longer referenced in any widget, formula, or template, letting you review them in an interactive checklist and disable them with one click to reduce memory and network traffic.",
+          "tags": [
+            33,
+            43
+          ]
+        },
+        {
+          "title": "Fixed: All-day calendar events stay on the correct day when daylight saving time changes.",
+          "tags": [
+            34
+          ]
+        },
+        {
+          "title": "Improved: State Caching",
+          "description": "Added cache mode options in Settings to optimize memory usage and stability on Homey.",
+          "tags": [
+            33,
+            45
+          ]
+        }
+      ]
+    },
+    {
+      "version": "2.1.1",
+      "date": "2026-10-21",
+      "changes": [
+        {
+          "title": "New: Basic Beginners Tutorial",
+          "description": "Added a step-by-step beginners guide to the documentation.",
+          "tags": [
+            44
+          ]
+        },
+        {
+          "title": "New: Filter by Capability",
+          "description": "In Dashboard Studio configuration settings, a new capability search bar sits alongside the device name filter, allowing simultaneous filtering by device and capability with automatic section expansion.",
+          "tags": [
+            33,
+            42
+          ]
+        },
+        {
+          "title": "New: Light Grid Live Lights",
+          "description": "Choose lights from the topics already on your dashboard. Each light appears as a small icon with its name, live color, and brightness. Lights already in the grid start checked. Apply adds new lights and removes the ones you uncheck. Combine merges selected light devices into one tile, and Split gives a grouped light its own tile.",
+          "tags": [
+            11
+          ]
+        },
+        {
+          "title": "New: Dashboard Statistics, Advanced Data Explorer and Diagnostics",
+          "description": "Live telemetry, topic inspection, and a Diagnostics page (easy for submitting error logs).",
+          "tags": [
+            43,
+            46
+          ]
+        },
+        {
+          "title": "Fixed: Several bug fixes and stability improvements.",
+          "tags": [
+            45
+          ]
+        }
+      ]
+    },
+    {
+      "version": "2.1.0",
+      "date": "2026-10-19",
+      "changes": [
+        {
+          "title": "New: Auto-Widget Gallery",
+          "description": "A smart widget generator integrated into both the Reset Canvas setup wizard and the Data Stream Explorer. It automatically scans all incoming Homey and MQTT topics and uses an intelligent detection algorithm to suggest the best widget type, style, icon, and unit for each live value (such as gauges for power or temperature, switches for lights and states, or sliders for dimmers). Previews are rendered live in a responsive grid with your dashboard theme, allowing you to fine-tune presets and add pre-configured widgets to your canvas with a single click.",
+          "tags": [
+            42,
+            43
+          ]
+        },
+        {
+          "title": "New: Getting Started Pointer",
+          "description": "On the demo dashboard, an arrow points to the Edit button, then to Reset Canvas.",
+          "tags": [
+            42,
+            44
+          ]
+        },
+        {
+          "title": "Fixed: Kiosk Stability",
+          "description": "Improved stability and reduced memory usage for continuous wall panel and kiosk displays running over multiple days.",
+          "tags": [
+            37,
+            45
+          ]
+        },
+        {
+          "title": "Fixed: Themes",
+          "description": "Themes now strictly apply visual styling without altering widget layout or behavior.",
+          "tags": [
+            36
+          ]
+        },
+        {
+          "title": "Fixed: Responsive Columns Menus",
+          "description": "Clicking in grid gutters no longer prematurely closes open dropdowns, topic menus, or color pickers.",
+          "tags": [
+            40,
+            42
+          ]
+        },
+        {
+          "title": "Fixed: Formulas",
+          "description": "Formulas referencing the same topic multiple times now evaluate reliably.",
+          "tags": [
+            41,
+            49
+          ]
+        },
+        {
+          "title": "Fixed: Graph Height",
+          "description": "In Responsive Columns, a new graph with automatic cell height matches the column width instead of opening extremely tall.",
+          "tags": [
+            7,
+            40
+          ]
+        }
+      ]
+    },
+    {
+      "version": "2.0.16",
+      "date": "2026-10-16",
+      "changes": [
+        {
+          "title": "Fixed: Binding Options Formulas",
+          "description": "Fixed the formula edit box to allow easily removing the default value and preserved formula text when copying to the clipboard.",
+          "tags": [
+            41,
+            42,
+            49
+          ]
+        }
+      ]
+    },
+    {
+      "version": "2.0.15",
+      "date": "2026-10-16",
+      "changes": [
+        {
+          "title": "Fixed: Kiosk Memory & Stability",
+          "description": "Resolved memory accumulation and high-frequency resource churn during multi-day continuous wall display runs. Reused clock formatting instances and text spans, streamlined camera and image refresh memory, optimized live sensor updates across gauges, battery indicators, and graphs, and eliminated lingering network timers to ensure long-term stability on kiosk screens.",
+          "tags": [
+            2,
+            3,
+            6,
+            7,
+            9,
+            17,
+            37,
+            45
+          ]
+        },
+        {
+          "title": "Fixed: Bound Input Topics",
+          "description": "Interactive widgets (switches, buttons, sliders, menus, and light grids) no longer overwrite bound topic data when clicked or adjusted.",
+          "tags": [
+            11,
+            13,
+            14,
+            15,
+            49
+          ]
+        }
+      ]
+    },
+    {
+      "version": "2.0.14",
+      "date": "2026-10-15",
+      "changes": [
+        {
+          "title": "New: Dashboard Studio V2 Stable Release",
+          "description": "This release marks the official transition of Dashboard Studio V2 to public stable, introducing an overhauled editor interface with full tablet touch and stylus support, an edit-mode canvas zoom slider, a quick toolbar, and a choice between Basic and Advanced editor modes. Dashboards can now be built across three layout modes (Fixed Resolution, Scale to Fit Screen, or fluid Responsive Columns), complete with landing page navigation and automatic return after inactivity. Behind the scenes, a modernized save format, extensive performance optimizations, and reduced memory usage deliver 24/7 kiosk stability alongside a dedicated viewer mode for older tablets and iOS 12. Visual styling is expanded with frosted glass effects across 19 glass themes, instant flat/glass conversion themes, a Theme Preset Editor, a visual Theme Explorer with live theme switching via topics, and fine-grained palette adjustments (Color Tone, Intensity, Brightness, and Contrast). Container widgets gain custom polygon shapes, while text widgets add drop shadows, smooth scrolling, and markdown blinking. Homey integration expands with optional Personal API Key support to directly update Homey Logic variables, run flows, and set zone Moods from buttons, paired with an upgraded calendar engine offering streaming three-month iCal feeds and Markdown conversion flow cards. The widget ecosystem adds reusable widget presets, an integrated dashboard audio system with an in-app audio gallery, confirmation dialogs for switches and buttons, universal widget deactivation and opacity controls, linear time scales and streaming timestamps for graphs, payload formula calculations in markdown and dynamic icons, inline image gallery pickers, label hints for menu and button widgets, Open URL actions for edit boxes, and two-digit day and month formatting for clocks. Editor productivity is further enhanced with an extensible Tools menu featuring batch weblink imports for menus, link opening behavior controls, and a tool to freeze dynamic values into fixed settings, all supported by a guided canvas reset setup wizard and a fully rewritten in-app documentation library with search and beginner guides.",
+          "tags": [
+            42,
+            44,
+            45
+          ]
+        },
+        {
+          "title": "Fixed: Label Widget Alignment",
+          "description": "Text alignment (center and right) in wide containers now aligns properly when Auto Width is disabled.",
+          "tags": [
+            10
+          ]
+        },
+        {
+          "title": "Fixed: Page-Jumping State",
+          "description": "Switch and menu navigation items now accurately reflect their active state based on the current page.",
+          "tags": [
+            13,
+            15,
+            40
+          ]
+        }
+      ]
+    },
+    {
+      "version": "2.0.13",
+      "date": "2026-10-14",
+      "changes": [
+        {
+          "title": "New: Edit Homey Variables",
+          "description": "Update Homey Logic variables directly from dashboard widgets like edit boxes, switches, and sliders using an optional Personal API Key.",
+          "tags": [
+            5,
+            14,
+            15,
+            31,
+            50
+          ]
+        },
+        {
+          "title": "New: Direct Flow Starting",
+          "description": "Run Standard and Advanced Flows with a single tap from dashboard buttons or switches using an optional Personal API Key.",
+          "tags": [
+            15,
+            30,
+            50
+          ]
+        },
+        {
+          "title": "New: Direct Mood Activation",
+          "description": "Activate room ambiance and lighting moods directly from dashboard buttons using an optional Personal API Key.",
+          "tags": [
+            15,
+            32,
+            50
+          ]
+        },
+        {
+          "title": "New: Calendar Flow Cards",
+          "description": "Renamed to \"Convert iCal JSON to Markdown\" with new view formats (Tomorrow, Yesterday, Next/Previous week, Next weekend, Next/Previous month, and rolling day views).",
+          "tags": [
+            30,
+            34
+          ]
+        },
+        {
+          "title": "New: Flexible Calendar Range",
+          "description": "Load & Filter iCal flow card adds \"Previous, current and next month\" timeframe so a single download can feed multiple markdown views.",
+          "tags": [
+            30,
+            34
+          ]
+        },
+        {
+          "title": "Improved: Calendar Memory & Performance",
+          "description": "Optimized iCal streaming filter, parsing, and markdown generation to reduce memory and CPU usage on Homey.",
+          "tags": [
+            34,
+            45
+          ]
+        },
+        {
+          "title": "Improved: Calendar Documentation",
+          "description": "Expanded in-app documentation with recommended multi-view patterns and flow advice.",
+          "tags": [
+            34,
+            44
+          ]
+        },
+        {
+          "title": "Improved: Binding Options",
+          "description": "Payload formula edit box automatically expands for multi-line formulas.",
+          "tags": [
+            41,
+            42,
+            49
+          ]
+        },
+        {
+          "title": "Improved: Reorganized Editor settings into a more intuitive, logical layout.",
+          "tags": [
+            42
+          ]
+        },
+        {
+          "title": "Improved: Connecting Widgets & Data Documentation",
+          "description": "Updated in-app documentation for connecting widgets and live data.",
+          "tags": [
+            44,
+            49
+          ]
+        },
+        {
+          "title": "Fixed: Disabled Widgets",
+          "description": "Disabled widgets reliably block all touch, click, and keyboard interactions now.",
+          "tags": [
+            42
+          ]
+        },
+        {
+          "title": "Fixed: Flow Card Trigger",
+          "description": "Switching browser tabs back to Dashboard Studio no longer re-triggers the \"Dashboard Loaded / Refreshed\" flow card.",
+          "tags": [
+            30,
+            37
+          ]
+        },
+        {
+          "title": "Fixed: Button Audio",
+          "description": "Long-pressing a Switch or Button widget configured with an additional topic now plays audio feedback.",
+          "tags": [
+            15,
+            38
+          ]
+        }
+      ]
+    },
+    {
+      "version": "2.0.12",
+      "date": "2026-10-10",
+      "changes": [
+        {
+          "title": "New: Glass Effects",
+          "description": "Widgets can blur what sits behind them, with customizable inner glow, surface opacity, and outline styling across switches, buttons, sliders, menus, gauges, and light grid tiles.",
+          "tags": [
+            36
+          ]
+        },
+        {
+          "title": "New: Built-in Themes",
+          "description": "Added new themes including 19 glass themes featuring translucent frosted glass styling.",
+          "tags": [
+            36
+          ]
+        },
+        {
+          "title": "New: Glass Conversion Themes",
+          "description": "Instantly transform any dashboard into a frosted glass look or reset back to flat styling using the \"Convert Flat to Glass\" and \"Convert Glass to Flat\" adjustment themes.",
+          "tags": [
+            36
+          ]
+        },
+        {
+          "title": "New: Theme Preset Editor",
+          "description": "A dedicated workspace tool in Editor Tools lets you compare, customize, export, import, and batch-edit full themes and adjustment themes in a side-by-side grid.",
+          "tags": [
+            36,
+            43
+          ]
+        },
+        {
+          "title": "New: Theme Color Adjustments",
+          "description": "Fine-tune any theme palette with Hue Shift, Saturation, Brightness, and Contrast sliders in Theme Colors.",
+          "tags": [
+            36
+          ]
+        },
+        {
+          "title": "New: Custom Shape Containers",
+          "description": "Container widgets can create custom polygon shapes with draggable corners, individual corner radiuses, and grid snapping.",
+          "tags": [
+            4
+          ]
+        },
+        {
+          "title": "New: Text Drop Shadow",
+          "description": "Text widgets can display a drop shadow behind markdown text with customizable opacity, color, and blur.",
+          "tags": [
+            16
+          ]
+        },
+        {
+          "title": "New: Movable & Resizable Dialogs",
+          "description": "Drag dialog windows by their titlebars and resize gallery windows from their corners.",
+          "tags": [
+            39,
+            42
+          ]
+        },
+        {
+          "title": "New: Landing & Return Page",
+          "description": "After a quiet period the dashboard can go back to the home page or another page you choose, and optionally open on that page when the dashboard loads.",
+          "tags": [
+            37,
+            40
+          ]
+        },
+        {
+          "title": "Improved: Menu Audio",
+          "description": "Sounds are set on the main audio setting instead of on each item.",
+          "tags": [
+            13,
+            38
+          ]
+        },
+        {
+          "title": "Improved: Image & Audio Galleries",
+          "description": "Select multiple files using Ctrl/Cmd-click or Shift-click for batch deletion, and double-click an image or sound clip to preview or play it.",
+          "tags": [
+            38,
+            42
+          ]
+        },
+        {
+          "title": "Improved: Inspector Layout",
+          "description": "Controls sharing a row distribute their space equally.",
+          "tags": [
+            42
+          ]
+        },
+        {
+          "title": "Fixed: Resume and Wake Freeze",
+          "description": "Minimizing and restoring or waking the dashboard no longer freezes the screen.",
+          "tags": [
+            37,
+            45
+          ]
+        },
+        {
+          "title": "Fixed: Switch Icon Hover",
+          "description": "Hover color works when the switch or button is off.",
+          "tags": [
+            15
+          ]
+        },
+        {
+          "title": "Fixed: Select Behind",
+          "description": "Middle-click can select the widget under a group when group members overlap.",
+          "tags": [
+            42
+          ]
+        },
+        {
+          "title": "Fixed: Small Bug Fixes & UI Improvements",
+          "description": "A collection of minor UI improvements and small bug fixes.",
+          "tags": [
+            42,
+            45
+          ]
+        }
+      ]
+    },
+    {
+      "version": "2.0.11",
+      "date": "2026-10-03",
+      "changes": [
+        {
+          "title": "New: Text Scroll",
+          "description": "A Text widget can move its markdown as one block, horizontally or vertically. Choose Loop, Bounce, or Reset, then set speed, reverse, Loop gap, and hold or fade. Only When Text Overflows moves the text only when it does not fit the widget. Auto-Fit, Scroll Overflow Content, and the content-change Animation stay off while Text Scroll is on.",
+          "tags": [
+            16
+          ]
+        },
+        {
+          "title": "New: Markdown Blink",
+          "description": "Wrap a phrase, table, or callout with [blink]...[/blink] so it fades on and off. Use [blink 1.5] for a slower cycle, or pick a speed from the Blink control in the Full editor.",
+          "tags": [
+            16
+          ]
+        },
+        {
+          "title": "Improved: General Interface",
+          "description": "The editor and dashboards pick up a round of general interface polish.",
+          "tags": [
+            42
+          ]
+        },
+        {
+          "title": "Fixed: Arrow Direction",
+          "description": "A reversed arrow with Head Size 0 now meets the end point.",
+          "tags": [
+            1
+          ]
+        },
+        {
+          "title": "Fixed: Smaller Issues",
+          "description": "A handful of smaller issues are resolved.",
+          "tags": [
+            45
+          ]
+        }
+      ]
+    },
+    {
+      "version": "2.0.10",
+      "date": "2026-09-29",
+      "changes": [
+        {
+          "title": "New: Editor Theme",
+          "description": "The editor theme button cycles Auto, Light, and Dark. Auto matches the editor to dashboard background Color 1.",
+          "tags": [
+            36,
+            42
+          ]
+        },
+        {
+          "title": "Improved: Home Screen Icon",
+          "description": "Adding Dashboard Studio to the home screen uses a proper app icon on iPhone, Android, and desktop.",
+          "tags": [
+            37
+          ]
+        },
+        {
+          "title": "Improved: Dialogs",
+          "description": "You can select and confirm dialog buttons with the keyboard.",
+          "tags": [
+            39,
+            42
+          ]
+        },
+        {
+          "title": "Fixed: App Stability",
+          "description": "Dashboard Studio no longer crashes when a Homey device changes before the app has finished loading that device.",
+          "tags": [
+            33,
+            45
+          ]
+        },
+        {
+          "title": "Fixed: Gauge Colors",
+          "description": "Start, middle, end, and baseline colors show correctly as soon as the dashboard opens.",
+          "tags": [
+            6
+          ]
+        },
+        {
+          "title": "Fixed: Responsive Columns",
+          "description": "Switching dashboards or resetting the canvas no longer leaves old group frames on the page.",
+          "tags": [
+            40,
+            42
+          ]
+        },
+        {
+          "title": "Fixed: Arrow Widget",
+          "description": "Dragging an arrow with corner points moves the whole shape together.",
+          "tags": [
+            1
+          ]
+        },
+        {
+          "title": "Fixed: Arrow Colors",
+          "description": "Main, flow, reverse, and glow colors use the Arrow defaults again.",
+          "tags": [
+            1
+          ]
+        },
+        {
+          "title": "Fixed: Arrow in Responsive Columns",
+          "description": "The arrow - line sits in its grid cell.",
+          "tags": [
+            1,
+            40
+          ]
+        },
+        {
+          "title": "Fixed: Tall Dashboards on iPad",
+          "description": "A fixed dashboard taller than the window no longer jumps to the bottom while you scroll, and the page starts at the top so you can reach the whole canvas.",
+          "tags": [
+            37,
+            40
+          ]
+        },
+        {
+          "title": "Fixed: Responsive Background",
+          "description": "Background Color 1 and 2 cover the viewable dashboard, including when Width is unlimited.",
+          "tags": [
+            36,
+            40
+          ]
+        }
+      ]
+    },
+    {
+      "version": "2.0.9",
+      "date": "2026-09-26",
+      "changes": [
+        {
+          "title": "Improved: Themes",
+          "description": "Changing a theme updates the dashboard faster.",
+          "tags": [
+            36,
+            45
+          ]
+        },
+        {
+          "title": "Fixed: Text Tables",
+          "description": "Custom column widths follow a table that arrives from a topic.",
+          "tags": [
+            16,
+            49
+          ]
+        },
+        {
+          "title": "Improved: Edit Mode",
+          "description": "You can scroll the dashboard clear of a docked toolbar.",
+          "tags": [
+            42
+          ]
+        }
+      ]
+    },
+    {
+      "version": "2.0.8",
+      "date": "2026-09-25",
+      "changes": [
+        {
+          "title": "Fixed: Confirmation Message",
+          "description": "A message linked to a topic now shows the live text when the dialog opens, and updates while it stays open, including the Confirm and Dismiss labels.",
+          "tags": [
+            39,
+            49
+          ]
+        },
+        {
+          "title": "Fixed: Widget Visibility",
+          "description": "Widgets with Visibility turned off stay hidden when you leave the page and come back, including when Visibility comes from a topic.",
+          "tags": [
+            40,
+            42,
+            49
+          ]
+        },
+        {
+          "title": "New: Graph Streaming Times",
+          "description": "A graph that receives one number at a time shows when each value arrived. Date and time X-axis formats, such as Date Hours or Hours:Minutes, use that time.",
+          "tags": [
+            7
+          ]
+        },
+        {
+          "title": "New: Linear Time Scale",
+          "description": "Graph points can follow the real time between them, so a quiet gap stays empty on the chart.",
+          "tags": [
+            7
+          ]
+        }
+      ]
+    },
+    {
+      "version": "2.0.7",
+      "date": "2026-09-23",
+      "changes": [
+        {
+          "title": "Fixed: Graph Labels",
+          "description": "Axis labels are no longer cut off.",
+          "tags": [
+            7
+          ]
+        },
+        {
+          "title": "New: Make All Dynamic Values Fixed",
+          "description": "Tools can keep the current value of every topic-linked setting.",
+          "tags": [
+            43,
+            49
+          ]
+        },
+        {
+          "title": "Improved: Page Switching",
+          "description": "Other pages are cached in the background, so opening them is faster.",
+          "tags": [
+            40,
+            45
+          ]
+        },
+        {
+          "title": "New: Edit Mode Zoom Slider",
+          "description": "Scale the dashboard 20% - 200% in edit mode.",
+          "tags": [
+            40,
+            42
+          ]
+        },
+        {
+          "title": "Improved: Horizontal Scrolling",
+          "description": "When the dashboard sits behind the editor, you can scroll until the left side is fully visible.",
+          "tags": [
+            40,
+            42
+          ]
+        }
+      ]
+    },
+    {
+      "version": "2.0.6",
+      "date": "2026-09-20",
+      "changes": [
+        {
+          "title": "Improved: Dashboard Loading",
+          "description": "Large multi-page dashboards now open faster.",
+          "tags": [
+            40,
+            45
+          ]
+        }
+      ]
+    },
+    {
+      "version": "2.0.5",
+      "date": "2026-09-19",
+      "changes": [
+        {
+          "title": "Improved: Loading Speed",
+          "description": "Dashboards and the editor now load faster",
+          "tags": [
+            42,
+            45
+          ]
+        },
+        {
+          "title": "Improved: Overall Performance",
+          "description": "Smoother experience and snappier responsiveness throughout the app",
+          "tags": [
+            45
+          ]
+        },
+        {
+          "title": "Improved: Canvas Centering",
+          "description": "Improved positioning and centering of dashboards in both the viewer and editor",
+          "tags": [
+            37,
+            40,
+            42
+          ]
+        },
+        {
+          "title": "Improved: File Manager",
+          "description": "You can now press Enter to quickly save or open a dashboard",
+          "tags": [
+            42,
+            51
+          ]
+        },
+        {
+          "title": "Improved: Homey App Stability",
+          "description": "Optimized memory handling for better long-term reliability",
+          "tags": [
+            33,
+            45
+          ]
+        },
+        {
+          "title": "Fixed: Analog Clock",
+          "description": "Restored the second hand on analog clocks",
+          "tags": [
+            3
+          ]
+        },
+        {
+          "title": "Fixed: Live Topic Bindings",
+          "description": "Resolved an issue where certain widget like the arrow widgets settings did not update from live data",
+          "tags": [
+            1,
+            49
+          ]
+        },
+        {
+          "title": "Fixed: Text Widget",
+          "description": "Custom table column width controls now appear reliably when selected",
+          "tags": [
+            16,
+            42
+          ]
+        }
+      ]
+    },
+    {
+      "version": "2.0.4",
+      "date": "2026-09-16",
+      "changes": [
+        {
+          "title": "Fixed: Switch & Button Widget Height on Older Devices",
+          "description": "Buttons with an inside label now keep their full height on older iPads and iPhones running iOS 12",
+          "tags": [
+            15,
+            37
+          ]
+        },
+        {
+          "title": "Improved: Performance",
+          "description": "Smoother and faster throughout, especially on responsive dashboards",
+          "tags": [
+            40,
+            45
+          ]
+        },
+        {
+          "title": "New: Payload Formula Text Joining",
+          "description": "Payload Formulas can join text with + (for example \"prefix\" + value + \"suffix\")",
+          "tags": [
+            41
+          ]
+        }
+      ]
+    },
+    {
+      "version": "2.0.3",
+      "date": "2026-09-15",
+      "changes": [
+        {
+          "title": "New: Widget Deactivated Mode",
+          "description": "Added a Deactivated toggle for all widgets. When active, all user interactions are disabled while the widget continues to receive and display live data updates in real-time.",
+          "tags": [
+            42,
+            49
+          ]
+        },
+        {
+          "title": "New: Widget Opacity Control",
+          "description": "Added an Opacity input (0% to 100%) for all widgets",
+          "tags": [
+            42
+          ]
+        },
+        {
+          "title": "New: Switch & Button Confirm With",
+          "description": "When Require Confirmation is enabled and some outputs use Hold to Activate while others do not, a Confirm With dropdown in Confirmation Dialog Appearance lets you choose which press gesture opens the dialog: Hold to Activate, Tap to Activate, or Hold and Tap.",
+          "tags": [
+            15,
+            39
+          ]
+        },
+        {
+          "title": "Fixed: Hold to Activate Gestures",
+          "description": "Resolved an issue where buttons configured with Hold to Activate could react on a quick tap or prematurely open confirmation dialogs.",
+          "tags": [
+            15,
+            39
+          ]
+        },
+        {
+          "title": "Fixed: Topic Loopback Synchronization",
+          "description": "Bound text, label, and peer widgets now update immediately when control widgets (switches, sliders, menus) share the same topic for both binding and output.",
+          "tags": [
+            11,
+            13,
+            14,
+            15,
+            49
+          ]
+        }
+      ]
+    },
+    {
+      "version": "2.0.2",
+      "date": "2026-09-14",
+      "changes": [
+        {
+          "title": "Fixed: Widget settings",
+          "description": "Sub-settings (such as Graph X/Y axis options and Switch glow settings) now reliably appear when their main setting is enabled",
+          "tags": [
+            42
+          ]
+        }
+      ]
+    },
+    {
+      "version": "2.0.1",
+      "date": "2026-09-14",
+      "changes": [
+        {
+          "title": "New: Dashboard Environment",
+          "description": "Added theme dropdown with live topic binding to switch themes directly from MQTT or Homey data",
+          "tags": [
+            36,
+            47,
+            49
+          ]
+        },
+        {
+          "title": "Improved: Performance across the board",
+          "description": "Significantly faster dashboard page switching and widget selection in Edit Mode, plus snappier responses for checkboxes, dropdowns, color swatches, and font or icon selectors",
+          "tags": [
+            40,
+            42,
+            45
+          ]
+        },
+        {
+          "title": "Fixed: Documentation panel",
+          "description": "Resolved white flashes over the dashboard when scrolling help content in Chromium browsers (Chrome, Edge)",
+          "tags": [
+            44
+          ]
+        },
+        {
+          "title": "Fixed: Widget edit label help",
+          "description": "Clicking the \"?\" on a selected widget now correctly opens its corresponding help page",
+          "tags": [
+            42,
+            44
+          ]
+        },
+        {
+          "title": "Fixed: Docked Quick Toolbar",
+          "description": "Corrected the rounded bottom edge and adjusted spacing when the toolbar contains many buttons",
+          "tags": [
+            42
+          ]
+        },
+        {
+          "title": "Fixed: Color swatches",
+          "description": "Widget colors such as Container background and border can be changed again",
+          "tags": [
+            36,
+            42
+          ]
+        },
+        {
+          "title": "Fixed: Various minor bug fixes and stability improvements",
+          "tags": [
+            45
+          ]
+        }
+      ]
+    },
+    {
+      "version": "2.0.0",
+      "date": "2026-09-13",
+      "changes": [
+        {
+          "title": "New: Modern Editor Interface & Full Tablet Touch Support",
+          "tags": [
+            42
+          ]
+        },
+        {
+          "title": "New: Basic and Advanced Editor Modes",
+          "tags": [
+            42
+          ]
+        },
+        {
+          "title": "New: Three Dashboard Layout Modes (Fixed Resolution, Scale to Fit Screen, Responsive Columns)",
+          "tags": [
+            40
+          ]
+        },
+        {
+          "title": "New: Widget Presets & Multi-Variant Styling",
+          "tags": [
+            42,
+            43
+          ]
+        },
+        {
+          "title": "New: Dashboard Audio System & Sound Effects",
+          "tags": [
+            38
+          ]
+        },
+        {
+          "title": "New: In-App Audio Gallery Manager",
+          "tags": [
+            38,
+            42
+          ]
+        },
+        {
+          "title": "New: Reset Canvas & New Dashboard Setup Wizard",
+          "tags": [
+            42,
+            43
+          ]
+        },
+        {
+          "title": "New: Theme Explorer & \"Dashboard Studio Light\" Theme",
+          "tags": [
+            36
+          ]
+        },
+        {
+          "title": "New: Widget Preset Editor Tool",
+          "tags": [
+            42,
+            43
+          ]
+        },
+        {
+          "title": "New: Switch & Button Confirmation Dialogs",
+          "tags": [
+            15,
+            39
+          ]
+        },
+        {
+          "title": "New: Quick Toolbar",
+          "tags": [
+            42
+          ]
+        },
+        {
+          "title": "New: Editor Tools Menu & Set Link Open Behavior",
+          "tags": [
+            42,
+            43
+          ]
+        },
+        {
+          "title": "New: Menu Widget Batch Add Weblinks",
+          "tags": [
+            13,
+            43
+          ]
+        },
+        {
+          "title": "Improved: Dashboard Performance & Viewer Mode",
+          "tags": [
+            37,
+            45
+          ]
+        },
+        {
+          "title": "Improved: In-App Documentation Rewrite & Complete Homey Beginner Guide",
+          "tags": [
+            44
+          ]
+        },
+        {
+          "title": "Improved: In-App Documentation Search & Navigation",
+          "tags": [
+            44
+          ]
+        },
+        {
+          "title": "Improved: Inline Image Gallery Pickers",
+          "tags": [
+            42
+          ]
+        },
+        {
+          "title": "Improved: Dynamic Icon Switching with Payload Formulas",
+          "tags": [
+            8,
+            41
+          ]
+        },
+        {
+          "title": "Improved: Text Widget with Payload Formulas in Markdown",
+          "tags": [
+            16,
+            41
+          ]
+        },
+        {
+          "title": "Improved: Menu and Button Widgets with Label Hints",
+          "tags": [
+            13,
+            15
+          ]
+        },
+        {
+          "title": "Improved: Edit Box Widget with Open URL Action",
+          "tags": [
+            5
+          ]
+        },
+        {
+          "title": "Improved: Dashboard File Save Format",
+          "tags": [
+            42,
+            45,
+            51
+          ]
+        },
+        {
+          "title": "Improved: Clock Widget 2-Digit Day and Month",
+          "tags": [
+            3
+          ]
+        },
+        {
+          "title": "Fixed: Graph widget plot redraw on container resize",
+          "tags": [
+            7
+          ]
+        },
+        {
+          "title": "Fixed: Platform switching reconnection when returning to Homey",
+          "tags": [
+            33,
+            46
+          ]
+        },
+        {
+          "title": "Fixed: Browser Back and Forward navigation and state recovery",
+          "tags": [
+            40,
+            42
+          ]
+        },
+        {
+          "title": "Fixed: Homey live values instant synchronization on reconnect",
+          "tags": [
+            33,
+            49
+          ]
+        },
+        {
+          "title": "Fixed: Older tablet display support on iOS 12 and Safari 12",
+          "tags": [
+            37,
+            45
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.11.7",
+      "date": "2026-09-11",
+      "changes": [
+        {
+          "title": "Fixed: Switch and Button Invisible style no longer hides the Layout & Dimensions panel; Padding is hidden, while X, Y, Width, and Height stay available.",
+          "tags": [
+            15,
+            42
+          ]
+        },
+        {
+          "title": "Fixed: Dashboard Environment",
+          "description": "Hold to Activate Duration now shows the default value.",
+          "tags": [
+            15,
+            42
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.11.6",
+      "date": "2026-09-04",
+      "changes": [
+        {
+          "title": "New: Switch and Button widget",
+          "description": "Hold to Activate support. running actions immediately on tap or after a configurable hold duration (default: 1.5s).",
+          "tags": [
+            15
+          ]
+        },
+        {
+          "title": "New: Slider widget",
+          "description": "Slider Label Location (Top, Bottom, Left, Right) and Value Location (Middle, Top, Bottom, Left, Right) in Text & Typography. Middle keeps the value on the track; other value positions sit beside the slider. Sharing a side places label, then value, then unit.",
+          "tags": [
+            14
+          ]
+        },
+        {
+          "title": "New: Text widget Full editor",
+          "description": "column alignment buttons for markdown tables (Default, Left, Center, Right).",
+          "tags": [
+            16,
+            42
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.11.5",
+      "date": "2026-08-19",
+      "changes": [
+        {
+          "title": "Improved: Connection Lost warning waits 2 seconds before showing, so brief disconnects do not interrupt the dashboard.",
+          "tags": [
+            46
+          ]
+        },
+        {
+          "title": "Fixed: Text widget",
+          "description": "Auto-Fit Text to Frame keeps text visible when Horizontal Alignment is Left, Center, or Right.",
+          "tags": [
+            16
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.11.4",
+      "date": "2026-07-20",
+      "changes": [
+        {
+          "title": "New: Homey app settings",
+          "description": "back up your Dashboard Studio configuration.",
+          "tags": [
+            33,
+            51
+          ]
+        },
+        {
+          "title": "Improved: Graph widget",
+          "description": "object data can include timestamps (t), text labels (l), and values (v) together. Text Labels and time formats each use only their field; empty labels or times stay blank.",
+          "tags": [
+            7
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.11.3",
+      "date": "2026-07-12",
+      "changes": [
+        {
+          "title": "Improved: Payload Formulas accept quoted text and can compare string values from live data.",
+          "tags": [
+            41,
+            49
+          ]
+        },
+        {
+          "title": "Improved: Text settings",
+          "description": "Binding Options include Payload Formula to turn live data into display text.",
+          "tags": [
+            16,
+            41,
+            49
+          ]
+        },
+        {
+          "title": "Improved: Color settings",
+          "description": "Binding Options include Payload Formula to pick a color or theme token from live data.",
+          "tags": [
+            36,
+            41,
+            49
+          ]
+        },
+        {
+          "title": "Fixed: Help editor shows formula operators like <= as plain text.",
+          "tags": [
+            41,
+            44
+          ]
+        },
+        {
+          "title": "Fixed: Text widget",
+          "description": "removed unnecessary horizontal scrollbar when content fits inside the widget.",
+          "tags": [
+            16
+          ]
+        },
+        {
+          "title": "New: On Homey, your saved templates now appear in the Select Template dropdown.",
+          "tags": [
+            33,
+            51
+          ]
+        },
+        {
+          "title": "New: Icon widget",
+          "description": "Glow on Active setting to turn off the active-state glow.",
+          "tags": [
+            8
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.11.2",
+      "date": "2026-07-02",
+      "changes": [
+        {
+          "title": "New: Text widget",
+          "description": "tint inline Phosphor icons in markdown with the same pipe color syntax as images (e.g. :ph-heart|@accent: or :ph-duotone ph-android-logo|@accent|@danger:).",
+          "tags": [
+            16
+          ]
+        },
+        {
+          "title": "New: Text widget",
+          "description": "choose how links open (follow each link, always a new tab, or always the same tab).",
+          "tags": [
+            16
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.11.1",
+      "date": "2026-07-01",
+      "changes": [
+        {
+          "title": "New: Text widget",
+          "description": "inline text color anywhere in your markdown with [color #34FF1C]...[/color] or a theme token like [color @accentSoft]...[/color].",
+          "tags": [
+            16,
+            36
+          ]
+        },
+        {
+          "title": "New: Text widget",
+          "description": "headings (#, ##, ###) now work inside table cells, so a cell can have its own title above the value.",
+          "tags": [
+            16
+          ]
+        },
+        {
+          "title": "Improved: Full editor",
+          "description": "a Text color swatch in the toolbar colors the selected text, and it is now possible to add headers inside tables.",
+          "tags": [
+            16,
+            42
+          ]
+        },
+        {
+          "title": "New: Text widget",
+          "description": "tint a PNG or SVG image to any color directly in your markdown, just like icons.",
+          "tags": [
+            16
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.11.0",
+      "date": "2026-06-27",
+      "changes": [
+        {
+          "title": "New: Numeric fields",
+          "description": "Numeric Payload Formula in Binding Options transforms incoming numerical values with math (invert, scale, clamp, round, threshold). Includes presets.",
+          "tags": [
+            41,
+            49
+          ]
+        },
+        {
+          "title": "New: Boolean fields (switch state, visibility, and similar)",
+          "description": "Binding Options add Transform Mode: Boolean Payload Mapping or Numeric Payload Formula. Formula mode converts numerical values to on/off with Threshold 50 and Round to 0 or 1 presets.",
+          "tags": [
+            41,
+            49
+          ]
+        },
+        {
+          "title": "New: Formulas can reference other live topics with Insert Topic ({{topic/path}} tags). Boolean logic functions and, or, not, xor, and nor combine topic values and comparisons.",
+          "tags": [
+            41,
+            49
+          ]
+        },
+        {
+          "title": "Improved: New Help section about the new Binding Options and a Payload Formulas guide with topic references, logic functions, value coercion, and worked examples.",
+          "tags": [
+            41,
+            44,
+            49
+          ]
+        },
+        {
+          "title": "Fixed: Master typography defaults for Light Grid and Icon widgets apply correctly.",
+          "tags": [
+            8,
+            11,
+            42
+          ]
+        },
+        {
+          "title": "Fixed: Custom Google Fonts with plus signs in the name (e.g. Henny+Penny) now save and load correctly.",
+          "tags": [
+            42
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.10.7",
+      "date": "2026-06-25",
+      "changes": [
+        {
+          "title": "Fixed: Adjusting hue, saturation, and brightness in the color picker no longer freezes or slows down the editor.",
+          "tags": [
+            36,
+            42,
+            45
+          ]
+        },
+        {
+          "title": "Fixed: Light Grid widget",
+          "description": "individual light settings (name, output mode, switch state, and on/off actions) can now be linked to live data.",
+          "tags": [
+            11,
+            49
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.10.6",
+      "date": "2026-06-20",
+      "changes": [
+        {
+          "title": "Fixed: Text widget text uses the full width when padding is zero, and the widget label always stays at the top.",
+          "tags": [
+            16
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.10.5",
+      "date": "2026-06-20",
+      "changes": [
+        {
+          "title": "Fixed: Widget labels line up with the container when padding is zero, and label settings are named and organised the same way on every widget.",
+          "tags": [
+            42
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.10.4",
+      "date": "2026-06-18",
+      "changes": [
+        {
+          "title": "Fixed: Icon Style slideout",
+          "description": "Style dropdown no longer clips at the slideout boundary.",
+          "tags": [
+            42
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.10.3",
+      "date": "2026-06-17",
+      "changes": [
+        {
+          "title": "Improved: Light Grid widget",
+          "description": "Item Height (px), Item Width (px), and Item Spacing (px) in Grid Layout (0 = auto; same defaults as before).",
+          "tags": [
+            11
+          ]
+        },
+        {
+          "title": "New: Light Grid widget",
+          "description": "per-light Output Mode (Light or Switch). Switch mode toggles on click and sends On/Off values to output topics (optional Go to Page or Open URL actions).",
+          "tags": [
+            11,
+            49
+          ]
+        },
+        {
+          "title": "Improved: Text widget markdown now supports sizing of images and icons.",
+          "tags": [
+            16
+          ]
+        },
+        {
+          "title": "Fixed: Text widget inline topics now parse icons and special markdown syntax.",
+          "tags": [
+            16,
+            49
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.10.2",
+      "date": "2026-06-15",
+      "changes": [
+        {
+          "title": "Fixed: Dashboard Environment Width and Height (0=Auto) fill the available screen again.",
+          "tags": [
+            40
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.10.1",
+      "date": "2026-06-11",
+      "changes": [
+        {
+          "title": "Improved: Editor groups",
+          "description": "opening a group clears selection; Group, Ungroup, and Open Group buttons disable when the action does not apply.",
+          "tags": [
+            42
+          ]
+        },
+        {
+          "title": "Fixed: Editor and viewer horizontal scroll reaches the full canvas when the dashboard is wider than the screen.",
+          "tags": [
+            37,
+            40,
+            42
+          ]
+        },
+        {
+          "title": "Fixed: Buttons inside a group no longer blur when Blur Background When Visible is on.",
+          "tags": [
+            15,
+            42
+          ]
+        },
+        {
+          "title": "New: Hold Ctrl+` (backtick) for live preview while keeping the editor panel visible.",
+          "tags": [
+            42
+          ]
+        },
+        {
+          "title": "New: Click the version number in the editor header to open What's New release notes.",
+          "tags": [
+            42,
+            44
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.10.0",
+      "date": "2026-06-05",
+      "changes": [
+        {
+          "title": "New: Dashboard viewer at /viewer.html",
+          "description": "editor and viewer split for faster, lighter view-only dashboards on wall tablets and kiosks.",
+          "tags": [
+            37,
+            45
+          ]
+        },
+        {
+          "title": "Improved: Editor toolbar shows a copyable viewer link for the active dashboard.",
+          "tags": [
+            37,
+            42
+          ]
+        },
+        {
+          "title": "Improved: Help restyled",
+          "description": "fully rewritten and updated for all widgets with new tips. Cleaner layout, spacing, and rounded info boxes.",
+          "tags": [
+            44
+          ]
+        },
+        {
+          "title": "New: Graph widget",
+          "description": "Text Labels X-axis format for custom bar names from key-value data (multi-line with \\n); X-Axis Fixed Width for label space below the chart.",
+          "tags": [
+            7
+          ]
+        },
+        {
+          "title": "Improved: Graph widget",
+          "description": "separate X and Y axis typography; Y axis inherits from X until customized.",
+          "tags": [
+            7
+          ]
+        },
+        {
+          "title": "New: Switch and Button widget",
+          "description": "optional additional output topics fire on every press, including page and URL actions.",
+          "tags": [
+            15,
+            49
+          ]
+        },
+        {
+          "title": "New: Switch and Button widget (toggle mode)",
+          "description": "separate On and Off topics for primary and additional outputs.",
+          "tags": [
+            15,
+            49
+          ]
+        },
+        {
+          "title": "New: Ctrl+E toggles Edit Mode; hold ` (backtick) for temporary live preview while editing.",
+          "tags": [
+            42
+          ]
+        },
+        {
+          "title": "Improved: Opened groups close automatically when you switch pages in the editor.",
+          "tags": [
+            40,
+            42
+          ]
+        },
+        {
+          "title": "New: Homey app settings",
+          "description": "Copy button on device capabilities in the Configuration tab.",
+          "tags": [
+            33
+          ]
+        },
+        {
+          "title": "New: Website documentation",
+          "description": "copy shareable links.",
+          "tags": [
+            44
+          ]
+        },
+        {
+          "title": "New: Website documentation",
+          "description": "copy topic as Markdown for sharing with AI tools.",
+          "tags": [
+            44
+          ]
+        },
+        {
+          "title": "Improved: 'Hide editor button' replaced with 'Viewer mode only'",
+          "description": "the main dashboard link opens the viewer directly instead of hiding the edit button in the editor.",
+          "tags": [
+            37,
+            42
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.9.7",
+      "date": "2026-06-05",
+      "changes": [
+        {
+          "title": "Fixed: Widget editor dropdowns work properly again.",
+          "tags": [
+            42
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.9.6",
+      "date": "2026-06-04",
+      "changes": [
+        {
+          "title": "New: Image widget",
+          "description": "Fallback URL shows a replacement image when the primary URL fails; leave empty to show nothing.",
+          "tags": [
+            9
+          ]
+        },
+        {
+          "title": "New: Graph widget",
+          "description": "Show Point Values displays data values directly next to the points or bars on the chart. Optionally on mouse hover only.",
+          "tags": [
+            7
+          ]
+        },
+        {
+          "title": "New: Text widget",
+          "description": "color individual markdown table cells with [cell #hex] or [cell @themeToken] at the start of a cell. The Full editor adds a cell background picker (and Clear) when the cursor is in a table cell.",
+          "tags": [
+            16,
+            36,
+            42
+          ]
+        },
+        {
+          "title": "Improved: Text widget",
+          "description": "markdown code blocks have their own Code typography section (font, text and background colors, spacing, and line height).",
+          "tags": [
+            16
+          ]
+        },
+        {
+          "title": "Improved: Dashboard performance, especially in Google Chrome.",
+          "tags": [
+            45
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.9.5",
+      "date": "2026-06-01",
+      "changes": [
+        {
+          "title": "New: Edit box widget",
+          "description": "Send Behavior can send when you press Enter or when you leave the field (Keyboard Enter & Exit).",
+          "tags": [
+            5
+          ]
+        },
+        {
+          "title": "New: Menu widget",
+          "description": "Layout Direction: Horizontal & Vertical \"Grid\" layout.",
+          "tags": [
+            13
+          ]
+        },
+        {
+          "title": "New: Switch and Button widget",
+          "description": "Text Only and Invisible visual styles in the Visual Style dropdown.",
+          "tags": [
+            15
+          ]
+        },
+        {
+          "title": "Fixed: Switch and Button widget",
+          "description": "the pointing-hand cursor appears only over the button area, not the full widget container.",
+          "tags": [
+            15
+          ]
+        },
+        {
+          "title": "Improved: Text widget",
+          "description": "markdown tables with a fully empty header row no longer render a visible header; only the body rows are shown.",
+          "tags": [
+            16
+          ]
+        },
+        {
+          "title": "Improved: Switch and Menu widgets",
+          "description": "optional New tab setting opens the target URL in a new browser tab when On Click is Open URL.",
+          "tags": [
+            13,
+            15
+          ]
+        },
+        {
+          "title": "Improved: Switch and Menu widgets",
+          "description": "you can now use the website favicon as the icon when On Click is Open URL and a Target URL is set.",
+          "tags": [
+            13,
+            15
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.9.4",
+      "date": "2026-05-30",
+      "changes": [
+        {
+          "title": "New: Text widget",
+          "description": "Wrap Text option in Text Settings lets you turn line wrapping on or off.",
+          "tags": [
+            16
+          ]
+        },
+        {
+          "title": "Fixed: Text widget shows again on iOS 12 and other older iPhones and iPads where it was missing.",
+          "tags": [
+            16,
+            37
+          ]
+        },
+        {
+          "title": "Fixed: Dashboards upgraded from version 1.9.0 keep icon colors, text colors, and live MQTT color bindings.",
+          "tags": [
+            47,
+            49,
+            51
+          ]
+        },
+        {
+          "title": "Fixed: Label widget",
+          "description": "Bold, Italic, and Case settings apply correctly and are kept after saving.",
+          "tags": [
+            10
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.9.3",
+      "date": "2026-05-26",
+      "changes": [
+        {
+          "title": "New: Text widget",
+          "description": "Auto-Fit Text to Frame scales all markdown content to fill the widget frame (mutually exclusive with Scroll Overflow Content).",
+          "tags": [
+            16
+          ]
+        },
+        {
+          "title": "New: Text widget",
+          "description": "each typography slideout (Paragraph, Headers, Table Header, Table Text, Block Typography) has Vertical Spacing and Line Height settings.",
+          "tags": [
+            16
+          ]
+        },
+        {
+          "title": "Improved: Text widget displays more reliably on older iPhones and iPads.",
+          "tags": [
+            16,
+            37
+          ]
+        },
+        {
+          "title": "Fixed: Icon widget",
+          "description": "Active Icon and related inherit slots no longer drop saved settings when they match the base icon; Style and other inherit edits persist when the base icon is later set to the same value (same fix for Button, Menu, and List icon slots).",
+          "tags": [
+            8,
+            12,
+            13,
+            15,
+            42
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.9.2",
+      "date": "2026-05-23",
+      "changes": [
+        {
+          "title": "Fixed: Added the correct demo page.",
+          "tags": [
+            44
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.9.1",
+      "date": "2026-05-23",
+      "changes": [
+        {
+          "title": "Fixed: Text widget",
+          "description": "layout on older iPads no longer collapses to zero height.",
+          "tags": [
+            16,
+            37
+          ]
+        },
+        {
+          "title": "Fixed: Text widget",
+          "description": "color blocks in markdown tables stay in the cell instead of spanning the full width.",
+          "tags": [
+            16
+          ]
+        },
+        {
+          "title": "Fixed: Text widget",
+          "description": "inline live values and content animations work more reliably after updates.",
+          "tags": [
+            16,
+            49
+          ]
+        },
+        {
+          "title": "Fixed: Text widget",
+          "description": "scroll position no longer jumps when live topic values change.",
+          "tags": [
+            16,
+            49
+          ]
+        },
+        {
+          "title": "Improved: Gauge and Slider",
+          "description": "custom display range adds decimal places and keep trailing zeros for the shown value.",
+          "tags": [
+            6,
+            14
+          ]
+        },
+        {
+          "title": "Improved: Graph widget",
+          "description": "tick marks attach to the axis lines instead of sitting centered on the line; default tick thickness increased.",
+          "tags": [
+            7
+          ]
+        },
+        {
+          "title": "Fixed: Insight flow cards",
+          "description": "Last 24 Hours, 7 Days, 30 Days, and Year send the full time range again.",
+          "tags": [
+            30
+          ]
+        },
+        {
+          "title": "Fixed: Insight flow cards",
+          "description": "sensors that change rarely (e.g. door sensors) show correctly on short time ranges.",
+          "tags": [
+            30
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.9.0",
+      "date": "2026-05-19",
+      "changes": [
+        {
+          "title": "New: Text widget",
+          "description": "\\n in markdown is treated as a line break so full markdown (including tables) can be written on a single line; works in Text Content, topic bindings, {{topic}} placeholders, and values sent from buttons or flows.",
+          "tags": [
+            16,
+            49
+          ]
+        },
+        {
+          "title": "New: Text widget",
+          "description": "Animations & Effects when content changes (many transition styles, optional random).",
+          "tags": [
+            16
+          ]
+        },
+        {
+          "title": "New: Image widget",
+          "description": "Animations & Effects on picture URL or animated SVG updates (including with Live Refresh).",
+          "tags": [
+            9
+          ]
+        },
+        {
+          "title": "Improved: Gauge widget",
+          "description": "icon and Text & Typography sections; editor hides unused options; custom display min/max; optional bar color from gradient at the current value; Keep Trailing Zeros.",
+          "tags": [
+            6
+          ]
+        },
+        {
+          "title": "Improved: Slider",
+          "description": "custom display min/max (MQTT range unchanged) and refreshed typography for caption, value, and unit.",
+          "tags": [
+            14
+          ]
+        },
+        {
+          "title": "Improved: Icon widget",
+          "description": "redesigned icon slide-out with a separate active icon that can inherit from the base icon.",
+          "tags": [
+            8,
+            42
+          ]
+        },
+        {
+          "title": "Improved: Light Grid",
+          "description": "icon slide-out overhaul, typography for light names, control panel auto-hides when not in use.",
+          "tags": [
+            11,
+            42
+          ]
+        },
+        {
+          "title": "Fixed: Menu and Light Grid",
+          "description": "reordering items in the editor by drag and drop works again.",
+          "tags": [
+            11,
+            13,
+            42
+          ]
+        },
+        {
+          "title": "Improved: Widgets with icons",
+          "description": "five icon styles (Thin, Light, Regular, Bold, Fill, Duotone), offset and rotation, and Off/Base icons can inherit from the On icon (buttons, menus, and more).",
+          "tags": [
+            42
+          ]
+        },
+        {
+          "title": "Improved: Graph widget",
+          "description": "Text & Typography sections with unused fields hidden; smoother curves that stay within data peaks; lines and fills break at null gaps.",
+          "tags": [
+            7
+          ]
+        },
+        {
+          "title": "New: Graph widget",
+          "description": "optional display smoothing (adjustable strength for smooth-line charts).",
+          "tags": [
+            7
+          ]
+        },
+        {
+          "title": "New: Graph widget",
+          "description": "optional tick marks on the X and Y axes (spacing, size, color, offset).",
+          "tags": [
+            7
+          ]
+        },
+        {
+          "title": "Improved: Insight flow cards",
+          "description": "evenly spaced time steps, forward-filled values, and null for future or missing data (pairs with Graph gaps).",
+          "tags": [
+            30
+          ]
+        },
+        {
+          "title": "Fixed: Editor",
+          "description": "moving and resizing widgets no longer fights text selection and stays responsive.",
+          "tags": [
+            42
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.8.9",
+      "date": "2026-05-14",
+      "changes": [
+        {
+          "title": "New: 1.8.9",
+          "description": "stable: This version ships the new Text widget as the main way to show rich copy on the dashboard: Markdown (headings, lists, tables, callouts, links), Phosphor icons (including duotone in text), images, live topic values, and calendar output from Homey Flows (event lists, “today & tomorrow” style layouts, color blocks, and flexible ordering). Label widgets are migrated automatically to Text; on dense or custom layouts you may still want to check spacing, typography, and bindings once.",
+          "tags": [
+            10,
+            16,
+            51
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.8.8",
+      "date": "2026-05-13",
+      "changes": [
+        {
+          "title": "Improved: In-app help updated with new Homey Flow Cards documentation for iCal-overview, send and receive, save and reload, Insight graphs, and example flows (simple flow plus serial and parallel calendar loading).",
+          "tags": [
+            30,
+            34,
+            44
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.8.7",
+      "date": "2026-05-11",
+      "changes": [
+        {
+          "title": "New:The Homey part of the app is now fully translated. Languages: AR, DA, DE, EN, ES, FR, IT, KO, NL, NO, PL, RU, SV.",
+          "tags": [
+            33
+          ]
+        },
+        {
+          "title": "Improved: Extra alignment space beside the icon only appears for the “icon + time + event” layout. Events without a time no longer show that gap.",
+          "tags": [
+            34
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.8.6",
+      "date": "2026-05-10",
+      "changes": [
+        {
+          "title": "Improved: Widgets that use the icon slide-out now support thin, light, bold, and duotone icon styles.",
+          "tags": [
+            42
+          ]
+        },
+        {
+          "title": "New: Icon accent theme color for duotone icons.",
+          "tags": [
+            36
+          ]
+        },
+        {
+          "title": "New: Markdown “Today & Tomorrow” list from calendar events.",
+          "tags": [
+            30,
+            34
+          ]
+        },
+        {
+          "title": "New: Time-of-day grouping is optional for calendar markdown.",
+          "tags": [
+            30,
+            34
+          ]
+        },
+        {
+          "title": "New: Calendar markdown event order is configurable (icon, time, and title).",
+          "tags": [
+            30,
+            34
+          ]
+        },
+        {
+          "title": "Improved: When icons are on but the default calendar icon is off, column width stays aligned for time and events.",
+          "tags": [
+            34
+          ]
+        },
+        {
+          "title": "Fixed: All markdown table cells align to the top.",
+          "tags": [
+            16
+          ]
+        },
+        {
+          "title": "Improved: Load & Filter iCal flow card now includes Source ID.",
+          "tags": [
+            30,
+            34
+          ]
+        },
+        {
+          "title": "New: Color blocks can now be configured by event type or calendar source.",
+          "tags": [
+            30,
+            34
+          ]
+        },
+        {
+          "title": "Improved: Load & Filter iCal handles recurrence exceptions more reliably.",
+          "tags": [
+            30,
+            34
+          ]
+        },
+        {
+          "title": "Improved: Load & Filter iCal uses much less memory for large calendars.",
+          "tags": [
+            30,
+            34,
+            45
+          ]
+        },
+        {
+          "title": "Improved: Markdown links with a caret after the URL open in a new tab; the full markdown editor can set this too.",
+          "tags": [
+            16,
+            42
+          ]
+        },
+        {
+          "title": "Improved: Text widget Markdown inline icons support every Phosphor weight-Thin, Light, Regular, Bold, Fill, and Duotone-including bracket `:ph(…):` and `:ph-weight ph-name:` shorthand, with configurable primary and accent colors for duotone.",
+          "tags": [
+            16
+          ]
+        },
+        {
+          "title": "New: Text widget editor adds Markdown Icon Style (default for `:ph-icon-slug:` tokens) plus Markdown Icon Accent Color and opacity for the duotone secondary layer.",
+          "tags": [
+            16,
+            42
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.8.5",
+      "date": "2026-05-08",
+      "changes": [
+        {
+          "title": "Fixed: Sliders and gauges can now fully hide their track or fill when you set the size to 0.",
+          "tags": [
+            6,
+            14
+          ]
+        },
+        {
+          "title": "Improved: Calendar all-day events now display with the correct end date (no extra day).",
+          "tags": [
+            34
+          ]
+        },
+        {
+          "title": "New: Calendar setting to wrap events in colored blocks, or keep them as plain lines.",
+          "tags": [
+            34
+          ]
+        },
+        {
+          "title": "New: Calendar setting to group timed events by time of day (Night/Morning/Afternoon/Evening).",
+          "tags": [
+            34
+          ]
+        },
+        {
+          "title": "Improved: Calendar icons are now more flexible, with an option to disable the default icon.",
+          "tags": [
+            34
+          ]
+        },
+        {
+          "title": "Fixed: Calendar icon bindings can now be left empty.",
+          "tags": [
+            34,
+            49
+          ]
+        },
+        {
+          "title": "New: Added four new theme “marker tint” colors for clearer categories and accents.",
+          "tags": [
+            36
+          ]
+        },
+        {
+          "title": "New: Text widget now supports simple callout blocks you can use in your content (4 color styles).",
+          "tags": [
+            16
+          ]
+        },
+        {
+          "title": "New: Text widget editor adds a quick “block callout” tool to wrap selected text.",
+          "tags": [
+            16,
+            42
+          ]
+        },
+        {
+          "title": "Improved: Text widget tables now support Markdown alignment markers like `:---:` and `---:`.",
+          "tags": [
+            16
+          ]
+        },
+        {
+          "title": "Improved: Text widget table row background defaults were refreshed for a cleaner look.",
+          "tags": [
+            16
+          ]
+        },
+        {
+          "title": "Improved: Text markdown formatting reference updated in the help file.",
+          "tags": [
+            44
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.8.4",
+      "date": "2026-05-06",
+      "changes": [
+        {
+          "title": "Fixed: Selection group widgets (Switch/Button + Menu) now refresh reliably, even when the same value arrives again.",
+          "tags": [
+            13,
+            15,
+            49
+          ]
+        },
+        {
+          "title": "Fixed: Calendar all-day and multi-day events no longer appear one day later also in some cases.",
+          "tags": [
+            34
+          ]
+        },
+        {
+          "title": "Improved: Calendar week view ordering is now clearer and more consistent.",
+          "tags": [
+            34
+          ]
+        },
+        {
+          "title": "Improved: Recurring calendar events support more rule patterns and exceptions for better compatibility.",
+          "tags": [
+            34
+          ]
+        },
+        {
+          "title": "Improved: Calendar event ordering is now consistent across month/week/day views.",
+          "tags": [
+            34
+          ]
+        },
+        {
+          "title": "New: Load & Filter iCal can emit event type flags (timed/all-day/multi-day/recurring) for easier styling.",
+          "tags": [
+            30,
+            34
+          ]
+        },
+        {
+          "title": "New: Calendar setting to show/hide icons, plus a configurable default icon.",
+          "tags": [
+            34
+          ]
+        },
+        {
+          "title": "Improved: Calendar event lines have a cleaner, consistent format (icon → time → title).",
+          "tags": [
+            34
+          ]
+        },
+        {
+          "title": "Fixed: Calendar day view now shows only the selected day.",
+          "tags": [
+            34
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.8.3",
+      "date": "2026-05-02",
+      "changes": [
+        {
+          "title": "Improved: All-day and multi-day calendar events show correctly in your chosen range.",
+          "tags": [
+            34
+          ]
+        },
+        {
+          "title": "Improved: Load & Filter iCal, custom start and end dates accept Flow tags.",
+          "tags": [
+            30,
+            34
+          ]
+        },
+        {
+          "title": "Fixed: Button dynamic dimension change now works correctly when global topics are used.",
+          "tags": [
+            15,
+            49
+          ]
+        },
+        {
+          "title": "Fixed: Light Grid auto-hide works correctly again.",
+          "tags": [
+            11
+          ]
+        },
+        {
+          "title": "Fixed: Graph",
+          "description": "turning on Show X Axis no longer collapses the chart.",
+          "tags": [
+            7
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.8.2",
+      "date": "2026-04-30",
+      "changes": [
+        {
+          "title": "New: Added a lightweight Label widget for simple text lines with minimal overhead.",
+          "tags": [
+            10
+          ]
+        },
+        {
+          "title": "New: Redesigned the calendar engine (iCal) to handle massive files with ultra-low memory usage, preventing crashes on Homey Pro.",
+          "tags": [
+            34,
+            45
+          ]
+        },
+        {
+          "title": "New: 'Load & Filter iCal' and 'Merge Calendar Events' flow cards for modular and flexible schedule management.",
+          "tags": [
+            30,
+            34
+          ]
+        },
+        {
+          "title": "Improved: Added a wide range of timeframe presets for calendar filtering (Today, Yesterday, Tomorrow, This/Previous/Next Week & Month).",
+          "tags": [
+            34
+          ]
+        },
+        {
+          "title": "Improved: Native support for webcal:// links and automatic HTTP redirect handling for better compatibility with iCloud and Google calendars.",
+          "tags": [
+            34
+          ]
+        },
+        {
+          "title": "Improved: Text widget table colors and opacity now behave more predictably across table styles.",
+          "tags": [
+            16
+          ]
+        },
+        {
+          "title": "New: Added a Table Cell Padding setting to control spacing inside table cells.",
+          "tags": [
+            16
+          ]
+        },
+        {
+          "title": "Improved: Updated default table row colors for a cleaner starting look.",
+          "tags": [
+            16
+          ]
+        },
+        {
+          "title": "Improved: Scrolling in wide text tables now feels better.",
+          "tags": [
+            16
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.8.1",
+      "date": "2026-04-27",
+      "changes": [
+        {
+          "title": "Improved: Text widget table column sizing was overhauled with a new Table Column Width Mode: Align table columns (same column count), Equal Table Column Widths, Fixed Table Column Width, and Custom Column Width.",
+          "tags": [
+            16
+          ]
+        },
+        {
+          "title": "New: In Custom Column Width mode, the editor detects the number of table columns from Text Content and shows per-column width controls; 0 keeps auto width, any value above 0 sets pixel width for that column.",
+          "tags": [
+            16,
+            42
+          ]
+        },
+        {
+          "title": "Improved: Overall app performance is significantly improved compared to all previous versions.",
+          "tags": [
+            45
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.8.0",
+      "date": "2026-04-22",
+      "changes": [
+        {
+          "title": "Improved: The Label widget is replaced by a Text widget with rich Markdown-formatting, icons, images, tables, and live values in the same text block.",
+          "tags": [
+            10,
+            16
+          ]
+        },
+        {
+          "title": "Improved: Edit mode can show widget names on the canvas, which helps with invisible or easy-to-miss widgets; configure it in the Dashboard Environment.",
+          "tags": [
+            42
+          ]
+        },
+        {
+          "title": "Improved: Binding Options for on/off topics-a blank custom word covers all other messages; with both words set, only those two are mapped.",
+          "tags": [
+            49
+          ]
+        },
+        {
+          "title": "Fixed: A bug in the simulation driver.",
+          "tags": [
+            46
+          ]
+        },
+        {
+          "title": "Fixed: Changing Binding Options (such as the default when a topic is still empty) no longer alters the rest of the widget unexpectedly.",
+          "tags": [
+            49
+          ]
+        },
+        {
+          "title": "Fixed: When you set a topic for the current page, or show the page in a text or other widget, that value now shows up on time with local page links-no more long wait after opening the dashboard or moving between pages.",
+          "tags": [
+            40,
+            49
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.7.4",
+      "date": "2026-04-18",
+      "changes": [
+        {
+          "title": "New: Binding Options (extra button next to the topic link): set a default when the topic is still empty; for on/off settings, map your own words to on or off, with Invert to flip or clear.",
+          "tags": [
+            49
+          ]
+        },
+        {
+          "title": "Fixed: Icon colors-theme colors work in the color picker again.",
+          "tags": [
+            8,
+            36,
+            42
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.7.3",
+      "date": "2026-04-16",
+      "changes": [
+        {
+          "title": "Fixed: Switch/Button and Menu toggles in Selection Groups: when one turns on remotely, the others switch off correctly, and group state is remembered after reloading the dashboard.",
+          "tags": [
+            13,
+            15,
+            49
+          ]
+        },
+        {
+          "title": "Improved: iCal calendars now include all-day and multi-day events correctly within your chosen date range.",
+          "tags": [
+            34
+          ]
+        },
+        {
+          "title": "Fixed: Timed idle behaviour in button stacks (for example auto-hide) no longer breaks when global topics refresh the dashboard.",
+          "tags": [
+            15,
+            49
+          ]
+        },
+        {
+          "title": "Fixed: Light Grid auto-hide after idle no longer keeps restarting during live updates.",
+          "tags": [
+            11,
+            49
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.7.2",
+      "date": "2026-04-14",
+      "changes": [
+        {
+          "title": "Fixed: Clock stays centered on older iPhones and iPads.",
+          "tags": [
+            3,
+            37
+          ]
+        },
+        {
+          "title": "Fixed: Date Time Text now shows immediately after reload.",
+          "tags": [
+            3
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.7.1",
+      "date": "2026-04-13",
+      "changes": [
+        {
+          "title": "Fixed: Selecting a group from the Selected Widget menu now opens the page where that group is placed.",
+          "tags": [
+            40,
+            42
+          ]
+        },
+        {
+          "title": "Improved: Groups in the Selected Widget menu now show which page they are on.",
+          "tags": [
+            40,
+            42
+          ]
+        },
+        {
+          "title": "Improved: You can now click the page label and type a page number directly for faster page navigation.",
+          "tags": [
+            40,
+            42
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.7.0",
+      "date": "2026-04-09",
+      "changes": [
+        {
+          "title": "New: Clock widget: Custom time, flip-clock layout, and textual time with language-aware formatting.",
+          "tags": [
+            3
+          ]
+        },
+        {
+          "title": "New: Theme Colors: Redesigned configuration, token-based theme editing, and an editor color picker with quick access to colors already used on the canvas.",
+          "tags": [
+            36,
+            42
+          ]
+        },
+        {
+          "title": "New: Optional backups when you overwrite a dashboard on Homey; export an older copy from Load from Homey in the editor.",
+          "tags": [
+            33,
+            51
+          ]
+        },
+        {
+          "title": "New: Widget groups: Show or hide the whole group, optional Override Page(s) for every member, dimmed backdrop behind the group, and modal-style stacking when several groups overlap.",
+          "tags": [
+            40,
+            42
+          ]
+        },
+        {
+          "title": "Fixed: Graph widget horizontal grid stays inside the plot area instead of leaking past the container edge.",
+          "tags": [
+            7
+          ]
+        },
+        {
+          "title": "Fixed: Switch/Button and Menu visibility and interaction on older iOS 12 / WebKit.",
+          "tags": [
+            13,
+            15,
+            37
+          ]
+        },
+        {
+          "title": "New: Graph widget:Optional vertical grid lines on the left and right chart edges.",
+          "tags": [
+            7
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.6.3",
+      "date": "2026-04-04",
+      "changes": [
+        {
+          "title": "Fixed: Duplicate and paste while a group is open keep widgets in that group and visible in focus mode.",
+          "tags": [
+            42
+          ]
+        },
+        {
+          "title": "Fixed: Typing a value in the editor and then clicking a different widget no longer applies the unconfirmed value to the wrong widget.",
+          "tags": [
+            42
+          ]
+        },
+        {
+          "title": "Fixed: Horizontal gauge axis labels no longer spill past the bar (smart/strict intervals).",
+          "tags": [
+            6
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.6.2",
+      "date": "2026-04-03",
+      "changes": [
+        {
+          "title": "New: Widget Page(s) supports ranges (e.g. 1,2,5-8); insert/delete page shifts all page numbers including range bounds.",
+          "tags": [
+            40,
+            42
+          ]
+        },
+        {
+          "title": "New: Optional \"Current Page Output Topic\" under Dashboard Environment: publishes the active page on load, reconnect, and whenever the page changes (view mode).",
+          "tags": [
+            40,
+            49
+          ]
+        },
+        {
+          "title": "Improved: Menu row Output Topic matches Switch wording and dropdown layout.",
+          "tags": [
+            13,
+            15,
+            49
+          ]
+        },
+        {
+          "title": "Fixed: Global Font Family dropdown includes custom Google fonts (same shared list as widget editors).",
+          "tags": [
+            42
+          ]
+        },
+        {
+          "title": "Fixed: Custom fonts apply immediately for Menu and Switch/Button typography; loading now keeps your custom font list active and picks up all typography font fields.",
+          "tags": [
+            13,
+            15,
+            42
+          ]
+        },
+        {
+          "title": "Improved: When widget Background is off, inner effects (e.g. Switch/Button glow) are no longer clipped at the widget frame.",
+          "tags": [
+            15,
+            42
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.6.1",
+      "date": "2026-04-01",
+      "changes": [
+        {
+          "title": "Fixed: Icon color picker no longer closes while you edit the color (e.g. in Chrome).",
+          "tags": [
+            42
+          ]
+        },
+        {
+          "title": "Fixed: Menu widget glow shows correctly in view mode for slide and dropdown styles when open.",
+          "tags": [
+            13
+          ]
+        },
+        {
+          "title": "Improved: Menu widget Icon Location adds Top and Bottom (icon above or below the label).",
+          "tags": [
+            13
+          ]
+        },
+        {
+          "title": "New: Menu widget optional Menu Item Width (px) for fixed-width items; long labels show an ellipsis.",
+          "tags": [
+            13
+          ]
+        },
+        {
+          "title": "New: Selection groups support \"Allow empty selection\" so a grouped toggle can turn off when policy allows (Switch/Button and Menu toggle items).",
+          "tags": [
+            13,
+            15
+          ]
+        },
+        {
+          "title": "New: Menu toggle items support State (On/Off) for initial or unbound on/off state.",
+          "tags": [
+            13,
+            49
+          ]
+        },
+        {
+          "title": "New: Menu toggle items support \"Send Off When Turned Off by Group\" to publish the off payload when another item in the same selection group takes over.",
+          "tags": [
+            13,
+            49
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.6.0",
+      "date": "2026-04-02",
+      "changes": [
+        {
+          "title": "Improved: Redesigned the image gallery browser so it is easier to browse and pick pictures.",
+          "tags": [
+            42
+          ]
+        },
+        {
+          "title": "Fixed: Resize no longer resets the refresh timer, so the image does not reload constantly while you change the size.",
+          "tags": [
+            9
+          ]
+        },
+        {
+          "title": "Fixed: Image widgets now follow the linked topic correctly.",
+          "tags": [
+            9,
+            49
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.5.3",
+      "date": "2026-04-01",
+      "changes": [
+        {
+          "title": "Fixed: Resolved an issue where Menu item icons failed to appear.",
+          "tags": [
+            13
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.5.2",
+      "date": "2026-03-31",
+      "changes": [
+        {
+          "title": "Fixed: Global label color for switches and buttons applies to button text again when you open older dashboards.",
+          "tags": [
+            15
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.5.1",
+      "date": "2026-03-30",
+      "changes": [
+        {
+          "title": "Fixed: Older dashboards with switches and buttons in groups now open with correct titles, captions, and label styling.",
+          "tags": [
+            15,
+            42
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.5.0",
+      "date": "2026-03-28",
+      "changes": [
+        {
+          "title": "New: Menu widget for navigation! open pages, links, toggles, and slide-out or dropdown layouts.",
+          "tags": [
+            13,
+            40
+          ]
+        },
+        {
+          "title": "New: Optional global setting to preload picture URLs across all pages for smoother page changes.",
+          "tags": [
+            40,
+            45
+          ]
+        },
+        {
+          "title": "Fixed: Arrow widgets inside groups no longer shift out of place when you move or duplicate the group.",
+          "tags": [
+            1,
+            42
+          ]
+        },
+        {
+          "title": "New: Image widget option 'Enable Live Refresh' to reload the picture on a timer (with adjustable interval).",
+          "tags": [
+            9
+          ]
+        },
+        {
+          "title": "Fixed: Selection group toggles ignore a tap when already ON.",
+          "tags": [
+            13,
+            15
+          ]
+        },
+        {
+          "title": "Improved: Button widget with broader text styling options and several layout fixes, including horizontal alignment.",
+          "tags": [
+            15
+          ]
+        },
+        {
+          "title": "Fixed: In Selection Groups, the group can no longer end up with every button off-state stays consistent with exclusive selection.",
+          "tags": [
+            13,
+            15
+          ]
+        },
+        {
+          "title": "Fixed: \"Send Off When Turned Off by Group\" now runs correctly when On Click is set to Go to Page.",
+          "tags": [
+            13,
+            15,
+            40,
+            49
+          ]
+        },
+        {
+          "title": "Fixed: Fixed: Arrow widget changes are covered by undo/redo.",
+          "tags": [
+            1,
+            42
+          ]
+        },
+        {
+          "title": "Fixed: The driver connection warning no longer appears on a cold page load before the link is established.",
+          "tags": [
+            46
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.4.3",
+      "date": "2026-03-23",
+      "changes": [
+        {
+          "title": "Improved: General stability improvements.",
+          "tags": [
+            45
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.4.2",
+      "date": "2026-03-22",
+      "changes": [
+        {
+          "title": "New: Added a 'Reload Dashboard' Flow action card. This allows you to remotely refresh a specific dashboard on all active devices by its name.",
+          "tags": [
+            30,
+            37
+          ]
+        },
+        {
+          "title": "Improved: Renamed the 'Group / Container' widget to 'Container' to distinguish it from the new interactive grouping functionality.",
+          "tags": [
+            4,
+            42
+          ]
+        },
+        {
+          "title": "Improved: Added a 'Value Horizontal Alignment' setting to the Gauge widget with intelligent positioning defaults.",
+          "tags": [
+            6
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.4.1",
+      "date": "2026-03-20",
+      "changes": [
+        {
+          "title": "Improved: Better compatibility with iOS 12 and Safari/WebKit on older devices.",
+          "tags": [
+            37,
+            45
+          ]
+        },
+        {
+          "title": "New: Slider option to stream values live while dragging (optional alternative to sending only on release).",
+          "tags": [
+            14,
+            49
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.4.0",
+      "date": "2026-03-18",
+      "changes": [
+        {
+          "title": "New: Added copy/paste for single widgets, multi-selections, and grouped content.",
+          "tags": [
+            42
+          ]
+        },
+        {
+          "title": "New: Added a grouping feature to organize and edit widgets together.",
+          "tags": [
+            42
+          ]
+        },
+        {
+          "title": "New: Added an undo feature with quick history controls in the editor.",
+          "tags": [
+            42
+          ]
+        },
+        {
+          "title": "New: Added snippet export/import so snippets can be shared as code.",
+          "tags": [
+            42,
+            51
+          ]
+        },
+        {
+          "title": "New: Added a page navigator in the editor (`◀ Page X ▶`) for fast page stepping.",
+          "tags": [
+            40,
+            42
+          ]
+        },
+        {
+          "title": "New: Added stacked widget selection using Middle Click or Alt+Click.",
+          "tags": [
+            42
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.3.4",
+      "date": "2026-03-17",
+      "changes": [
+        {
+          "title": "New: Switch/Button now supports Selection Groups, so only one toggle button in the same group can be ON at a time.",
+          "tags": [
+            15
+          ]
+        },
+        {
+          "title": "Improved: Switch/Button now sends its payload even when On Click is set to Go to Page or Open URL.",
+          "tags": [
+            15,
+            40,
+            49
+          ]
+        },
+        {
+          "title": "Fixed: Group moving with snap-to-grid now preserves exact relative widget positions, including manually offset widgets.",
+          "tags": [
+            42
+          ]
+        },
+        {
+          "title": "New: Added WHEN card \"Dashboard Saved\" with \"Dashboard Name\" token, triggered after confirming a successful dashboard save.",
+          "tags": [
+            30,
+            51
+          ]
+        },
+        {
+          "title": "Improved: Cleaned up Switch/Button field order and labels for clearer On/Off configuration.",
+          "tags": [
+            15
+          ]
+        },
+        {
+          "title": "New: Added an optional dashboard connection warning when the active driver goes offline, with auto-hide on reconnect.",
+          "tags": [
+            46
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.3.3",
+      "date": "2026-03-16",
+      "changes": [
+        {
+          "title": "New: Direct SVG support in the Image widget (including SMIL animations).",
+          "tags": [
+            9
+          ]
+        },
+        {
+          "title": "New: Intelligent active-page tracking for Button navigation.",
+          "tags": [
+            15,
+            40
+          ]
+        },
+        {
+          "title": "Improved: The 'Send Insight' Flow card now outputs data with equally spaced time intervals for perfectly consistent graph rendering.",
+          "tags": [
+            30
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.3.2",
+      "date": "2026-03-13",
+      "changes": [
+        {
+          "title": "New: Added an advanced 'Send Insight' Flow card that calculates and outputs the highest, lowest, and average values along with raw graph data.",
+          "tags": [
+            30
+          ]
+        },
+        {
+          "title": "New: You can now lock widgets! This prevents them from being accidentally moved or modified while the dashboard is in Edit Mode.",
+          "tags": [
+            42
+          ]
+        },
+        {
+          "title": "Improved: The Gauge widget now supports rotating labels for better customization.",
+          "tags": [
+            6
+          ]
+        },
+        {
+          "title": "Fixed: Resolved an issue to ensure widget label offsets behave correctly.",
+          "tags": [
+            42
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.3.1",
+      "date": "2026-03-12",
+      "changes": [
+        {
+          "title": "New: Current Dashboard Indicator",
+          "description": "Added an indicator to the Editor UI.",
+          "tags": [
+            42
+          ]
+        },
+        {
+          "title": "Improved: Graph Widget",
+          "description": "Massive update adding support for negative values, new baseline positioning, dynamic axis labels, customizable line and fill colors, and improved grid ticks.",
+          "tags": [
+            7
+          ]
+        },
+        {
+          "title": "Improved: Device & Variable Dropdowns",
+          "description": "Alphabetically sorted dropdowns in the Configuration panel.",
+          "tags": [
+            33
+          ]
+        },
+        {
+          "title": "Improved: Global Typography",
+          "description": "Bold formatting can now be enabled or disabled on all widgets.",
+          "tags": [
+            42
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.3.0",
+      "date": "2026-03-11",
+      "changes": [
+        {
+          "title": "New: Edit Box Widget",
+          "description": "A new interactive input field that allows users to type and send custom text values.",
+          "tags": [
+            5,
+            49
+          ]
+        },
+        {
+          "title": "New: Topic Auto-Echo",
+          "description": "Automatically synchronizes state changes across multiple open dashboard windows.",
+          "tags": [
+            49
+          ]
+        },
+        {
+          "title": "New: Local Topics",
+          "description": "A new way to define and manage internal dashboard variables without broadcasting them externally.",
+          "tags": [
+            49
+          ]
+        },
+        {
+          "title": "New: List/Log Widget",
+          "description": "Added multi-line text (linebreak) support.",
+          "tags": [
+            12
+          ]
+        },
+        {
+          "title": "New: Label & Text Widget",
+          "description": "Added a new 'Vertical Alignment' setting.",
+          "tags": [
+            10,
+            16
+          ]
+        },
+        {
+          "title": "New: Configuration Access Tags",
+          "description": "Introduced visual Read/Write data access level tags, local tags, and Flow tags across the configuration interface.",
+          "tags": [
+            33
+          ]
+        },
+        {
+          "title": "New: Switch/Button Widget",
+          "description": "Added X/Y icon offset settings.",
+          "tags": [
+            15
+          ]
+        },
+        {
+          "title": "Improved: Dashboard Templates",
+          "description": "Added various UI improvements and styling refinements.",
+          "tags": [
+            42,
+            51
+          ]
+        },
+        {
+          "title": "Improved: Arrow Widget",
+          "description": "Automatically synchronizes the arrowhead direction with the flow animation state.",
+          "tags": [
+            1
+          ]
+        },
+        {
+          "title": "Improved: Widget Selection Dropdown",
+          "description": "Alphabetically sorted for easier navigation.",
+          "tags": [
+            42
+          ]
+        },
+        {
+          "title": "Improved: Light Grid",
+          "description": "UI refinements with better visual consistency and an option to hide the white/color light indicators.",
+          "tags": [
+            11
+          ]
+        },
+        {
+          "title": "Fixed: Arrow Widget",
+          "description": "Fixed an issue where the bounding box blocked interaction with underlying widgets.",
+          "tags": [
+            1
+          ]
+        },
+        {
+          "title": "Fixed: Graph Widget",
+          "description": "Fixed an issue where the dashboard would crash when receiving a flatline of identical values.",
+          "tags": [
+            7,
+            45
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.2.5",
+      "date": "2026-03-07",
+      "changes": [
+        {
+          "title": "Fixed: Output Topics",
+          "description": "Fixed an issue in the editor where the link/unlink button would incorrectly appear for widget output topics.",
+          "tags": [
+            42,
+            49
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.2.4",
+      "date": "2026-03-07",
+      "changes": [
+        {
+          "title": "Improved: Widget Selection Navigation",
+          "description": "The dashboard now automatically navigates and switches to the correct page when you select a widget from the dropdown.",
+          "tags": [
+            40,
+            42
+          ]
+        },
+        {
+          "title": "Improved: Editor Labels",
+          "description": "Read-only items in the editor are now clearly labeled to prevent confusion.",
+          "tags": [
+            42
+          ]
+        },
+        {
+          "title": "Improved: Dashboard Performance",
+          "description": "Improved dashboard loading speed.",
+          "tags": [
+            45
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.2.3",
+      "date": "2026-03-06",
+      "changes": [
+        {
+          "title": "New: Icon Browser",
+          "description": "Expanded the Icon Browser to include the complete library of Phosphor Icons with intelligent keyword searching.",
+          "tags": [
+            42
+          ]
+        },
+        {
+          "title": "New: Graph Widget",
+          "description": "Added exact X and Y offset controls, allowing you to freely position the chart area.",
+          "tags": [
+            7
+          ]
+        },
+        {
+          "title": "New: Label Widget",
+          "description": "Added a free rotation setting (0-360 degrees).",
+          "tags": [
+            10
+          ]
+        },
+        {
+          "title": "New: Slider Widget",
+          "description": "Added support for inverted ranges (where Minimum is greater than Maximum).",
+          "tags": [
+            14
+          ]
+        },
+        {
+          "title": "Fixed: Global Styling",
+          "description": "Fixed an issue in the editor where global styling settings could not be dynamically bound to data topics.",
+          "tags": [
+            42,
+            49
+          ]
+        },
+        {
+          "title": "Fixed: Graph Widget",
+          "description": "Fixed a bug where the regular line color would sometimes incorrectly match the negative fill color.",
+          "tags": [
+            7
+          ]
+        },
+        {
+          "title": "Fixed: Dashboard Export",
+          "description": "Fixed an issue where the save/export filename would incorrectly carry over when switching between different dashboards.",
+          "tags": [
+            42,
+            51
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.2.2",
+      "date": "2026-03-05",
+      "changes": [
+        {
+          "title": "Improved: Arrow / Line Widget",
+          "description": "Added the ability to add corners, a reverse flow animation option, and reverse flow coloring.",
+          "tags": [
+            1
+          ]
+        },
+        {
+          "title": "Improved: Interface",
+          "description": "Widget names are now colored throughout the interface for easier identification.",
+          "tags": [
+            42
+          ]
+        },
+        {
+          "title": "Improved: Widget Dropdown",
+          "description": "The 'Selected Widget' dropdown is now intelligently sorted by page, widget type, and name to help you find the right item quickly.",
+          "tags": [
+            40,
+            42
+          ]
+        },
+        {
+          "title": "Improved: Topic Search",
+          "description": "Dynamic topic search dropdown now expands to the full editor width, making it easier to read long data topics.",
+          "tags": [
+            42,
+            49
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.2.1",
+      "date": "2026-03-03",
+      "changes": [
+        {
+          "title": "New: Graph Widget",
+          "description": "Added a new 'Smart Rounding' feature to display Y-axis values in clean, human-readable intervals.",
+          "tags": [
+            7
+          ]
+        },
+        {
+          "title": "Improved: Editor Labels",
+          "description": "Renamed all editor setting labels across every widget to clear, full words for a more consistent editing experience.",
+          "tags": [
+            42
+          ]
+        },
+        {
+          "title": "Fixed: Security",
+          "description": "Applied a security fix to the editor interface.",
+          "tags": [
+            42,
+            50
+          ]
+        },
+        {
+          "title": "Fixed: Graph Widget",
+          "description": "Fixed an issue where the negative fill was misaligned with the baseline.",
+          "tags": [
+            7
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.2.0",
+      "date": "2026-03-02",
+      "changes": [
+        {
+          "title": "New: Token-Based Security System",
+          "description": "When enabled in Homey app settings, devices accessing the dashboard must submit the configured Security Token to gain access.",
+          "tags": [
+            33,
+            50
+          ]
+        },
+        {
+          "title": "New: Graph Widget",
+          "description": "Added an optional 'Convert UTC to local timezone' setting to fix timeline offsets with native Homey Insight data.",
+          "tags": [
+            7
+          ]
+        },
+        {
+          "title": "New: Switch/Button Widget",
+          "description": "Added a new 'Button Alignment' setting.",
+          "tags": [
+            15
+          ]
+        },
+        {
+          "title": "Improved: Dashboard Initialization",
+          "description": "Optimized to instantly display capability values upon connection without waiting for device updates.",
+          "tags": [
+            33,
+            45,
+            49
+          ]
+        },
+        {
+          "title": "Improved: URL Cleanup",
+          "description": "Added automatic cleanup of configuration URL parameters (such as ?dashboard=...) when dashboards are loaded or imported via the user interface.",
+          "tags": [
+            42,
+            51
+          ]
+        },
+        {
+          "title": "Improved: Icon Browser",
+          "description": "Upgraded with infinite-scrolling to browse all 7,000+ icons.",
+          "tags": [
+            42
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.1.5",
+      "date": "2026-03-01",
+      "changes": [
+        {
+          "title": "New: Canvas Environment",
+          "description": "Added a 'Hide Scrollbars' setting for clean kiosk displays.",
+          "tags": [
+            37,
+            40
+          ]
+        },
+        {
+          "title": "Fixed: Graph Widget",
+          "description": "Fixed an issue where negative values configured as 'Show as Positive' would be incorrectly hidden or misaligned when minimum boundary was set to 0 or Auto Min was enabled.",
+          "tags": [
+            7
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.1.4",
+      "date": "2026-03-01",
+      "changes": [
+        {
+          "title": "New: Page Management",
+          "description": "Added buttons to Insert and Delete complete dashboard pages.",
+          "tags": [
+            40,
+            42
+          ]
+        },
+        {
+          "title": "New: Page Management",
+          "description": "Added a 'Move to Page' button to quickly transfer selected widgets across pages.",
+          "tags": [
+            40,
+            42
+          ]
+        },
+        {
+          "title": "New: Gauge Widget",
+          "description": "Added a toggle to turn off bold formatting on its central value.",
+          "tags": [
+            6
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.1.3",
+      "date": "2026-03-01",
+      "changes": [
+        {
+          "title": "New: Clock Widget",
+          "description": "Added the ability to change the font of clock numbers.",
+          "tags": [
+            3
+          ]
+        },
+        {
+          "title": "New: Graph Widget",
+          "description": "Added the ability to format the X-axis with time and date values (Hours, Minutes, Seconds) when driven by flow cards containing timestamps.",
+          "tags": [
+            7,
+            30
+          ]
+        },
+        {
+          "title": "New: Graph Widget",
+          "description": "Introduced highly customizable Grid Lines to independently toggle and style Top, Bottom, Baseline, Horizontal, and Vertical grid lines.",
+          "tags": [
+            7
+          ]
+        },
+        {
+          "title": "New: Graph Widget",
+          "description": "Added a 'Smooth Line' curved aesthetic option to the chart visuals.",
+          "tags": [
+            7
+          ]
+        },
+        {
+          "title": "New: Graph Widget",
+          "description": "Added an option to limit the number of decimals shown on the Y-axis.",
+          "tags": [
+            7
+          ]
+        },
+        {
+          "title": "Improved: Graph Widget",
+          "description": "Improved the Y-axis to dynamically ensure the configured 'Zero Value' (Baseline) is always visibly labeled.",
+          "tags": [
+            7
+          ]
+        },
+        {
+          "title": "Improved: Widget Inputs",
+          "description": "Replaced sliders with exact number inputs across all widgets to allow dynamic tag bindings for colors, opacities, and sizes.",
+          "tags": [
+            42,
+            49
+          ]
+        },
+        {
+          "title": "Fixed: Label Widget",
+          "description": "Fixed an issue where the widget failed to display the exact word 'false' and the number '0' when bound to a dynamic text value.",
+          "tags": [
+            10,
+            49
+          ]
+        },
+        {
+          "title": "Fixed: Multi-Dashboard Sync",
+          "description": "Resolved a synchronization bug preventing background updates from being reflected across multiple active dashboards.",
+          "tags": [
+            45,
+            49
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.1.2",
+      "date": "2026-02-28",
+      "changes": [
+        {
+          "title": "New: Google Fonts",
+          "description": "Added custom Google Fonts support.",
+          "tags": [
+            42
+          ]
+        },
+        {
+          "title": "New: Buttons and Switches",
+          "description": "Added directional labels.",
+          "tags": [
+            15
+          ]
+        },
+        {
+          "title": "New: Dashboard Migration",
+          "description": "Introduced an automatic dashboard migration system.",
+          "tags": [
+            51
+          ]
+        },
+        {
+          "title": "Improved: Label Positioning",
+          "description": "Standardized label positioning across all widgets.",
+          "tags": [
+            42
+          ]
+        },
+        {
+          "title": "Improved: Battery Widget",
+          "description": "Enhanced styling and scaling.",
+          "tags": [
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.1.1",
+      "date": "2026-02-20",
+      "changes": [
+        {
+          "title": "New: Smart Light Grid Widget",
+          "description": "Easily control multiple lights, colors, and brightness from a single compact panel.",
+          "tags": [
+            11
+          ]
+        },
+        {
+          "title": "Improved: Graph Widget",
+          "description": "'Manual Min' and 'Max' now strictly limit graph boundaries, and added a 'Zero Value' setting to draw bars from a custom baseline.",
+          "tags": [
+            7
+          ]
+        },
+        {
+          "title": "Improved: Reset Canvas",
+          "description": "Now loads a fully configured default dashboard layout instead of a blank screen.",
+          "tags": [
+            42,
+            43
+          ]
+        },
+        {
+          "title": "Fixed: Color Display",
+          "description": "Fixed an issue where dark colors appeared incorrectly as white on Android tablets and phones.",
+          "tags": [
+            36,
+            37
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.0.2",
+      "date": "2026-02-18",
+      "changes": [
+        {
+          "title": "Improved: Connection Indicator",
+          "description": "Updated the top status indicator to correctly display 'Simulating' when simulation mode is active.",
+          "tags": [
+            46
+          ]
+        },
+        {
+          "title": "Fixed: Editor Navigation",
+          "description": "Fixed an issue where the 'unsaved changes' warning would appear unnecessarily when switching pages or viewing the dashboard.",
+          "tags": [
+            40,
+            42
+          ]
+        },
+        {
+          "title": "Fixed: Graph Widget",
+          "description": "Fixed a bug where the title label was missing from Graph widgets.",
+          "tags": [
+            7
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.0.1",
+      "date": "2026-02-17",
+      "changes": [
+        {
+          "title": "New: Gauge Widget",
+          "description": "Added precise X and Y offset settings to freely position text and values.",
+          "tags": [
+            6
+          ]
+        },
+        {
+          "title": "New: Documentation",
+          "description": "Added a new 'Tips & Tricks' section featuring guides for Camera Streams and Date/Time formatting.",
+          "tags": [
+            44
+          ]
+        },
+        {
+          "title": "Improved: Sliders & Switches",
+          "description": "The 'Output Topic' field now features a dropdown menu of active topics.",
+          "tags": [
+            14,
+            15,
+            49
+          ]
+        },
+        {
+          "title": "Fixed: Arrow Widget",
+          "description": "Fixed an issue where flowing arrow animations would appear static on Apple devices (iPhone/iPad).",
+          "tags": [
+            1,
+            37
+          ]
+        },
+        {
+          "title": "Fixed: iOS Home Screen",
+          "description": "Fixed an issue where saving the dashboard to the iOS Home Screen would forget which specific layout to load.",
+          "tags": [
+            37,
+            40
+          ]
+        }
+      ]
+    },
+    {
+      "version": "1.0.0",
+      "date": "2026-02-01",
+      "changes": [
+        {
+          "title": "New: Initial Release",
+          "description": "Initial release of Dashboard Studio.",
+          "tags": []
+        }
+      ]
+    }
+  ]
+}

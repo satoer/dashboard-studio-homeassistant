@@ -1,6 +1,6 @@
 class GraphWidget extends BaseWidget {
     static get metadata() {
-        return { shortName: "Graph", label: "Graph", icon: "ph-chart-line", category: "Data", color_dark: "hsl(160, 80%, 65%)", color_light: "hsl(160, 85%, 35%)", version: "2.3.3", date: "2026-11-04" };
+        return { shortName: "Graph", label: "Graph", icon: "ph-chart-line", category: "Data", color_dark: "hsl(160, 80%, 65%)", color_light: "hsl(160, 85%, 35%)", version: "2.3.3", date: "2026-11-05" };
     }
 
     static getLegendPositionOptions(values, isGlobal) {
@@ -796,31 +796,84 @@ class GraphWidget extends BaseWidget {
             return !hover;
         };
         const intervalDeps = pointValuesDeps.concat(isMaster ? ['defaultGraphPointValuesHoverOnly'] : ['pointValuesHoverOnly', 'defaultGraphPointValuesHoverOnly']);
+        const distKey = isMaster ? 'defaultGraphPointValuesDistribution' : 'pointValuesDistribution';
+        const distDeps = intervalDeps.concat(isMaster ? ['defaultGraphPointValuesDistribution'] : ['pointValuesDistribution', 'defaultGraphPointValuesDistribution']);
+        const distField = {
+            key: distKey,
+            type: 'select',
+            label: 'Point Value Distribution',
+            options: [
+                { value: 'timeHighLow', text: 'Time (Peaks & Troughs)' },
+                { value: 'timeUniform', text: 'Time (Uniform)' },
+                { value: 'pointStep', text: 'Point Step (Every N Points)' }
+            ],
+            cols: 12,
+            ...dk('defaultGraphPointValuesDistribution')
+        };
+        GraphWidget.attachGraphFieldVisibleWhen(distField, intervalVisible, intervalDeps);
+        fields.push(distField);
+
+        const isPointStepMode = function (values) {
+            const dist = values[distKey] !== undefined
+                ? values[distKey]
+                : (typeof MASTER_SETTINGS !== 'undefined' && MASTER_SETTINGS.defaultGraphPointValuesDistribution
+                    ? MASTER_SETTINGS.defaultGraphPointValuesDistribution
+                    : 'timeHighLow');
+            return dist === 'pointStep';
+        };
+
         const autoIntervalKey = isMaster ? 'defaultGraphAutoPointValuesInterval' : 'autoPointValuesInterval';
+        const isAutoActive = function (values) {
+            const a = values[autoIntervalKey] !== undefined
+                ? values[autoIntervalKey]
+                : (typeof MASTER_SETTINGS !== 'undefined' && MASTER_SETTINGS.defaultGraphAutoPointValuesInterval === true);
+            return !!a;
+        };
+        const autoDeps = distDeps.concat(isMaster ? [autoIntervalKey] : [autoIntervalKey, 'defaultGraphAutoPointValuesInterval']);
+
         const autoIntervalField = {
             key: autoIntervalKey,
             type: 'checkbox',
             label: 'Auto Interval',
-            cols: 12,
+            cols: 6,
             ...dk('defaultGraphAutoPointValuesInterval')
         };
         GraphWidget.attachGraphFieldVisibleWhen(autoIntervalField, intervalVisible, intervalDeps);
         fields.push(autoIntervalField);
-        const manualIntervalField = {
-            key: isMaster ? 'defaultGraphPointValuesInterval' : 'pointValuesInterval',
+
+        const timeWidthKey = isMaster ? 'defaultGraphPointValuesTimeWidth' : 'pointValuesTimeWidth';
+        const timeWidthField = {
+            key: timeWidthKey,
             type: 'number',
-            min: 0.001,
-            step: 0.001,
-            label: 'Interval',
-            cols: 12,
-            ...dk('defaultGraphPointValuesInterval')
+            min: 1,
+            step: 1,
+            label: 'Time Section Width (px)',
+            cols: 6,
+            disableWhen: isAutoActive,
+            ...dk('defaultGraphPointValuesTimeWidth')
         };
-        GraphWidget.attachGraphFieldVisibleWhen(manualIntervalField, function (values) {
+        GraphWidget.attachGraphFieldVisibleWhen(timeWidthField, function (values) {
             if (!intervalVisible(values)) return false;
-            const auto = values[autoIntervalKey] !== undefined ? values[autoIntervalKey] : (typeof MASTER_SETTINGS !== 'undefined' && MASTER_SETTINGS.defaultGraphAutoPointValuesInterval === true);
-            return !auto;
-        }, intervalDeps.concat(isMaster ? [autoIntervalKey] : [autoIntervalKey, 'defaultGraphAutoPointValuesInterval']));
-        fields.push(manualIntervalField);
+            return !isPointStepMode(values);
+        }, autoDeps);
+        fields.push(timeWidthField);
+
+        const stepKey = isMaster ? 'defaultGraphPointValuesStep' : 'pointValuesStep';
+        const pointStepField = {
+            key: stepKey,
+            type: 'number',
+            min: 1,
+            step: 1,
+            label: 'Point Step',
+            cols: 6,
+            disableWhen: isAutoActive,
+            ...dk('defaultGraphPointValuesStep')
+        };
+        GraphWidget.attachGraphFieldVisibleWhen(pointStepField, function (values) {
+            if (!intervalVisible(values)) return false;
+            return isPointStepMode(values);
+        }, autoDeps);
+        fields.push(pointStepField);
         return fields;
     }
 
@@ -1395,7 +1448,9 @@ class GraphWidget extends BaseWidget {
             defaultGraphAxisXFontBold: false,
             defaultGraphShowPointValues: false,
             defaultGraphPointValuesHoverOnly: false,
-            defaultGraphPointValuesInterval: 1,
+            defaultGraphPointValuesDistribution: 'timeHighLow',
+            defaultGraphPointValuesTimeWidth: 48,
+            defaultGraphPointValuesStep: 1,
             defaultGraphPointValuesDecimals: 0,
             defaultGraphPointValuesAbbreviate: true,
             defaultGraphPointValFont: "'Inter', sans-serif",
@@ -2114,6 +2169,12 @@ class GraphWidget extends BaseWidget {
         if (!this._seriesState) this._seriesState = {};
         if (!this._sessionVisible) this._sessionVisible = {};
         if (this._timelineTimer === undefined) this._timelineTimer = null;
+        if (this._timelineRaf === undefined) this._timelineRaf = null;
+        if (this._timelineMode === undefined) this._timelineMode = null;
+        if (this._timelineTimerMs === undefined) this._timelineTimerMs = null;
+        if (this._lastTimelineTick === undefined) this._lastTimelineTick = 0;
+        if (this._boundTimelineTick === undefined) this._boundTimelineTick = null;
+        if (this._boundTimelineTimer === undefined) this._boundTimelineTimer = null;
         if (this._plotView === undefined) this._plotView = null;
         if (!this.renderedPoints) this.renderedPoints = [];
         if (!this._activeAnimations) this._activeAnimations = {};
@@ -2146,6 +2207,9 @@ class GraphWidget extends BaseWidget {
         const tint = GraphWidget.markerTintForIndex(0);
         return {
             label: "Graph",
+            pointValuesDistribution: 'timeHighLow',
+            pointValuesTimeWidth: 48,
+            pointValuesStep: 1,
             series: [
                 GraphWidget.createSeries(0, {
                     name: 'Graph 1',
@@ -2445,7 +2509,9 @@ class GraphWidget extends BaseWidget {
             autoPointValuesInterval: c.autoPointValuesInterval !== undefined && c.autoPointValuesInterval !== null
                 ? (c.autoPointValuesInterval === true)
                 : (c.defaultGraphAutoPointValuesInterval === true),
-            pointValuesInterval: hoverOnly ? 1 : Math.max(0.001, BaseWidget.toFiniteNumber(c.pointValuesInterval !== undefined && c.pointValuesInterval !== null ? c.pointValuesInterval : (c.defaultGraphPointValuesInterval !== undefined ? c.defaultGraphPointValuesInterval : 1), 1)),
+            pointValuesDistribution: c.pointValuesDistribution || c.defaultGraphPointValuesDistribution || 'timeHighLow',
+            pointValuesTimeWidth: hoverOnly ? 48 : Math.max(1, Math.round(BaseWidget.toFiniteNumber(c.pointValuesTimeWidth !== undefined && c.pointValuesTimeWidth !== null ? c.pointValuesTimeWidth : (c.defaultGraphPointValuesTimeWidth !== undefined ? c.defaultGraphPointValuesTimeWidth : 48), 48))),
+            pointValuesStep: hoverOnly ? 1 : Math.max(1, Math.round(BaseWidget.toFiniteNumber(c.pointValuesStep !== undefined && c.pointValuesStep !== null ? c.pointValuesStep : (c.defaultGraphPointValuesStep !== undefined ? c.defaultGraphPointValuesStep : 1), 1))),
             pointValuesDecimals: Math.max(0, Math.floor(BaseWidget.toFiniteNumber(c.pointValuesDecimals !== undefined && c.pointValuesDecimals !== null ? c.pointValuesDecimals : (c.defaultGraphPointValuesDecimals !== undefined ? c.defaultGraphPointValuesDecimals : 0), 0))),
             pointValuesAbbreviate: c.pointValuesAbbreviate !== undefined && c.pointValuesAbbreviate !== null ? c.pointValuesAbbreviate : (c.defaultGraphPointValuesAbbreviate !== undefined ? c.defaultGraphPointValuesAbbreviate : true),
 
@@ -3016,7 +3082,10 @@ class GraphWidget extends BaseWidget {
             const w = wrap.clientWidth;
             const h = wrap.clientHeight;
             if (w >= 10 && h >= 10) {
-                return { w: w, h: h };
+                if (!this._measuredPlotBox) this._measuredPlotBox = { w: 0, h: 0 };
+                this._measuredPlotBox.w = w;
+                this._measuredPlotBox.h = h;
+                return this._measuredPlotBox;
             }
         }
         const c = this.config || {};
@@ -3153,6 +3222,8 @@ class GraphWidget extends BaseWidget {
         this._lastObservedPlotH = null;
         this._lastPlacedPointValues = null;
         this._boundAnimTick = null;
+        this._boundTimelineTick = null;
+        this._boundTimelineTimer = null;
         this._scaleState = null;
         this._cachedPlotLayout = null;
         if (this._legendPointerBinding && typeof this._legendPointerBinding.destroy === 'function') {
@@ -3940,24 +4011,29 @@ class GraphWidget extends BaseWidget {
         const plotSpan = horizontal ? geom.drawH : geom.drawW;
         if (plotSpan <= 0) return;
 
+        const distMode = c.pointValuesDistribution || 'timeHighLow';
+        const isPointStep = distMode === 'pointStep';
+        const isTimeUniform = distMode === 'timeUniform';
+
         let gridDivisions;
-        let userInterval = 1;
+        let timeTargetStep = 48;
         if (c.autoPointValuesInterval === true) {
+            timeTargetStep = 48;
             gridDivisions = Math.max(4, Math.min(24, Math.floor(plotSpan / 48)));
         } else {
-            userInterval = Math.max(0.001, Number(c.pointValuesInterval) || 1);
-            const targetStep = Math.max(0.05, 48 * userInterval);
-            gridDivisions = Math.max(2, Math.min(2000, Math.floor(plotSpan / targetStep)));
+            timeTargetStep = Math.max(1, Math.round(Number(c.pointValuesTimeWidth) || 48));
+            gridDivisions = Math.max(2, Math.min(2000, Math.floor(plotSpan / timeTargetStep)));
         }
         if (gridDivisions < 1) gridDivisions = 1;
 
         const fs = Number(c.type === 'bar' ? c.pointValBarFs : c.pointValFs) || 10;
-        const spacingFactor = (c.autoPointValuesInterval !== true && userInterval < 1) ? Math.max(0, userInterval) : 1;
+        const spacingFactor = (c.autoPointValuesInterval !== true && timeTargetStep < 48) ? Math.max(0, timeTargetStep / 48) : 1;
         const minSpacing = Math.max(0, Math.max(26, fs * 2.5) * spacingFactor);
         const minCrossSpacing = Math.max(0, Math.max(12, fs * 1.2) * spacingFactor);
         const placedLabels = [];
         const currentSeriesPlaced = {};
         const self = this;
+        const now = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
 
         const tryPlaceLabel = function (pt, spec, seriesIdx, bestKey, labeledKeys) {
             const inBounds = pt.x >= -2 && pt.x <= geom.drawW + 2 && pt.y >= -2 && pt.y <= geom.drawH + 2;
@@ -3968,9 +4044,12 @@ class GraphWidget extends BaseWidget {
             for (let i = 0; i < placedLabels.length; i++) {
                 const lbl = placedLabels[i];
                 if (lbl.seriesIdx === seriesIdx) {
-                    if (Math.abs(candPos - lbl.pos) < minSpacing) return false;
+                    if (!isPointStep && Math.abs(candPos - lbl.pos) < minSpacing) return false;
+                    if (isPointStep && Math.abs(candPos - lbl.pos) < 0.5) return false;
                 } else {
-                    if (Math.abs(candPos - lbl.pos) < minSpacing && Math.abs(candCross - lbl.cross) < minCrossSpacing) {
+                    const posDist = Math.abs(candPos - lbl.pos);
+                    const crossDist = Math.abs(candCross - lbl.cross);
+                    if (posDist < (isPointStep ? 6 : minSpacing) && crossDist < minCrossSpacing) {
                         return false;
                     }
                 }
@@ -3999,7 +4078,16 @@ class GraphWidget extends BaseWidget {
 
             if (anim && anim.updateMode !== 'stream') {
                 const isUnchanged = anim.animMode !== 'draw' && self._isLabelUnchanged(anim.prevPlacedLabels, pt.v, pt.x, pt.y);
-                const op = isUnchanged ? 1.0 : opFactor;
+                let op;
+                if (isUnchanged) {
+                    op = 1.0;
+                } else if (anim.animMode === 'morph' || anim.animMode === 'none') {
+                    const elapsed = anim.startTime ? (now - anim.startTime) : 350;
+                    const fadeProgress = Math.max(0, Math.min(1.0, elapsed / 350));
+                    op = fadeProgress * opFactor;
+                } else {
+                    op = opFactor;
+                }
                 self._drawPointValueLabel(ctx, pt.v, pt.x, pt.y, c, labelCol, op);
                 return true;
             }
@@ -4039,6 +4127,31 @@ class GraphWidget extends BaseWidget {
                 return getCoord(a) - getCoord(b);
             });
 
+            if (isPointStep) {
+                var step;
+                if (c.autoPointValuesInterval === true) {
+                    var maxFit = Math.max(1, Math.floor(plotSpan / 48));
+                    step = Math.max(1, Math.ceil(sortedPts.length / maxFit));
+                } else {
+                    step = Math.max(1, Math.round(Number(c.pointValuesStep) || 1));
+                }
+                for (let i = 0; i < sortedPts.length; i++) {
+                    const p = sortedPts[i];
+                    const nodeSeq = (p.seq != null && isFinite(p.seq))
+                        ? p.seq
+                        : (p.pt && p.pt.seq != null && isFinite(p.pt.seq)
+                            ? p.pt.seq
+                            : (p.index != null && isFinite(p.index) ? p.index : i));
+                    if (Math.abs(nodeSeq) % step === 0) {
+                        const pointKey = 'seq_' + nodeSeq;
+                        if (!labeledKeys[pointKey]) {
+                            tryPlaceLabel(p, spec, d, pointKey, labeledKeys);
+                        }
+                    }
+                }
+                continue;
+            }
+
             const seriesStep = isDuration
                 ? timeStep
                 : Math.max(0.001, Math.max(Number(c.maxPoints) || 20, sortedPts.length) / gridDivisions);
@@ -4069,22 +4182,26 @@ class GraphWidget extends BaseWidget {
                 let bestPoint = sortedPts[cellStartIdx];
 
                 if (cellEndIdx - cellStartIdx > 1) {
-                    let maxExtremum = -1;
-                    for (let i = cellStartIdx; i < cellEndIdx; i++) {
-                        const p = sortedPts[i];
-                        const prev = i > 0 ? sortedPts[i - 1].v : p.v;
-                        const next = i < sortedPts.length - 1 ? sortedPts[i + 1].v : p.v;
-                        const isPeak = p.v >= prev && p.v >= next && (p.v > prev || p.v > next);
-                        const isTrough = p.v <= prev && p.v <= next && (p.v < prev || p.v < next);
-                        if (isPeak || isTrough) {
-                            const score = Math.max(Math.abs(p.v - prev), Math.abs(p.v - next));
-                            if (score > maxExtremum) {
-                                maxExtremum = score;
-                                bestPoint = p;
+                    let foundPeakOrTrough = false;
+                    if (!isTimeUniform) {
+                        let maxExtremum = -1;
+                        for (let i = cellStartIdx; i < cellEndIdx; i++) {
+                            const p = sortedPts[i];
+                            const prev = i > 0 ? sortedPts[i - 1].v : p.v;
+                            const next = i < sortedPts.length - 1 ? sortedPts[i + 1].v : p.v;
+                            const isPeak = p.v >= prev && p.v >= next && (p.v > prev || p.v > next);
+                            const isTrough = p.v <= prev && p.v <= next && (p.v < prev || p.v < next);
+                            if (isPeak || isTrough) {
+                                const score = Math.max(Math.abs(p.v - prev), Math.abs(p.v - next));
+                                if (score > maxExtremum) {
+                                    maxExtremum = score;
+                                    bestPoint = p;
+                                    foundPeakOrTrough = true;
+                                }
                             }
                         }
                     }
-                    if (maxExtremum < 0) {
+                    if (!foundPeakOrTrough) {
                         let bestCenterDist = Infinity;
                         for (let i = cellStartIdx; i < cellEndIdx; i++) {
                             const dist = Math.abs(getCoord(sortedPts[i]) - cellCenter);
@@ -4103,14 +4220,14 @@ class GraphWidget extends BaseWidget {
             }
         }
 
-        // Draw-in mode cross-fade: fade out previous point value labels during the animation interval
+        // Snapshot cross-fade: fade out previous point value labels over fixed 350 ms
         for (let d = 0; d < numSeries; d++) {
             const sObj = drawnSeries[d];
             const sp = sObj.spec || {};
             const sAnim = self._activeAnimations && sp.id && self._activeAnimations[sp.id];
-            if (sAnim && sAnim.animMode === 'morph' && sAnim.updateMode !== 'stream' && sAnim.prevPlacedLabels && sAnim.prevPlacedLabels.length > 0) {
-                const p = sAnim.progress != null ? sAnim.progress : 1.0;
-                const fadeOut = Math.max(0, Math.min(1.0, 1.0 - p));
+            if (sAnim && (sAnim.animMode === 'morph' || sAnim.animMode === 'none') && sAnim.updateMode !== 'stream' && sAnim.prevPlacedLabels && sAnim.prevPlacedLabels.length > 0) {
+                const elapsed = sAnim.startTime ? (now - sAnim.startTime) : 350;
+                const fadeOut = Math.max(0, Math.min(1.0, 1.0 - (elapsed / 350)));
                 if (fadeOut > 0.01) {
                     for (let j = 0; j < sAnim.prevPlacedLabels.length; j++) {
                         const oldLbl = sAnim.prevPlacedLabels[j];
@@ -4690,7 +4807,10 @@ class GraphWidget extends BaseWidget {
         if (!this._graphIsOnPage()) return;
         const c = this._plotView || this.config;
         const animMode = c.graphAnimation;
-        if (!animMode || animMode === 'none') return;
+        const hasPointValFade = updateMode !== 'stream'
+            && c.showPointValues && !c.pointValuesHoverOnly
+            && this._lastPlacedPointValues && this._lastPlacedPointValues[seriesId] && this._lastPlacedPointValues[seriesId].length > 0;
+        if ((!animMode || animMode === 'none') && !hasPointValFade) return;
         const activeAnim = this._activeAnimations && this._activeAnimations[seriesId];
         if (activeAnim && activeAnim.animMode === 'draw' && (activeAnim.progress == null || activeAnim.progress < 1.0)) {
             if (!this._pendingAnimationUpdates) this._pendingAnimationUpdates = {};
@@ -4702,13 +4822,20 @@ class GraphWidget extends BaseWidget {
             };
             return;
         }
-        const durSec = updateMode === 'stream'
-            ? (c.graphAnimStreamDuration != null ? c.graphAnimStreamDuration : 0.6)
-            : (c.graphAnimDuration != null ? c.graphAnimDuration : 2);
+        let durSec;
+        let effectiveMode = animMode;
+        if (!animMode || animMode === 'none') {
+            effectiveMode = 'none';
+            durSec = 0.35;
+        } else if (updateMode === 'stream') {
+            durSec = c.graphAnimStreamDuration != null ? c.graphAnimStreamDuration : 0.6;
+        } else {
+            durSec = c.graphAnimDuration != null ? c.graphAnimDuration : 2;
+        }
         this._needsPageRevealAnimation = false;
         this._startSeriesAnimation(
             seriesId,
-            animMode,
+            effectiveMode,
             updateMode,
             prevBuf,
             nextBuf,
@@ -4744,9 +4871,9 @@ class GraphWidget extends BaseWidget {
         }
 
         const targetBuf = toBuf ? toBuf.slice() : [];
-        const isInitialReveal = animMode === 'draw'
+        const isInitialReveal = animMode !== 'none' && (animMode === 'draw'
             || (effectiveFrom.length === 0 && updateMode !== 'stream')
-            || (this._needsPageRevealAnimation === true && updateMode !== 'stream' && animMode !== 'morph');
+            || (this._needsPageRevealAnimation === true && updateMode !== 'stream' && animMode !== 'morph'));
         this._needsPageRevealAnimation = false;
         const effectiveAnimMode = isInitialReveal ? 'draw' : (animMode === 'shimmer' ? 'shimmer' : (animMode === 'none' ? 'none' : 'morph'));
         const shiftSlots = (effectiveAnimMode === 'morph' && updateMode === 'snapshot')
@@ -4771,7 +4898,7 @@ class GraphWidget extends BaseWidget {
             currentBuffer: null
         };
 
-        if (effectiveAnimMode === 'draw' || !this._hasPlottedFiniteData) {
+        if (effectiveAnimMode === 'none' || effectiveAnimMode === 'draw' || !this._hasPlottedFiniteData) {
             if (this._scaleState) {
                 this._scaleState.fromMin = null;
                 this._scaleState.fromMax = null;
@@ -4880,6 +5007,10 @@ class GraphWidget extends BaseWidget {
         const from = anim.fromBuffer || [];
         const to = anim.toBuffer || stateBuffer || [];
         if (!to.length) return stateBuffer;
+
+        if (anim.animMode === 'none') {
+            return to;
+        }
 
         // --- STREAMING 4-STAGE PIPELINE ---
         if (anim.updateMode === 'stream') {
@@ -5349,11 +5480,18 @@ class GraphWidget extends BaseWidget {
     }
 
     _clearTimelineTimer() {
-        if (this._timelineTimer) {
+        if (this._timelineRaf != null && typeof cancelAnimationFrame === 'function') {
+            cancelAnimationFrame(this._timelineRaf);
+            this._timelineRaf = null;
+        }
+        if (this._timelineTimer != null) {
             clearInterval(this._timelineTimer);
+            clearTimeout(this._timelineTimer);
             this._timelineTimer = null;
         }
+        this._timelineMode = null;
         this._timelineTimerMs = null;
+        this._lastTimelineTick = 0;
     }
 
     _graphIsOnPage() {
@@ -5375,7 +5513,7 @@ class GraphWidget extends BaseWidget {
 
     _syncTimelineTimer(c) {
         const isRealTime = c && c.bufferMode === 'duration' && c.timelineAdvance === 'time';
-        const onPage = this._graphIsOnPage();
+        const onPage = this._graphIsOnPage() && !this._pausedInBackground;
         if (!isRealTime || !onPage) {
             this._clearTimelineTimer();
             return;
@@ -5384,21 +5522,85 @@ class GraphWidget extends BaseWidget {
         const period = GraphWidget.durationMsFrom(c.durationPreset, c.durationCustomValue, c.durationCustomUnit);
         const plotW = Math.max(100, (this.canvas && this.canvas.clientWidth) || 400);
         const idealMs = Math.round((0.5 * period) / plotW);
-        const targetMs = Math.max(250, Math.min(2000, idealMs));
 
-        if (this._timelineTimer && this._timelineTimerMs === targetMs) return;
+        const isSmoothRafMode = idealMs <= 100;
+        const targetCadenceMs = isSmoothRafMode
+            ? Math.max(30, idealMs)
+            : Math.max(100, Math.min(2000, idealMs));
+
+        const targetMode = isSmoothRafMode ? 'raf' : 'timer';
+        if (this._timelineMode === targetMode && this._timelineTimerMs === targetCadenceMs) {
+            return;
+        }
+
         this._clearTimelineTimer();
+        this._timelineMode = targetMode;
+        this._timelineTimerMs = targetCadenceMs;
+        this._lastTimelineTick = 0;
 
-        this._timelineTimerMs = targetMs;
-        const self = this;
-        this._timelineTimer = setInterval(function () {
-            if (!self._graphIsOnPage()) {
-                self._clearTimelineTimer();
-                return;
+        if (isSmoothRafMode) {
+            if (!this._boundTimelineTick) {
+                this._boundTimelineTick = this._tickTimeline.bind(this);
             }
-            if (typeof document !== 'undefined' && document.hidden) return;
-            self._renderPlotOnly();
-        }, targetMs);
+            if (typeof requestAnimationFrame === 'function') {
+                this._timelineRaf = requestAnimationFrame(this._boundTimelineTick);
+            }
+        } else {
+            if (!this._boundTimelineTimer) {
+                this._boundTimelineTimer = this._onTimelineTimerFired.bind(this);
+            }
+            this._timelineTimer = setInterval(this._boundTimelineTimer, targetCadenceMs);
+        }
+    }
+
+    _tickTimeline() {
+        this._timelineRaf = null;
+        if (!this._graphIsOnPage() || this._pausedInBackground) {
+            this._clearTimelineTimer();
+            return;
+        }
+        if (typeof document !== 'undefined' && document.hidden) {
+            if (typeof requestAnimationFrame === 'function') {
+                this._timelineRaf = requestAnimationFrame(this._boundTimelineTick);
+            }
+            return;
+        }
+
+        const now = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
+        const cadence = this._timelineTimerMs || 33;
+        const elapsed = now - (this._lastTimelineTick || 0);
+
+        if (elapsed >= cadence) {
+            this._lastTimelineTick = now;
+            if (!this._animRaf) {
+                this._renderPlotOnly();
+            }
+        }
+
+        if (typeof requestAnimationFrame === 'function') {
+            this._timelineRaf = requestAnimationFrame(this._boundTimelineTick);
+        }
+    }
+
+    _onTimelineTimerFired() {
+        if (!this._graphIsOnPage() || this._pausedInBackground) {
+            this._clearTimelineTimer();
+            return;
+        }
+        if (typeof document !== 'undefined' && document.hidden) return;
+        const self = this;
+        if (typeof requestAnimationFrame === 'function') {
+            requestAnimationFrame(function () {
+                if (!self._graphIsOnPage() || self._pausedInBackground) return;
+                if (!self._animRaf) {
+                    self._renderPlotOnly();
+                }
+            });
+        } else {
+            if (!this._animRaf) {
+                this._renderPlotOnly();
+            }
+        }
     }
 
     _syncSeriesSeeds(c) {
@@ -6596,7 +6798,8 @@ class GraphWidget extends BaseWidget {
         const estMin = effectiveLockMin != null ? effectiveLockMin : dataMin;
         const estMax = effectiveLockMax != null ? effectiveLockMax : dataMax;
 
-        const isAnimating = !!(this._activeAnimations && Object.keys(this._activeAnimations).length > 0);
+        const isRealTime = c && c.bufferMode === 'duration' && c.timelineAdvance === 'time';
+        const isAnimating = !!(this._activeAnimations && Object.keys(this._activeAnimations).length > 0) || isRealTime;
         const epochSig = this._renderInputsEpochSig ? this._renderInputsEpochSig() : null;
         let laid = null;
         let reserve = null;

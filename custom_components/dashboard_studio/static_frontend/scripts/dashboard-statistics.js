@@ -1282,6 +1282,97 @@
         margin-left: 0.35rem;
         vertical-align: middle;
     }
+    .ds-stats-about-update-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        padding: 0.15rem 0.5rem;
+        border-radius: 9999px;
+        background: rgba(14, 165, 233, 0.2);
+        border: 1px solid rgba(14, 165, 233, 0.5);
+        color: var(--ds-accent-cyan, #0ea5e9);
+        margin-left: 0.5rem;
+        cursor: pointer;
+        vertical-align: middle;
+        transition: all 0.15s ease;
+    }
+    .ds-stats-about-update-pill:hover {
+        background: rgba(14, 165, 233, 0.32);
+        border-color: var(--ds-accent-cyan, #0ea5e9);
+        box-shadow: 0 0 10px rgba(14, 165, 233, 0.4);
+    }
+    .ds-stats-about-uptodate-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        font-size: 0.65rem;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        padding: 0.12rem 0.45rem;
+        border-radius: 9999px;
+        background: rgba(16, 185, 129, 0.15);
+        border: 1px solid rgba(16, 185, 129, 0.4);
+        color: #10b981;
+        margin-left: 0.5rem;
+        vertical-align: middle;
+    }
+    .ds-stats-about-version-status {
+        width: 100%;
+        max-width: 540px;
+        margin: 0 auto;
+    }
+    .ds-stats-about-update-banner {
+        background: linear-gradient(135deg, rgba(14, 165, 233, 0.12) 0%, var(--ds-card-bg) 75%);
+        border: 1px solid rgba(14, 165, 233, 0.45);
+        border-radius: var(--radius-control, 0.6rem);
+        padding: 0.75rem 1rem;
+        box-shadow: 0 4px 16px -2px rgba(14, 165, 233, 0.22);
+        text-align: left;
+    }
+    .ds-stats-about-update-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        margin-bottom: 0.35rem;
+    }
+    .ds-stats-about-update-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        font-size: 0.88rem;
+        font-weight: 700;
+        color: var(--ds-accent-cyan, #0ea5e9);
+    }
+    .ds-stats-about-update-desc {
+        font-size: 0.78rem;
+        color: var(--ds-text-dim);
+        line-height: 1.4;
+    }
+    .ds-stats-about-update-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        font-size: 0.76rem;
+        font-weight: 600;
+        padding: 0.28rem 0.65rem;
+        border-radius: var(--radius-control, 0.4rem);
+        background: var(--ds-accent-cyan, #0ea5e9);
+        color: #ffffff;
+        border: none;
+        cursor: pointer;
+        transition: background 0.15s ease, box-shadow 0.15s ease;
+    }
+    .ds-stats-about-update-btn:hover {
+        background: #0284c7;
+        box-shadow: 0 0 10px rgba(14, 165, 233, 0.45);
+    }
     .ds-stats-about-tagline {
         font-size: 0.9rem;
         color: var(--ds-text-dim);
@@ -1376,13 +1467,26 @@
         background: var(--ds-accent-cyan, #0ea5e9);
         box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.4), 0 0 10px rgba(14, 165, 233, 0.6);
     }
+    .ds-stats-changelog-node.is-current {
+        width: 13px;
+        height: 13px;
+        background: var(--ds-accent-cyan, #0ea5e9);
+        box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.4), 0 0 12px rgba(14, 165, 233, 0.7);
+    }
+    .ds-stats-changelog-node.is-newer {
+        width: 12px;
+        height: 12px;
+        background: #f59e0b;
+        box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.4), 0 0 10px rgba(245, 158, 11, 0.5);
+    }
     .ds-stats-changelog-node.is-milestone {
         width: 13px;
         height: 13px;
         background: #38bdf8;
         box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.5), 0 0 12px rgba(56, 189, 248, 0.5);
     }
-    .ds-stats-changelog-node.is-latest.is-milestone {
+    .ds-stats-changelog-node.is-latest.is-milestone,
+    .ds-stats-changelog-node.is-current.is-milestone {
         background: #38bdf8;
         box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.6), 0 0 14px rgba(56, 189, 248, 0.8);
     }
@@ -1401,9 +1505,26 @@
         border-color: rgba(14, 165, 233, 0.45);
         box-shadow: 0 0 18px -4px rgba(14, 165, 233, 0.25);
     }
+    .ds-stats-changelog-card.is-current {
+        border-width: 2px;
+        border-color: var(--ds-accent-cyan, #0ea5e9);
+        background: linear-gradient(135deg, rgba(14, 165, 233, 0.14) 0%, var(--ds-card-bg) 70%);
+        box-shadow: 0 0 22px -2px rgba(14, 165, 233, 0.35);
+    }
+    .ds-stats-changelog-card.is-newer {
+        border-color: rgba(245, 158, 11, 0.45);
+        background: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, var(--ds-card-bg) 65%);
+        box-shadow: 0 0 18px -4px rgba(245, 158, 11, 0.22);
+    }
     .ds-stats-changelog-card.is-milestone {
         border-color: rgba(56, 189, 248, 0.35);
         background: linear-gradient(135deg, rgba(14, 165, 233, 0.08) 0%, var(--ds-card-bg) 60%);
+    }
+    .ds-stats-changelog-card.is-current.is-milestone {
+        border-width: 2px;
+        border-color: var(--ds-accent-cyan, #0ea5e9);
+        background: linear-gradient(135deg, rgba(14, 165, 233, 0.18) 0%, var(--ds-card-bg) 65%);
+        box-shadow: 0 0 24px -2px rgba(14, 165, 233, 0.42);
     }
     .ds-stats-changelog-card.is-latest.is-milestone {
         border-color: rgba(56, 189, 248, 0.5);
@@ -1411,7 +1532,13 @@
         box-shadow: 0 0 20px -3px rgba(14, 165, 233, 0.3);
     }
 
-    /* Light Mode Changelog Colors (Milestone = White, Inbetween = Soft Light Blue) */
+    /* Light Mode Changelog Colors */
+    body.ui-light .ds-stats-dialog .ds-stats-about-update-banner,
+    :root.ui-light .ds-stats-dialog .ds-stats-about-update-banner {
+        background: #ffffff;
+        border-color: rgba(14, 165, 233, 0.5);
+        box-shadow: 0 2px 14px -2px rgba(14, 165, 233, 0.18);
+    }
     body.ui-light .ds-stats-dialog .ds-stats-changelog-card,
     :root.ui-light .ds-stats-dialog .ds-stats-changelog-card {
         background: rgba(239, 246, 255, 0.78);
@@ -1420,6 +1547,18 @@
     body.ui-light .ds-stats-dialog .ds-stats-changelog-card:hover,
     :root.ui-light .ds-stats-dialog .ds-stats-changelog-card:hover {
         border-color: rgba(125, 211, 252, 0.85);
+    }
+    body.ui-light .ds-stats-dialog .ds-stats-changelog-card.is-current,
+    :root.ui-light .ds-stats-dialog .ds-stats-changelog-card.is-current {
+        background: #ffffff;
+        border-color: var(--ds-accent-cyan, #0ea5e9);
+        box-shadow: 0 0 18px -2px rgba(14, 165, 233, 0.28);
+    }
+    body.ui-light .ds-stats-dialog .ds-stats-changelog-card.is-newer,
+    :root.ui-light .ds-stats-dialog .ds-stats-changelog-card.is-newer {
+        background: #ffffff;
+        border-color: rgba(245, 158, 11, 0.55);
+        box-shadow: 0 0 16px -2px rgba(245, 158, 11, 0.2);
     }
     body.ui-light .ds-stats-dialog .ds-stats-changelog-card.is-milestone,
     :root.ui-light .ds-stats-dialog .ds-stats-changelog-card.is-milestone {
@@ -1432,7 +1571,9 @@
         border-color: rgba(14, 165, 233, 0.55);
     }
     body.ui-light .ds-stats-dialog .ds-stats-changelog-card.is-latest.is-milestone,
-    :root.ui-light .ds-stats-dialog .ds-stats-changelog-card.is-latest.is-milestone {
+    body.ui-light .ds-stats-dialog .ds-stats-changelog-card.is-current.is-milestone,
+    :root.ui-light .ds-stats-dialog .ds-stats-changelog-card.is-latest.is-milestone,
+    :root.ui-light .ds-stats-dialog .ds-stats-changelog-card.is-current.is-milestone {
         background: #ffffff;
         border-color: rgba(14, 165, 233, 0.55);
         box-shadow: 0 0 16px -2px rgba(14, 165, 233, 0.25);
@@ -1468,6 +1609,34 @@
         background: rgba(14, 165, 233, 0.18);
         border: 1px solid rgba(14, 165, 233, 0.4);
         color: var(--ds-accent-cyan);
+    }
+    .ds-stats-changelog-current-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        padding: 0.15rem 0.5rem;
+        border-radius: 9999px;
+        background: rgba(14, 165, 233, 0.22);
+        border: 1px solid var(--ds-accent-cyan, #0ea5e9);
+        color: var(--ds-accent-cyan, #0ea5e9);
+    }
+    .ds-stats-changelog-newer-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        padding: 0.15rem 0.5rem;
+        border-radius: 9999px;
+        background: rgba(245, 158, 11, 0.2);
+        border: 1px solid rgba(245, 158, 11, 0.5);
+        color: #f59e0b;
     }
     .ds-stats-changelog-milestone-pill {
         display: inline-flex;
@@ -2878,17 +3047,44 @@
     let changelogLoadingPromise = null;
     let changelogOnlyNew = false;
 
+    function compareVersions(v1, v2) {
+        var clean1 = String(v1 || '0').replace(/^v/i, '').trim();
+        var clean2 = String(v2 || '0').replace(/^v/i, '').trim();
+        var parts1 = clean1.split('.').map(function (n) { return parseInt(n, 10) || 0; });
+        var parts2 = clean2.split('.').map(function (n) { return parseInt(n, 10) || 0; });
+        var len = Math.max(parts1.length, parts2.length, 3);
+        for (var i = 0; i < len; i++) {
+            var p1 = parts1[i] || 0;
+            var p2 = parts2[i] || 0;
+            if (p1 < p2) return -1;
+            if (p1 > p2) return 1;
+        }
+        return 0;
+    }
+
     async function loadChangelogData() {
         if (changelogData) return changelogData;
         if (changelogLoadingPromise) return changelogLoadingPromise;
 
         changelogLoadingPromise = (async function () {
-            const sources = [
+            const basePath = (typeof window !== 'undefined' && window.location && window.location.pathname)
+                ? window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1)
+                : '';
+            const rawSources = [
                 '../../website/changelog.json',
                 '../website/changelog.json',
                 'release-changelog.json',
+                (basePath ? (basePath + 'release-changelog.json') : null),
+                '/dashboard_studio/release-changelog.json',
+                '/release-changelog.json',
                 'https://satoer.com/dashboardstudio/changelog.json'
             ];
+            const sources = [];
+            for (let s = 0; s < rawSources.length; s++) {
+                if (rawSources[s] && sources.indexOf(rawSources[s]) === -1) {
+                    sources.push(rawSources[s]);
+                }
+            }
 
             for (let i = 0; i < sources.length; i++) {
                 try {
@@ -2913,6 +3109,71 @@
         return result;
     }
 
+    /**
+     * Updates the About page version status badge and update alert banner.
+     */
+    async function updateAboutVersionUI() {
+        const statusContainer = document.getElementById('ds-stats-about-version-status');
+        const badgeSlot = document.getElementById('ds-stats-about-ver-badge-slot');
+        if (!statusContainer && !badgeSlot) return;
+
+        const currentVersion = String(window.DASHBOARD_VERSION || '').trim();
+        const data = await loadChangelogData();
+        if (!data || !Array.isArray(data) || data.length === 0) {
+            return;
+        }
+
+        const latestRelease = data[0];
+        const latestVer = String(latestRelease.version || '').trim();
+        const cmp = currentVersion ? compareVersions(latestVer, currentVersion) : 0;
+
+        if (cmp > 0) {
+            if (badgeSlot) {
+                badgeSlot.innerHTML = `<span class="ds-stats-about-update-pill" id="ds-about-update-pill" role="button" tabindex="0" title="Click to view changelog"><i class="ph-bold ph-arrow-circle-up"></i> Update: v${escapeHtml(latestVer)}</span>`;
+                const pill = document.getElementById('ds-about-update-pill');
+                if (pill) {
+                    pill.onclick = function () { switchTab('changelog'); };
+                    pill.onkeydown = function (e) {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            switchTab('changelog');
+                        }
+                    };
+                }
+            }
+
+            if (statusContainer) {
+                statusContainer.innerHTML = `
+                    <div class="ds-stats-about-update-banner">
+                        <div class="ds-stats-about-update-header">
+                            <div class="ds-stats-about-update-badge">
+                                <i class="ph-bold ph-sparkle"></i>
+                                <span>New Version Available: <strong>v${escapeHtml(latestVer)}</strong></span>
+                            </div>
+                            <button type="button" class="btn-tool ds-stats-about-update-btn" id="ds-about-view-changelog-btn">
+                                <i class="ph-bold ph-rocket-launch"></i><span>View Changelog</span>
+                            </button>
+                        </div>
+                        <div class="ds-stats-about-update-desc">
+                            You are running <strong>v${escapeHtml(currentVersion)}</strong>. A newer release is available with new features and improvements.
+                        </div>
+                    </div>
+                `;
+                const viewBtn = document.getElementById('ds-about-view-changelog-btn');
+                if (viewBtn) {
+                    viewBtn.onclick = function () { switchTab('changelog'); };
+                }
+            }
+        } else {
+            if (badgeSlot) {
+                badgeSlot.innerHTML = `<span class="ds-stats-about-uptodate-badge"><i class="ph-bold ph-check"></i> Latest</span>`;
+            }
+            if (statusContainer) {
+                statusContainer.innerHTML = '';
+            }
+        }
+    }
+
     function isMilestoneVersion(versionStr) {
         if (!versionStr) return false;
         var clean = String(versionStr).replace(/^v/i, '').trim();
@@ -2929,6 +3190,7 @@
         if (!container) return;
         if (changelogData) {
             renderChangelogTimeline(container, changelogData);
+            updateAboutVersionUI();
             return;
         }
         container.innerHTML = '<div class="ds-stats-loading-msg"><i class="ph-bold ph-spinner ph-spin"></i><span>Loading release notes...</span></div>';
@@ -2936,6 +3198,7 @@
         const data = await loadChangelogData();
         if (data) {
             renderChangelogTimeline(container, data);
+            updateAboutVersionUI();
         } else {
             console.error('[DashboardStatistics] Failed to load changelog');
             container.innerHTML = `
@@ -2959,10 +3222,16 @@
 
     function renderChangelogTimeline(container, data) {
         if (!container || !Array.isArray(data)) return;
+        var currentVersion = String(window.DASHBOARD_VERSION || '').trim();
+        var latestRelease = data.length > 0 ? data[0] : null;
         var visibleCount = 0;
         var html = '<div class="ds-stats-changelog-track">';
         data.forEach(function (release, index) {
-            var isLatest = index === 0;
+            var relVer = String(release.version || '').trim();
+            var cmp = currentVersion ? compareVersions(relVer, currentVersion) : 0;
+            var isCurrent = currentVersion ? (cmp === 0) : (index === 0);
+            var isNewer = currentVersion ? (cmp > 0) : false;
+            var isLatest = (release === latestRelease);
             var isMilestone = isMilestoneVersion(release.version);
             var rawChanges = Array.isArray(release.changes) ? release.changes : [];
             var filteredChanges = rawChanges;
@@ -2985,15 +3254,48 @@
             });
             changesHtml += '</div>';
 
+            var nodeClasses = ['ds-stats-changelog-node'];
+            var cardClasses = ['ds-stats-changelog-card'];
+
+            if (isCurrent) {
+                nodeClasses.push('is-current');
+                cardClasses.push('is-current');
+            } else if (isNewer) {
+                nodeClasses.push('is-newer');
+                cardClasses.push('is-newer');
+            }
+
+            if (isLatest) {
+                nodeClasses.push('is-latest');
+                cardClasses.push('is-latest');
+            }
+            if (isMilestone) {
+                nodeClasses.push('is-milestone');
+                cardClasses.push('is-milestone');
+            }
+
+            var pillsHtml = '';
+            if (isCurrent) {
+                pillsHtml += '<span class="ds-stats-changelog-current-pill"><i class="ph-bold ph-check-circle"></i> CURRENT VERSION</span>';
+            }
+            if (isNewer) {
+                pillsHtml += '<span class="ds-stats-changelog-newer-pill"><i class="ph-bold ph-arrow-circle-up"></i> NEW VERSION</span>';
+            }
+            if (isLatest && !isCurrent && !isNewer) {
+                pillsHtml += '<span class="ds-stats-changelog-latest-pill">LATEST</span>';
+            }
+            if (isMilestone) {
+                pillsHtml += '<span class="ds-stats-changelog-milestone-pill"><i class="ph-bold ph-sparkle"></i> MILESTONE</span>';
+            }
+
             html += `
                 <div class="ds-stats-changelog-item">
-                    <div class="ds-stats-changelog-node ${isLatest ? 'is-latest' : ''} ${isMilestone ? 'is-milestone' : ''}"></div>
-                    <article class="ds-stats-changelog-card ${isLatest ? 'is-latest' : ''} ${isMilestone ? 'is-milestone' : ''}">
+                    <div class="${nodeClasses.join(' ')}"></div>
+                    <article class="${cardClasses.join(' ')}">
                         <div class="ds-stats-changelog-card-header">
                             <div class="ds-stats-changelog-ver-wrap">
                                 <span class="ds-stats-changelog-badge">v${escapeHtml(release.version || '')}</span>
-                                ${isLatest ? '<span class="ds-stats-changelog-latest-pill">LATEST</span>' : ''}
-                                ${isMilestone ? '<span class="ds-stats-changelog-milestone-pill"><i class="ph-bold ph-sparkle"></i> MILESTONE</span>' : ''}
+                                ${pillsHtml}
                             </div>
                             <time class="ds-stats-changelog-date">${escapeHtml(release.date || '')}</time>
                         </div>
@@ -3045,6 +3347,8 @@
             renderBytesLeaderboard();
         } else if (target === 'changelog') {
             ensureChangelogLoaded();
+        } else if (target === 'about') {
+            updateAboutVersionUI();
         } else if (target === 'diagnostics') {
             renderConsoleLogs();
         }
@@ -3137,7 +3441,8 @@
                     <div class="ds-stats-about-box">
                         <img src="images/dashboardstudio_logo_darkmode.svg" alt="Dashboard Studio" class="ds-stats-about-logo logo-dark">
                         <img src="images/dashboardstudio_logo_lightmode.svg" alt="Dashboard Studio" class="ds-stats-about-logo logo-light">
-                        <div class="ds-stats-about-title">Dashboard Studio <span class="ds-stats-about-ver">v${escapeHtml(window.DASHBOARD_VERSION || '2.1.1')}</span></div>
+                        <div class="ds-stats-about-title">Dashboard Studio <span class="ds-stats-about-ver">v${escapeHtml(window.DASHBOARD_VERSION || '2.1.1')}</span><span id="ds-stats-about-ver-badge-slot"></span></div>
+                        <div id="ds-stats-about-version-status" class="ds-stats-about-version-status"></div>
                         <div class="ds-stats-about-tagline">
                             Visualize your home, exactly how you imagine it. Crafted with passion and precision by <strong>Satoer Creations</strong> for Homey, MQTT, Node-RED, and modern smart homes.
                         </div>
@@ -4743,6 +5048,8 @@
         if (isDialogOpen()) {
             if (targetTab) {
                 switchTab(targetTab);
+            } else {
+                updateAboutVersionUI();
             }
             if (typeof DialogHost.bringToFront === 'function') {
                 DialogHost.bringToFront(HOST_ID);
@@ -4842,6 +5149,7 @@
                 buildShell(body);
             },
             onOpen: function () {
+                updateAboutVersionUI();
                 if (targetTab) {
                     switchTab(targetTab);
                 }

@@ -9,47 +9,40 @@
     var SETTINGS_METADATA = {
     "editor-tools": {
         "title": "Editor Tools",
-        "description": "Quick access to dashboard utilities, diagnostics, preset managers, and full-screen preview.",
+        "description": "Quick toolbar actions to manage galleries, snippets, helper scripts, and editor display modes.",
         "help": {
             "topic": "Editor Interface Guide",
             "anchor": "2-editor-tools"
         }
     },
     "editor-zoom": {
-        "title": "Canvas Zoom",
-        "description": "Adjust the editor canvas magnification or click to reset back to 100%.",
-        "help": {
-            "topic": "Editor Interface Guide",
-            "anchor": "1-editor-header"
-        }
+        "title": "Edit Mode Zoom",
+        "description": "Adjust canvas magnification level in edit mode to inspect fine widget details or zoom out for full layouts.",
+        "help": null
     },
     "viewer-url": {
-        "title": "Viewer URL & Launch",
-        "description": "Copy the clean dashboard launch URL or open the live dashboard in a new browser tab.",
-        "help": {
-            "topic": "Editor Interface Guide",
-            "anchor": "3-viewer-url--dashboard-files"
-        }
+        "title": "Viewer URL",
+        "description": "Direct address link to display this dashboard in fullscreen viewer mode on tablets and wall displays.",
+        "help": null
     },
     "theme": {
-        "title": "Theme & Styling",
-        "description": "Active color palette and visual styling preset. Cycle through themes or browse previews in the Theme Explorer.",
+        "title": "Theme",
+        "description": "Select the active color palette and visual styling preset applied across dashboard widgets.",
         "help": {
-            "topic": "Editor Interface Guide",
-            "anchor": "4-theme"
+            "topic": "Styling & Layering",
+            "anchor": "2-themes-theme-explorer"
         }
     },
     "create-widget": {
         "title": "Create Widget",
-        "description": "Add a new interactive widget, sensor display, or layout element to the active canvas page.",
+        "description": "Add a new smart home widget such as a switch, gauge, slider, battery, or graph to the canvas.",
         "help": {
-            "topic": "Editor Interface Guide",
-            "anchor": "5-create-widget"
+            "topic": "Widgets"
         }
     },
     "selected-widget": {
-        "title": "Selected Widget Tools",
-        "description": "Align, distribute, duplicate, lock, or adjust stacking order for the currently selected widget.",
+        "title": "Selected Widget",
+        "description": "Select an active widget from the list to inspect and edit its properties in this panel.",
         "help": {
             "topic": "Editor Interface Guide",
             "anchor": "6-selected-widget-tools"
@@ -57,25 +50,18 @@
     },
     "universal-actions": {
         "title": "Universal Actions",
-        "description": "Global operations to save your dashboard, undo recent edits, redo changes, or reset canvas properties.",
-        "help": {
-            "topic": "Editor Interface Guide",
-            "anchor": "7-universal-actions"
-        }
+        "description": "Clipboard and history operations including copy, cut, paste, undo, and redo for canvas widgets.",
+        "help": null
     },
     "undo": {
         "title": "Undo",
-        "description": "Revert the most recent dashboard modification or widget movement.",
-        "help": {
-            "topic": "Editor Shortcuts"
-        }
+        "description": "Undo the last layout change or property modification on the canvas.",
+        "help": null
     },
     "redo": {
         "title": "Redo",
-        "description": "Reapply the most recently undone action.",
-        "help": {
-            "topic": "Editor Shortcuts"
-        }
+        "description": "Reapply the change that was previously undone.",
+        "help": null
     },
     "save": {
         "title": "Save Dashboard",
@@ -87,19 +73,13 @@
     },
     "duplicate": {
         "title": "Duplicate Widget",
-        "description": "Clone the selected widget with all of its styling and topic bindings.",
-        "help": {
-            "topic": "Editor Interface Guide",
-            "anchor": "6-selected-widget-tools"
-        }
+        "description": "Create an exact duplicate clone of the selected widget with all its current settings.",
+        "help": null
     },
     "delete": {
         "title": "Delete Widget",
-        "description": "Remove the selected widget from the active canvas page.",
-        "help": {
-            "topic": "Editor Interface Guide",
-            "anchor": "6-selected-widget-tools"
-        }
+        "description": "Permanently delete the selected widget or widgets from the dashboard canvas.",
+        "help": null
     },
     "lock": {
         "title": "Lock Widget",
@@ -189,7 +169,7 @@
     },
     "dataDriver": {
         "title": "Platform Connection",
-        "description": "The primary home automation backend powering live data and controls (Homey, Home Assistant, Node-RED, MQTT, or Simulation).",
+        "description": "Determines which home automation platform or data protocol powers the dashboard:\n• Homey: Connects to Athom Homey Pro via local WebSockets and device capability topics.\n• Home Assistant: Connects to Home Assistant WebSocket API for entity states and service calls.\n• Node-RED: Communicates with Node-RED flows via custom WebSocket or HTTP endpoints.\n• MQTT: Connects directly to an MQTT broker supporting JSON payloads and wildcards.\n• Simulation: Generates demo data locally without external network connections.",
         "help": {
             "topic": "Editor Interface Guide",
             "anchor": "9-platform-connection"
@@ -197,7 +177,7 @@
     },
     "editorMode": {
         "title": "Editor Mode",
-        "description": "Switch between Basic and Advanced mode. Basic streamlines the inspector for everyday setups, while Advanced exposes all low-level styling and protocol controls.",
+        "description": "Sets the complexity level of the widget configuration panel:\n• Basic: Streamlined interface showing only essential visual and functional settings.\n• Advanced: Full access to all fine-grained styling, raw data bindings, and timing options.",
         "help": {
             "topic": "Editor Interface Guide",
             "anchor": "11-editor-environment"
@@ -213,7 +193,7 @@
     },
     "quickToolbarVisibility": {
         "title": "Quick Toolbar",
-        "description": "Choose when the quick action toolbar appears. Auto Hide displays it when scrolling, Always Visible keeps it docked, and Never Visible hides it.",
+        "description": "Controls when the floating widget toolbar appears on the canvas:\n• Auto Hide When Docked: Conceals the floating toolbar whenever the side editor is open.\n• Always Visible: Keeps the floating toolbar pinned above selected widgets at all times.\n• Never Visible: Completely hides the floating toolbar for an unobstructed canvas view.",
         "help": {
             "topic": "Editor Interface Guide",
             "anchor": "11-editor-environment"
@@ -245,7 +225,7 @@
     },
     "widgetLabelMode": {
         "title": "Widget Labels In Canvas",
-        "description": "Controls whether widget name badges appear above cards directly on the canvas during editing.",
+        "description": "Controls the display of widget title headers on the canvas:\n• Hide: Keeps widget headers hidden for a clean dashboard appearance.\n• Always: Permanently displays widget title headers above widgets on the canvas.\n• Hover: Reveals widget headers only when hovering the mouse over the widget.",
         "help": {
             "topic": "Editor Interface Guide",
             "anchor": "11-editor-environment"
@@ -268,7 +248,7 @@
     },
     "layoutMode": {
         "title": "Layout Mode",
-        "description": "Canvas scaling behavior: Fixed Canvas for pixel-perfect wall tablets, Scale to Fit for responsive displays, or Responsive Grid for auto-reflowing cards.",
+        "description": "Determines how the dashboard canvas adapts to different screens:\n• Fixed Resolution: Locks the canvas to an exact pixel width and height with standard scrolling.\n• Scale to Fit Screen: Proportionally zooms and scales the entire canvas to fit any display.\n• Responsive Columns: Automatically reflows widgets into flexible columns based on screen width.",
         "help": {
             "topic": "Layout Modes"
         }
@@ -391,7 +371,7 @@
     },
     "canvasBgType": {
         "title": "Background Type",
-        "description": "Canvas background style: solid color, two-color linear gradient, or custom background wallpaper image.",
+        "description": "Defines how canvas background colors blend:\n• Flat Color: Applies a single solid background color across the entire dashboard.\n• Linear Gradient: Transitions smoothly between colors in a directional straight line.\n• Mirror Gradient: Creates a symmetrical bi-directional color blend centered on the canvas.\n• Radial: Radiates color outward in concentric circles from the center.",
         "help": {
             "topic": "Editor Interface Guide",
             "anchor": "12-dashboard-environment"
@@ -493,7 +473,7 @@
     },
     "swipeLeftAction": {
         "title": "Swipe Left Action",
-        "description": "Action triggered when swiping left across the dashboard canvas (Next Page, Specific Page, or Topic Payload).",
+        "description": "Specifies the action triggered when swiping left across the dashboard:\n• Go to Next Page: Navigates forward to the subsequent dashboard page.\n• Go to Previous Page: Navigates backward to the preceding dashboard page.\n• Go to Specific Page: Jumps directly to a chosen target dashboard page.\n• Trigger Topic: Fires an automation topic command or webhook without changing pages.",
         "help": {
             "topic": "Editor Interface Guide",
             "anchor": "12-dashboard-environment"
@@ -523,7 +503,7 @@
     },
     "swipeRightAction": {
         "title": "Swipe Right Action",
-        "description": "Action triggered when swiping right across the dashboard canvas.",
+        "description": "Specifies the action triggered when swiping right across the dashboard:\n• Go to Next Page: Navigates forward to the subsequent dashboard page.\n• Go to Previous Page: Navigates backward to the preceding dashboard page.\n• Go to Specific Page: Jumps directly to a chosen target dashboard page.\n• Trigger Topic: Fires an automation topic command or webhook without changing pages.",
         "help": {
             "topic": "Editor Interface Guide",
             "anchor": "12-dashboard-environment"
@@ -553,7 +533,7 @@
     },
     "swipeUpAction": {
         "title": "Swipe Up Action",
-        "description": "Action triggered when swiping upward across the dashboard canvas.",
+        "description": "Specifies the action triggered when swiping up across the dashboard:\n• Go to Next Page: Navigates forward to the subsequent dashboard page.\n• Go to Previous Page: Navigates backward to the preceding dashboard page.\n• Go to Specific Page: Jumps directly to a chosen target dashboard page.\n• Trigger Topic: Fires an automation topic command or webhook without changing pages.",
         "help": {
             "topic": "Editor Interface Guide",
             "anchor": "12-dashboard-environment"
@@ -583,7 +563,7 @@
     },
     "swipeDownAction": {
         "title": "Swipe Down Action",
-        "description": "Action triggered when swiping downward across the dashboard canvas.",
+        "description": "Specifies the action triggered when swiping down across the dashboard:\n• Go to Next Page: Navigates forward to the subsequent dashboard page.\n• Go to Previous Page: Navigates backward to the preceding dashboard page.\n• Go to Specific Page: Jumps directly to a chosen target dashboard page.\n• Trigger Topic: Fires an automation topic command or webhook without changing pages.",
         "help": {
             "topic": "Editor Interface Guide",
             "anchor": "12-dashboard-environment"
@@ -644,7 +624,7 @@
     },
     "defaultLabelCase": {
         "title": "Default Font Family",
-        "description": "Primary font applied globally to labels and widget text across the dashboard.",
+        "description": "Controls default capitalization formatting for widget title headers:\n• UPPERCASE: Converts all characters in widget titles to capital letters.\n• Capitalize: Formats titles with the first letter of each word capitalized.\n• lowercase: Formats all characters in widget titles to lowercase.\n• None: Preserves exact text casing as entered or received from data topics.",
         "help": {
             "topic": "Editor Interface Guide",
             "anchor": "15-typography"
@@ -1266,7 +1246,7 @@
     },
     "clock.displayMode": {
         "title": "Clock Face Type",
-        "description": "Select clock appearance: Analog hands, retro Flip cards, or clean Digital text.",
+        "description": "Selects the clock visualization style:\n• Analog Clock: Renders a traditional clock face with rotating hour, minute, and second hands.\n• Flip Clock: Displays split-flap mechanical cards that animate when digits flip.\n• Date Time Text: Formats the current time and date as customizable digital typography.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "clock"
@@ -1330,7 +1310,7 @@
     },
     "clock.sweepMode": {
         "title": "Sweep Second Hand",
-        "description": "Smooth continuous sweep motion for the second hand instead of ticking once per second.",
+        "description": "Controls the motion of the second hand:\n• tick: Steps the second hand forward once per second with crisp mechanical motion.\n• smooth: Glides the second hand continuously in a fluid uninterrupted sweep.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "clock"
@@ -1538,7 +1518,7 @@
     },
     "editbox.inputMode": {
         "title": "Input Format",
-        "description": "Text input mode: Single Line, Password (masked), Multi-line Area, or Numeric keypad.",
+        "description": "Sets the text field size and layout:\n• Single Line: Standard text input field for short commands, names, or values.\n• Multi-Line: Expandable text box with enter key support for notes, code, or JSON payloads.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "editbox"
@@ -1546,7 +1526,7 @@
     },
     "editbox.sendBehavior": {
         "title": "Send Trigger",
-        "description": "When data is published: on every keystroke, on Enter key, or on blur/defocus.",
+        "description": "Controls when entered text is transmitted:\n• Live (On Type): Transmits input data continuously with each keystroke as you type.\n• Keyboard (Enter): Transmits input data when pressing Enter, keeping keyboard focus.\n• Keyboard (Enter) & Exit: Transmits data when pressing Enter and removes keyboard focus.\n• Trigger Topic: Sends the current value only when an external trigger topic fires.\n• Open URL: Navigates to a dynamic URL constructed with the entered text.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "editbox"
@@ -1922,7 +1902,7 @@
     },
     "graph.legendPosition": {
         "title": "Legend Placement",
-        "description": "Where dataset labels appear (Top, Bottom, Left, Right, or Hidden).",
+        "description": "Specifies where the series legend is anchored:\n• Top: Places the series legend in a horizontal row above the chart plot.\n• Bottom: Places the series legend in a horizontal row beneath the horizontal axis.\n• Left: Docks the legend in a vertical column along the left edge of the chart.\n• Right: Docks the legend in a vertical column along the right edge of the chart.\n• Floating: Overlays the legend inside the chart plotting area.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "graph"
@@ -2395,7 +2375,7 @@
     },
     "slider.sendValueMode": {
         "title": "Value Send Behavior",
-        "description": "Publish updates in real-time as thumb slides, or send only when releasing touch.",
+        "description": "Determines when slider values are published to your smart-home controller:\n• Send value on release: Transmits the final value only after letting go, reducing network traffic.\n• Send value directly on movement: Streams values continuously in real time as you drag the handle.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "slider"
@@ -2493,7 +2473,7 @@
     },
     "switch.mode": {
         "title": "Switch Operation Mode",
-        "description": "Toggle button (flips state), Momentary push (active while held), or Push Button (fires pulse).",
+        "description": "Determines the electrical switching behavior of the widget:\n• Toggle Switch: Alternates between On and Off states with each tap, maintaining state.\n• Push Button (Momentary): Activates while pressed and immediately reverts when released.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "switch"
@@ -2501,7 +2481,7 @@
     },
     "switch.style": {
         "title": "Button Visual Style",
-        "description": "Appearance preset: Modern Flat Card, Glass Bevel, Neumorphic, or Minimal Icon.",
+        "description": "Selects the visual container design for the switch:\n• Switch (Pill): Classic toggle pill slider with sliding thumb indicator.\n• Button (Rect): Modern interactive push card with custom background and borders.\n• Image Only: Clickable icon or image without background button frames.\n• Text Only: Lightweight text link button without border containers.\n• Invisible: Transparent touch zone placed over custom dashboard background artwork.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "switch"
@@ -2509,7 +2489,7 @@
     },
     "switch.actionType": {
         "title": "Interaction Action",
-        "description": "Action fired on tap: Publish Topic Payload, Navigate to Page, Open URL, or Homey Flow.",
+        "description": "Specifies what happens when tapping the switch or button:\n• Send Topic: Publishes an automation command or payload to your controller.\n• Go to Page: Switches the dashboard view directly to another page.\n• Open URL: Launches an external website or mobile app deep link in your browser.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "switch"
@@ -2633,7 +2613,7 @@
     },
     "text.labelCase": {
         "title": "Text Capitalization",
-        "description": "Format text casing: Normal, Uppercase, Lowercase, or Capitalize.",
+        "description": "Controls capitalization formatting for markdown and label text:\n• Use Typography Settings: Inherits capitalization rules defined in Dashboard Settings.\n• UPPERCASE: Converts all characters to capital letters.\n• Capitalize: Formats text with the first letter of each word capitalized.\n• lowercase: Formats all characters to lowercase.\n• None: Preserves exact text casing as entered in the markdown source.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "text"
@@ -2665,7 +2645,7 @@
     },
     "text.mdLinkTarget": {
         "title": "Markdown Link Destination",
-        "description": "Opens markdown links in New Browser Tab or same dashboard window.",
+        "description": "Controls how markdown hyperlink clicks are handled:\n• Use Markdown Setting (per link): Follows target tags specified directly in markdown links.\n• Always Open in New Tab: Forces all markdown links to launch in a separate browser tab.\n• Always Open in Same Tab: Opens markdown links inside the current dashboard window.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "text"
@@ -2697,7 +2677,7 @@
     },
     "text.textScrollMotion": {
         "title": "Ticker Marquee Animation",
-        "description": "Continuously scrolls text horizontally or vertically like a news ticker.",
+        "description": "Defines the movement trajectory for scrolling text:\n• Loop: Wraps text continuously so the beginning reappears right after the end.\n• Bounce: Reverses scroll direction when reaching the boundary, moving back and forth.\n• Reset: Scrolls completely out of view before re-entering from the start.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "text"
@@ -2753,7 +2733,7 @@
     },
     "text.mdCalendarWeekStart": {
         "title": "Calendar First Day of Week",
-        "description": "Set Monday or Sunday as the leading column in markdown calendar tables.",
+        "description": "Sets which day starts weekly calendar views in markdown tables:\n• Europe (Monday): Starts weekly calendar views on Monday following the ISO 8601 standard.\n• Americas / Japan (Sunday): Starts weekly calendar views on Sunday following traditional layouts.\n• Middle East (Saturday): Starts weekly calendar views on Saturday following regional week schedules.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "text"
@@ -2761,7 +2741,7 @@
     },
     "text.mdTableColumnWidthMode": {
         "title": "Table Column Sizing",
-        "description": "Auto-calculated width, equal column distribution, or custom pixel widths.",
+        "description": "Controls how table column widths are distributed:\n• Auto (each table natural width): Allows each column to size naturally based on cell content.\n• Align table columns (same column count): Synchronizes widths across tables sharing identical column counts.\n• Equal Table Column Widths: Divides table width evenly among all columns.\n• Fixed Table Column Width: Enforces a uniform pixel width across every column.\n• Custom Column Width: Uses comma-separated column width percentages specified in settings.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "text"
@@ -2833,7 +2813,7 @@
     },
     "canvasBgSize": {
         "title": "Canvas Image Fit",
-        "description": "How the background wallpaper fits the viewport. Choose Cover to fill completely or Contain to prevent cropping.",
+        "description": "Controls how background images scale within the canvas:\n• Cover: Scales the image to fill the canvas completely, cropping excess if necessary.\n• Contain: Scales the image to fit entirely within the screen without cropping.\n• Tile: Repeats the image pattern horizontally and vertically across the canvas.",
         "help": {
             "topic": "Styling & Layering",
             "anchor": "1-the-styling-cascade-master-vs-local"
@@ -3242,7 +3222,7 @@
     },
     "image.sourceType": {
         "title": "Source Type",
-        "description": "Select between an external image URL, media gallery file, camera stream, or raw inline SVG code.",
+        "description": "Defines where the image data originates:\n• URL: Loads image files from remote web addresses or local camera snapshot paths.\n• Animated Vector Graphic (SVG): Renders inline scalable vector graphics with animated vector effects.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "image",
@@ -3561,7 +3541,7 @@
     },
     "gauge.barType": {
         "title": "Gauge Visual Style",
-        "description": "Select between circular radial arcs, solid level bars, and segmented LED dash bars.",
+        "description": "Selects the visual geometry of the gauge display:\n• round: Renders a curved radial arc gauge dial.\n• horizontal: Renders a straight linear bar progress meter.\n• none: Hides the gauge bar, displaying only numeric values, icons, and labels.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "gauge",
@@ -3786,7 +3766,7 @@
     },
     "gauge.axisRoundingMode": {
         "title": "Axis Scale Rounding",
-        "description": "Algorithm for choosing neat human readable numbers along the dial scale.",
+        "description": "Determines how scale tick marks and limits are calculated:\n• Fit Data Range: Sets scale boundaries strictly to your specified minimum and maximum values.\n• Clean Steps: Snaps scale ticks to human-friendly increments like 1, 2, 5, or 10.\n• Whole Numbers Only: Constrains scale tick intervals strictly to integers for count values.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "gauge",
@@ -3939,7 +3919,7 @@
     },
     "graph.bufferMode": {
         "title": "Streaming Buffer Mode",
-        "description": "Manage incoming real-time points. Choose Stream to slide new points onto the right or Replace to redraw.",
+        "description": "Controls how historical data samples are stored in memory:\n• Point Count: Retains a fixed maximum number of data entries regardless of elapsed time.\n• Time Period: Retains data points within a sliding time window such as 1 hour or 24 hours.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "graph",
@@ -3984,7 +3964,7 @@
     },
     "graph.timelineAdvance": {
         "title": "Timeline Progress Style",
-        "description": "Controls whether the time axis slides smoothly in real time or steps forward on new data.",
+        "description": "Controls how the horizontal time axis moves forward:\n• On New Value: Only advances the timeline when a fresh data packet arrives.\n• Continuous Real Time: Continuously scrolls the timeline second-by-second in real time.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "graph",
@@ -4011,7 +3991,7 @@
     },
     "graph.lineGaps": {
         "title": "Handle Missing Data Gaps",
-        "description": "Break the line across missed intervals or connect points across gaps.",
+        "description": "Determines how periods without incoming data are drawn:\n• Break on Missing Time: Leaves an empty gap when data stops arriving to highlight sensor dropouts.\n• Connect Points: Bridges directly across missing intervals with unbroken lines.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "graph",
@@ -4074,7 +4054,7 @@
     },
     "graph.negMode": {
         "title": "Negative Value Handling",
-        "description": "How negative numbers are displayed, such as below-zero temperatures or solar grid export.",
+        "description": "Controls how negative sensor values are represented:\n• Show as Negative: Plots negative values beneath the zero baseline.\n• Show as Positive: Inverts negative values to positive numbers for magnitude comparisons.\n• Ignore (Hide): Excludes negative readings from the graph completely.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "graph",
@@ -4083,7 +4063,7 @@
     },
     "graph.type": {
         "title": "Visual Graph Type",
-        "description": "Switch between smooth area charts, lines, stepped curves, and vertical bars.",
+        "description": "Selects the rendering technique for data series:\n• Line: Connects consecutive data points with crisp straight angled segments.\n• Smooth: Curves lines gracefully between points using cubic spline interpolation.\n• Stepped: Draws horizontal and vertical step lines, ideal for binary or relay states.\n• Bar: Plots data points as vertical rectangular bars.\n• Text: Overlays latest numeric readings directly on the plot area.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "graph",
@@ -4146,14 +4126,6 @@
     "graph.graphOffY": {
         "title": "Graph Vertical Offset",
         "description": "Shifts the plotting area vertically within the widget bounding box.",
-        "help": {
-            "topic": "Widgets",
-            "widgetSub": "graph"
-        }
-    },
-    "graph.axesSplit": {
-        "title": "Dual Axis Configuration",
-        "description": "Split left and right vertical axes for charting two distinct units like temperature and humidity.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "graph"
@@ -4399,14 +4371,6 @@
             "widgetSub": "graph"
         }
     },
-    "graph.tickSplit": {
-        "title": "Tick Mark Alignment",
-        "description": "Controls whether tick notches point inward or outward along the axis boundary.",
-        "help": {
-            "topic": "Widgets",
-            "widgetSub": "graph"
-        }
-    },
     "graph.pointSize": {
         "title": "Data Point Dot Size",
         "description": "Radius in pixels of circular marker dots rendered at each sample point.",
@@ -4447,9 +4411,33 @@
             "widgetSub": "graph"
         }
     },
+    "graph.pointValuesDistribution": {
+        "title": "Point Value Distribution",
+        "description": "Determines how value labels are distributed across the plot:\n• Time (Peaks & Troughs): Slices the timeline into sections and places labels at local peaks and valleys within each section.\n• Time (Uniform): Distributes labels evenly across time slices, selecting the data point closest to the center of each slice.\n• Point Step (Every N Points): Places labels strictly every Nth data point, anchored directly to data nodes.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph"
+        }
+    },
     "graph.autoPointValuesInterval": {
         "title": "Auto Point Interval",
         "description": "Automatically spaces point labels to prevent visual crowding.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph"
+        }
+    },
+    "graph.pointValuesTimeWidth": {
+        "title": "Time Section Width (px)",
+        "description": "Width in pixels of each time section column (for example 48px). Smaller widths display more values across the plot, while larger widths display fewer values.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph"
+        }
+    },
+    "graph.pointValuesStep": {
+        "title": "Point Step",
+        "description": "Spacing interval for value labels in Point Step mode. For example, 1 displays a value on every single node point, 2 on every other point, and 3 on every third point.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "graph"
@@ -4546,7 +4534,7 @@
     },
     "graph.graphAnimation": {
         "title": "Graph Animation",
-        "description": "Enable smooth rise and slide transitions on incoming telemetry data.",
+        "description": "Controls line drawing animations:\n• None: Renders chart lines and updates immediately without animation delay.\n• Draw In & Morph: Plays an initial drawing animation and smoothly morphs curves on value updates.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "graph"
@@ -5199,7 +5187,7 @@
     },
     "list.outputMode": {
         "title": "Trigger Output Mode",
-        "description": "Controls whether tapping an item publishes the item text, index number, or checked boolean state.",
+        "description": "Controls when checked items are published:\n• On Trigger Topic Only: Publishes the selected list items only when an external trigger topic fires.\n• On Any Change: Immediately publishes updated list items whenever checkboxes or selections change.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "list",
@@ -5208,7 +5196,7 @@
     },
     "list.outputFormat": {
         "title": "Trigger Output Format",
-        "description": "Format of the published message payload, such as plain text string or structured JSON.",
+        "description": "Selects the data structure published by the list:\n• JSON Array (Objects): Publishes items as structured JSON objects containing id, label, and state.\n• Boolean Array: Publishes items as a compact array of boolean true or false flags.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "list",
@@ -5395,7 +5383,7 @@
     },
     "menu.menuLayout": {
         "title": "Menu Layout Direction",
-        "description": "Arrange navigation buttons in a vertical list, horizontal bar, or compact grid.",
+        "description": "Arranges menu navigation items:\n• Vertical: Arranges menu navigation items in a single vertical column.\n• Horizontal: Arranges menu navigation items in a single horizontal row.\n• Horizontal & Vertical: Displays menu items in a two-dimensional grid layout.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "menu",
@@ -5404,7 +5392,7 @@
     },
     "menu.menuStyle": {
         "title": "Menu Flyout Style",
-        "description": "Select between static in-place buttons, popover flyouts, and drawer side-drawers.",
+        "description": "Controls the opening animation and panel positioning:\n• Static (Always visible): Keeps navigation items permanently visible without opening or closing.\n• Instant (no slide): Toggles navigation items immediately without transition animations.\n• Dropdown Menu: Expands navigation items downward from the menu button.\n• Dropup Menu: Expands navigation items upward above the menu button.\n• Slide Left Panel: Slides an off-canvas navigation drawer inward from the left screen edge.\n• Slide Right Panel: Slides an off-canvas navigation drawer inward from the right screen edge.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "menu",
@@ -5431,7 +5419,7 @@
     },
     "menu.menuCloseMethod": {
         "title": "Auto Close Method",
-        "description": "How the menu closes. Choose click outside, selection tap, or explicit close button.",
+        "description": "Determines when the menu closes automatically:\n• Never close automatically: Keeps the menu open until you explicitly tap the close button.\n• Close after selection except toggle items: Closes upon clicking action links while keeping toggle controls open.\n• Always automatically close: Closes the menu drawer immediately after clicking any item.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "menu",
@@ -5530,7 +5518,7 @@
     },
     "menu.menuLabelHint": {
         "title": "Menu Label Hint",
-        "description": "Subtle sub-label hint text displayed under menu item titles.",
+        "description": "Controls hover tooltip behavior for menu button labels:\n• Disabled: Never displays a hover tooltip over the button label.\n• When Label Is Truncated: Shows a tooltip only when text exceeds button width and gets clipped.\n• Always: Always displays the full label text in a hover tooltip.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "menu",
@@ -6007,7 +5995,7 @@
     },
     "switch.buttonLabelHint": {
         "title": "Button Label Hint",
-        "description": "Subtle secondary helper text displayed beneath the button title.",
+        "description": "Controls hover tooltip behavior for button labels:\n• Disabled: Never displays a hover tooltip over the button label.\n• When Label Is Truncated: Shows a tooltip only when text exceeds button width and gets clipped.\n• Always: Always displays the full label text in a hover tooltip.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "switch",
@@ -6319,7 +6307,7 @@
     },
     "text.textScroll": {
         "title": "Continuous Text Marquee",
-        "description": "Smoothly scrolls long text lines horizontally across the widget.",
+        "description": "Controls continuous text animation:\n• None: Keeps text stationary within the widget container.\n• Horizontal: Scrolls overflowing text horizontally like a news marquee ticker.\n• Vertical: Scrolls multi-line text upward continuously like a teleprompter.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
@@ -6977,19 +6965,9 @@
             "anchor": "2-editor-tools"
         }
     },
-    "editor-zoom": {
-        "title": "Edit Mode Zoom",
-        "description": "Adjust canvas magnification level in edit mode to inspect fine widget details or zoom out for full layouts.",
-        "help": null
-    },
     "editor-zoom-reset": {
         "title": "Reset Zoom",
         "description": "Reset editor canvas magnification back to 100% normal view.",
-        "help": null
-    },
-    "viewer-url": {
-        "title": "Viewer URL",
-        "description": "Direct address link to display this dashboard in fullscreen viewer mode on tablets and wall displays.",
         "help": null
     },
     "btn-copy-viewer-url": {
@@ -7021,14 +6999,6 @@
         "title": "Clear Canvas",
         "description": "Remove all widgets and reset canvas settings to start a completely fresh dashboard layout.",
         "help": null
-    },
-    "theme": {
-        "title": "Theme",
-        "description": "Select the active color palette and visual styling preset applied across dashboard widgets.",
-        "help": {
-            "topic": "Styling & Layering",
-            "anchor": "2-themes-theme-explorer"
-        }
     },
     "theme-prev": {
         "title": "Previous Theme",
@@ -7076,13 +7046,6 @@
         "description": "Delete the selected custom theme from the system.",
         "help": null
     },
-    "create-widget": {
-        "title": "Create Widget",
-        "description": "Add a new smart home widget such as a switch, gauge, slider, battery, or graph to the canvas.",
-        "help": {
-            "topic": "Widgets"
-        }
-    },
     "add-widget-select-btn": {
         "title": "Widget Type Selector",
         "description": "Choose which type of widget to create and place onto your dashboard.",
@@ -7095,14 +7058,6 @@
         "description": "Spawn the selected widget type directly onto the canvas at default position.",
         "help": {
             "topic": "Widgets"
-        }
-    },
-    "selected-widget": {
-        "title": "Selected Widget",
-        "description": "Select an active widget from the list to inspect and edit its properties in this panel.",
-        "help": {
-            "topic": "Editor Interface Guide",
-            "anchor": "6-selected-widget-tools"
         }
     },
     "widget-select-btn": {
@@ -7123,21 +7078,6 @@
         "description": "Move the selected widget or widgets to another dashboard page or display on all pages.",
         "help": null
     },
-    "duplicate": {
-        "title": "Duplicate Widget",
-        "description": "Create an exact duplicate clone of the selected widget with all its current settings.",
-        "help": null
-    },
-    "delete": {
-        "title": "Delete Widget",
-        "description": "Permanently delete the selected widget or widgets from the dashboard canvas.",
-        "help": null
-    },
-    "universal-actions": {
-        "title": "Universal Actions",
-        "description": "Clipboard and history operations including copy, cut, paste, undo, and redo for canvas widgets.",
-        "help": null
-    },
     "toolbar-btn-copy": {
         "title": "Copy Widget",
         "description": "Copy selected widget configuration to clipboard so you can paste it on any page.",
@@ -7151,16 +7091,6 @@
     "toolbar-btn-paste": {
         "title": "Paste Widget",
         "description": "Paste copied widget from clipboard onto current canvas page.",
-        "help": null
-    },
-    "undo": {
-        "title": "Undo",
-        "description": "Undo the last layout change or property modification on the canvas.",
-        "help": null
-    },
-    "redo": {
-        "title": "Redo",
-        "description": "Reapply the change that was previously undone.",
         "help": null
     },
     "btn-group-create": {
@@ -7212,14 +7142,6 @@
         "title": "Toggle Edit Mode",
         "description": "Switch between live interactive dashboard view and editing mode.",
         "help": null
-    },
-    "editor-tools": {
-        "title": "Editor Tools",
-        "description": "Quick toolbar actions to manage galleries, snippets, helper scripts, and editor display modes.",
-        "help": {
-            "topic": "Editor Interface Guide",
-            "anchor": "2-editor-tools"
-        }
     },
     "menu.menuLabelFont": {
         "title": "Font",
@@ -12853,6 +12775,26 @@
         "description": "How many digits to show after the decimal on point labels.",
         "help": null
     },
+    "graph.defaultGraphPointValuesDistribution": {
+        "title": "Point Value Distribution",
+        "description": "Determines how value labels are distributed across the plot:\n• Time (Peaks & Troughs): Slices the timeline into sections and places labels at local peaks and valleys within each section.\n• Time (Uniform): Distributes labels evenly across time slices, selecting the data point closest to the center of each slice.\n• Point Step (Every N Points): Places labels strictly every Nth data point, anchored directly to data nodes.",
+        "help": null
+    },
+    "graph.defaultGraphAutoPointValuesInterval": {
+        "title": "Auto Point Interval",
+        "description": "Automatically spaces point labels to prevent visual crowding.",
+        "help": null
+    },
+    "graph.defaultGraphPointValuesTimeWidth": {
+        "title": "Time Section Width (px)",
+        "description": "Width in pixels of each time section column (for example 48px). Smaller widths display more values across the plot, while larger widths display fewer values.",
+        "help": null
+    },
+    "graph.defaultGraphPointValuesStep": {
+        "title": "Point Step",
+        "description": "Spacing interval for value labels in Point Step mode. For example, 1 displays a value on every single node point, 2 on every other point, and 3 on every third point.",
+        "help": null
+    },
     "graph.defaultGraphPointValuesInterval": {
         "title": "Point Value Spacing",
         "description": "How often a point number is printed along the series.",
@@ -14874,6 +14816,379 @@
         "title": "Inner Glow Opacity",
         "description": "How strong the halo inside the button face is. 100 is solid and 0 is invisible.",
         "help": null
+    },
+    "defaultGraphPointValuesDistribution": {
+        "title": "Default Graph Point Values Distribution",
+        "description": "Determines how value labels are distributed across the plot:\n• Time (Peaks & Troughs): Slices the timeline into sections and places labels at local peaks and valleys within each section.\n• Time (Uniform): Distributes labels evenly across time slices, selecting the data point closest to the center of each slice.\n• Point Step (Every N Points): Places labels strictly every Nth data point, anchored directly to data nodes.",
+        "help": null
+    },
+    "graph.showAxisX": {
+        "title": "Show X Axis",
+        "description": "Displays horizontal time or category labels along the bottom of the graph.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph"
+        }
+    },
+    "defaultGraphShowAxisX": {
+        "title": "Show X Axis",
+        "description": "Displays horizontal time or category labels along the bottom of the graph.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph"
+        }
+    },
+    "graph.timeFormat": {
+        "title": "X Axis Format",
+        "description": "Determines how horizontal axis timestamps and categories are displayed:\n• Datapoints: Displays sequential numeric index numbers for each incoming data entry.\n• Text Labels: Formats axis markers using string category names from incoming data.\n• Date Hours: Displays combined calendar date and hour timestamps.\n• Date: Displays calendar day and month values without clock times.\n• Hours: Displays only the hour component of incoming readings.\n• Hours:Minutes: Standard time format displaying hours and minutes.\n• Hours:Minutes:Seconds: High-precision time format including seconds.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph"
+        }
+    },
+    "defaultGraphTimeFormat": {
+        "title": "X Axis Format",
+        "description": "Determines how horizontal axis timestamps and categories are displayed:\n• Datapoints: Displays sequential numeric index numbers for each incoming data entry.\n• Text Labels: Formats axis markers using string category names from incoming data.\n• Date Hours: Displays combined calendar date and hour timestamps.\n• Date: Displays calendar day and month values without clock times.\n• Hours: Displays only the hour component of incoming readings.\n• Hours:Minutes: Standard time format displaying hours and minutes.\n• Hours:Minutes:Seconds: High-precision time format including seconds.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph"
+        }
+    },
+    "graph.dateFormat": {
+        "title": "Date Format",
+        "description": "Sets the calendar date order and separator format when dates are displayed on the horizontal axis.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph"
+        }
+    },
+    "defaultGraphDateFormat": {
+        "title": "Date Format",
+        "description": "Sets the calendar date order and separator format when dates are displayed on the horizontal axis.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph"
+        }
+    },
+    "graph.time24h": {
+        "title": "24 Hour Clock",
+        "description": "Formats horizontal axis clock times using 24-hour notation instead of 12-hour AM and PM periods.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph"
+        }
+    },
+    "defaultGraphTime24h": {
+        "title": "24 Hour Clock",
+        "description": "Formats horizontal axis clock times using 24-hour notation instead of 12-hour AM and PM periods.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph"
+        }
+    },
+    "graph.convertToLocalTime": {
+        "title": "Convert to Local Time",
+        "description": "Automatically converts UTC timestamps from incoming sensor feeds to your local device timezone.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph"
+        }
+    },
+    "defaultGraphConvertToLocalTime": {
+        "title": "Convert to Local Time",
+        "description": "Automatically converts UTC timestamps from incoming sensor feeds to your local device timezone.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph"
+        }
+    },
+    "graph.timeOffset": {
+        "title": "Manual Time Offset",
+        "description": "Applies a minute-based time shift to compensate for sensor clock discrepancies or remote server time zones.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph"
+        }
+    },
+    "defaultGraphTimeOffset": {
+        "title": "Manual Time Offset",
+        "description": "Applies a minute-based time shift to compensate for sensor clock discrepancies or remote server time zones.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph"
+        }
+    },
+    "graph.axisWidthX": {
+        "title": "X Axis Fixed Width",
+        "description": "Enforces an exact pixel height for the horizontal axis container, or 0 for automatic spacing.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph"
+        }
+    },
+    "defaultGraphAxisWidthX": {
+        "title": "X Axis Fixed Width",
+        "description": "Enforces an exact pixel height for the horizontal axis container, or 0 for automatic spacing.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph"
+        }
+    },
+    "graph.axisOffY": {
+        "title": "X Axis Spacing",
+        "description": "Adjusts vertical pixel distance between horizontal axis labels and the bottom plot boundary.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph"
+        }
+    },
+    "defaultGraphAxisOffY": {
+        "title": "X Axis Spacing",
+        "description": "Adjusts vertical pixel distance between horizontal axis labels and the bottom plot boundary.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph"
+        }
+    },
+    "graph.autoAxisResX": {
+        "title": "Auto X Axis Interval",
+        "description": "Dynamically adjusts label spacing along the horizontal axis to prevent text overlap as the graph resizes.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph"
+        }
+    },
+    "defaultGraphAutoAxisResX": {
+        "title": "Auto X Axis Interval",
+        "description": "Dynamically adjusts label spacing along the horizontal axis to prevent text overlap as the graph resizes.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph"
+        }
+    },
+    "graph.axisResX": {
+        "title": "X Axis Interval",
+        "description": "Specifies the exact step interval or point count between successive horizontal axis labels when auto interval is disabled.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph"
+        }
+    },
+    "defaultGraphAxisResX": {
+        "title": "X Axis Interval",
+        "description": "Specifies the exact step interval or point count between successive horizontal axis labels when auto interval is disabled.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph"
+        }
+    },
+    "graph.categoryLabelRotation": {
+        "title": "X Axis Label Rotation",
+        "description": "Rotates horizontal axis labels by degrees to fit lengthy text and timestamps within compact graph widths.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph"
+        }
+    },
+    "defaultGraphCategoryLabelRotation": {
+        "title": "X Axis Label Rotation",
+        "description": "Rotates horizontal axis labels by degrees to fit lengthy text and timestamps within compact graph widths.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph"
+        }
+    },
+    "graph.showAxisY": {
+        "title": "Show Y Axis",
+        "description": "Displays vertical value scale numbers and tick markings along the side of the graph.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph"
+        }
+    },
+    "defaultGraphShowAxisY": {
+        "title": "Show Y Axis",
+        "description": "Displays vertical value scale numbers and tick markings along the side of the graph.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph"
+        }
+    },
+    "graph.roundingMode": {
+        "title": "Y Axis Scale Mode",
+        "description": "Determines how vertical axis scale increments and boundary values are calculated:\n• Fit Data Range (Exact Min/Max): Sets vertical axis limits strictly to your minimum and maximum values.\n• Clean Steps (1, 2, 5...): Automatically adjusts scale ticks to user-friendly steps like 1, 2, 5, or 10.\n• Whole Numbers Only (Counts): Constrains scale intervals strictly to integer counts without fractions.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph"
+        }
+    },
+    "defaultGraphRoundingMode": {
+        "title": "Y Axis Scale Mode",
+        "description": "Determines how vertical axis scale increments and boundary values are calculated:\n• Fit Data Range (Exact Min/Max): Sets vertical axis limits strictly to your minimum and maximum values.\n• Clean Steps (1, 2, 5...): Automatically adjusts scale ticks to user-friendly steps like 1, 2, 5, or 10.\n• Whole Numbers Only (Counts): Constrains scale intervals strictly to integer counts without fractions.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph"
+        }
+    },
+    "graph.decimals": {
+        "title": "Y Axis Decimals",
+        "description": "Sets the number of decimal digits displayed on vertical axis value numbers.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph"
+        }
+    },
+    "defaultGraphDecimals": {
+        "title": "Y Axis Decimals",
+        "description": "Sets the number of decimal digits displayed on vertical axis value numbers.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph"
+        }
+    },
+    "graph.headroom": {
+        "title": "Headroom Percentage",
+        "description": "Adds percentage headroom above and below data limits to prevent plot peaks and valleys from touching chart borders.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph"
+        }
+    },
+    "defaultGraphHeadroom": {
+        "title": "Headroom Percentage",
+        "description": "Adds percentage headroom above and below data limits to prevent plot peaks and valleys from touching chart borders.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph"
+        }
+    },
+    "graph.axisWidthY": {
+        "title": "Y Axis Fixed Width",
+        "description": "Enforces an exact pixel width for the vertical axis sidebar, or 0 for automatic sizing based on number width.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph"
+        }
+    },
+    "defaultGraphAxisWidthY": {
+        "title": "Y Axis Fixed Width",
+        "description": "Enforces an exact pixel width for the vertical axis sidebar, or 0 for automatic sizing based on number width.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph"
+        }
+    },
+    "graph.axisOffX": {
+        "title": "Y Axis Spacing",
+        "description": "Adjusts horizontal pixel clearance between vertical axis numbers and the plot line grid.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph"
+        }
+    },
+    "defaultGraphAxisOffX": {
+        "title": "Y Axis Spacing",
+        "description": "Adjusts horizontal pixel clearance between vertical axis numbers and the plot line grid.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph"
+        }
+    },
+    "graph.autoAxisResY": {
+        "title": "Auto Y Axis Line Count",
+        "description": "Automatically calculates the optimal number of horizontal grid lines based on chart height.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph"
+        }
+    },
+    "defaultGraphAutoAxisResY": {
+        "title": "Auto Y Axis Line Count",
+        "description": "Automatically calculates the optimal number of horizontal grid lines based on chart height.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph"
+        }
+    },
+    "graph.axisResY": {
+        "title": "Y Axis Line Count",
+        "description": "Sets the explicit number of horizontal grid lines and vertical labels when auto line count is disabled.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph"
+        }
+    },
+    "defaultGraphAxisResY": {
+        "title": "Y Axis Line Count",
+        "description": "Sets the explicit number of horizontal grid lines and vertical labels when auto line count is disabled.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph"
+        }
+    },
+    "graph.valueLabelRotation": {
+        "title": "Y Axis Label Rotation",
+        "description": "Rotates vertical axis numbers by degrees to fit inside narrow vertical margins.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph"
+        }
+    },
+    "defaultGraphValueLabelRotation": {
+        "title": "Y Axis Label Rotation",
+        "description": "Rotates vertical axis numbers by degrees to fit inside narrow vertical margins.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph"
+        }
+    },
+    "graph.showTickX": {
+        "title": "Show X Axis Tick Marks",
+        "description": "Displays small tick mark indicators along the horizontal axis line at each time step.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph"
+        }
+    },
+    "defaultGraphShowTickX": {
+        "title": "Show X Axis Tick Marks",
+        "description": "Displays small tick mark indicators along the horizontal axis line at each time step.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph"
+        }
+    },
+    "graph.showTickY": {
+        "title": "Show Y Axis Tick Marks",
+        "description": "Displays small tick mark indicators along the vertical axis line at each value step.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph"
+        }
+    },
+    "defaultGraphShowTickY": {
+        "title": "Show Y Axis Tick Marks",
+        "description": "Displays small tick mark indicators along the vertical axis line at each value step.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph"
+        }
+    },
+    "lightgrid.lgLightNameOffX": {
+        "title": "Light Name Offset X",
+        "description": "Adjusts horizontal pixel position of the light channel label within each grid tile.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "lightgrid"
+        }
+    },
+    "lightgrid.lgLightNameOffY": {
+        "title": "Light Name Offset Y",
+        "description": "Adjusts vertical pixel position of the light channel label within each grid tile.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "lightgrid"
+        }
     }
 };
 

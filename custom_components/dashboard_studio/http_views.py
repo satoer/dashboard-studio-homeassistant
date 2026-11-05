@@ -4,11 +4,14 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+import time
 from typing import Any
 
+import aiohttp
 from aiohttp import web
 from homeassistant.components.http import HomeAssistantView
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .const import ADMIN_API_PATH, APP_PATH
 from .runtime import get_runtime
@@ -23,6 +26,53 @@ MEDIA = {
     "presets": "presets",
     "widgetpresets": "presets",
 }
+
+
+_CHANGELOG_REMOTE_URL = "https://satoer.com/dashboardstudio/changelog.json"
+_CHANGELOG_CACHE_TTL = 3600
+_changelog_cache: Any = None
+_changelog_cache_at: float = 0.0
+
+
+async def async_get_changelog(hass: HomeAssistant) -> tuple[Any, int]:
+    """Fetch changelog with 1-hour cache and local bundled fallback."""
+    global _changelog_cache, _changelog_cache_at
+    now = time.time()
+    if _changelog_cache is not None and (now - _changelog_cache_at) < _CHANGELOG_CACHE_TTL:
+        return _changelog_cache, 200
+
+    try:
+        session = async_get_clientsession(hass)
+        timeout = aiohttp.ClientTimeout(total=10)
+        async with session.get(_CHANGELOG_REMOTE_URL, timeout=timeout) as resp:
+            if resp.status == 200:
+                data = await resp.json(content_type=None)
+                _changelog_cache = data
+                _changelog_cache_at = now
+                return data, 200
+    except Exception:
+        pass
+
+    if _changelog_cache is not None:
+        return _changelog_cache, 200
+
+    here = Path(__file__).resolve().parent
+    candidates = [
+        resolve_frontend_dir() / "release-changelog.json",
+        resolve_frontend_dir() / "changelog.json",
+        here.parent.parent / "website" / "changelog.json",
+    ]
+    for candidate in candidates:
+        if candidate.is_file():
+            try:
+                data = json.loads(candidate.read_text(encoding="utf-8"))
+                _changelog_cache = data
+                _changelog_cache_at = now
+                return data, 200
+            except Exception:
+                pass
+
+    return {"error": "Failed to fetch changelog"}, 502
 
 
 def resolve_frontend_dir() -> Path:
@@ -87,6 +137,9 @@ class DashboardStudioAppView(HomeAssistantView):
             config_path = resolve_platform_config()
             if config_path and config_path.is_file():
                 return web.FileResponse(config_path)
+        if rel in ("release-changelog.json", "changelog.json"):
+            data, status = await async_get_changelog(hass)
+            return web.json_response(data, status=status, headers={"Cache-Control": "public, max-age=3600"})
         parts = [part for part in rel.split("/") if part and part not in (".", "..")]
         if parts and parts[0] in MEDIA:
             runtime = get_runtime(hass)

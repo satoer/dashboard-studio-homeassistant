@@ -180,10 +180,19 @@
         _bindEvents: function () {
             var self = this;
 
-            // Capture-phase mouseover strips browser native titles everywhere to prevent double tips
+            // Capture-phase mouseover strips browser native titles in the editor to prevent double tips,
+            // while preserving regular native tooltips for special cases (the FAB edit button and Quick Toolbar)
             document.addEventListener('mouseover', function (e) {
-                var titledEl = e.target.closest ? e.target.closest('[title]') : null;
+                var titledEl = e.target.closest ? e.target.closest('[title], [data-stored-title]') : null;
                 if (titledEl && titledEl !== self._helpBtn) {
+                    var isSpecialRegularTooltip = Boolean(titledEl.closest('#fab-mode-switch, #quick-toolbar-host, .quick-toolbar-shell, .quick-toolbar-clip, .quick-toolbar-flyout'));
+                    if (isSpecialRegularTooltip) {
+                        if (!titledEl.getAttribute('title') && titledEl.getAttribute('data-stored-title')) {
+                            titledEl.setAttribute('title', titledEl.getAttribute('data-stored-title'));
+                        }
+                        return;
+                    }
+
                     var t = titledEl.getAttribute('title');
                     if (t) {
                         titledEl.setAttribute('data-stored-title', t);
@@ -252,6 +261,11 @@
 
         resolveTarget: function (rawTarget) {
             if (!rawTarget || !rawTarget.closest) return null;
+
+            // Special cases: Cogwheel FAB edit button and Quick Toolbar use regular tooltips
+            if (rawTarget.closest('#fab-mode-switch, #quick-toolbar-host, .quick-toolbar-shell, .quick-toolbar-clip, .quick-toolbar-flyout')) {
+                return null;
+            }
 
             // Expand matching candidates to include buttons, controls, labels, and theme elements
             var target = rawTarget.closest(
@@ -386,11 +400,83 @@
             if (this._shadowEl) this._shadowEl.classList.remove('is-fading');
         },
 
+        _renderBodyContent: function (desc) {
+            var bodyEl = this._bodyEl;
+            if (!bodyEl) return false;
+            bodyEl.innerHTML = '';
+
+            if (!desc) return false;
+
+            // Check if description contains bullet points
+            if (!desc.includes('•') && !desc.includes('\n- ') && !desc.includes('\n* ')) {
+                bodyEl.textContent = desc;
+                return false;
+            }
+
+            var leadText = '';
+            var items = [];
+
+            if (desc.includes('\n')) {
+                var rawParts = desc.split(/\n/);
+                for (var i = 0; i < rawParts.length; i++) {
+                    var line = rawParts[i].trim();
+                    if (!line) continue;
+                    if (line.startsWith('•') || line.startsWith('-') || line.startsWith('*')) {
+                        var clean = line.replace(/^[•\-\*]\s*/, '').trim();
+                        if (clean) items.push(clean);
+                    } else if (items.length === 0) {
+                        leadText = leadText ? (leadText + ' ' + line) : line;
+                    } else {
+                        items[items.length - 1] += ' ' + line;
+                    }
+                }
+            } else {
+                var parts = desc.split('•');
+                leadText = parts[0].trim();
+                for (var p = 1; p < parts.length; p++) {
+                    var c = parts[p].trim();
+                    if (c) items.push(c);
+                }
+            }
+
+            if (leadText) {
+                var leadEl = document.createElement('div');
+                leadEl.className = 'editor-tooltip-lead';
+                leadEl.textContent = leadText;
+                bodyEl.appendChild(leadEl);
+            }
+
+            if (items.length > 0) {
+                var ul = document.createElement('ul');
+                ul.className = 'editor-tooltip-bullets';
+                for (var j = 0; j < items.length; j++) {
+                    var li = document.createElement('li');
+                    li.className = 'editor-tooltip-bullet-item';
+                    var itemText = items[j];
+                    var colonIdx = itemText.indexOf(':');
+                    if (colonIdx > 0 && colonIdx < 50) {
+                        var strong = document.createElement('strong');
+                        strong.className = 'editor-tooltip-bullet-title';
+                        strong.textContent = itemText.slice(0, colonIdx + 1);
+                        li.appendChild(strong);
+                        var spaceNode = document.createTextNode(' ' + itemText.slice(colonIdx + 1).trim());
+                        li.appendChild(spaceNode);
+                    } else {
+                        li.textContent = itemText;
+                    }
+                    ul.appendChild(li);
+                }
+                bodyEl.appendChild(ul);
+            }
+
+            return true;
+        },
+
         _renderAndShow: function (target, data) {
             if (!this._el) return;
 
             this._titleEl.textContent = data.title || '';
-            this._bodyEl.textContent = data.description || '';
+            var isList = this._renderBodyContent(data.description || '');
 
             if (data.help && data.help.topic) {
                 this._activeHelpSpec = data.help;
@@ -403,7 +489,7 @@
                 this._el.classList.add('no-help');
             }
 
-            this._positionFlyout(target);
+            this._positionFlyout(target, isList);
 
             this._el.classList.remove('hidden', 'is-fading');
             this._el.classList.add('is-visible');
@@ -451,7 +537,7 @@
             ].join(' ');
         },
 
-        _positionFlyout: function (target) {
+        _positionFlyout: function (target, isList) {
             var flyout = this._el;
             var editorPanel = document.getElementById('editor-panel');
             if (!flyout || !editorPanel) return;
@@ -459,7 +545,7 @@
             var panelRect = editorPanel.getBoundingClientRect();
             var targetRect = target.getBoundingClientRect();
 
-            var cardWidth = 290;
+            var cardWidth = isList ? 320 : 290;
             var arrowWidth = 8;
             var arrowHeight = 16;
             var cornerRadius = 14;

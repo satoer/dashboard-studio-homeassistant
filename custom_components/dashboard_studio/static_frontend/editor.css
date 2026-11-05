@@ -957,6 +957,40 @@ body.edit-mode.ui-light .editor-tooltip-help-btn:hover {
     color: var(--text-muted, var(--ui-text-muted, #94a3b8));
 }
 
+.editor-tooltip-lead {
+    margin-bottom: 0.45rem;
+    line-height: 1.45;
+}
+
+.editor-tooltip-bullets {
+    margin: 0.25rem 0 0 0;
+    padding-left: 1.15rem;
+    list-style-type: disc;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.editor-tooltip-bullet-item {
+    font-size: 11.5px;
+    line-height: 1.45;
+    color: var(--text-muted, var(--ui-text-muted, #94a3b8));
+}
+
+.editor-tooltip-bullet-item::marker {
+    color: var(--accent, var(--ui-accent, #38bdf8));
+    font-size: 0.9em;
+}
+
+.editor-tooltip-bullet-title {
+    font-weight: 600;
+    color: var(--ui-text, #ffffff);
+}
+
+body.edit-mode.ui-light .editor-tooltip-bullet-title {
+    color: var(--ui-text, #1e293b);
+}
+
 .editor-zoom {
     display: flex;
     flex-direction: column;
