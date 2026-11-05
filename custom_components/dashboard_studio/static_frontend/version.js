@@ -1,4 +1,4 @@
-window.DASHBOARD_VERSION = "2.3.3";
+window.DASHBOARD_VERSION = "2.3.4";
 window.LATEST_MIGRATION_VERSION = "2.3.0";
 
 /**

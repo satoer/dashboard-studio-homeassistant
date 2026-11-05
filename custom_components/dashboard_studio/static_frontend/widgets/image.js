@@ -1,6 +1,6 @@
 class ImageWidget extends BaseWidget {
     static get metadata() {
-        return { label: "Image", shortName: "Image", icon: "ph-image", category: "Graphics", color_dark: "hsl(30, 80%, 65%)", color_light: "hsl(30, 85%, 35%)", version: "2.3.3", date: "2026-11-04" };
+        return { label: "Image", shortName: "Image", icon: "ph-image", category: "Graphics", color_dark: "hsl(30, 80%, 65%)", color_light: "hsl(30, 85%, 35%)", version: "2.3.4", date: "2026-11-05" };
     }
 
     static get IMAGE_LABEL_LEGACY_TYPO_KEYS() {
@@ -893,15 +893,28 @@ class ImageWidget extends BaseWidget {
     }
 
     /**
+     * Checks if a URL contains basic authentication credentials (e.g. http://user:pass@host/path).
+     * Fetch strictly rejects URLs with embedded credentials with a TypeError.
+     */
+    _hasEmbeddedCredentials(url) {
+        if (!url || typeof url !== 'string') return false;
+        const atIdx = url.indexOf('@');
+        if (atIdx === -1) return false;
+        const slashIdx = url.indexOf('://');
+        return slashIdx !== -1 && atIdx > slashIdx;
+    }
+
+    /**
      * A URL can be snapshotted into one revocable blob when fetch and createObjectURL exist.
      * blob: sources are already object URLs and must be assigned directly.
-     * Skips fetch for endpoints already identified as non-CORS to avoid failing network requests.
+     * Skips fetch for endpoints already identified as non-CORS or containing credentials to avoid failing requests.
      */
     _canBlobLoad(sourceUrl) {
         if (!sourceUrl || sourceUrl.indexOf('blob:') === 0) return false;
         if (typeof fetch !== 'function') return false;
         if (typeof URL === 'undefined' || typeof URL.createObjectURL !== 'function') return false;
         if (this._noCorsUrl === sourceUrl) return false;
+        if (this._hasEmbeddedCredentials(sourceUrl)) return false;
         return true;
     }
 
@@ -916,6 +929,12 @@ class ImageWidget extends BaseWidget {
             this._directStreamUrl = null;
             this._refreshSeq = ((this._refreshSeq || 0) + 1) % 1000000;
             const sep = src.indexOf('?') !== -1 ? '&' : '?';
+            this._refreshInFlight = true;
+            if (this._refreshInFlightTimer) clearTimeout(this._refreshInFlightTimer);
+            const widget = this;
+            this._refreshInFlightTimer = setTimeout(function () {
+                widget._clearRefreshInFlight();
+            }, 15000);
             this._maybeAnimatedSetSrc(src + sep + '_ds_cb=' + Date.now() + '_' + this._refreshSeq);
             return;
         }
@@ -967,8 +986,17 @@ class ImageWidget extends BaseWidget {
         }
 
         const editMode = typeof Dashboard !== 'undefined' && Dashboard.isEditMode;
-        if (editMode || !this._canBlobLoad(src)) {
+        if (editMode) {
             this._maybeAnimatedSetSrc(src);
+            return;
+        }
+
+        if (!this._canBlobLoad(src)) {
+            if (force) {
+                this._useDirectImageSource(src, false);
+            } else {
+                this._maybeAnimatedSetSrc(src);
+            }
             return;
         }
 
