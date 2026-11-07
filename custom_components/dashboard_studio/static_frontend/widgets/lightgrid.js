@@ -1,6 +1,6 @@
 class LightGridWidget extends BaseWidget {
     static get metadata() {
-        return { label: "Light Grid", shortName: "Lights", icon: "ph-lightbulb", category: "Control", color_dark: "hsl(50, 80%, 65%)", color_light: "hsl(50, 85%, 35%)", version: "2.3.1", date: "2026-11-02" };
+        return { label: "Light Grid", shortName: "Lights", icon: "ph-lightbulb", category: "Control", color_dark: "hsl(50, 80%, 65%)", color_light: "hsl(50, 85%, 35%)", version: "2.3.5", date: "2026-11-07" };
     }
 
     static get ICON_KEYMAP_ON() {
@@ -1183,7 +1183,7 @@ class LightGridWidget extends BaseWidget {
                 ]
             },
             {
-                id: 'lg_layout', title: 'Grid Layout', icon: 'ph-grid-four',
+                id: 'lg_layout', title: 'Tile Layout', icon: 'ph-grid-four',
                 fields: [
                     { key: 'columns', type: 'number', label: 'Columns', cols: 3, defaultKey: 'lgCols' },
                     {

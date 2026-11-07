@@ -1,6 +1,6 @@
 class SwitchWidget extends BaseWidget {
     static get metadata() {
-        return { label: "Switch / Button", shortName: "Switch", icon: "ph-toggle-left", category: "Control", color_dark: "hsl(220, 80%, 65%)", color_light: "hsl(220, 85%, 35%)", version: "2.3.1", date: "2026-11-02" };
+        return { label: "Switch / Button", shortName: "Switch", icon: "ph-toggle-left", category: "Control", color_dark: "hsl(220, 80%, 65%)", color_light: "hsl(220, 85%, 35%)", version: "2.3.5", date: "2026-11-07" };
     }
 
     /** Toggle + Go to Page (+ Topic): mutual exclusion by dashboard page; no manual group ID. */
@@ -1425,7 +1425,7 @@ class SwitchWidget extends BaseWidget {
     getSchema() {
         return [
             {
-                id: 'sw_behavior', title: 'Action & Behavior', icon: 'ph-lightning',
+                id: 'sw_behavior', title: 'Data & Behavior', icon: 'ph-lightning',
                 fields: [
                     {
                         key: 'mode', type: 'select', label: 'Mode', options: SwitchWidget.SWITCH_MODE_OPTIONS, cols: 6, defaultKey: 'defaultSwitchMode'

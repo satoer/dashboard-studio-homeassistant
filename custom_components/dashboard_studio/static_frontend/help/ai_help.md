@@ -394,7 +394,7 @@ Rendered through `markdown-it` and sanitized via `DOMPurify`.
 ### 11. Image
 - **Type:** `image`
 - **Purpose:** Picture display, camera stream, SVG graphic, or animated asset.
-- **Data & Behavior:**
+- **Data & Source:**
   - Source Types: URL (web/LAN link), SVG (raw XML string), Gallery path (`/images/...`).
   - Image Fit: `cover`, `contain`, `fill`, `none`, `tile`.
   - Live Refresh: Timer-based URL reload in milliseconds for snapshot camera feeds. Pauses when editor open or tab hidden.
@@ -407,7 +407,7 @@ Rendered through `markdown-it` and sanitized via `DOMPurify`.
 - **Data & Behavior:**
   - Binding: Bound to Unified Light State JSON array, or each tile bound to individual light topics.
   - Control Modes: Toggle (simple click on/off), Dimmer, or Control Panel Popover (shows slider, color wheel, temperature bar, and preset buttons).
-- **Grid Layout:** Columns, rows, tile gap, tile corner radius.
+- **Tile Layout:** Columns, rows, tile gap, tile corner radius.
 - **Appearance & Icons:** Per-light icon slots (`icons.on`), light name typography, status indicators, panel slider styling.
 - **Audio Triggers:** On Tile On, On Tile Off, On Panel Open, On Panel Close.
 

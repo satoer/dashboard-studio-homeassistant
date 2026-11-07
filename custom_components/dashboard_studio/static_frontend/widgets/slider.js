@@ -1,6 +1,6 @@
 class SliderWidget extends BaseWidget {
     static get metadata() {
-        return { label: "Slider", shortName: "Slider", icon: "ph-sliders-horizontal", category: "Control", color_dark: "hsl(240, 80%, 65%)", color_light: "hsl(240, 85%, 35%)", version: "2.3.1", date: "2026-11-02" };
+        return { label: "Slider", shortName: "Slider", icon: "ph-sliders-horizontal", category: "Control", color_dark: "hsl(240, 80%, 65%)", color_light: "hsl(240, 85%, 35%)", version: "2.3.5", date: "2026-11-07" };
     }
 
     /** Remap raw slider value to display range when customDisplayRange is enabled (MQTT/output unchanged). */
@@ -717,7 +717,7 @@ class SliderWidget extends BaseWidget {
 
         return [
             {
-                id: 'sl_data', title: 'Data Configuration', icon: 'ph-database',
+                id: 'sl_data', title: 'Data & Behavior', icon: 'ph-database',
                 fields: [
                     { key: 'value', type: 'number', label: 'Value', cols: 6 },
                     {

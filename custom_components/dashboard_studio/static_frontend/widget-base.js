@@ -995,6 +995,15 @@ class BaseWidget {
     }
 
     // Reusable utility for Typography fields
+    /** Muted slideout suffix after a typography group title. */
+    static get TYPOGRAPHY_HEADER_SUFFIX() { return 'Typography'; }
+
+    /**
+     * Muted suffix for a typography group that other groups copy.
+     * The whole phrase, including Base, uses the same color as Typography.
+     */
+    static get TYPOGRAPHY_BASE_HEADER_SUFFIX() { return 'Base Typography'; }
+
     static getTypographySchema(prefix, title, options = {}) {
         // Inspector widths are equalized per row by Editor.equalizeInspectorGrid:
         // `cols` below only declares row membership (which fields share a row).
@@ -1165,9 +1174,11 @@ class BaseWidget {
         if (Array.isArray(options.dependsOn) && options.dependsOn.length > 0) {
             group.dependsOn = options.dependsOn.slice();
         }
-        if (Object.prototype.hasOwnProperty.call(options, 'headerSuffix')) {
-            const hs = options.headerSuffix;
-            const trimmed = hs != null ? String(hs).trim() : '';
+        const suffixSource = Object.prototype.hasOwnProperty.call(options, 'headerSuffix')
+            ? options.headerSuffix
+            : (options.baseLeader === true ? BaseWidget.TYPOGRAPHY_BASE_HEADER_SUFFIX : undefined);
+        if (suffixSource !== undefined) {
+            const trimmed = suffixSource != null ? String(suffixSource).trim() : '';
             if (trimmed !== '') {
                 group.typographyHeaderSuffix = trimmed;
             }

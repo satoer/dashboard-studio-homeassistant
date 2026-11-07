@@ -1,6 +1,6 @@
 class MenuWidget extends BaseWidget {
     static get metadata() {
-        return { label: "Menu", shortName: "Menu", icon: "ph-list", category: "Layout", color_dark: "hsl(280, 80%, 65%)", color_light: "hsl(280, 85%, 35%)", version: "2.3.1", date: "2026-11-02" };
+        return { label: "Menu", shortName: "Menu", icon: "ph-list", category: "Layout", color_dark: "hsl(280, 80%, 65%)", color_light: "hsl(280, 85%, 35%)", version: "2.3.5", date: "2026-11-07" };
     }
 
     /** Keys for BaseWidget.getIconStyleSchema / applyIconStyleToElement (on state). */
@@ -1047,7 +1047,7 @@ class MenuWidget extends BaseWidget {
     getSchema() {
         return [
             {
-                id: 'menu_behavior', title: 'Menu Behavior & Layout', icon: 'ph-list',
+                id: 'menu_behavior', title: 'Menu Behavior', icon: 'ph-list',
                 fields: [
                     { key: 'menuLayout', type: 'select', label: 'Layout Direction', options: [{value:'vertical', text:'Vertical'}, {value:'horizontal', text:'Horizontal'}, {value:'grid', text:'Horizontal & Vertical'}], cols: 12 },
                     { key: 'menuStyle', type: 'select', label: 'Menu Slide Style', options: [

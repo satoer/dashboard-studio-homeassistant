@@ -1,6 +1,6 @@
 class GraphWidget extends BaseWidget {
     static get metadata() {
-        return { shortName: "Graph", label: "Graph", icon: "ph-chart-line", category: "Data", color_dark: "hsl(160, 80%, 65%)", color_light: "hsl(160, 85%, 35%)", version: "2.3.3", date: "2026-11-05" };
+        return { shortName: "Graph", label: "Graph", icon: "ph-chart-line", category: "Data", color_dark: "hsl(160, 80%, 65%)", color_light: "hsl(160, 85%, 35%)", version: "2.3.5", date: "2026-11-07" };
     }
 
     static getLegendPositionOptions(values, isGlobal) {
@@ -30,19 +30,36 @@ class GraphWidget extends BaseWidget {
     }
 
     static get INHERIT_EDITOR_TYPOGRAPHY_SLOTS() {
-        return {
-            leaderRole: 'axisX',
-            followerRole: 'axisY',
-            inheritProps: GraphWidget.AXIS_Y_INHERIT_PROPS,
-            followerPrefix: 'axisY',
-            leaderPrefix: 'axisX'
-        };
+        return [
+            {
+                leaderRole: 'axisX',
+                followerRole: 'axisY',
+                inheritProps: GraphWidget.AXIS_Y_INHERIT_PROPS,
+                followerPrefix: 'axisY',
+                leaderPrefix: 'axisX'
+            },
+            {
+                leaderRole: 'axisXLabel',
+                followerRole: 'axisYLabel',
+                inheritProps: GraphWidget.AXIS_Y_INHERIT_PROPS,
+                followerPrefix: 'axisYLabel',
+                leaderPrefix: 'axisXLabel'
+            }
+        ];
     }
 
     static get GRAPH_AXIS_TYPO_EXTRA_BY_ROLE() {
+        const axisTick = {
+            fontSize: 'FontSize', color: 'FontColor', bold: 'FontBold', opacity: 'FontOpacity', rotation: 'Rotation'
+        };
+        const axisTitle = {
+            fontSize: 'FontSize', color: 'FontColor', bold: 'FontBold', opacity: 'FontOpacity', rotation: 'Rotation'
+        };
         return {
-            axisX: { fontSize: 'FontSize', color: 'FontColor', bold: 'FontBold', opacity: 'FontOpacity' },
-            axisY: { fontSize: 'FontSize', color: 'FontColor', bold: 'FontBold', opacity: 'FontOpacity' }
+            axisX: axisTick,
+            axisY: axisTick,
+            axisXLabel: axisTitle,
+            axisYLabel: axisTitle
         };
     }
 
@@ -51,6 +68,8 @@ class GraphWidget extends BaseWidget {
             ['widgetLabel', 'label'],
             ['axisX', 'axisX'],
             ['axisY', 'axisY'],
+            ['axisXLabel', 'axisXLabel'],
+            ['axisYLabel', 'axisYLabel'],
             ['dataText', 'text'],
             ['pointValues', 'pointVal'],
             ['pointValuesBar', 'pointValBar'],
@@ -102,16 +121,117 @@ class GraphWidget extends BaseWidget {
         GraphWidget.applyAxisTypographyBlockToFlat(c, 'axisY', resolved);
     }
 
+    static _fillAxisStyleSlot(c, prefix, masterPrefix, fallback, M) {
+        const master = M && typeof M === 'object' ? M : {};
+        const fb = fallback && typeof fallback === 'object' ? fallback : {};
+        if (!c[prefix + 'Font']) {
+            c[prefix + 'Font'] = master[masterPrefix + 'Font'] || fb.fontFamily || "'Inter', sans-serif";
+        }
+        if (c[prefix + 'FontSize'] == null || c[prefix + 'FontSize'] === '') {
+            c[prefix + 'FontSize'] = master[masterPrefix + 'FontSize'] != null ? master[masterPrefix + 'FontSize'] : (fb.fontSize != null ? fb.fontSize : 10);
+        }
+        if (!c[prefix + 'FontColor']) {
+            c[prefix + 'FontColor'] = master[masterPrefix + 'FontColor'] || fb.color || '@iconMuted';
+        }
+        if (c[prefix + 'FontBold'] === undefined || c[prefix + 'FontBold'] === null) {
+            if (master[masterPrefix + 'FontBold'] !== undefined && master[masterPrefix + 'FontBold'] !== null) {
+                c[prefix + 'FontBold'] = master[masterPrefix + 'FontBold'] === true;
+            } else {
+                c[prefix + 'FontBold'] = fb.bold === true;
+            }
+        }
+        if (c[prefix + 'FontOpacity'] == null || c[prefix + 'FontOpacity'] === '') {
+            c[prefix + 'FontOpacity'] = master[masterPrefix + 'FontOpacity'] != null
+                ? master[masterPrefix + 'FontOpacity']
+                : (fb.opacity != null ? fb.opacity : 100);
+        }
+    }
+
+    static _axisTitleRoleHasOwn(block, prop) {
+        if (!block || typeof block !== 'object' || !Object.prototype.hasOwnProperty.call(block, prop)) return false;
+        return !BaseWidget.followerTypographyInheritPlaceholder(prop, block[prop]);
+    }
+
+    /**
+     * Built-in title rotation before anyone sets the field.
+     * Vertical bars: category 0, value -90.
+     * Horizontal bars only: the title on the left (shown as Y Axis Label) is -90,
+     * and the title on the bottom (shown as X Axis Label) is 0.
+     * A saved number that is not that built-in value is kept for both directions.
+     */
+    static unsetAxisTitleRotation(which, storedValue, horizontal) {
+        const factory = which === 'value' ? -90 : 0;
+        if (storedValue != null && storedValue !== '' && Number(storedValue) !== factory) {
+            return Number(storedValue);
+        }
+        if (horizontal) return which === 'value' ? 0 : -90;
+        return factory;
+    }
+
+    static _graphConfigIsHorizontalBar(c, M) {
+        const master = M && typeof M === 'object' ? M : {};
+        const type = (c && c.type) || (c && c.defaultGraphType) || master.defaultGraphType || 'line';
+        if (type !== 'bar') return false;
+        let dir = c && c.barDirection;
+        if (dir == null || dir === '') dir = c && c.defaultGraphBarDirection;
+        if (dir == null || dir === '') dir = master.defaultGraphBarDirection || 'vertical';
+        return dir === 'horizontal';
+    }
+
+    /**
+     * X axis title is the base. Y axis title copies those font props until overridden.
+     * Rotation is not copied.
+     */
+    static resolveGraphAxisLabelTypographyForRuntime(c, M) {
+        const master = M && typeof M === 'object' ? M : {};
+        const horizontal = GraphWidget._graphConfigIsHorizontalBar(c, master);
+        const xDef = GraphWidget.defaultGraphAxisXTypographyFromMaster(master);
+        GraphWidget._fillAxisStyleSlot(c, 'axisXLabel', 'defaultGraphAxisXLabel', xDef, master);
+        if (c.axisXLabelRotation == null || c.axisXLabelRotation === '') {
+            c.axisXLabelRotation = GraphWidget.unsetAxisTitleRotation('category', master.defaultGraphAxisXLabelRotation, horizontal);
+        }
+
+        const leader = GraphWidget.axisTypographyBlockFromFlat(c, 'axisXLabel');
+        const typRoot = c.typography && typeof c.typography === 'object' ? c.typography : {};
+        const sparseY = typRoot.axisYLabel && typeof typRoot.axisYLabel === 'object' ? typRoot.axisYLabel : {};
+        const resolved = BaseWidget.resolveTypographyFollowerFromLeader(
+            leader, sparseY, GraphWidget.AXIS_Y_INHERIT_PROPS
+        );
+        const masterY = {
+            fontFamily: master.defaultGraphAxisYLabelFont,
+            fontSize: master.defaultGraphAxisYLabelFontSize,
+            color: master.defaultGraphAxisYLabelFontColor,
+            bold: master.defaultGraphAxisYLabelFontBold,
+            opacity: master.defaultGraphAxisYLabelFontOpacity
+        };
+        const props = GraphWidget.AXIS_Y_INHERIT_PROPS;
+        for (let i = 0; i < props.length; i++) {
+            const prop = props[i];
+            if (GraphWidget._axisTitleRoleHasOwn(sparseY, prop)) continue;
+            const mv = masterY[prop];
+            if (mv !== undefined && mv !== null && mv !== '') resolved[prop] = mv;
+        }
+        GraphWidget.applyAxisTypographyBlockToFlat(c, 'axisYLabel', resolved);
+        if (c.axisYLabelRotation == null || c.axisYLabelRotation === '') {
+            c.axisYLabelRotation = GraphWidget.unsetAxisTitleRotation('value', master.defaultGraphAxisYLabelRotation, horizontal);
+        }
+    }
+
+    static _stripGraphFollowerRole(typography, role) {
+        if (!typography[role] || typeof typography[role] !== 'object') {
+            typography[role] = {};
+        }
+        BaseWidget.stripTypographyFollowerInheritPlaceholders(
+            typography[role], GraphWidget.AXIS_Y_INHERIT_PROPS
+        );
+        if (Object.keys(typography[role]).length === 0) delete typography[role];
+    }
+
     static ensureGraphAxisTypography(o) {
         if (!o || typeof o !== 'object') return;
         if (!o.typography || typeof o.typography !== 'object') o.typography = {};
-        if (!o.typography.axisY || typeof o.typography.axisY !== 'object') {
-            o.typography.axisY = {};
-        }
-        BaseWidget.stripTypographyFollowerInheritPlaceholders(
-            o.typography.axisY, GraphWidget.AXIS_Y_INHERIT_PROPS
-        );
-        if (Object.keys(o.typography.axisY).length === 0) delete o.typography.axisY;
+        GraphWidget._stripGraphFollowerRole(o.typography, 'axisY');
+        GraphWidget._stripGraphFollowerRole(o.typography, 'axisYLabel');
     }
 
     static buildTypographyNestedEditorPatch(widgetType, typoPatch) {
@@ -128,7 +248,9 @@ class GraphWidget extends BaseWidget {
     static applyTypographyNestedToConfig(c) {
         BaseWidget.applyTypographyNestedToConfig(c, GraphWidget.GRAPH_TYPOGRAPHY_ROLES, {
             extraByRole: Object.assign({}, GraphWidget.GRAPH_AXIS_TYPO_EXTRA_BY_ROLE, {
-                dataText: { fontSize: 'Size', color: 'Color', bold: 'FontBold' }
+                dataText: { fontSize: 'Size', color: 'Color', bold: 'FontBold' },
+                pointValues: { invertYNegative: 'InvertYNegative' },
+                pointValuesBar: { invertYNegative: 'InvertYNegative' }
             })
         });
     }
@@ -139,7 +261,9 @@ class GraphWidget extends BaseWidget {
                 GraphWidget.GRAPH_TYPOGRAPHY_ROLES,
                 {
                     extraByRole: Object.assign({}, GraphWidget.GRAPH_AXIS_TYPO_EXTRA_BY_ROLE, {
-                        dataText: { fontSize: 'Size', color: 'Color', bold: 'FontBold' }
+                        dataText: { fontSize: 'Size', color: 'Color', bold: 'FontBold' },
+                        pointValues: { invertYNegative: 'InvertYNegative' },
+                        pointValuesBar: { invertYNegative: 'InvertYNegative' }
                     })
                 }
             );
@@ -173,6 +297,13 @@ class GraphWidget extends BaseWidget {
                 c[prefix + 'OffY'] = M[masterPrefix + 'OffY'] != null ? M[masterPrefix + 'OffY'] : defaults.offY;
             }
         }
+        if (defaults.hasInvertYNegative) {
+            if (c[prefix + 'InvertYNegative'] === undefined || c[prefix + 'InvertYNegative'] === null) {
+                c[prefix + 'InvertYNegative'] = M[masterPrefix + 'InvertYNegative'] !== undefined
+                    ? (M[masterPrefix + 'InvertYNegative'] === true)
+                    : (defaults.invertYNegative !== false);
+            }
+        }
     }
 
     static fillGraphTypographyResolved(c, M) {
@@ -190,10 +321,33 @@ class GraphWidget extends BaseWidget {
         if (c.axisXFontOpacity == null || c.axisXFontOpacity === '') {
             c.axisXFontOpacity = axisXDefaults.opacity != null ? axisXDefaults.opacity : 100;
         }
+        if (c.axisXRotation == null || c.axisXRotation === '') {
+            const masterXRot = c.defaultGraphAxisXRotation != null && c.defaultGraphAxisXRotation !== ''
+                ? c.defaultGraphAxisXRotation
+                : M.defaultGraphAxisXRotation;
+            c.axisXRotation = masterXRot != null && masterXRot !== '' ? masterXRot : 0;
+        }
         GraphWidget.resolveGraphAxisYTypographyForRuntime(c, M);
         if (c.axisYFontOpacity == null || c.axisYFontOpacity === '') {
             c.axisYFontOpacity = c.axisXFontOpacity != null ? c.axisXFontOpacity : 100;
         }
+        if (c.axisYRotation == null || c.axisYRotation === '') {
+            const masterRot = c.defaultGraphAxisYRotation != null && c.defaultGraphAxisYRotation !== ''
+                ? c.defaultGraphAxisYRotation
+                : M.defaultGraphAxisYRotation;
+            c.axisYRotation = masterRot != null && masterRot !== '' ? masterRot : 0;
+        }
+        if (c.axisXLabel == null) {
+            c.axisXLabel = c.defaultGraphAxisXLabel != null ? String(c.defaultGraphAxisXLabel) : '';
+        } else {
+            c.axisXLabel = String(c.axisXLabel);
+        }
+        if (c.axisYLabel == null) {
+            c.axisYLabel = c.defaultGraphAxisYLabel != null ? String(c.defaultGraphAxisYLabel) : '';
+        } else {
+            c.axisYLabel = String(c.axisYLabel);
+        }
+        GraphWidget.resolveGraphAxisLabelTypographyForRuntime(c, M);
 
         if (!c.textFont) c.textFont = M.defaultGraphTextFont || "'Inter', sans-serif";
         if (c.textSize == null || c.textSize === '') {
@@ -205,10 +359,10 @@ class GraphWidget extends BaseWidget {
         }
 
         GraphWidget._fillTypoSlot(c, M, 'pointVal', 'defaultGraphPointVal', {
-            fs: 10, col: '@accent', align: 'left', caseMode: 'none', hasOffsets: true, offX: 6, offY: -6
+            fs: 10, col: '@accent', align: 'left', caseMode: 'none', hasOffsets: true, offX: 6, offY: -6, hasInvertYNegative: true, invertYNegative: true
         });
         GraphWidget._fillTypoSlot(c, M, 'pointValBar', 'defaultGraphPointValBar', {
-            fs: 10, col: '@accent', align: 'center', caseMode: 'none', hasOffsets: true, offX: 0, offY: -6
+            fs: 10, col: '@accent', align: 'center', caseMode: 'none', hasOffsets: true, offX: 0, offY: -6, hasInvertYNegative: true, invertYNegative: true
         });
         GraphWidget._fillTypoSlot(c, M, 'legendItem', 'defaultGraphLegendItem', {
             fs: 12, col: '@text', align: 'left', caseMode: 'none', hasOffsets: false
@@ -321,6 +475,40 @@ class GraphWidget extends BaseWidget {
         const axis = isHoriz ? 'X Axis' : 'Y Axis';
         const lead = prefix ? (axis + ' ' + prefix) : axis;
         return lead + ' (Value)';
+    }
+
+    static categoryAxisLabelTitle(values, isGlobal) {
+        return (GraphWidget.isBarHorizontal(values, isGlobal) ? 'Y Axis' : 'X Axis') + ' (Label)';
+    }
+
+    static valueAxisLabelTitle(values, isGlobal) {
+        return (GraphWidget.isBarHorizontal(values, isGlobal) ? 'X Axis' : 'Y Axis') + ' (Label)';
+    }
+
+    static categoryAxisLabelFieldTitle(values, isGlobal) {
+        return GraphWidget.isBarHorizontal(values, isGlobal) ? 'Y Axis Label' : 'X Axis Label';
+    }
+
+    static valueAxisLabelFieldTitle(values, isGlobal) {
+        return GraphWidget.isBarHorizontal(values, isGlobal) ? 'X Axis Label' : 'Y Axis Label';
+    }
+
+    static axisTitleString(value) {
+        if (value == null) return '';
+        return String(value).trim();
+    }
+
+    /** True when that axis title will be drawn, or a topic is supplying the text. */
+    static axisLabelHasText(values, isGlobal, isValue) {
+        const instanceKey = isValue ? 'axisYLabel' : 'axisXLabel';
+        const masterKey = isValue ? 'defaultGraphAxisYLabel' : 'defaultGraphAxisXLabel';
+        const key = isGlobal ? masterKey : instanceKey;
+        if (GraphWidget.axisTitleString(values && values[key]) !== '') return true;
+        if (isGlobal) return false;
+        if (typeof Editor === 'undefined' || !Editor.currentId || typeof Dashboard === 'undefined' || !Dashboard.widgets) return false;
+        const w = Dashboard.widgets[Editor.currentId];
+        const topic = w && w.bindings ? w.bindings[instanceKey] : '';
+        return typeof topic === 'string' && topic.trim() !== '';
     }
 
     static _objectKeysInLabelOrder(obj) {
@@ -531,13 +719,13 @@ class GraphWidget extends BaseWidget {
             },
             {
                 key: isMaster ? 'defaultGraphAnimShimmer' : 'graphAnimShimmer',
-                type: 'checkbox', label: 'Shimmer on Unchanged Data', cols: 6,
+                type: 'checkbox', label: 'Shimmer on Unchanged Data', cols: 12,
                 ...(isMaster ? {} : { defaultKey: 'defaultGraphAnimShimmer' }),
                 dependsOn: animDeps, visibleWhen: animOn
             },
             {
                 key: isMaster ? 'defaultGraphAnimStaggerBars' : 'graphAnimStaggerBars',
-                type: 'checkbox', label: 'Stagger Rise for Bars', cols: 6,
+                type: 'checkbox', label: 'Stagger Rise for Bars', cols: 12,
                 ...(isMaster ? {} : { defaultKey: 'defaultGraphAnimStaggerBars' }),
                 dependsOn: typeDeps,
                 visibleWhen: function (values, isGlobal) {
@@ -885,7 +1073,6 @@ class GraphWidget extends BaseWidget {
         const time24Key = isMaster ? 'defaultGraphTime24h' : 'time24h';
         const convertLocalKey = isMaster ? 'defaultGraphConvertToLocalTime' : 'convertToLocalTime';
         const timeOffsetKey = isMaster ? 'defaultGraphTimeOffset' : 'timeOffset';
-        const tzKey = isMaster ? 'defaultGraphTimezoneConvert' : 'timezoneConvert';
         const resXKey = isMaster ? 'defaultGraphAxisResX' : 'axisResX';
         const offYKey = isMaster ? 'defaultGraphAxisOffY' : 'axisOffY';
         const roundingKey = isMaster ? 'defaultGraphRoundingMode' : 'roundingMode';
@@ -895,8 +1082,6 @@ class GraphWidget extends BaseWidget {
         const widthYKey = isMaster ? 'defaultGraphAxisWidthY' : 'axisWidthY';
         const widthXKey = isMaster ? 'defaultGraphAxisWidthX' : 'axisWidthX';
         const offXKey = isMaster ? 'defaultGraphAxisOffX' : 'axisOffX';
-        const catRotKey = isMaster ? 'defaultGraphCategoryLabelRotation' : 'categoryLabelRotation';
-        const valRotKey = isMaster ? 'defaultGraphValueLabelRotation' : 'valueLabelRotation';
         const autoResXKey = isMaster ? 'defaultGraphAutoAxisResX' : 'autoAxisResX';
         const autoResYKey = isMaster ? 'defaultGraphAutoAxisResY' : 'autoAxisResY';
         const dirDeps = ['type', 'barDirection', 'defaultGraphType', 'defaultGraphBarDirection'];
@@ -930,6 +1115,14 @@ class GraphWidget extends BaseWidget {
         ];
 
         // Category / Time column fields
+        pushField(catFields, {
+            key: isMaster ? 'defaultGraphAxisXLabel' : 'axisXLabel',
+            type: 'text',
+            label: 'X Axis Label',
+            dynamicLabel: (v, g) => GraphWidget.categoryAxisLabelFieldTitle(v, g),
+            dependsOn: dirDeps,
+            ...dk('defaultGraphAxisXLabel')
+        }, null, null, 12);
         pushField(catFields, {
             key: showCatKey, type: 'checkbox', label: 'Show X Axis',
             dynamicLabel: (v, g) => GraphWidget.isBarHorizontal(v, g) ? 'Show Y Axis' : 'Show X Axis',
@@ -995,13 +1188,16 @@ class GraphWidget extends BaseWidget {
             const auto = values[autoResXKey] !== undefined ? values[autoResXKey] : (typeof MASTER_SETTINGS !== 'undefined' && MASTER_SETTINGS.defaultGraphAutoAxisResX === true);
             return !auto;
         }, catDeps.concat(isMaster ? [autoResXKey] : [autoResXKey, 'defaultGraphAutoAxisResX']).concat(dirDeps), 12);
-        pushField(catFields, {
-            key: catRotKey, type: 'number', label: 'X Axis Label Rotation',
-            dynamicLabel: (v, g) => GraphWidget.isBarHorizontal(v, g) ? 'Y Axis Label Rotation' : 'X Axis Label Rotation',
-            ...dk('defaultGraphCategoryLabelRotation')
-        }, catVisible, catDeps.concat(dirDeps), 12);
 
         // Value column fields
+        pushField(valFields, {
+            key: isMaster ? 'defaultGraphAxisYLabel' : 'axisYLabel',
+            type: 'text',
+            label: 'Y Axis Label',
+            dynamicLabel: (v, g) => GraphWidget.valueAxisLabelFieldTitle(v, g),
+            dependsOn: dirDeps,
+            ...dk('defaultGraphAxisYLabel')
+        }, null, null, 12);
         pushField(valFields, {
             key: showValKey, type: 'checkbox', label: 'Show Y Axis',
             dynamicLabel: (v, g) => GraphWidget.isBarHorizontal(v, g) ? 'Show X Axis' : 'Show Y Axis',
@@ -1023,6 +1219,12 @@ class GraphWidget extends BaseWidget {
             const mode = values[roundingKey] !== undefined ? values[roundingKey] : (typeof MASTER_SETTINGS !== 'undefined' ? MASTER_SETTINGS.defaultGraphRoundingMode : 'smart');
             return mode === 'exact';
         }, valDeps.concat(isMaster ? [roundingKey] : [roundingKey, 'defaultGraphRoundingMode']).concat(dirDeps), 12);
+        pushField(valFields, {
+            key: isMaster ? 'defaultGraphAbbreviateLargeValues' : 'abbreviateLargeValues',
+            type: 'checkbox',
+            label: 'Abbreviate Large Values (k, M)',
+            ...dk('defaultGraphAbbreviateLargeValues')
+        }, valVisible, valDeps, 12);
         pushField(valFields, {
             key: headroomKey, type: 'number', min: 0, max: 100, label: 'Headroom (%)',
             ...dk('defaultGraphHeadroom')
@@ -1051,12 +1253,6 @@ class GraphWidget extends BaseWidget {
             const auto = values[autoResYKey] !== undefined ? values[autoResYKey] : (typeof MASTER_SETTINGS !== 'undefined' && MASTER_SETTINGS.defaultGraphAutoAxisResY === true);
             return !auto;
         }, valDeps.concat(isMaster ? [autoResYKey] : [autoResYKey, 'defaultGraphAutoAxisResY']).concat(dirDeps), 12);
-        pushField(valFields, {
-            key: valRotKey, type: 'number', label: 'Y Axis Label Rotation',
-            dynamicLabel: (v, g) => GraphWidget.isBarHorizontal(v, g) ? 'X Axis Label Rotation' : 'Y Axis Label Rotation',
-            ...dk('defaultGraphValueLabelRotation')
-        }, valVisible, valDeps.concat(dirDeps), 12);
-
         const axisTitleDeps = isMaster
             ? ['defaultGraphType', 'defaultGraphBarDirection', 'defaultGraphTimeFormat']
             : ['type', 'barDirection', 'defaultGraphType', 'defaultGraphBarDirection', 'timeFormat', 'defaultGraphTimeFormat'];
@@ -1106,7 +1302,7 @@ class GraphWidget extends BaseWidget {
         const group = BaseWidget.getTypographySchema(prefix, 'X Axis (Time)', {
             dynamicLabel: (v, g) => GraphWidget.categoryAxisTitle(v, g),
             exclude: ['align', 'case', 'offset', 'italic', 'opacity', 'colorOff', 'size', 'bold', 'color'],
-            headerSuffix: 'Typography',
+            baseLeader: true,
             nestedTypography: isMaster ? undefined : { root: 'typography', role: 'axisX' },
             fontDefaultKey: isMaster ? 'fontFamily' : 'defaultGraphAxisXFont',
             extraFieldsInsert: 'afterColor',
@@ -1131,9 +1327,15 @@ class GraphWidget extends BaseWidget {
                 },
                 {
                     key: isMaster ? 'defaultGraphAxisXFontBold' : 'axisXFontBold',
-                    type: 'checkbox', label: 'Bold', cols: 4,
+                    type: 'checkbox', label: 'Bold', cols: 6,
                     defaultKey: 'defaultGraphAxisXFontBold',
                     typographyNestedProp: isMaster ? undefined : 'bold'
+                },
+                {
+                    key: isMaster ? 'defaultGraphAxisXRotation' : 'axisXRotation',
+                    type: 'number', label: 'Rotation', cols: 6,
+                    defaultKey: 'defaultGraphAxisXRotation',
+                    typographyNestedProp: isMaster ? undefined : 'rotation'
                 }
             ]
         });
@@ -1186,9 +1388,15 @@ class GraphWidget extends BaseWidget {
                 },
                 {
                     key: isMaster ? 'defaultGraphAxisYFontBold' : 'axisYFontBold',
-                    type: 'checkbox', label: 'Bold', cols: 4,
+                    type: 'checkbox', label: 'Bold', cols: 6,
                     defaultKey: leaderBoldDefault,
                     typographyNestedProp: isMaster ? undefined : 'bold'
+                },
+                {
+                    key: isMaster ? 'defaultGraphAxisYRotation' : 'axisYRotation',
+                    type: 'number', label: 'Rotation', cols: 6,
+                    defaultKey: 'defaultGraphAxisYRotation',
+                    typographyNestedProp: isMaster ? undefined : 'rotation'
                 }
             ]
         });
@@ -1204,6 +1412,90 @@ class GraphWidget extends BaseWidget {
                 ['showAxisY', 'defaultGraphShowAxisY', 'showAxisX', 'defaultGraphShowAxisX'].concat(axisTitleDeps)
             );
         }
+        return group;
+    }
+
+    static buildGraphAxisLabelTypographySchema(isMaster, which) {
+        const isValue = which === 'value';
+        const role = isValue ? 'axisYLabel' : 'axisXLabel';
+        const prefix = isMaster
+            ? (isValue ? 'defaultGraphAxisYLabel' : 'defaultGraphAxisXLabel')
+            : role;
+        const leaderPrefix = isMaster ? 'defaultGraphAxisXLabel' : 'axisXLabel';
+        const own = function (suffix) { return prefix + suffix; };
+        const inherited = function (suffix) { return (isValue ? leaderPrefix : prefix) + suffix; };
+        const titleFn = isValue
+            ? function (v, g) { return GraphWidget.valueAxisLabelTitle(v, g); }
+            : function (v, g) { return GraphWidget.categoryAxisLabelTitle(v, g); };
+        const fontDefaultKey = isValue
+            ? inherited('Font')
+            : (isMaster ? 'fontFamily' : 'defaultGraphAxisXLabelFont');
+        const rotationDefaultKey = isValue ? 'defaultGraphAxisYLabelRotation' : 'defaultGraphAxisXLabelRotation';
+        const group = BaseWidget.getTypographySchema(prefix, isValue ? 'Y Axis (Label)' : 'X Axis (Label)', {
+            dynamicLabel: titleFn,
+            exclude: ['align', 'case', 'offset', 'italic', 'opacity', 'colorOff', 'size', 'bold', 'color'],
+            baseLeader: !isValue,
+            nestedTypography: isMaster ? undefined : { root: 'typography', role: role },
+            fontDefaultKey: fontDefaultKey,
+            extraFieldsInsert: 'afterColor',
+            extraFields: [
+                {
+                    key: own('FontSize'),
+                    type: 'number', label: 'Font Size', cols: 4,
+                    defaultKey: inherited('FontSize'),
+                    typographyNestedProp: isMaster ? undefined : 'fontSize'
+                },
+                {
+                    key: own('FontColor'),
+                    type: 'color', label: 'Color', cols: 4,
+                    defaultKey: inherited('FontColor'),
+                    typographyNestedProp: isMaster ? undefined : 'color'
+                },
+                {
+                    key: own('FontOpacity'),
+                    type: 'number', label: 'Opacity', min: 0, max: 100, cols: 4,
+                    defaultKey: inherited('FontOpacity'),
+                    typographyNestedProp: isMaster ? undefined : 'opacity'
+                },
+                {
+                    key: own('FontBold'),
+                    type: 'checkbox', label: 'Bold', cols: 6,
+                    defaultKey: inherited('FontBold'),
+                    typographyNestedProp: isMaster ? undefined : 'bold'
+                },
+                {
+                    key: own('Rotation'),
+                    type: 'number', label: 'Rotation', cols: 6,
+                    defaultKey: rotationDefaultKey,
+                    typographyNestedProp: isMaster ? undefined : 'rotation',
+                    syncResolvedWhenUnset: true,
+                    displayValue: function (raw, values, isGlobal) {
+                        if (!isGlobal) return raw;
+                        return GraphWidget.unsetAxisTitleRotation(
+                            isValue ? 'value' : 'category',
+                            raw,
+                            GraphWidget.isBarHorizontal(values, true)
+                        );
+                    }
+                }
+            ]
+        });
+        const axisTitleDeps = isMaster
+            ? ['defaultGraphType', 'defaultGraphBarDirection']
+            : ['type', 'barDirection', 'defaultGraphType', 'defaultGraphBarDirection'];
+        const labelKey = isMaster
+            ? (isValue ? 'defaultGraphAxisYLabel' : 'defaultGraphAxisXLabel')
+            : (isValue ? 'axisYLabel' : 'axisXLabel');
+        const prevDeps = Array.isArray(group.dependsOn) ? group.dependsOn : [];
+        const labelDeps = prevDeps.concat(axisTitleDeps).concat([labelKey]);
+        group.dynamicLabel = titleFn;
+        GraphWidget.attachGraphTypographyGroupVisibility(
+            group,
+            function (values, isGlobal) {
+                return GraphWidget.axisLabelHasText(values, isGlobal, isValue);
+            },
+            labelDeps
+        );
         return group;
     }
 
@@ -1245,6 +1537,16 @@ class GraphWidget extends BaseWidget {
 
     static buildGraphPointValuesTypographySchema(isMaster) {
         const prefix = isMaster ? 'defaultGraphPointVal' : 'pointVal';
+        const invertField = {
+            key: `${prefix}InvertYNegative`,
+            type: 'checkbox',
+            label: 'Invert Y on Negative Values',
+            cols: 4,
+            typographyNestedProp: 'invertYNegative'
+        };
+        if (!isMaster) {
+            invertField.defaultKey = 'defaultGraphPointValInvertYNegative';
+        }
         const group = BaseWidget.getTypographySchema(prefix, 'Point Values (Line)', {
             exclude: ['colorOff'],
             nestedTypography: isMaster ? undefined : { root: 'typography', role: 'pointValues' },
@@ -1257,7 +1559,8 @@ class GraphWidget extends BaseWidget {
             caseDefaultKey: 'defaultGraphPointValCase',
             opacityDefaultKey: 'defaultGraphPointValOpacity',
             offXDefaultKey: 'defaultGraphPointValOffX',
-            offYDefaultKey: 'defaultGraphPointValOffY'
+            offYDefaultKey: 'defaultGraphPointValOffY',
+            extraFields: [invertField]
         });
         GraphWidget.attachGraphTypographyGroupVisibility(
             group,
@@ -1275,6 +1578,16 @@ class GraphWidget extends BaseWidget {
 
     static buildGraphPointValuesBarTypographySchema(isMaster) {
         const prefix = isMaster ? 'defaultGraphPointValBar' : 'pointValBar';
+        const invertField = {
+            key: `${prefix}InvertYNegative`,
+            type: 'checkbox',
+            label: 'Invert Y on Negative Values',
+            cols: 4,
+            typographyNestedProp: 'invertYNegative'
+        };
+        if (!isMaster) {
+            invertField.defaultKey = 'defaultGraphPointValBarInvertYNegative';
+        }
         const group = BaseWidget.getTypographySchema(prefix, 'Point Values (Bar)', {
             exclude: ['colorOff'],
             nestedTypography: isMaster ? undefined : { root: 'typography', role: 'pointValuesBar' },
@@ -1287,7 +1600,8 @@ class GraphWidget extends BaseWidget {
             caseDefaultKey: 'defaultGraphPointValBarCase',
             opacityDefaultKey: 'defaultGraphPointValBarOpacity',
             offXDefaultKey: 'defaultGraphPointValBarOffX',
-            offYDefaultKey: 'defaultGraphPointValBarOffY'
+            offYDefaultKey: 'defaultGraphPointValBarOffY',
+            extraFields: [invertField]
         });
         GraphWidget.attachGraphTypographyGroupVisibility(
             group,
@@ -1360,8 +1674,12 @@ class GraphWidget extends BaseWidget {
             defaultGraphSmoothingAmount: 0,
             defaultGraphLineW: 2,
             defaultGraphBarDirection: "vertical",
+            defaultGraphBarGroupMode: "side_by_side",
+            defaultGraphBarStackGapStep: 0,
             defaultGraphBarGap: 2,
             defaultGraphBarRadius: 4,
+            defaultGraphPositiveColorOpacity: 100,
+            defaultGraphNegativeColorOpacity: 100,
             defaultGraphPositiveStartOpacity: 40,
             defaultGraphPositiveEndOpacity: 0,
             defaultGraphNegativeStartOpacity: 40,
@@ -1373,8 +1691,17 @@ class GraphWidget extends BaseWidget {
             defaultGraphFixedTimeWindow: false,
             defaultGraphTimelineAdvance: 'data',
             defaultGraphLineGaps: "break",
-            defaultGraphCategoryLabelRotation: 0,
-            defaultGraphValueLabelRotation: 0,
+            defaultGraphAxisXRotation: 0,
+            defaultGraphAxisYRotation: 0,
+            defaultGraphAxisXLabel: '',
+            defaultGraphAxisYLabel: '',
+            defaultGraphAxisXLabelFont: "'Inter', sans-serif",
+            defaultGraphAxisXLabelFontSize: 10,
+            defaultGraphAxisXLabelFontColor: '@iconMuted',
+            defaultGraphAxisXLabelFontOpacity: 100,
+            defaultGraphAxisXLabelFontBold: false,
+            defaultGraphAxisXLabelRotation: 0,
+            defaultGraphAxisYLabelRotation: -90,
             defaultGraphShowLegend: true,
             defaultGraphLegendPosition: "right",
             defaultGraphLegendLayout: "column",
@@ -1412,6 +1739,7 @@ class GraphWidget extends BaseWidget {
             defaultGraphNegMode: 'show_neg',
             defaultGraphDecimals: 0,
             defaultGraphRoundingMode: 'smart',
+            defaultGraphAbbreviateLargeValues: true,
             defaultGraphHeadroom: 0,
 
             defaultGraphTextFont: "'Inter', sans-serif",
@@ -1463,6 +1791,7 @@ class GraphWidget extends BaseWidget {
             defaultGraphPointValOpacity: 100,
             defaultGraphPointValOffX: 6,
             defaultGraphPointValOffY: -6,
+            defaultGraphPointValInvertYNegative: true,
             defaultGraphAutoPointValuesInterval: false,
             defaultGraphPointValBarFont: "'Inter', sans-serif",
             defaultGraphPointValBarFs: 10,
@@ -1474,6 +1803,7 @@ class GraphWidget extends BaseWidget {
             defaultGraphPointValBarOpacity: 100,
             defaultGraphPointValBarOffX: 0,
             defaultGraphPointValBarOffY: -6,
+            defaultGraphPointValBarInvertYNegative: true,
 
             // --- Grid Lines ---
             defaultGraphGridHTopShow: false,
@@ -1531,8 +1861,8 @@ class GraphWidget extends BaseWidget {
     static get basicSettingKeys() {
         return [
             { key: 'series', cols: 12 },
-            { key: 'bufferMode', cols: 6 },
-            { key: 'maxPoints', cols: 6 },
+            { key: 'bufferMode', cols: 12 },
+            { key: 'maxPoints', cols: 12 },
             { key: 'dynamicFloor', cols: 6 },
             { key: 'dynamicCeiling', cols: 6 }
         ];
@@ -1554,16 +1884,37 @@ class GraphWidget extends BaseWidget {
             return legendOn(values) && values.defaultGraphLegendAutoSize === false;
         };
         return [
-            { key: 'defaultGraphType', type: 'select', label: 'Default Type', options: GraphWidget.GRAPH_TYPE_OPTIONS, cols: 6 },
-            { key: 'defaultGraphLineW', type: 'number', min: 0, label: 'Line Width', cols: 6 },
+            { key: 'defaultGraphType', type: 'select', label: 'Default Type', options: GraphWidget.GRAPH_TYPE_OPTIONS, cols: 12 },
+            {
+                key: 'defaultGraphLineW', type: 'number', min: 0, label: 'Line Width', cols: 12,
+                dependsOn: ['defaultGraphType'],
+                visibleWhen: function (values) {
+                    return GraphWidget.isLineLike(values.defaultGraphType || 'line');
+                }
+            },
             {
                 key: 'defaultGraphSmoothingAmount', type: 'number', min: 0, max: 100, label: 'Smoothing Amount', cols: 12,
                 dependsOn: ['defaultGraphType'], visibleWhen: smoothOnly
             },
             {
-                key: 'defaultGraphBarDirection', type: 'select', label: 'Bar Direction', cols: 12,
+                key: 'defaultGraphBarDirection', type: 'select', label: 'Bar Direction', cols: 6,
                 options: [{ value: 'vertical', text: 'Vertical' }, { value: 'horizontal', text: 'Horizontal' }],
                 dependsOn: ['defaultGraphType'], visibleWhen: barOnly
+            },
+            {
+                key: 'defaultGraphBarGroupMode', type: 'select', label: 'Bar Series Layout', cols: 6,
+                options: [
+                    { value: 'side_by_side', text: 'Side by Side' },
+                    { value: 'stacked', text: 'Stacked' }
+                ],
+                dependsOn: ['defaultGraphType'], visibleWhen: barOnly
+            },
+            {
+                key: 'defaultGraphBarStackGapStep', type: 'number', label: 'Stacked Gap Step', min: 0, cols: 12,
+                dependsOn: ['defaultGraphType', 'defaultGraphBarGroupMode'],
+                visibleWhen: function (values, isGlobal) {
+                    return barOnly(values, isGlobal) && values.defaultGraphBarGroupMode === 'stacked';
+                }
             },
 
             { type: 'heading', label: 'Streaming Values', cols: 12 },
@@ -1608,10 +1959,17 @@ class GraphWidget extends BaseWidget {
                 ],
                 dependsOn: ['defaultGraphBufferMode', 'defaultGraphDurationPreset'], visibleWhen: customDuration
             },
-            { key: 'defaultGraphLineGaps', type: 'select', label: 'Line Gaps', cols: 12, options: [
-                { value: 'break', text: 'Break on Missing Time' },
-                { value: 'connect', text: 'Connect Points' }
-            ] },
+            {
+                key: 'defaultGraphLineGaps', type: 'select', label: 'Line Gaps', cols: 12,
+                options: [
+                    { value: 'break', text: 'Break on Missing Time' },
+                    { value: 'connect', text: 'Connect Points' }
+                ],
+                dependsOn: ['defaultGraphType'],
+                visibleWhen: function (values) {
+                    return GraphWidget.isLineLike(values.defaultGraphType || 'line');
+                }
+            },
             { type: 'heading', label: 'Scale Range & Baseline', cols: 12 },
             { key: 'defaultGraphDynamicFloor', type: 'checkbox', label: 'Dynamic Floor', cols: 6 },
             { key: 'defaultGraphDynamicCeiling', type: 'checkbox', label: 'Dynamic Ceiling', cols: 6 },
@@ -1631,6 +1989,9 @@ class GraphWidget extends BaseWidget {
                 dependsOn: ['defaultGraphType'],
                 visibleWhen: function (values) { return values.defaultGraphType !== 'text'; }
             },
+
+            { key: 'defaultGraphPositiveColorOpacity', type: 'number', min: 0, max: 100, label: 'Positive Color Opacity', cols: 6 },
+            { key: 'defaultGraphNegativeColorOpacity', type: 'number', min: 0, max: 100, label: 'Negative Color Opacity', cols: 6 },
 
             { key: 'defaultGraphPositiveStartOpacity', type: 'number', min: 0, max: 100, label: 'Positive Start Opacity', cols: 3 },
             { key: 'defaultGraphPositiveEndOpacity', type: 'number', min: 0, max: 100, label: 'Positive End Opacity', cols: 3 },
@@ -1724,7 +2085,9 @@ class GraphWidget extends BaseWidget {
 
             { type: 'heading', label: 'Text & Typography', cols: 12 },
             GraphWidget.buildGraphAxisXTypographySchema(true),
+            GraphWidget.buildGraphAxisLabelTypographySchema(true, 'category'),
             GraphWidget.buildGraphAxisYTypographySchema(true),
+            GraphWidget.buildGraphAxisLabelTypographySchema(true, 'value'),
             GraphWidget.buildGraphDataTextTypographySchema(true),
             GraphWidget.buildGraphPointValuesTypographySchema(true),
             GraphWidget.buildGraphPointValuesBarTypographySchema(true),
@@ -1767,7 +2130,9 @@ class GraphWidget extends BaseWidget {
             visible: true,
             data: '',
             positiveColor: tint,
+            positiveColorOpacity: 100,
             negativeColor: tint,
+            negativeColorOpacity: 100,
             positiveFillColor: tint,
             negativeFillColor: tint
         };
@@ -1921,8 +2286,10 @@ class GraphWidget extends BaseWidget {
                 xStartLabel = String(firstP.l);
                 xEndLabel = String(lastP.l);
             } else if (firstP.t != null && lastP.t != null) {
-                const d1 = new Date(firstP.t);
-                const d2 = new Date(lastP.t);
+                const tStart = GraphWidget._timestampSortKey(firstP.t);
+                const tEnd = GraphWidget._timestampSortKey(lastP.t);
+                const d1 = new Date(tStart != null ? tStart : firstP.t);
+                const d2 = new Date(tEnd != null ? tEnd : lastP.t);
                 const pad2 = function (n) { return n < 10 ? '0' + n : String(n); };
                 xStartLabel = pad2(d1.getHours()) + ':' + pad2(d1.getMinutes());
                 xEndLabel = pad2(d2.getHours()) + ':' + pad2(d2.getMinutes());
@@ -2003,7 +2370,9 @@ class GraphWidget extends BaseWidget {
             { prop: 'name', kind: 'text' },
             { prop: 'visible', kind: 'bool' },
             { prop: 'positiveColor', kind: 'color' },
+            { prop: 'positiveColorOpacity', kind: 'number' },
             { prop: 'negativeColor', kind: 'color' },
+            { prop: 'negativeColorOpacity', kind: 'number' },
             { prop: 'positiveFillColor', kind: 'color' },
             { prop: 'negativeFillColor', kind: 'color' },
             { prop: 'pointColor', kind: 'color' },
@@ -2123,6 +2492,8 @@ class GraphWidget extends BaseWidget {
         const master = M || {};
         const raw = c && Array.isArray(c.series) ? c.series : [];
         const lineW = master.defaultGraphLineW != null ? master.defaultGraphLineW : 2;
+        const posColorOp = master.defaultGraphPositiveColorOpacity != null ? master.defaultGraphPositiveColorOpacity : 100;
+        const negColorOp = master.defaultGraphNegativeColorOpacity != null ? master.defaultGraphNegativeColorOpacity : posColorOp;
         const startOp = master.defaultGraphPositiveStartOpacity != null ? master.defaultGraphPositiveStartOpacity : 40;
         const endOp = master.defaultGraphPositiveEndOpacity != null ? master.defaultGraphPositiveEndOpacity : 0;
         const nStart = master.defaultGraphNegativeStartOpacity != null ? master.defaultGraphNegativeStartOpacity : startOp;
@@ -2132,6 +2503,7 @@ class GraphWidget extends BaseWidget {
             const s = raw[i] && typeof raw[i] === 'object' ? raw[i] : {};
             const tint = GraphWidget.markerTintForIndex(i);
             const pos = s.positiveColor || tint;
+            const neg = s.negativeColor || pos;
             const row = {
                 id: s.id || ('s' + i),
                 name: s.name || ('Graph ' + (i + 1)),
@@ -2140,9 +2512,11 @@ class GraphWidget extends BaseWidget {
                 data: s.data != null ? String(s.data) : '',
                 lineWidth: BaseWidget.clampNumber(s.lineWidth != null && s.lineWidth !== '' ? s.lineWidth : lineW, 0, null),
                 positiveColor: pos,
-                negativeColor: s.negativeColor || pos,
+                positiveColorOpacity: GraphWidget.clampOpacity(s.positiveColorOpacity, posColorOp),
+                negativeColor: neg,
+                negativeColorOpacity: GraphWidget.clampOpacity(s.negativeColorOpacity, negColorOp),
                 positiveFillColor: s.positiveFillColor || pos,
-                negativeFillColor: s.negativeFillColor || pos,
+                negativeFillColor: s.negativeFillColor || neg,
                 positiveStartOpacity: GraphWidget.clampOpacity(s.positiveStartOpacity, startOp),
                 positiveEndOpacity: GraphWidget.clampOpacity(s.positiveEndOpacity, endOp),
                 negativeStartOpacity: GraphWidget.clampOpacity(s.negativeStartOpacity, nStart),
@@ -2207,9 +2581,6 @@ class GraphWidget extends BaseWidget {
         const tint = GraphWidget.markerTintForIndex(0);
         return {
             label: "Graph",
-            pointValuesDistribution: 'timeHighLow',
-            pointValuesTimeWidth: 48,
-            pointValuesStep: 1,
             series: [
                 GraphWidget.createSeries(0, {
                     name: 'Graph 1',
@@ -2319,14 +2690,14 @@ class GraphWidget extends BaseWidget {
             })(),
             lineGaps: c.lineGaps || c.defaultGraphLineGaps || 'break',
             barDirection: c.barDirection || c.defaultGraphBarDirection || 'vertical',
-            categoryLabelRotation: BaseWidget.toFiniteNumber(
-                c.categoryLabelRotation !== undefined && c.categoryLabelRotation !== null ? c.categoryLabelRotation : c.defaultGraphCategoryLabelRotation,
-                0
-            ),
-            valueLabelRotation: BaseWidget.toFiniteNumber(
-                c.valueLabelRotation !== undefined && c.valueLabelRotation !== null ? c.valueLabelRotation : c.defaultGraphValueLabelRotation,
-                0
-            ),
+            barGroupMode: c.barGroupMode || c.defaultGraphBarGroupMode || 'side_by_side',
+            barStackGapStep: BaseWidget.clampNumber(c.barStackGapStep !== undefined && c.barStackGapStep !== null ? c.barStackGapStep : (c.defaultGraphBarStackGapStep !== undefined ? c.defaultGraphBarStackGapStep : 0), 0, null),
+            axisXRotation: BaseWidget.toFiniteNumber(c.axisXRotation, 0),
+            axisYRotation: BaseWidget.toFiniteNumber(c.axisYRotation, 0),
+            axisXLabel: c.axisXLabel != null ? String(c.axisXLabel) : '',
+            axisYLabel: c.axisYLabel != null ? String(c.axisYLabel) : '',
+            axisXLabelRotation: BaseWidget.toFiniteNumber(c.axisXLabelRotation, 0),
+            axisYLabelRotation: BaseWidget.toFiniteNumber(c.axisYLabelRotation, -90),
             showLegend: c.showLegend !== undefined && c.showLegend !== null ? c.showLegend === true : (c.defaultGraphShowLegend === true),
             legendPosition: c.legendPosition || c.defaultGraphLegendPosition || 'right',
             legendLayout: c.legendLayout || c.defaultGraphLegendLayout || 'column',
@@ -2377,6 +2748,13 @@ class GraphWidget extends BaseWidget {
             negMode: c.negMode || c.defaultGraphNegMode || 'show_neg',
             decimals: Math.max(0, Math.floor(BaseWidget.toFiniteNumber(c.decimals !== undefined && c.decimals !== null ? c.decimals : (c.defaultGraphDecimals || 0), 0))),
             roundingMode: c.roundingMode || c.defaultGraphRoundingMode || 'smart',
+            abbreviateLargeValues: (function () {
+                const raw = (c.abbreviateLargeValues !== undefined && c.abbreviateLargeValues !== null && c.abbreviateLargeValues !== '')
+                    ? c.abbreviateLargeValues
+                    : c.defaultGraphAbbreviateLargeValues;
+                if (raw === undefined || raw === null || raw === '') return true;
+                return raw === true || raw === 'true' || raw === 1 || raw === '1';
+            })(),
             headroom: BaseWidget.clampNumber(c.headroom !== undefined && c.headroom !== null ? c.headroom : (c.defaultGraphHeadroom || 0), 0, 100),
             showAxisX: c.showAxisX !== undefined && c.showAxisX !== null ? c.showAxisX : c.defaultGraphShowAxisX,
             timeFormat: c.timeFormat || c.defaultGraphTimeFormat || "Datapoints",
@@ -2388,7 +2766,6 @@ class GraphWidget extends BaseWidget {
             timeOffset: BaseWidget.clampNumber(c.timeOffset !== undefined && c.timeOffset !== null
                 ? c.timeOffset
                 : (c.defaultGraphTimeOffset !== undefined && c.defaultGraphTimeOffset !== null ? c.defaultGraphTimeOffset : 0), -1440, 1440),
-            timezoneConvert: c.timezoneConvert !== undefined && c.timezoneConvert !== null ? c.timezoneConvert : (c.defaultGraphTimezoneConvert || false),
             showAxisY: c.showAxisY !== undefined && c.showAxisY !== null ? c.showAxisY : c.defaultGraphShowAxisY,
             axisResX: safeAxisResX,
             axisResY: safeAxisResY,
@@ -2525,6 +2902,7 @@ class GraphWidget extends BaseWidget {
             pointValOpacity: getNum(c.pointValOpacity, 100),
             pointValOffX: getNum(c.pointValOffX, M.defaultGraphPointValOffX != null ? M.defaultGraphPointValOffX : 6),
             pointValOffY: getNum(c.pointValOffY, M.defaultGraphPointValOffY != null ? M.defaultGraphPointValOffY : -6),
+            pointValInvertYNegative: c.pointValInvertYNegative !== undefined ? c.pointValInvertYNegative === true : (M.defaultGraphPointValInvertYNegative !== false),
 
             pointValBarFont: c.pointValBarFont,
             pointValBarFs: getNum(c.pointValBarFs, M.defaultGraphPointValBarFs != null ? M.defaultGraphPointValBarFs : 10),
@@ -2536,6 +2914,7 @@ class GraphWidget extends BaseWidget {
             pointValBarOpacity: getNum(c.pointValBarOpacity, 100),
             pointValBarOffX: getNum(c.pointValBarOffX, M.defaultGraphPointValBarOffX != null ? M.defaultGraphPointValBarOffX : 0),
             pointValBarOffY: getNum(c.pointValBarOffY, M.defaultGraphPointValBarOffY != null ? M.defaultGraphPointValBarOffY : -6),
+            pointValBarInvertYNegative: c.pointValBarInvertYNegative !== undefined ? c.pointValBarInvertYNegative === true : (M.defaultGraphPointValBarInvertYNegative !== false),
 
             graphAnimation: c.graphAnimation || c.defaultGraphAnimation || 'none',
             graphAnimDuration: Math.max(0.1, BaseWidget.toFiniteNumber(c.graphAnimDuration !== undefined && c.graphAnimDuration !== null ? c.graphAnimDuration : c.defaultGraphAnimDuration, 2)),
@@ -2569,7 +2948,9 @@ class GraphWidget extends BaseWidget {
     getSchema() {
         const widgetLabelTypo = GraphWidget.buildGraphWidgetLabelTypographySchema();
         const axisXTypo = GraphWidget.buildGraphAxisXTypographySchema(false);
+        const axisXLabelTypo = GraphWidget.buildGraphAxisLabelTypographySchema(false, 'category');
         const axisYTypo = GraphWidget.buildGraphAxisYTypographySchema(false);
+        const axisYLabelTypo = GraphWidget.buildGraphAxisLabelTypographySchema(false, 'value');
         const dataTextTypo = GraphWidget.buildGraphDataTextTypographySchema(false);
         const pointValuesTypo = GraphWidget.buildGraphPointValuesTypographySchema(false);
         const pointValuesBarTypo = GraphWidget.buildGraphPointValuesBarTypographySchema(false);
@@ -2622,10 +3003,28 @@ class GraphWidget extends BaseWidget {
             visibleWhen: smoothOnly
         };
         const barDirectionField = {
-            key: 'barDirection', type: 'select', label: 'Bar Direction', cols: 12, defaultKey: 'defaultGraphBarDirection',
+            key: 'barDirection', type: 'select', label: 'Bar Direction', cols: 6, defaultKey: 'defaultGraphBarDirection',
             options: [{ value: 'vertical', text: 'Vertical' }, { value: 'horizontal', text: 'Horizontal' }],
             dependsOn: ['type', 'defaultGraphType'],
             visibleWhen: barOnly
+        };
+        const barGroupModeField = {
+            key: 'barGroupMode', type: 'select', label: 'Bar Series Layout', cols: 6, defaultKey: 'defaultGraphBarGroupMode',
+            options: [
+                { value: 'side_by_side', text: 'Side by Side' },
+                { value: 'stacked', text: 'Stacked' }
+            ],
+            dependsOn: ['type', 'defaultGraphType'],
+            visibleWhen: barOnly
+        };
+        const barStackGapStepField = {
+            key: 'barStackGapStep', type: 'number', label: 'Stacked Gap Step', min: 0, cols: 12, defaultKey: 'defaultGraphBarStackGapStep',
+            dependsOn: ['type', 'defaultGraphType', 'barGroupMode', 'defaultGraphBarGroupMode'],
+            visibleWhen: function (values, isGlobal) {
+                if (!barOnly(values, isGlobal)) return false;
+                var mode = values.barGroupMode || (typeof MASTER_SETTINGS !== 'undefined' ? MASTER_SETTINGS.defaultGraphBarGroupMode : null) || 'side_by_side';
+                return mode === 'stacked';
+            }
         };
         const fixedFloorField = {
             key: 'fixedFloor', type: 'number', label: 'Fixed Floor', cols: 6,
@@ -2672,11 +3071,6 @@ class GraphWidget extends BaseWidget {
                 return GraphWidget.resolvedGraphType(v, isGlobal) !== 'text';
             }
         };
-        const animOn = function (values) {
-            const v = values ? (values.graphAnimation !== undefined ? values.graphAnimation : values.defaultGraphAnimation) : null;
-            return v != null && v !== '' && v !== 'none';
-        };
-
         return [
             {
                 id: 'gr_data', title: 'Data & Behavior', icon: 'ph-lightning', defaultExpanded: true,
@@ -2758,6 +3152,8 @@ class GraphWidget extends BaseWidget {
                     },
                     smoothingAmountField,
                     barDirectionField,
+                    barGroupModeField,
+                    barStackGapStepField,
                     {
                         key: 'barGap', type: 'number', label: 'Bar Gap', cols: 4, gridColStart: 1, defaultKey: 'defaultGraphBarGap',
                         dependsOn: ['type', 'defaultGraphType'], visibleWhen: barOnly
@@ -2808,7 +3204,7 @@ class GraphWidget extends BaseWidget {
                         dynamicOptions: function (values, isGlobal) {
                             return GraphWidget.getLegendPositionOptions(values, isGlobal);
                         },
-                        dependsOn: ['showLegend', 'defaultGraphShowLegend'],
+                        dependsOn: ['showLegend', 'defaultGraphShowLegend', 'layoutMode'],
                         visibleWhen: legendOn
                     },
                     {
@@ -2862,21 +3258,23 @@ class GraphWidget extends BaseWidget {
                 ]
             },
             {
-                id: 'gr_animation', title: 'Animations & Effects', icon: 'ph-sparkle',
-                fields: GraphWidget.buildGraphAnimationSchemaFields(false)
-            },
-            {
                 id: 'gr_typography', title: 'Text & Typography', icon: 'ph-text-t',
                 fields: [
                     { key: 'label', type: 'text', label: 'Widget Label', cols: 12 },
                     widgetLabelTypo,
                     axisXTypo,
+                    axisXLabelTypo,
                     axisYTypo,
+                    axisYLabelTypo,
                     dataTextTypo,
                     pointValuesTypo,
                     pointValuesBarTypo,
                     legendTypo
                 ]
+            },
+            {
+                id: 'gr_animation', title: 'Animations & Effects', icon: 'ph-sparkle',
+                fields: GraphWidget.buildGraphAnimationSchemaFields(false)
             }
         ];
     }
@@ -3050,19 +3448,28 @@ class GraphWidget extends BaseWidget {
                 if (!isMorph || !curBuf.length) {
                     this._startSeriesAnimation(spec.id, 'draw', 'snapshot', [], curBuf, durMs, []);
                 } else {
-                    const synthFrom = [];
+                    const synthTo = [];
                     for (let p = 0; p < curBuf.length; p++) {
                         const pt = curBuf[p];
                         const v = pt && pt.v != null && isFinite(pt.v) ? pt.v : 0;
                         const wave = Math.sin(p * 0.9 + (Date.now() % 1000) * 0.006) * 0.35;
-                        synthFrom.push({
+                        synthTo.push({
                             v: v * (0.65 + wave),
                             t: pt ? pt.t : null,
                             l: pt ? pt.l : null,
                             seq: pt && pt.seq != null ? pt.seq : p
                         });
                     }
-                    this._startSeriesAnimation(spec.id, 'morph', 'snapshot', synthFrom, curBuf, durMs, []);
+                    const half = Math.max(150, Math.round(durMs / 2));
+                    if (!this._pendingAnimationUpdates) this._pendingAnimationUpdates = {};
+                    this._pendingAnimationUpdates[spec.id] = {
+                        updateMode: 'snapshot',
+                        prevBuf: synthTo,
+                        nextBuf: curBuf,
+                        droppedPts: [],
+                        durationMs: half
+                    };
+                    this._startSeriesAnimation(spec.id, 'morph', 'snapshot', curBuf, synthTo, half, []);
                 }
             }
         }
@@ -3750,6 +4157,40 @@ class GraphWidget extends BaseWidget {
         }
     }
 
+    /**
+     * Keep a manual or auto interval from walking millions of calendar ticks.
+     * Prefer the next neat candidate that fits. If none is coarse enough, step
+     * in epoch milliseconds so a step larger than 60 seconds or 31 days does
+     * not go through calendar-field modulo.
+     */
+    _limitTimeStepForTickCap(chosenStep, spanMs, timeFormat) {
+        const cap = 250;
+        if (!chosenStep || !(chosenStep.ms > 0) || !(spanMs > 0) || (spanMs / chosenStep.ms) <= cap) {
+            return chosenStep;
+        }
+        const candidates = this._getNeatTimeCandidateSteps(timeFormat);
+        for (let i = 0; i < candidates.length; i++) {
+            const cand = candidates[i];
+            if (!cand || !(cand.ms > 0) || cand.ms + 1 < chosenStep.ms) continue;
+            if (spanMs / cand.ms <= cap) return cand;
+        }
+        const scale = Math.ceil((spanMs / chosenStep.ms) / cap);
+        return {
+            unit: 'epoch',
+            step: 1,
+            ms: chosenStep.ms * Math.max(1, scale),
+            epochAlign: true
+        };
+    }
+
+    _firstEpochTick(t, stepMs) {
+        if (!(stepMs > 0) || !isFinite(t)) return t;
+        const ratio = t / stepMs;
+        const nearest = Math.round(ratio);
+        if (Math.abs(ratio - nearest) < 1e-6) return nearest * stepMs;
+        return Math.ceil(ratio - 1e-9) * stepMs;
+    }
+
     _buildTimeScaleTicks(domain, labelCount, c, alongPx, sampleFoot) {
         if (!domain || !isFinite(domain.t0) || !isFinite(domain.t1)) return [];
         const t0 = domain.t0;
@@ -3800,12 +4241,21 @@ class GraphWidget extends BaseWidget {
         const t0Effective = t0 + offsetMs;
         const t1Effective = t1 + offsetMs;
 
-        let curEffectiveMs = this._findNextNeatTimestamp(t0Effective, chosenStep.unit, chosenStep.step, useLocal);
+        const MAX_TICKS = 250;
+        const spanEffective = t1Effective - t0Effective;
+        chosenStep = this._limitTimeStepForTickCap(chosenStep, spanEffective, c && c.timeFormat);
+        const epochAlign = chosenStep.epochAlign === true;
+
+        let curEffectiveMs = epochAlign
+            ? this._firstEpochTick(t0Effective, chosenStep.ms)
+            : this._findNextNeatTimestamp(t0Effective, chosenStep.unit, chosenStep.step, useLocal);
         const curDate = new Date(curEffectiveMs);
         const ticks = [];
         let prevText = null;
+        let tickGuard = 0;
 
-        while (curEffectiveMs <= t1Effective + 1e-4) {
+        while (curEffectiveMs <= t1Effective + 1e-4 && tickGuard < MAX_TICKS) {
+            tickGuard++;
             const curRealMs = curEffectiveMs - offsetMs;
             const frac = Math.max(0, Math.min(1, (curRealMs - t0) / span));
             const text = this._formatTimeScaleTick(curRealMs, c, domain.sample);
@@ -3817,8 +4267,14 @@ class GraphWidget extends BaseWidget {
                 });
                 prevText = text;
             }
-            this._advanceNeatTimestamp(curDate, chosenStep.unit, chosenStep.step, useLocal);
-            curEffectiveMs = curDate.getTime();
+            const prevMs = curEffectiveMs;
+            if (epochAlign) {
+                curEffectiveMs += chosenStep.ms;
+            } else {
+                this._advanceNeatTimestamp(curDate, chosenStep.unit, chosenStep.step, useLocal);
+                curEffectiveMs = curDate.getTime();
+            }
+            if (curEffectiveMs <= prevMs) break;
         }
 
         if (ticks.length === 0) {
@@ -3966,7 +4422,12 @@ class GraphWidget extends BaseWidget {
         if (factor <= 0.01) return;
         const isBar = c.type === 'bar';
         const offX = isBar ? c.pointValBarOffX : c.pointValOffX;
-        const offY = isBar ? c.pointValBarOffY : c.pointValOffY;
+        let offY = isBar ? c.pointValBarOffY : c.pointValOffY;
+        const invertY = isBar ? (c.pointValBarInvertYNegative !== false) : (c.pointValInvertYNegative !== false);
+        const numVal = (val !== null && val !== undefined && val !== '') ? Number(val) : NaN;
+        if (invertY && !isNaN(numVal) && numVal < 0) {
+            offY = -offY;
+        }
         const xPos = cx + offX;
         const yPos = cy + offY;
         const align = isBar ? c.pointValBarAlign : c.pointValAlign;
@@ -4076,18 +4537,19 @@ class GraphWidget extends BaseWidget {
                 currentSeriesPlaced[spec.id].push({ val: targetVal, x: pt.x, y: pt.y, col: labelCol });
             }
 
-            if (anim && anim.updateMode !== 'stream') {
-                const isUnchanged = anim.animMode !== 'draw' && self._isLabelUnchanged(anim.prevPlacedLabels, pt.v, pt.x, pt.y);
-                let op;
-                if (isUnchanged) {
-                    op = 1.0;
-                } else if (anim.animMode === 'morph' || anim.animMode === 'none') {
-                    const elapsed = anim.startTime ? (now - anim.startTime) : 350;
-                    const fadeProgress = Math.max(0, Math.min(1.0, elapsed / 350));
-                    op = fadeProgress * opFactor;
-                } else {
-                    op = opFactor;
-                }
+                if (anim && anim.updateMode !== 'stream') {
+                    const isUnchanged = anim.animMode !== 'draw' && self._isLabelUnchanged(anim.prevPlacedLabels, pt.v, pt.x, pt.y);
+                    let op;
+                    if (isUnchanged) {
+                        op = 1.0;
+                    } else if (anim.animMode === 'morph' || anim.animMode === 'none') {
+                        const elapsed = anim.startTime ? (now - anim.startTime) : 350;
+                        const fadeDur = Math.min(350, anim.duration > 0 ? anim.duration : 350);
+                        const fadeProgress = Math.max(0, Math.min(1.0, elapsed / fadeDur));
+                        op = fadeProgress * opFactor;
+                    } else {
+                        op = opFactor;
+                    }
                 self._drawPointValueLabel(ctx, pt.v, pt.x, pt.y, c, labelCol, op);
                 return true;
             }
@@ -4167,7 +4629,8 @@ class GraphWidget extends BaseWidget {
             const endK = isDuration ? Math.min(maxK, Math.ceil((domain.t1 - seriesOffset) / seriesStep)) : maxK;
 
             let ptr = 0;
-            for (let k = startK; k <= endK; k++) {
+            let cellGuard = 0;
+            for (let k = startK; k <= endK && cellGuard < 8000; k++, cellGuard++) {
                 const cellStart = k * seriesStep + seriesOffset;
                 const cellEnd = cellStart + seriesStep;
                 const cellCenter = cellStart + seriesStep * 0.5;
@@ -4177,7 +4640,13 @@ class GraphWidget extends BaseWidget {
                 while (ptr < sortedPts.length && getCoord(sortedPts[ptr]) < cellEnd) ptr++;
                 const cellEndIdx = ptr;
 
-                if (cellStartIdx >= cellEndIdx) continue;
+                if (cellStartIdx >= cellEndIdx) {
+                    if (ptr < sortedPts.length) {
+                        const nextK = Math.floor((getCoord(sortedPts[ptr]) - seriesOffset) / seriesStep) - 1;
+                        if (nextK > k) k = nextK;
+                    }
+                    continue;
+                }
 
                 let bestPoint = sortedPts[cellStartIdx];
 
@@ -4227,7 +4696,8 @@ class GraphWidget extends BaseWidget {
             const sAnim = self._activeAnimations && sp.id && self._activeAnimations[sp.id];
             if (sAnim && (sAnim.animMode === 'morph' || sAnim.animMode === 'none') && sAnim.updateMode !== 'stream' && sAnim.prevPlacedLabels && sAnim.prevPlacedLabels.length > 0) {
                 const elapsed = sAnim.startTime ? (now - sAnim.startTime) : 350;
-                const fadeOut = Math.max(0, Math.min(1.0, 1.0 - (elapsed / 350)));
+                const fadeDur = Math.min(350, sAnim.duration > 0 ? sAnim.duration : 350);
+                const fadeOut = Math.max(0, Math.min(1.0, 1.0 - (elapsed / fadeDur)));
                 if (fadeOut > 0.01) {
                     for (let j = 0; j < sAnim.prevPlacedLabels.length; j++) {
                         const oldLbl = sAnim.prevPlacedLabels[j];
@@ -4262,7 +4732,12 @@ class GraphWidget extends BaseWidget {
         if (el.textContent !== formatted) el.textContent = formatted;
         const isBar = c.type === 'bar';
         const offX = isBar ? c.pointValBarOffX : c.pointValOffX;
-        const offY = isBar ? c.pointValBarOffY : c.pointValOffY;
+        let offY = isBar ? c.pointValBarOffY : c.pointValOffY;
+        const invertY = isBar ? (c.pointValBarInvertYNegative !== false) : (c.pointValInvertYNegative !== false);
+        const numVal = (pt && pt.val !== null && pt.val !== undefined && pt.val !== '') ? Number(pt.val) : NaN;
+        if (invertY && !isNaN(numVal) && numVal < 0) {
+            offY = -offY;
+        }
         const startX = this._lastStartX || 0;
         const fs = isBar ? c.pointValBarFs : c.pointValFs;
         const font = isBar ? c.pointValBarFont : c.pointValFont;
@@ -4286,7 +4761,12 @@ class GraphWidget extends BaseWidget {
         if (!el && !canvas) return;
         const type = c.type || 'line';
         const last = (lastVal === null || lastVal === undefined || isNaN(lastVal)) ? '' : String(lastVal);
-        const summary = last ? ('Graph (' + type + '), last value ' + last) : ('Graph (' + type + ')');
+        const xName = GraphWidget.axisTitleString(c.axisXLabel);
+        const yName = GraphWidget.axisTitleString(c.axisYLabel);
+        let summary = 'Graph (' + type + ')';
+        if (xName && yName) summary += ', ' + xName + ' and ' + yName;
+        else if (xName || yName) summary += ', ' + (xName || yName);
+        if (last) summary += ', last value ' + last;
         if (canvas && canvas.getAttribute('aria-label') !== summary) canvas.setAttribute('aria-label', summary);
         if (el && el.textContent !== summary) el.textContent = summary;
     }
@@ -4364,7 +4844,7 @@ class GraphWidget extends BaseWidget {
             return Math.max(0, Math.floor(BaseWidget.toFiniteNumber(c.decimals, 0)));
         }
         let smartDec = scale && scale.decimals != null ? Math.max(0, Math.floor(scale.decimals)) : 0;
-        if (scale && scale.ticks && scale.ticks.length > 1) {
+        if (c.abbreviateLargeValues !== false && scale && scale.ticks && scale.ticks.length > 1) {
             let step = scale.tickStep || Math.abs(scale.ticks[1] - scale.ticks[0]);
             let absMax = Math.max(
                 Math.abs(scale.renderMin != null ? scale.renderMin : 0),
@@ -4381,12 +4861,13 @@ class GraphWidget extends BaseWidget {
         return smartDec;
     }
 
-    _formatYAxisValue(val, decimals) {
+    _formatYAxisValue(val, decimals, c) {
         if (val === 0) return parseFloat((0).toFixed(decimals)).toString();
         const sign = val < 0 ? '-' : '';
         const absVal = Math.abs(val);
-        if (absVal >= 1000000) return sign + parseFloat((absVal / 1000000).toFixed(decimals)) + 'M';
-        if (absVal >= 1000) return sign + parseFloat((absVal / 1000).toFixed(decimals)) + 'k';
+        const abbreviate = !c || c.abbreviateLargeValues !== false;
+        if (abbreviate && absVal >= 1000000) return sign + parseFloat((absVal / 1000000).toFixed(decimals)) + 'M';
+        if (abbreviate && absVal >= 1000) return sign + parseFloat((absVal / 1000).toFixed(decimals)) + 'k';
         return sign + parseFloat(absVal.toFixed(decimals)).toString();
     }
 
@@ -4526,23 +5007,43 @@ class GraphWidget extends BaseWidget {
         const mouseX = (event.clientX - rect.left) / scale - (this._plotCanvasOriginX || 0) - startX;
         const mouseY = (event.clientY - rect.top) / scale - (this._plotCanvasOriginY || 0);
         const threshold = c.pointSize + 10;
+        const thresholdSq = threshold * threshold;
+        const barSlack = 6;
+        const barSlackSq = barSlack * barSlack;
         let hit = null;
 
-        for (let i = 0; i < this.renderedPoints.length; i++) {
+        for (let i = this.renderedPoints.length - 1; i >= 0; i--) {
             const pt = this.renderedPoints[i];
-            let isHovered = false;
-            if (pt.type === 'bar') {
-                const margin = 10;
-                isHovered = (mouseX >= pt.barX - margin && mouseX <= pt.barX + pt.barW + margin
-                    && mouseY >= pt.rectY - margin && mouseY <= pt.rectY + pt.rectH + margin);
-            } else {
-                const dx = mouseX - pt.x;
-                const dy = mouseY - pt.y;
-                isHovered = Math.sqrt(dx * dx + dy * dy) <= threshold;
-            }
-            if (isHovered) {
+            if (pt.type !== 'bar') continue;
+            if (mouseX >= pt.barX && mouseX <= pt.barX + pt.barW
+                && mouseY >= pt.rectY && mouseY <= pt.rectY + pt.rectH) {
                 hit = pt;
                 break;
+            }
+        }
+
+        if (!hit) {
+            let bestDist = Infinity;
+            for (let i = this.renderedPoints.length - 1; i >= 0; i--) {
+                const pt = this.renderedPoints[i];
+                let dist;
+                if (pt.type === 'bar') {
+                    const cx = Math.max(pt.barX, Math.min(mouseX, pt.barX + pt.barW));
+                    const cy = Math.max(pt.rectY, Math.min(mouseY, pt.rectY + pt.rectH));
+                    const dx = mouseX - cx;
+                    const dy = mouseY - cy;
+                    dist = dx * dx + dy * dy;
+                    if (dist > barSlackSq) continue;
+                } else {
+                    const dx = mouseX - pt.x;
+                    const dy = mouseY - pt.y;
+                    dist = dx * dx + dy * dy;
+                    if (dist > thresholdSq) continue;
+                }
+                if (dist < bestDist) {
+                    bestDist = dist;
+                    hit = pt;
+                }
             }
         }
 
@@ -4673,7 +5174,13 @@ class GraphWidget extends BaseWidget {
                 }
             }
             if (lastPreCutoff) {
-                kept.unshift(lastPreCutoff);
+                kept.unshift({
+                    v: lastPreCutoff.v,
+                    t: lastPreCutoff.t,
+                    l: lastPreCutoff.l,
+                    seq: lastPreCutoff.seq,
+                    isPreCutoff: true
+                });
             }
             const cap = GraphWidget.SAFETY_CAP();
             if (kept.length > cap) return kept.slice(kept.length - cap);
@@ -4759,10 +5266,12 @@ class GraphWidget extends BaseWidget {
                 const a = fromBuf[i + s];
                 const b = toBuf[i];
                 if (!a || !b) continue;
-                if (a.t != null && b.t != null && a.t === b.t) {
+                if (a.t != null && b.t != null) {
+                    if (a.t !== b.t) continue;
                     matches++;
                     matchedByTimestampOrLabel = true;
-                } else if (a.l != null && b.l != null && a.l !== '' && a.l === b.l) {
+                } else if (a.l != null && b.l != null && a.l !== '' && b.l !== '') {
+                    if (a.l !== b.l) continue;
                     matches++;
                     matchedByTimestampOrLabel = true;
                 } else if (a.v != null && b.v != null && isFinite(a.v) && isFinite(b.v) && Math.abs(a.v - b.v) < 1e-6) {
@@ -4898,17 +5407,19 @@ class GraphWidget extends BaseWidget {
             currentBuffer: null
         };
 
-        if (effectiveAnimMode === 'none' || effectiveAnimMode === 'draw' || !this._hasPlottedFiniteData) {
-            if (this._scaleState) {
-                this._scaleState.fromMin = null;
-                this._scaleState.fromMax = null;
+        if (effectiveAnimMode !== 'shimmer') {
+            if (effectiveAnimMode === 'none' || effectiveAnimMode === 'draw' || !this._hasPlottedFiniteData) {
+                if (this._scaleState) {
+                    this._scaleState.fromMin = null;
+                    this._scaleState.fromMax = null;
+                }
+            } else if (this._scaleState && this._scaleState.currentMin != null && this._scaleState.currentMax != null) {
+                this._scaleState.fromMin = this._scaleState.currentMin;
+                this._scaleState.fromMax = this._scaleState.currentMax;
+                this._scaleState.startTime = now;
+                this._scaleState.duration = Math.max(150, durationMs || 1000);
+                this._scaleState.easing = (effectiveAnimMode === 'morph' && updateMode !== 'stream') ? 'inOut' : 'out';
             }
-        } else if (this._scaleState && this._scaleState.currentMin != null && this._scaleState.currentMax != null) {
-            this._scaleState.fromMin = this._scaleState.currentMin;
-            this._scaleState.fromMax = this._scaleState.currentMax;
-            this._scaleState.startTime = now;
-            this._scaleState.duration = Math.max(150, durationMs || 1000);
-            this._scaleState.easing = (effectiveAnimMode === 'morph' && updateMode !== 'stream') ? 'inOut' : 'out';
         }
 
         if (!this._boundAnimTick) {
@@ -4950,13 +5461,16 @@ class GraphWidget extends BaseWidget {
                     const durSec = pending.updateMode === 'stream'
                         ? (c.graphAnimStreamDuration != null ? c.graphAnimStreamDuration : 0.6)
                         : (c.graphAnimDuration != null ? c.graphAnimDuration : 2);
+                    const pendingDur = (pending.durationMs != null && isFinite(pending.durationMs) && pending.durationMs > 0)
+                        ? pending.durationMs
+                        : Math.max(80, Math.round(durSec * 1000));
                     this._startSeriesAnimation(
                         sid,
                         'morph',
                         pending.updateMode,
                         pending.prevBuf,
                         pending.nextBuf,
-                        Math.max(80, Math.round(durSec * 1000)),
+                        pendingDur,
                         pending.droppedPts
                     );
                     anyActive = true;
@@ -5062,7 +5576,7 @@ class GraphWidget extends BaseWidget {
         // --- CHOREOGRAPHED REVEAL (EMPTY -> FULL OR DRAW MODE) ---
         if (!from.length || anim.animMode === 'draw') {
             anim.drawProgress = GraphWidget._easeOutCubic(p);
-            anim.drawRawProgress = p;
+            anim.drawRawProgress = null;
             const res = [];
             for (let i = 0; i < to.length; i++) {
                 const tPt = to[i];
@@ -5362,15 +5876,19 @@ class GraphWidget extends BaseWidget {
         ctx.clip();
         ctx.beginPath();
         this._traceCurvePath(ctx, pts, type, horizontal);
-        ctx.lineWidth = Math.max(2, baseWidth + 3);
+        const isLight = (typeof document !== 'undefined' && document.body && document.body.classList && document.body.classList.contains('ui-light'));
+        ctx.lineWidth = Math.max(1.5, (baseWidth || 2) + 1.5);
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
+        ctx.globalCompositeOperation = isLight ? 'source-over' : 'lighter';
         const grad = horizontal
             ? ctx.createLinearGradient(0, shimmerCenter - 40, 0, shimmerCenter + 40)
             : ctx.createLinearGradient(shimmerCenter - 40, 0, shimmerCenter + 40, 0);
-        grad.addColorStop(0, 'rgba(255, 255, 255, 0)');
-        grad.addColorStop(0.5, 'rgba(255, 255, 255, 0.85)');
-        grad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+        const edge = isLight ? 'rgba(15, 23, 42, 0)' : 'rgba(255, 255, 255, 0)';
+        const mid = isLight ? 'rgba(15, 23, 42, 0.55)' : 'rgba(255, 255, 255, 0.8)';
+        grad.addColorStop(0, edge);
+        grad.addColorStop(0.5, mid);
+        grad.addColorStop(1, edge);
         ctx.strokeStyle = grad;
         ctx.stroke();
         ctx.restore();
@@ -6045,7 +6563,8 @@ class GraphWidget extends BaseWidget {
         const list = c.series || [];
         for (let i = 0; i < list.length; i++) {
             const s = list[i];
-            const col = this._resolvePlotColor(c.deactivated ? BaseWidget.getDeactivatedColorAccent(c) : s.positiveColor, 100);
+            const legOp = s.positiveColorOpacity != null ? s.positiveColorOpacity : 100;
+            const col = this._resolvePlotColor(c.deactivated ? BaseWidget.getDeactivatedColorAccent(c) : s.positiveColor, legOp);
             sig += '|' + s.id + ':' + s.name + ':' + col + ':' + (this._seriesDrawn(s) ? '1' : '0');
         }
         const sigChanged = (this._legendDomSig !== sig);
@@ -6200,7 +6719,8 @@ class GraphWidget extends BaseWidget {
             if (c.legendSwatch === 'square') swClass += ' graph-legend-swatch--square';
             else if (c.legendSwatch === 'circle') swClass += ' graph-legend-swatch--circle';
             sw.className = swClass;
-            sw.style.background = this._resolvePlotColor(c.deactivated ? BaseWidget.getDeactivatedColorAccent(c) : s.positiveColor, 100);
+            const legOp = s.positiveColorOpacity != null ? s.positiveColorOpacity : 100;
+            sw.style.background = this._resolvePlotColor(c.deactivated ? BaseWidget.getDeactivatedColorAccent(c) : s.positiveColor, legOp);
             const name = document.createElement('span');
             name.className = 'graph-legend-name';
             name.textContent = s.name || ('Graph ' + (i + 1));
@@ -6365,8 +6885,8 @@ class GraphWidget extends BaseWidget {
      */
     _graphAxisReserve(c, horizontal, yTexts, catTexts, edgeTexts) {
         const catOnBottom = !horizontal;
-        const catBox = this._widestLabelBox(catTexts, c.axisXFontSize, c.axisXFont, c.axisXFontBold, c.categoryLabelRotation);
-        const valBox = this._widestLabelBox(yTexts, c.axisYFontSize, c.axisYFont, c.axisYFontBold, c.valueLabelRotation);
+        const catBox = this._widestLabelBox(catTexts, c.axisXFontSize, c.axisXFont, c.axisXFontBold, c.axisXRotation);
+        const valBox = this._widestLabelBox(yTexts, c.axisYFontSize, c.axisYFont, c.axisYFontBold, c.axisYRotation);
         const pad = 6;
         let reservedLeft = 0;
         let reservedRight = 8;
@@ -6411,34 +6931,69 @@ class GraphWidget extends BaseWidget {
             reservedTop = Math.max(reservedTop, eh / 2 + 2);
             reservedBottom = Math.max(reservedBottom, eh / 2 + 2);
         }
+        const titleGap = 4;
+        const catTitle = GraphWidget.axisTitleString(c.axisXLabel);
+        const valTitle = GraphWidget.axisTitleString(c.axisYLabel);
+        let catTitleBox = null;
+        let valTitleBox = null;
+        if (catTitle) {
+            catTitleBox = this._rotatedLabelBox(
+                catTitle, c.axisXLabelFontSize, c.axisXLabelFont, c.axisXLabelFontBold, c.axisXLabelRotation
+            );
+            if (catOnBottom) reservedBottom += catTitleBox.h + titleGap;
+            else reservedLeft += catTitleBox.w + titleGap;
+        }
+        if (valTitle) {
+            valTitleBox = this._rotatedLabelBox(
+                valTitle, c.axisYLabelFontSize, c.axisYLabelFont, c.axisYLabelFontBold, c.axisYLabelRotation
+            );
+            if (horizontal) reservedBottom += valTitleBox.h + titleGap;
+            else reservedLeft += valTitleBox.w + titleGap;
+        }
         return {
             left: reservedLeft,
             right: reservedRight,
             top: reservedTop,
             bottom: reservedBottom,
-            catBox: { w: Math.max(8, catBox.w), h: Math.max(8, catBox.h) }
+            catBox: { w: Math.max(8, catBox.w), h: Math.max(8, catBox.h) },
+            catTitleBox: catTitleBox,
+            valTitleBox: valTitleBox
         };
     }
 
     _fitGraphReserve(box, reserve) {
         const minPlot = 24;
-        let left = reserve.left;
-        let right = reserve.right;
-        let top = reserve.top;
-        let bottom = reserve.bottom;
+        const rawLeft = reserve.left;
+        const rawRight = reserve.right;
+        const rawTop = reserve.top;
+        const rawBottom = reserve.bottom;
+        let left = rawLeft;
+        let right = rawRight;
+        let top = rawTop;
+        let bottom = rawBottom;
+        let scaleX = 1;
+        let scaleY = 1;
         const maxX = Math.max(0, box.w - minPlot);
         if (left + right > maxX && (left + right) > 0) {
-            const scale = maxX / (left + right);
-            left *= scale;
-            right *= scale;
+            scaleX = maxX / (left + right);
+            left *= scaleX;
+            right *= scaleX;
         }
         const maxY = Math.max(0, box.h - minPlot);
         if (top + bottom > maxY && (top + bottom) > 0) {
-            const scale = maxY / (top + bottom);
-            top *= scale;
-            bottom *= scale;
+            scaleY = maxY / (top + bottom);
+            top *= scaleY;
+            bottom *= scaleY;
         }
-        return { left: left, right: right, top: top, bottom: bottom, catBox: reserve.catBox };
+        return {
+            left: left,
+            right: right,
+            top: top,
+            bottom: bottom,
+            catBox: reserve.catBox,
+            catTitleBox: reserve.catTitleBox,
+            valTitleBox: reserve.valTitleBox
+        };
     }
 
     _shiftLabelAnchor(x, y, rawW, rawH, align, baseline, limits) {
@@ -6496,7 +7051,8 @@ class GraphWidget extends BaseWidget {
             ctx.textAlign = 'right';
             ctx.textBaseline = 'middle';
         }
-        const fs = parseFloat(ctx.font) || 10;
+        const fsNum = fit && fit.fontSize != null ? Number(fit.fontSize) : 10;
+        const fs = (Number.isFinite(fsNum) && fsNum > 0) ? fsNum : 10;
         const lh = fs * 1.2;
         const start = edge === 'bottom' ? 0 : -((lines.length - 1) * lh) / 2;
         for (let i = 0; i < lines.length; i++) ctx.fillText(lines[i], 0, start + i * lh);
@@ -6553,6 +7109,76 @@ class GraphWidget extends BaseWidget {
         this._paintGraph(c);
     }
 
+    /**
+     * Visible time span for one series. Pre-cutoff samples stay in the buffer so
+     * the line can clip at the left edge, but they do not stretch the axis.
+     * During a stream or shift-morph, the span eases from the previous window
+     * to the new one so timestamp axes slide instead of jumping on the first frame.
+     */
+    _seriesAnimatedTimeExtent(buf, anim) {
+        const points = buf || [];
+        let minKept = Infinity;
+        let maxKept = -Infinity;
+        let oldestDrop = null;
+        let newestNew = null;
+        let sawKept = false;
+        for (let p = 0; p < points.length; p++) {
+            const pt = points[p];
+            if (!pt || pt.t == null || !isFinite(pt.t) || pt.isPreCutoff) continue;
+            if (pt.isDropped) {
+                if (oldestDrop == null || pt.t < oldestDrop) oldestDrop = pt.t;
+                continue;
+            }
+            if (pt.isStreamNew || pt.isMorphNew) {
+                if (newestNew == null || pt.t > newestNew) newestNew = pt.t;
+                continue;
+            }
+            sawKept = true;
+            if (pt.t < minKept) minKept = pt.t;
+            if (pt.t > maxKept) maxKept = pt.t;
+        }
+
+        let sliding = false;
+        let shiftP = 1;
+        if (anim && anim.updateMode === 'stream' && anim.streamShiftProgress != null) {
+            sliding = true;
+            shiftP = anim.streamShiftProgress;
+        } else if (anim && anim.morphShiftProgress != null && anim.morphShiftSlots > 0) {
+            sliding = true;
+            shiftP = anim.morphShiftProgress;
+        }
+
+        if (!sliding) {
+            if (newestNew != null) {
+                if (!sawKept || newestNew < minKept) minKept = newestNew;
+                if (!sawKept || newestNew > maxKept) maxKept = newestNew;
+                sawKept = true;
+            }
+            if (!sawKept) return null;
+            return { min: minKept, max: maxKept };
+        }
+
+        let minT = null;
+        if (oldestDrop != null && sawKept) minT = oldestDrop + (minKept - oldestDrop) * shiftP;
+        else if (sawKept) minT = minKept;
+        else if (oldestDrop != null) minT = oldestDrop;
+        else minT = newestNew;
+
+        let maxT = null;
+        if (newestNew != null && sawKept) maxT = maxKept + (newestNew - maxKept) * shiftP;
+        else if (sawKept) maxT = maxKept;
+        else if (newestNew != null) maxT = newestNew;
+        else maxT = oldestDrop;
+
+        if (minT == null || maxT == null || !isFinite(minT) || !isFinite(maxT)) return null;
+        if (minT > maxT) {
+            const swap = minT;
+            minT = maxT;
+            maxT = swap;
+        }
+        return { min: minT, max: maxT };
+    }
+
     _buildSeriesPlotRows(c) {
         const rows = [];
         let tMin = Infinity;
@@ -6571,18 +7197,16 @@ class GraphWidget extends BaseWidget {
 
             let logicalLen = 0;
             for (let p = 0; p < buf.length; p++) {
-                if (buf[p] && !buf[p].isDropped) logicalLen++;
+                if (buf[p] && !buf[p].isDropped && !buf[p].isPreCutoff) logicalLen++;
             }
             if (logicalLen > maxLen) maxLen = logicalLen;
 
             if (drawn) {
-                for (let p = 0; p < buf.length; p++) {
-                    const pt = buf[p];
-                    if (pt && !pt.isDropped && pt.t != null && isFinite(pt.t)) {
-                        anyTime = true;
-                        if (pt.t < tMin) tMin = pt.t;
-                        if (pt.t > tMax) tMax = pt.t;
-                    }
+                const extent = this._seriesAnimatedTimeExtent(buf, anim);
+                if (extent) {
+                    anyTime = true;
+                    if (extent.min < tMin) tMin = extent.min;
+                    if (extent.max > tMax) tMax = extent.max;
                 }
             }
             rows.push({ spec: spec, buf: buf, drawn: drawn, anim: anim, logicalLen: logicalLen });
@@ -6670,7 +7294,8 @@ class GraphWidget extends BaseWidget {
                     const item = buf[p];
                     if (!item) continue;
                     if (item.t != null && isFinite(item.t)) {
-                        const rawCat = (item.t - domain.t0) / span;
+                        let rawCat = (item.t - domain.t0) / span;
+                        if (item.isStreamNew && rawCat > 1) rawCat = 1;
                         const cat = isReversed ? (1 - rawCat) : rawCat;
                         const scaled = scaleV(row.spec, item.v);
                         const scaledFrom = item.fromVal != null ? scaleV(row.spec, item.fromVal) : null;
@@ -6688,7 +7313,8 @@ class GraphWidget extends BaseWidget {
                             isDropped: item.isDropped === true,
                             isStreamNew: item.isStreamNew === true,
                             isMorphNew: item.isMorphNew === true,
-                            isDrawReveal: item.isDrawReveal === true
+                            isDrawReveal: item.isDrawReveal === true,
+                            isPreCutoff: item.isPreCutoff === true
                         });
                     } else {
                         untimed.push(item);
@@ -6715,7 +7341,8 @@ class GraphWidget extends BaseWidget {
                         isDropped: item && item.isDropped === true,
                         isStreamNew: item && item.isStreamNew === true,
                         isMorphNew: item && item.isMorphNew === true,
-                        isDrawReveal: item && item.isDrawReveal === true
+                        isDrawReveal: item && item.isDrawReveal === true,
+                        isPreCutoff: item && item.isPreCutoff === true
                     });
                 }
                 pts.sort(function (a, b) { return a.cat - b.cat; });
@@ -6733,7 +7360,10 @@ class GraphWidget extends BaseWidget {
                         slotPos = logicalIdx + ( item.isStreamNew ? 0 : conveyorShiftSlots );
                         logicalIdx++;
                     }
-                    const rawCat = slots <= 1 ? 0.5 : (slotPos / denom);
+                    let rawCat = slots <= 1 ? 0.5 : (slotPos / denom);
+                    if (item.isStreamNew && rawCat > 1 && anim && (!anim.droppedPoints || !anim.droppedPoints.length)) {
+                        rawCat = 1;
+                    }
                     const cat = isReversed ? (1 - rawCat) : rawCat;
                     const scaled = scaleV(row.spec, item.v);
                     const scaledFrom = item.fromVal != null ? scaleV(row.spec, item.fromVal) : null;
@@ -6752,7 +7382,8 @@ class GraphWidget extends BaseWidget {
                         isDropped: item.isDropped === true,
                         isStreamNew: item.isStreamNew === true,
                         isMorphNew: item.isMorphNew === true,
-                        isDrawReveal: item.isDrawReveal === true
+                        isDrawReveal: item.isDrawReveal === true,
+                        isPreCutoff: item.isPreCutoff === true
                     });
                 }
                 pts.sort(function (a, b) { return a.cat - b.cat; });
@@ -6761,6 +7392,7 @@ class GraphWidget extends BaseWidget {
             if (row.drawn) {
                 for (let p = 0; p < pts.length; p++) {
                     if (pts[p].isDropped) continue;
+                    if (pts[p].isPreCutoff && (pts[p].cat < -0.0001 || pts[p].cat > 1.0001)) continue;
                     const v = (anim && pts[p].toVal != null && isFinite(pts[p].toVal)) ? pts[p].toVal : pts[p].v;
                     if (v == null || !isFinite(v)) continue;
                     finiteCount++;
@@ -6912,25 +7544,25 @@ class GraphWidget extends BaseWidget {
             const yTextsFrom = function (nextScale, dec) {
                 const texts = [];
                 const ticks = nextScale && nextScale.ticks ? nextScale.ticks : [];
-                for (let i = 0; i < ticks.length; i++) texts.push(self._formatYAxisValue(ticks[i], dec));
-                if (nextScale && nextScale.edgeMin != null) texts.push(self._formatYAxisValue(nextScale.edgeMin, dec));
-                if (nextScale && nextScale.edgeMax != null) texts.push(self._formatYAxisValue(nextScale.edgeMax, dec));
+                for (let i = 0; i < ticks.length; i++) texts.push(self._formatYAxisValue(ticks[i], dec, c));
+                if (nextScale && nextScale.edgeMin != null) texts.push(self._formatYAxisValue(nextScale.edgeMin, dec, c));
+                if (nextScale && nextScale.edgeMax != null) texts.push(self._formatYAxisValue(nextScale.edgeMax, dec, c));
                 if (!texts.length) {
-                    texts.push(self._formatYAxisValue(dataMax, dec));
-                    texts.push(self._formatYAxisValue(dataMin, dec));
+                    texts.push(self._formatYAxisValue(dataMax, dec, c));
+                    texts.push(self._formatYAxisValue(dataMin, dec, c));
                 }
                 if (c.gridHBaseShow) {
                     const bVal = c.useBaseline ? (Number(c.baselineVal) || 0) : 0;
-                    texts.push(self._formatYAxisValue(bVal, dec));
+                    texts.push(self._formatYAxisValue(bVal, dec, c));
                 }
                 return texts;
             };
 
             const reserveBaselineVal = c.useBaseline ? (Number(c.baselineVal) || 0) : 0;
             reserve = this._fitGraphReserve(box, this._graphAxisReserve(c, horizontal, [
-                this._formatYAxisValue(estMax, c.decimals),
-                this._formatYAxisValue(estMin, c.decimals),
-                this._formatYAxisValue(isBaselineFloor ? reserveBaselineVal : 0, c.decimals)
+                this._formatYAxisValue(estMax, c.decimals, c),
+                this._formatYAxisValue(estMin, c.decimals, c),
+                this._formatYAxisValue(isBaselineFloor ? reserveBaselineVal : 0, c.decimals, c)
             ], catSamples, edgeTexts));
             laid = buildScale(reserve);
             for (let pass = 0; pass < 2; pass++) {
@@ -7027,7 +7659,7 @@ class GraphWidget extends BaseWidget {
         if (isTimeAxis) {
             const sampleW = this._rotatedLabelBox(
                 this._formatTimeScaleTick(domain.t0, labelC, domain.sample),
-                c.axisXFontSize, c.axisXFont, c.axisXFontBold, c.categoryLabelRotation
+                c.axisXFontSize, c.axisXFont, c.axisXFontBold, c.axisXRotation
             );
             const foot = catOnBottom ? sampleW.w : sampleW.h;
             const count = this._timeScaleLabelCount(c, alongPx, Math.max(8, foot));
@@ -7062,7 +7694,7 @@ class GraphWidget extends BaseWidget {
                         if (!rows[s].drawn) continue;
                         const activePts = [];
                         for (let k = 0; k < placed[s].length; k++) {
-                            if (!placed[s][k].isDropped) activePts.push(placed[s][k]);
+                            if (!placed[s][k].isDropped && !placed[s][k].isPreCutoff) activePts.push(placed[s][k]);
                         }
                         const pt = activePts[i];
                         if (pt && pt.l) { text = String(pt.l); break; }
@@ -7121,6 +7753,8 @@ class GraphWidget extends BaseWidget {
         const bands = Math.min(pixelCap, Math.max(1, maxLen));
         const band = (horizontal ? drawH : drawW) / bands;
         const gap = Math.max(0, Number(c.barGap) || 0);
+        const isStacked = c.barGroupMode === 'stacked';
+        const stackGapStep = Math.max(0, Number(c.barStackGapStep) || 0);
         const numSeries = drawnSeries.length || 1;
         const maxPossibleGap = Math.max(0, (band - numSeries) / numSeries);
         const effectiveGap = Math.min(gap, maxPossibleGap);
@@ -7140,12 +7774,13 @@ class GraphWidget extends BaseWidget {
 
             for (let p = 0; p < pts.length; p++) {
                 const pt = pts[p];
-                if (!pt || pt.v == null || !isFinite(pt.v)) continue;
+                if (!pt || pt.isPreCutoff || pt.v == null || !isFinite(pt.v)) continue;
                 const value = pt.v;
                 const negative = pt.neg === true;
                 if (!pt.isDropped) lastVal = value;
                 const positive = !negative;
                 const color = accent || (positive ? spec.positiveColor : spec.negativeColor);
+                const barOpacity = positive ? spec.positiveColorOpacity : spec.negativeColorOpacity;
                 const outline = positive ? spec.positiveOutlineColor : spec.negativeOutlineColor;
 
                 const bandPos = (pt.cat * Math.max(1, bands - 1));
@@ -7186,7 +7821,30 @@ class GraphWidget extends BaseWidget {
                 let h;
                 let xVal = 0;
                 let yVal = 0;
-                if (horizontal) {
+                if (isStacked) {
+                    const seriesGap = gap + s * stackGapStep;
+                    const maxPossibleSeriesGap = Math.max(0, band - 1);
+                    const effectiveSeriesGap = Math.min(seriesGap, maxPossibleSeriesGap);
+                    const span = Math.max(1, band - effectiveSeriesGap);
+                    const slotOffset = (band - span) / 2;
+                    if (horizontal) {
+                        const y0 = bandStart + slotOffset;
+                        xVal = this._placeValue(0, value, geom).x;
+                        const fullW = Math.abs(xVal - baseAlong);
+                        w = fullW * barScale;
+                        x = (xVal >= baseAlong) ? baseAlong : (baseAlong - w);
+                        y = y0;
+                        h = span;
+                    } else {
+                        const x0 = bandStart + slotOffset;
+                        yVal = this._placeValue(0, value, geom).y;
+                        x = x0;
+                        const fullH = Math.abs(yVal - baseAlong);
+                        h = fullH * barScale;
+                        y = (yVal <= baseAlong) ? (baseAlong - h) : baseAlong;
+                        w = span;
+                    }
+                } else if (horizontal) {
                     const y0 = bandStart + (effectiveGap / 2) + s * (each + effectiveGap);
                     const y1 = y0 + Math.max(1, each);
                     xVal = this._placeValue(0, value, geom).x;
@@ -7205,7 +7863,7 @@ class GraphWidget extends BaseWidget {
                     w = Math.max(1, each);
                 }
                 GraphWidget.traceRoundRect(ctx, x, y, w, h, c.barRadius || 0);
-                ctx.fillStyle = this._resolvePlotColor(color, 100);
+                ctx.fillStyle = this._resolvePlotColor(color, barOpacity != null ? barOpacity : 100);
                 ctx.fill();
                 if (c.barOutlineWidth > 0) {
                     ctx.lineWidth = c.barOutlineWidth;
@@ -7309,14 +7967,15 @@ class GraphWidget extends BaseWidget {
                         isDropped: dp.isDropped === true,
                         isStreamNew: dp.isStreamNew === true,
                         isMorphNew: dp.isMorphNew === true,
-                        isDrawReveal: dp.isDrawReveal === true
+                        isDrawReveal: dp.isDrawReveal === true,
+                        isPreCutoff: dp.isPreCutoff === true
                     });
-                    if (!dp.isDropped) lastVal = dp.y;
+                    if (!dp.isDropped && !dp.isPreCutoff) lastVal = dp.y;
                 }
                 if (screenPts.length === 0) continue;
 
                 for (let i = 0; i < screenPts.length; i++) {
-                    if (!screenPts[i].isDropped) {
+                    if (!screenPts[i].isDropped && !screenPts[i].isPreCutoff) {
                         seriesPlottedPts[s].push(screenPts[i]);
                     }
                 }
@@ -7447,7 +8106,8 @@ class GraphWidget extends BaseWidget {
                             ctx.lineWidth = spec.lineWidth;
                             ctx.lineJoin = 'round';
                             ctx.lineCap = 'round';
-                            ctx.strokeStyle = self._resolvePlotColor(accent || (isPos ? spec.positiveColor : spec.negativeColor), 100);
+                            const lineOp = isPos ? spec.positiveColorOpacity : spec.negativeColorOpacity;
+                            ctx.strokeStyle = self._resolvePlotColor(accent || (isPos ? spec.positiveColor : spec.negativeColor), lineOp != null ? lineOp : 100);
                             ctx.stroke();
                             ctx.restore();
                         }
@@ -7500,6 +8160,9 @@ class GraphWidget extends BaseWidget {
                     if (spec.lineWidth > 0) {
                         const strokeSeg = function (clip) {
                             const positive = clip !== 'negative';
+                            const lineOp = (clip === 'all')
+                                ? (spec.positiveColorOpacity != null ? spec.positiveColorOpacity : 100)
+                                : (positive ? spec.positiveColorOpacity : spec.negativeColorOpacity);
                             ctx.save();
                             clipPlotBoundsAndSweep();
                             if (clip !== 'all') {
@@ -7516,11 +8179,12 @@ class GraphWidget extends BaseWidget {
                             ctx.lineWidth = spec.lineWidth;
                             ctx.lineJoin = 'round';
                             ctx.lineCap = 'round';
-                            ctx.strokeStyle = self._resolvePlotColor(accent || (positive ? spec.positiveColor : spec.negativeColor), 100);
+                            ctx.strokeStyle = self._resolvePlotColor(accent || (positive ? spec.positiveColor : spec.negativeColor), lineOp != null ? lineOp : 100);
                             ctx.stroke();
                             ctx.restore();
                         };
-                        const same = (accent || spec.positiveColor) === (accent || spec.negativeColor);
+                        const same = (accent || spec.positiveColor) === (accent || spec.negativeColor)
+                            && spec.positiveColorOpacity === spec.negativeColorOpacity;
                         if (same) strokeSeg('all');
                         else { strokeSeg('positive'); strokeSeg('negative'); }
                     }
@@ -7530,7 +8194,7 @@ class GraphWidget extends BaseWidget {
                 if (shouldEvaluatePoints) {
                     for (let i = 0; i < screenPts.length; i++) {
                         const spt = screenPts[i];
-                        if (spt.synthetic) continue;
+                        if (spt.synthetic || spt.isPreCutoff) continue;
                         const inPlot = spt.x >= -2 && spt.x <= drawW + 2 && spt.y >= -2 && spt.y <= drawH + 2;
                         if (!inPlot) continue;
                         if (!spt.isDropped) {
@@ -7544,15 +8208,16 @@ class GraphWidget extends BaseWidget {
                         const radius = Math.max(0.5, (basePointDia / 2) * ptScale);
                         const isNeg = spt.neg === true || spt.v < geom.baseline;
                         const col = accent || spec.pointColor || (!isNeg ? spec.positiveColor : spec.negativeColor);
+                        const ptOp = spec.pointColor ? 100 : (!isNeg ? spec.positiveColorOpacity : spec.negativeColorOpacity);
                         ctx.beginPath();
                         ctx.arc(spt.x, spt.y, radius, 0, Math.PI * 2);
-                        ctx.fillStyle = self._resolvePlotColor(col, 100);
+                        ctx.fillStyle = self._resolvePlotColor(col, ptOp != null ? ptOp : 100);
                         ctx.fill();
                     }
                 } else {
                     for (let i = 0; i < screenPts.length; i++) {
                         const spt = screenPts[i];
-                        if (spt.synthetic || spt.isDropped) continue;
+                        if (spt.synthetic || spt.isDropped || spt.isPreCutoff) continue;
                         const inPlot = spt.x >= -2 && spt.x <= drawW + 2 && spt.y >= -2 && spt.y <= drawH + 2;
                         if (inPlot) {
                             self.renderedPoints.push({ x: spt.x, y: spt.y, val: spt.v, type: 'point' });
@@ -7578,10 +8243,10 @@ class GraphWidget extends BaseWidget {
             const ticks = scale.ticks || [];
             const yFit = { limits: this._plotTextLimits, fontSize: c.axisYFontSize, family: c.axisYFont, bold: c.axisYFontBold };
             const fs = Math.max(8, Number(c.axisYFontSize) || 10);
-            const baseText = this._formatYAxisValue(geom.baseline, decimals);
+            const baseText = this._formatYAxisValue(geom.baseline, decimals, c);
             const basePos = horizontal ? basePt.x : basePt.y;
             const minSpacing = horizontal
-                ? Math.max(16, this._rotatedLabelBox(baseText, fs, c.axisYFont, c.axisYFontBold, c.valueLabelRotation).w + 4)
+                ? Math.max(16, this._rotatedLabelBox(baseText, fs, c.axisYFont, c.axisYFontBold, c.axisYRotation).w + 4)
                 : Math.max(10, fs * 1.2);
 
             const hasEdgeMin = scale && scale.edgeMin != null;
@@ -7602,25 +8267,25 @@ class GraphWidget extends BaseWidget {
                 if (hasEdgeMin && Math.abs(pos - minPos) < minSpacing) continue;
                 if (hasEdgeMax && Math.abs(pos - maxPos) < minSpacing) continue;
 
-                const text = this._formatYAxisValue(v, decimals);
+                const text = this._formatYAxisValue(v, decimals, c);
                 if (drawnLabels[text]) continue;
                 drawnLabels[text] = true;
                 if (horizontal) {
-                    this._drawEdgeLabel(ctx, text, pt.x, drawH + Math.max(0, c.axisOffX), c.valueLabelRotation, 'bottom', yFit);
+                    this._drawEdgeLabel(ctx, text, pt.x, drawH + Math.max(0, c.axisOffX), c.axisYRotation, 'bottom', yFit);
                 } else {
-                    this._drawEdgeLabel(ctx, text, -Math.max(0, c.axisOffX), pt.y, c.valueLabelRotation, 'left', yFit);
+                    this._drawEdgeLabel(ctx, text, -Math.max(0, c.axisOffX), pt.y, c.axisYRotation, 'left', yFit);
                 }
             }
             if (hasEdgeMin) {
                 const minPos = minPt ? (horizontal ? minPt.x : minPt.y) : null;
                 if (minPos != null && minPos >= -0.5 && minPos <= maxSpan + 0.5) {
-                    const text = this._formatYAxisValue(scale.edgeMin, decimals);
+                    const text = this._formatYAxisValue(scale.edgeMin, decimals, c);
                     if (!drawnLabels[text]) {
                         drawnLabels[text] = true;
                         if (horizontal) {
-                            this._drawEdgeLabel(ctx, text, minPt.x, drawH + Math.max(0, c.axisOffX), c.valueLabelRotation, 'bottom', yFit);
+                            this._drawEdgeLabel(ctx, text, minPt.x, drawH + Math.max(0, c.axisOffX), c.axisYRotation, 'bottom', yFit);
                         } else {
-                            this._drawEdgeLabel(ctx, text, -Math.max(0, c.axisOffX), minPt.y, c.valueLabelRotation, 'left', yFit);
+                            this._drawEdgeLabel(ctx, text, -Math.max(0, c.axisOffX), minPt.y, c.axisYRotation, 'left', yFit);
                         }
                     }
                 }
@@ -7628,13 +8293,13 @@ class GraphWidget extends BaseWidget {
             if (hasEdgeMax) {
                 const maxPos = maxPt ? (horizontal ? maxPt.x : maxPt.y) : null;
                 if (maxPos != null && maxPos >= -0.5 && maxPos <= maxSpan + 0.5) {
-                    const text = this._formatYAxisValue(scale.edgeMax, decimals);
+                    const text = this._formatYAxisValue(scale.edgeMax, decimals, c);
                     if (!drawnLabels[text]) {
                         drawnLabels[text] = true;
                         if (horizontal) {
-                            this._drawEdgeLabel(ctx, text, maxPt.x, drawH + Math.max(0, c.axisOffX), c.valueLabelRotation, 'bottom', yFit);
+                            this._drawEdgeLabel(ctx, text, maxPt.x, drawH + Math.max(0, c.axisOffX), c.axisYRotation, 'bottom', yFit);
                         } else {
-                            this._drawEdgeLabel(ctx, text, -Math.max(0, c.axisOffX), maxPt.y, c.valueLabelRotation, 'left', yFit);
+                            this._drawEdgeLabel(ctx, text, -Math.max(0, c.axisOffX), maxPt.y, c.axisYRotation, 'left', yFit);
                         }
                     }
                 }
@@ -7644,9 +8309,9 @@ class GraphWidget extends BaseWidget {
                 const baseLabelOp = c.gridHBaseCol ? (c.gridHBaseOp != null ? c.gridHBaseOp : c.axisYFontOpacity) : c.axisYFontOpacity;
                 ctx.fillStyle = this._resolvePlotColor(deactCol || c.gridHBaseCol || c.axisYFontColor, baseLabelOp);
                 if (horizontal) {
-                    this._drawEdgeLabel(ctx, baseText, basePt.x, drawH + Math.max(0, c.axisOffX), c.valueLabelRotation, 'bottom', yFit);
+                    this._drawEdgeLabel(ctx, baseText, basePt.x, drawH + Math.max(0, c.axisOffX), c.axisYRotation, 'bottom', yFit);
                 } else {
-                    this._drawEdgeLabel(ctx, baseText, -Math.max(0, c.axisOffX), basePt.y, c.valueLabelRotation, 'left', yFit);
+                    this._drawEdgeLabel(ctx, baseText, -Math.max(0, c.axisOffX), basePt.y, c.axisYRotation, 'left', yFit);
                 }
                 ctx.fillStyle = this._resolvePlotColor(deactCol || c.axisYFontColor, c.axisYFontOpacity);
             }
@@ -7683,9 +8348,9 @@ class GraphWidget extends BaseWidget {
             for (let i = 0; i < catTicks.length; i++) {
                 const tick = catTicks[i];
                 if (horizontal) {
-                    this._drawEdgeLabel(ctx, tick.text, -Math.max(0, c.axisOffY), tick.frac * drawH, c.categoryLabelRotation, 'left', xFit);
+                    this._drawEdgeLabel(ctx, tick.text, -Math.max(0, c.axisOffY), tick.frac * drawH, c.axisXRotation, 'left', xFit);
                 } else {
-                    this._drawEdgeLabel(ctx, tick.text, tick.frac * drawW, drawH + Math.max(0, c.axisOffY), c.categoryLabelRotation, 'bottom', xFit);
+                    this._drawEdgeLabel(ctx, tick.text, tick.frac * drawW, drawH + Math.max(0, c.axisOffY), c.axisXRotation, 'bottom', xFit);
                 }
             }
         }
@@ -7701,6 +8366,106 @@ class GraphWidget extends BaseWidget {
                     this._drawCanvasLine(ctx, x, drawH + (c.tickXOffset || 0), x, drawH + (c.tickXOffset || 0) + (c.tickXSize || 6), deactCol || c.tickXColor, c.tickXThickness, 100);
                 }
             }
+        }
+    }
+
+    /**
+     * A title longer than the plot span is drawn smaller so it stays on its own
+     * edge and does not cover the other axis. The reserved margin stays put.
+     */
+    _fitAxisTitleDraw(fontSize, box, edge, drawW, drawH) {
+        const base = Math.max(1, Number(fontSize) || 10);
+        let scale = 1;
+        if (box && box.w > 0 && box.h > 0) {
+            const span = edge === 'left' ? drawH : drawW;
+            const along = edge === 'left' ? box.h : box.w;
+            if (span > 0 && along > span) scale = span / along;
+        }
+        const minScale = 6 / base;
+        if (scale < minScale) scale = minScale;
+        return {
+            fontSize: base * scale,
+            box: box ? { w: box.w * scale, h: box.h * scale } : null
+        };
+    }
+
+    _clampAxisTitleCenter(cx, cy, box, drawW, drawH, reserve) {
+        if (!box) return { x: cx, y: cy };
+        const minX = -reserve.left;
+        const maxX = drawW + reserve.right;
+        const minY = -reserve.top;
+        const maxY = drawH + reserve.bottom;
+        let x = cx;
+        let y = cy;
+        const halfW = box.w / 2;
+        const halfH = box.h / 2;
+        if (box.w <= (maxX - minX)) {
+            if (x - halfW < minX) x = minX + halfW;
+            if (x + halfW > maxX) x = maxX - halfW;
+        } else {
+            x = (minX + maxX) / 2;
+        }
+        if (box.h <= (maxY - minY)) {
+            if (y - halfH < minY) y = minY + halfH;
+            if (y + halfH > maxY) y = maxY - halfH;
+        } else {
+            y = (minY + maxY) / 2;
+        }
+        return { x: x, y: y };
+    }
+
+    _drawOneAxisTitle(ctx, text, box, rotation, edge, drawW, drawH, reserve, fontSize, family, bold, color, opacity) {
+        if (!text || !box || !reserve) return;
+        const fitted = this._fitAxisTitleDraw(fontSize, box, edge, drawW, drawH);
+        const drawBox = fitted.box;
+        if (!drawBox) return;
+        this._setCanvasFont(ctx, fitted.fontSize, family, bold, false);
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(-reserve.left, -reserve.top, reserve.left + drawW + reserve.right, reserve.top + drawH + reserve.bottom);
+        ctx.clip();
+        ctx.fillStyle = this._resolvePlotColor(color, opacity);
+        const cx = edge === 'left' ? -(reserve.left - drawBox.w / 2) : drawW / 2;
+        const cy = edge === 'left' ? drawH / 2 : (drawH + reserve.bottom - drawBox.h / 2);
+        const at = this._clampAxisTitleCenter(cx, cy, drawBox, drawW, drawH, reserve);
+        ctx.translate(at.x, at.y);
+        ctx.rotate((Number(rotation) || 0) * Math.PI / 180);
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        const lines = String(text).split('\n');
+        if (lines.length < 2) {
+            ctx.fillText(text, 0, 0);
+        } else {
+            const lineH = Math.max(1, fitted.fontSize) * 1.25;
+            const start = -((lines.length - 1) * lineH) / 2;
+            for (let i = 0; i < lines.length; i++) {
+                ctx.fillText(lines[i], 0, start + i * lineH);
+            }
+        }
+        ctx.restore();
+    }
+
+    _drawAxisTitles(ctx, c, reserve, drawW, drawH, horizontal, deactCol) {
+        if (!reserve) return;
+        const catText = GraphWidget.axisTitleString(c.axisXLabel);
+        const valText = GraphWidget.axisTitleString(c.axisYLabel);
+        if (catText) {
+            this._drawOneAxisTitle(
+                ctx, catText, reserve.catTitleBox, c.axisXLabelRotation,
+                horizontal ? 'left' : 'bottom',
+                drawW, drawH, reserve,
+                c.axisXLabelFontSize, c.axisXLabelFont, c.axisXLabelFontBold,
+                deactCol || c.axisXLabelFontColor, c.axisXLabelFontOpacity
+            );
+        }
+        if (valText) {
+            this._drawOneAxisTitle(
+                ctx, valText, reserve.valTitleBox, c.axisYLabelRotation,
+                horizontal ? 'bottom' : 'left',
+                drawW, drawH, reserve,
+                c.axisYLabelFontSize, c.axisYLabelFont, c.axisYLabelFontBold,
+                deactCol || c.axisYLabelFontColor, c.axisYLabelFontOpacity
+            );
         }
     }
 
@@ -7783,7 +8548,7 @@ class GraphWidget extends BaseWidget {
                 const count = Math.max(1, pts.length);
                 const step = Math.max(1, Math.ceil(count / pixelCap));
                 for (let i = 0; i < pts.length; i += step) {
-                    if (pts[i].isDropped) continue;
+                    if (pts[i].isDropped || pts[i].isPreCutoff) continue;
                     const raw = pts[i].v;
                     let text = '';
                     if (raw != null && isFinite(raw)) text = Number(raw).toFixed(c.decimals);
@@ -7806,12 +8571,15 @@ class GraphWidget extends BaseWidget {
                     lastVal = (raw != null && isFinite(raw)) ? raw : lastVal;
                 }
             }
+            this._drawPlotAxesAndTicks(ctx, c, geom, scale, catTicks, basePt, showBaseline, decimals, deactCol, drawW, drawH, horizontal);
+            this._drawAxisTitles(ctx, c, reserve, drawW, drawH, horizontal, deactCol);
             ctx.restore();
             this._updatePlotA11y(c, lastVal);
             return;
         }
 
         this._drawPlotAxesAndTicks(ctx, c, geom, scale, catTicks, basePt, showBaseline, decimals, deactCol, drawW, drawH, horizontal);
+        this._drawAxisTitles(ctx, c, reserve, drawW, drawH, horizontal, deactCol);
 
         ctx.restore();
         this._updatePlotA11y(c, lastVal);

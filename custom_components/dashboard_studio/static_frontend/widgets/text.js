@@ -20,8 +20,8 @@ class TextWidget extends BaseWidget {
             category: 'Text',
             color_dark: 'hsl(300, 80%, 65%)',
             color_light: 'hsl(300, 85%, 35%)',
-            version: '2.3.1',
-            date: '2026-11-02'
+            version: '2.3.5',
+            date: '2026-11-07'
         };
     }
 
@@ -551,7 +551,7 @@ class TextWidget extends BaseWidget {
                 }
             },
 
-            { type: 'heading', label: 'Markdown Table & Element Colors', cols: 12 },
+            { type: 'heading', label: 'Markdown', cols: 12 },
             { key: 'textMdTableStyle', type: 'select', label: 'Table Style', cols: 12, options: tableStyleOpts },
             {
                 key: 'textMdCalendarWeekStart',
@@ -3045,7 +3045,7 @@ class TextWidget extends BaseWidget {
                 },
             {
                 id: 'txt_md_colors',
-                title: 'Markdown Table & Element Colors',
+                title: 'Markdown',
                 icon: 'ph-table',
                 fields: [
                     {
@@ -3164,7 +3164,6 @@ class TextWidget extends BaseWidget {
                     { key: 'mdBlock4Color', type: 'color', label: 'Block 4 Color', cols: 6, defaultKey: 'textMdBlock4Color' }
                 ]
             },
-            TextWidget._textAnimationsSchemaGroup(),
             {
                 id: 'txt_appear',
                 title: 'Appearance',
@@ -3215,7 +3214,8 @@ class TextWidget extends BaseWidget {
                     BaseWidget.getWidgetLabelTypographySchema('textWidgetLabel', 'widgetLabel'),
                     ...TextWidget._textMdTypographyGroupsForEditor(false)
                 ]
-            }
+            },
+            TextWidget._textAnimationsSchemaGroup()
         ];
     }
 

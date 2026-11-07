@@ -1,6 +1,6 @@
 class ImageWidget extends BaseWidget {
     static get metadata() {
-        return { label: "Image", shortName: "Image", icon: "ph-image", category: "Graphics", color_dark: "hsl(30, 80%, 65%)", color_light: "hsl(30, 85%, 35%)", version: "2.3.4", date: "2026-11-05" };
+        return { label: "Image", shortName: "Image", icon: "ph-image", category: "Graphics", color_dark: "hsl(30, 80%, 65%)", color_light: "hsl(30, 85%, 35%)", version: "2.3.5", date: "2026-11-07" };
     }
 
     static get IMAGE_LABEL_LEGACY_TYPO_KEYS() {
@@ -246,7 +246,6 @@ class ImageWidget extends BaseWidget {
                     }
                 ]
             },
-            ImageWidget.getAnimationSchemaGroup(c),
             {
                 id: 'img_layout', title: 'Appearance', icon: 'ph-palette',
                 fields: [
@@ -273,7 +272,8 @@ class ImageWidget extends BaseWidget {
                     { key: 'label', type: 'text', label: 'Widget Label', cols: 12 },
                     BaseWidget.getWidgetLabelTypographySchema('label', 'widgetLabel')
                 ]
-            }
+            },
+            ImageWidget.getAnimationSchemaGroup(c)
         ];
     }
 

@@ -1665,7 +1665,7 @@ const Editor = {
     _getGraphSeriesBindFallbackFromMerged: function (values, fieldKey) {
         const propPattern = (typeof GraphWidget !== 'undefined' && typeof GraphWidget.seriesBindPropPattern === 'function')
             ? GraphWidget.seriesBindPropPattern()
-            : 'data|name|visible|positiveColor|negativeColor|positiveFillColor|negativeFillColor|pointColor|positiveOutlineColor|negativeOutlineColor|lineWidth|positiveStartOpacity|positiveEndOpacity|negativeStartOpacity|negativeEndOpacity|valueMultiplier';
+            : 'data|name|visible|positiveColor|positiveColorOpacity|negativeColor|negativeColorOpacity|positiveFillColor|negativeFillColor|pointColor|positiveOutlineColor|negativeOutlineColor|lineWidth|positiveStartOpacity|positiveEndOpacity|negativeStartOpacity|negativeEndOpacity|valueMultiplier';
         const m = typeof fieldKey === 'string'
             ? fieldKey.match(new RegExp('^graphSeries_(.+)_(' + propPattern + ')$'))
             : null;
@@ -1866,6 +1866,25 @@ const Editor = {
     },
 
     /**
+     * Primary title plus one muted suffix. Base and the rest of the suffix share
+     * the same color, so a leader reads "Base Typography" the way an icon leader
+     * reads "Base Icon Style".
+     * @returns {HTMLElement} the primary title span
+     */
+    fillEditorCollapseTitle: function (titleBlock, primaryText, suffixText) {
+        titleBlock.textContent = '';
+        const titlePrimary = document.createElement('span');
+        titlePrimary.className = 'truncate text-xs font-bold text-[var(--ui-text)] tracking-wide';
+        titlePrimary.textContent = primaryText || '';
+        const titleMuted = document.createElement('span');
+        titleMuted.className = 'flex-shrink-0 text-xs font-bold text-[var(--ui-text-muted)] tracking-wide';
+        titleMuted.textContent = '\u00a0' + (suffixText || '');
+        titleBlock.appendChild(titlePrimary);
+        titleBlock.appendChild(titleMuted);
+        return titlePrimary;
+    },
+
+    /**
      * Shared collapsible shell for Icon Style groups (switch `icon_style` schema + menu_list row blocks).
      * @param {HTMLElement} mountParent
      * @param {object} options
@@ -1905,13 +1924,11 @@ const Editor = {
 
         const titleBlock = document.createElement('div');
         titleBlock.className = 'flex items-center gap-2 min-w-0 flex-1 pointer-events-none truncate';
-        const escLab = String(titleLabel).replace(/</g, '');
         const rawSuffix = options.headerSuffix;
         const suffix = (rawSuffix !== undefined && rawSuffix !== null && String(rawSuffix).trim() !== '')
             ? String(rawSuffix).trim()
             : 'Icon Style';
-        const escSuffix = suffix.replace(/</g, '');
-        titleBlock.innerHTML = '<span class="truncate text-xs font-bold text-[var(--ui-text)] tracking-wide">' + escLab + '</span><span class="flex-shrink-0 text-xs font-bold text-[var(--ui-text-muted)] tracking-wide">&nbsp;' + escSuffix + '</span>';
+        this.fillEditorCollapseTitle(titleBlock, String(titleLabel || ''), suffix);
 
         const chevron = document.createElement('i');
         chevron.className = 'ph-bold ph-caret-down text-[var(--ui-text-muted)] transition-transform duration-200 flex-shrink-0';
@@ -4645,6 +4662,35 @@ const Editor = {
         return this._reactiveMeta.dependencyKeys.has(changedKey);
     },
 
+    /**
+     * When a direction change only affects the built-in value, show that value
+     * without writing it into the widget. An explicit rotation stays put.
+     */
+    _syncUnsetResolvedFieldValue: function (f, reg, values, isGlobal) {
+        if (!f || !reg || !reg.inputEl) return;
+        let next;
+        if (!isGlobal && f.typographyNested) {
+            if (!this.currentId || typeof Dashboard === 'undefined' || !Dashboard.widgets) return;
+            const widget = Dashboard.widgets[this.currentId];
+            if (!widget) return;
+            const tn = f.typographyNested;
+            const block = widget.overrides && widget.overrides.typography && widget.overrides.typography[tn.role];
+            if (block && Object.prototype.hasOwnProperty.call(block, tn.prop)
+                    && block[tn.prop] !== null && block[tn.prop] !== undefined && block[tn.prop] !== '') {
+                return;
+            }
+            const cfg = widget.config;
+            if (!cfg || cfg[f.key] == null || cfg[f.key] === '') return;
+            next = cfg[f.key];
+        } else if (isGlobal && typeof f.displayValue === 'function') {
+            next = f.displayValue(values ? values[f.key] : undefined, values, true);
+        } else {
+            return;
+        }
+        if (next === undefined || next === null) return;
+        if (String(reg.inputEl.value) !== String(next)) reg.inputEl.value = String(next);
+    },
+
     _refreshReactiveInspector: function (changedKey) {
         if (!this.currentId || this.currentId === 'MULTIPLE') return;
         const isGlobal = (this.currentId === 'GLOBAL_SETTINGS');
@@ -4726,6 +4772,10 @@ const Editor = {
                         const nextLabelStr = String(nextLabel);
                         if (reg.labelEl.textContent !== nextLabelStr) reg.labelEl.textContent = nextLabelStr;
                     }
+                }
+
+                if (f.syncResolvedWhenUnset && reg.inputEl) {
+                    this._syncUnsetResolvedFieldValue(f, reg, values, isGlobal);
                 }
 
                 // Composite controls whose *content* (not just visibility) derives from sibling values:
@@ -4946,14 +4996,13 @@ const Editor = {
      * fields on the follower role (no wait for debounced `loadWidget`).
      *
      * Widgets opt in via `static get INHERIT_EDITOR_TYPOGRAPHY_SLOTS()`:
-     * `{ leaderRole, followerRole, inheritProps, followerPrefix, leaderPrefix }`.
+     * one slot, or an array of `{ leaderRole, followerRole, inheritProps, followerPrefix, leaderPrefix }`.
      */
     _syncFollowerTypographyFromLeaderImmediate: function (widget, tn, ctor) {
         if (!widget || !tn || tn.root !== 'typography') return;
-        const spec = ctor && ctor.INHERIT_EDITOR_TYPOGRAPHY_SLOTS;
-        if (!spec || tn.role !== spec.leaderRole) return;
-        const inheritProps = spec.inheritProps;
-        if (!inheritProps || !inheritProps.includes(tn.prop)) return;
+        const raw = ctor && ctor.INHERIT_EDITOR_TYPOGRAPHY_SLOTS;
+        if (!raw) return;
+        const specs = Array.isArray(raw) ? raw : [raw];
         const propToSuffix = {
             fontFamily: 'Font',
             fontSize: 'FontSize',
@@ -4963,27 +5012,34 @@ const Editor = {
         };
         const effectiveConfig = widget.config;
         const typRoot = widget.overrides && widget.overrides.typography ? widget.overrides.typography : {};
-        const followerStored = (typRoot[spec.followerRole] && typeof typRoot[spec.followerRole] === 'object')
-            ? typRoot[spec.followerRole] : {};
-        inheritProps.forEach((prop) => {
-            if (Object.prototype.hasOwnProperty.call(followerStored, prop)) return;
-            const suffix = propToSuffix[prop];
-            if (!suffix || !spec.followerPrefix) return;
-            const flatKey = spec.followerPrefix + suffix;
-            const newVal = effectiveConfig[flatKey];
-            if (newVal === undefined) return;
-            this._setSnapshotValue(flatKey, newVal);
-            const reg = this.fieldRegistry && this.fieldRegistry[flatKey];
-            if (reg && reg.inputEl) {
-                const el = reg.inputEl;
-                const sv = String(newVal !== undefined && newVal !== null ? newVal : '');
-                if (el.tagName === 'SELECT') el.value = sv;
-                else if (el.type === 'checkbox') {
-                    el.checked = newVal === true;
-                    if (typeof el._syncCheckboxRowChrome === 'function') el._syncCheckboxRowChrome();
-                } else el.value = sv;
-            }
-        });
+        for (let si = 0; si < specs.length; si++) {
+            const spec = specs[si];
+            if (!spec || tn.role !== spec.leaderRole) continue;
+            const inheritProps = spec.inheritProps;
+            if (!inheritProps || !inheritProps.includes(tn.prop)) continue;
+            const followerStored = (typRoot[spec.followerRole] && typeof typRoot[spec.followerRole] === 'object')
+                ? typRoot[spec.followerRole] : {};
+            inheritProps.forEach((prop) => {
+                if (Object.prototype.hasOwnProperty.call(followerStored, prop)) return;
+                const suffix = propToSuffix[prop];
+                if (!suffix || !spec.followerPrefix) return;
+                const flatKey = spec.followerPrefix + suffix;
+                const newVal = effectiveConfig[flatKey];
+                if (newVal === undefined) return;
+                this._setSnapshotValue(flatKey, newVal);
+                const reg = this.fieldRegistry && this.fieldRegistry[flatKey];
+                if (reg && reg.inputEl) {
+                    const el = reg.inputEl;
+                    const sv = String(newVal !== undefined && newVal !== null ? newVal : '');
+                    if (el.tagName === 'SELECT') el.value = sv;
+                    else if (el.type === 'checkbox') {
+                        el.checked = newVal === true;
+                        if (typeof el._syncCheckboxRowChrome === 'function') el._syncCheckboxRowChrome();
+                    } else el.value = sv;
+                }
+                if (reg && typeof reg.colorPickerSync === 'function') reg.colorPickerSync();
+            });
+        }
     },
 
     refreshVisibleColorPickers: function () {
@@ -7547,6 +7603,10 @@ const Editor = {
                 if (filled !== undefined) rawValue = filled;
             }
         }
+        if (typeof f.displayValue === 'function') {
+            const shown = f.displayValue(rawValue, values, isGlobal);
+            if (shown !== undefined && shown !== null) rawValue = shown;
+        }
         return rawValue;
     },
 
@@ -10100,21 +10160,21 @@ const Editor = {
 
                         const titleBlock = document.createElement('div');
                         titleBlock.className = 'flex items-center gap-2 min-w-0 flex-1 pointer-events-none truncate';
-                        const titlePrimary = document.createElement('span');
-                        titlePrimary.className = 'truncate text-xs font-bold text-[var(--ui-text)] tracking-wide';
-                        titlePrimary.textContent = (typeof f.dynamicLabel === 'function' ? f.dynamicLabel(values, isGlobal) : f.label) || '';
+                        const rawTypoSuffix = f.typographyHeaderSuffix;
+                        const defaultTypoSuffix = (typeof BaseWidget !== 'undefined' && BaseWidget.TYPOGRAPHY_HEADER_SUFFIX)
+                            ? BaseWidget.TYPOGRAPHY_HEADER_SUFFIX
+                            : 'Typography';
+                        const typoSuffix = (rawTypoSuffix !== undefined && rawTypoSuffix !== null && String(rawTypoSuffix).trim() !== '')
+                            ? String(rawTypoSuffix).trim()
+                            : defaultTypoSuffix;
+                        const titlePrimary = this.fillEditorCollapseTitle(
+                            titleBlock,
+                            (typeof f.dynamicLabel === 'function' ? f.dynamicLabel(values, isGlobal) : f.label) || '',
+                            typoSuffix
+                        );
                         if (this.fieldRegistry && this.fieldRegistry[fKey]) {
                             this.fieldRegistry[fKey].labelEl = titlePrimary;
                         }
-                        const titleMuted = document.createElement('span');
-                        titleMuted.className = 'flex-shrink-0 text-xs font-bold text-[var(--ui-text-muted)] tracking-wide';
-                        const rawTypoSuffix = f.typographyHeaderSuffix;
-                        const typoSuffix = (rawTypoSuffix !== undefined && rawTypoSuffix !== null && String(rawTypoSuffix).trim() !== '')
-                            ? String(rawTypoSuffix).trim()
-                            : 'Typography';
-                        titleMuted.textContent = '\u00a0' + typoSuffix;
-                        titleBlock.appendChild(titlePrimary);
-                        titleBlock.appendChild(titleMuted);
 
                         const chevron = document.createElement('i');
                         chevron.className = 'ph-bold ph-caret-down text-[var(--ui-text-muted)] transition-transform duration-200 flex-shrink-0';
@@ -11095,6 +11155,11 @@ const Editor = {
                             if (role === 'positive') return bar ? 'Positive Bar Color' : 'Positive Line Color';
                             return bar ? 'Negative Bar Color' : 'Negative Line Color';
                         };
+                        const seriesOpacityLabel = (role) => {
+                            const bar = seriesChartType === 'bar';
+                            if (role === 'positive') return bar ? 'Positive Bar Opacity' : 'Positive Line Opacity';
+                            return bar ? 'Negative Bar Opacity' : 'Negative Line Opacity';
+                        };
                         const syncSeriesModes = (vals) => {
                             const type = (vals && (vals.type || vals.defaultGraphType)) || 'line';
                             seriesChartType = type;
@@ -11115,8 +11180,10 @@ const Editor = {
                             wrap.querySelectorAll('[data-series-color]').forEach((el) => {
                                 const lab = el.querySelector('.control-label');
                                 if (lab) lab.textContent = seriesColorLabel(el.getAttribute('data-series-color'));
-                                const span = bar ? 'col-span-6' : 'col-span-3';
-                                el.className = el.className.replace(/col-span-\d+/, span);
+                            });
+                            wrap.querySelectorAll('[data-series-opacity]').forEach((el) => {
+                                const lab = el.querySelector('.control-label');
+                                if (lab) lab.textContent = seriesOpacityLabel(el.getAttribute('data-series-opacity'));
                             });
                             seriesPickers.forEach(function (p) {
                                 if (p && typeof p.sync === 'function') p.sync();
@@ -11223,6 +11290,8 @@ const Editor = {
                                 const M = (typeof MASTER_SETTINGS !== 'undefined' && MASTER_SETTINGS) ? MASTER_SETTINGS : {};
                                 if (key === 'valueMultiplier') return 0;
                                 if (key === 'lineWidth') return M.defaultGraphLineW != null ? M.defaultGraphLineW : 2;
+                                if (key === 'positiveColorOpacity') return M.defaultGraphPositiveColorOpacity != null ? M.defaultGraphPositiveColorOpacity : 100;
+                                if (key === 'negativeColorOpacity') return M.defaultGraphNegativeColorOpacity != null ? M.defaultGraphNegativeColorOpacity : 100;
                                 if (key === 'positiveStartOpacity') return M.defaultGraphPositiveStartOpacity != null ? M.defaultGraphPositiveStartOpacity : 40;
                                 if (key === 'positiveEndOpacity') return M.defaultGraphPositiveEndOpacity != null ? M.defaultGraphPositiveEndOpacity : 0;
                                 if (key === 'negativeStartOpacity') {
@@ -11590,15 +11659,27 @@ const Editor = {
                                 ));
                                 content.appendChild(multRow);
 
-                                const lineRow = makeRow('stroke');
-                                const posColor = makeCell(3, seriesColorLabel('positive'), colorMount(item, 'positiveColor', lIdx), null, bindSpec(item, lIdx, 'positiveColor', 'color', () => seriesColorLabel('positive')));
-                                const negColor = makeCell(3, seriesColorLabel('negative'), colorMount(item, 'negativeColor', lIdx), null, bindSpec(item, lIdx, 'negativeColor', 'color', () => seriesColorLabel('negative')));
+                                const posRow = makeRow('stroke');
+                                const posColor = makeCell(6, seriesColorLabel('positive'), colorMount(item, 'positiveColor', lIdx), null, bindSpec(item, lIdx, 'positiveColor', 'color', () => seriesColorLabel('positive')));
+                                const posOp = makeCell(6, seriesOpacityLabel('positive'), numInput(item, 'positiveColorOpacity', 0, 100, lIdx), null, bindSpec(item, lIdx, 'positiveColorOpacity', 'number', () => seriesOpacityLabel('positive')));
                                 posColor.setAttribute('data-series-color', 'positive');
+                                posOp.setAttribute('data-series-opacity', 'positive');
+                                posRow.appendChild(posColor);
+                                posRow.appendChild(posOp);
+                                content.appendChild(posRow);
+
+                                const negRow = makeRow('stroke');
+                                const negColor = makeCell(6, seriesColorLabel('negative'), colorMount(item, 'negativeColor', lIdx), null, bindSpec(item, lIdx, 'negativeColor', 'color', () => seriesColorLabel('negative')));
+                                const negOp = makeCell(6, seriesOpacityLabel('negative'), numInput(item, 'negativeColorOpacity', 0, 100, lIdx), null, bindSpec(item, lIdx, 'negativeColorOpacity', 'number', () => seriesOpacityLabel('negative')));
                                 negColor.setAttribute('data-series-color', 'negative');
-                                lineRow.appendChild(posColor);
-                                lineRow.appendChild(negColor);
-                                lineRow.appendChild(makeCell(3, 'Line Width', numInput(item, 'lineWidth', 0, null, lIdx), 'line', bindSpec(item, lIdx, 'lineWidth', 'number')));
-                                lineRow.appendChild(makeCell(3, 'Point Color', colorMount(item, 'pointColor', lIdx), 'point', bindSpec(item, lIdx, 'pointColor', 'color')));
+                                negOp.setAttribute('data-series-opacity', 'negative');
+                                negRow.appendChild(negColor);
+                                negRow.appendChild(negOp);
+                                content.appendChild(negRow);
+
+                                const lineRow = makeRow('line');
+                                lineRow.appendChild(makeCell(6, 'Line Width', numInput(item, 'lineWidth', 0, null, lIdx), 'line', bindSpec(item, lIdx, 'lineWidth', 'number')));
+                                lineRow.appendChild(makeCell(6, 'Point Color', colorMount(item, 'pointColor', lIdx), 'point', bindSpec(item, lIdx, 'pointColor', 'color')));
                                 content.appendChild(lineRow);
 
                                 const fillPos = makeRow('fill');

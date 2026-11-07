@@ -1,6 +1,6 @@
 class GaugeWidget extends BaseWidget {
     static get metadata() {
-        return { shortName: "Gauge", label: "Gauge", icon: "ph-gauge", category: "Data", color_dark: "hsl(190, 80%, 65%)", color_light: "hsl(190, 85%, 35%)", version: "2.3.1", date: "2026-11-02" };
+        return { shortName: "Gauge", label: "Gauge", icon: "ph-gauge", category: "Data", color_dark: "hsl(190, 80%, 65%)", color_light: "hsl(190, 85%, 35%)", version: "2.3.5", date: "2026-11-07" };
     }
 
     static _firstColor() {
@@ -1133,7 +1133,7 @@ class GaugeWidget extends BaseWidget {
 
         return [
             {
-                id: 'g_data', title: 'Data Configuration', icon: 'ph-database',
+                id: 'g_data', title: 'Data & Behavior', icon: 'ph-database',
                 fields: [
                     { key: 'value', type: 'number', label: 'Value', cols: 4 },
                     { key: 'decimalPlaces', type: 'number', label: 'Decimal Places', cols: 4 },

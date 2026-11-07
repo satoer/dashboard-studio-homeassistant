@@ -1,6 +1,6 @@
 class ListWidget extends BaseWidget {
     static get metadata() {
-        return { label: "List / Log", shortName: "List", icon: "ph-list-dashes", category: "Text", color_dark: "hsl(280, 80%, 65%)", color_light: "hsl(280, 85%, 35%)", version: "2.3.1", date: "2026-11-02" };
+        return { label: "List / Log", shortName: "List", icon: "ph-list-dashes", category: "Text", color_dark: "hsl(280, 80%, 65%)", color_light: "hsl(280, 85%, 35%)", version: "2.3.5", date: "2026-11-07" };
     }
 
     static get LIST_ICON_SLOT_NAMES() {
@@ -880,7 +880,7 @@ class ListWidget extends BaseWidget {
 
         return [
             {
-                id: 'list_data', title: 'Content Source', icon: 'ph-database',
+                id: 'list_data', title: 'Data & Behavior', icon: 'ph-database',
                 fields: [
                     { key: 'data', type: 'text', label: 'Data (String/JSON)', cols: 12 },
                     { key: 'maxLines', type: 'number', label: 'Max Lines', cols: 6, defaultKey: 'defaultListMaxLines' },
@@ -916,6 +916,16 @@ class ListWidget extends BaseWidget {
                     fields: [{ key: 'audio', type: 'audio_trigger_map', cols: 12, triggers: ListWidget.AUDIO_TRIGGERS }]
                 },
             {
+                id: 'list_timestamp', title: 'Timestamp Format', icon: 'ph-clock',
+                visibleWhen: (values, isGlobal) => !!isGlobal || ListWidget.showTimestampFields(values),
+                dependsOn: ['showTimestamp'],
+                fields: [
+                    timeFormatField,
+                    time24hField,
+                    dateFormatField
+                ]
+            },
+            {
                 id: 'list_appear', title: 'Appearance', icon: 'ph-palette',
                 fields: [
                     {
@@ -941,16 +951,6 @@ class ListWidget extends BaseWidget {
             {
                 id: 'list_icon', title: 'Icon', icon: 'ph-star',
                 fields: iconFields
-            },
-            {
-                id: 'list_timestamp', title: 'Timestamp Format', icon: 'ph-clock',
-                visibleWhen: (values, isGlobal) => !!isGlobal || ListWidget.showTimestampFields(values),
-                dependsOn: ['showTimestamp'],
-                fields: [
-                    timeFormatField,
-                    time24hField,
-                    dateFormatField
-                ]
             },
             {
                 id: 'list_typo', title: 'Text & Typography', icon: 'ph-text-t',

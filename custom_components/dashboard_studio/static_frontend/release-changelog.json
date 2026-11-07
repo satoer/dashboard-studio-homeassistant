@@ -42,6 +42,19 @@
   },
   "releases": [
     {
+      "version": "2.3.5",
+      "date": "2026-11-06",
+      "changes": [
+        {
+          "title": "New: Invert Graph Point Values on Negative Numbers",
+          "description": "Added an Invert Y on negative values setting so point value labels automatically display below negative bars and data points and above positive ones.",
+          "tags": [
+            7
+          ]
+        }
+      ]
+    },
+    {
       "version": "2.3.4",
       "date": "2026-11-05",
       "changes": [

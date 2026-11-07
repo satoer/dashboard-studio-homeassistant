@@ -3154,7 +3154,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "icon",
-            "anchor": "1-data-configuration"
+            "anchor": "1-data-behavior"
         }
     },
     "icon.group_icon_style_iconSourceOff": {
@@ -3253,7 +3253,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "image",
-            "anchor": "3-appearance"
+            "anchor": "2-appearance"
         }
     },
     "image.liveRefresh": {
@@ -3280,7 +3280,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "image",
-            "anchor": "3-appearance"
+            "anchor": "2-appearance"
         }
     },
     "image.proportional": {
@@ -3289,7 +3289,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "image",
-            "anchor": "3-appearance"
+            "anchor": "2-appearance"
         }
     },
     "image.scale": {
@@ -3298,7 +3298,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "image",
-            "anchor": "3-appearance"
+            "anchor": "2-appearance"
         }
     },
     "image.moveX": {
@@ -3307,7 +3307,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "image",
-            "anchor": "3-appearance"
+            "anchor": "2-appearance"
         }
     },
     "image.moveY": {
@@ -3316,7 +3316,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "image",
-            "anchor": "3-appearance"
+            "anchor": "2-appearance"
         }
     },
     "image.group_label": {
@@ -3325,7 +3325,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "image",
-            "anchor": "4-text--typography"
+            "anchor": "3-text-typography"
         }
     },
     "clock._clockInstanceTypeRowSpacer": {
@@ -3527,7 +3527,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "gauge",
-            "anchor": "1-data-configuration"
+            "anchor": "1-data-behavior"
         }
     },
     "gauge.abbreviatedDecimalPlaces": {
@@ -3536,7 +3536,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "gauge",
-            "anchor": "1-data-configuration"
+            "anchor": "1-data-behavior"
         }
     },
     "gauge.barType": {
@@ -4088,6 +4088,24 @@
             "anchor": "choosing-the-right-visual-style"
         }
     },
+    "graph.barGroupMode": {
+        "title": "Bar Series Layout",
+        "description": "Choose how multiple bar series are arranged across the graph:\n• Side by Side: Divides each category slot into separate columns placed next to each other.\n• Stacked: Layers all series bars directly on top of each other at the same baseline position.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph",
+            "anchor": "choosing-the-right-visual-style"
+        }
+    },
+    "graph.barStackGapStep": {
+        "title": "Stacked Gap Step",
+        "description": "Additional gap in pixels added to each consecutive bar drawn on top, narrowing upper bars so underlying series remain visible.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph",
+            "anchor": "choosing-the-right-visual-style"
+        }
+    },
     "graph.barGap": {
         "title": "Bar Spacing Gap",
         "description": "Spacing in pixels between adjacent columns in bar charts.",
@@ -4598,7 +4616,7 @@
     },
     "graph.group_axisX": {
         "title": "Time Axis (X) Typography",
-        "description": "Font, size, and styling for timestamps along the horizontal axis.",
+        "description": "Base style for the category tick numbers. The value axis copies this until you change it. Rotation tilts these numbers. Horizontal bars rename this group to the Y axis.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "graph"
@@ -4606,10 +4624,46 @@
     },
     "graph.group_axisY": {
         "title": "Value Axis (Y) Typography",
-        "description": "Font, size, and styling for sensor numbers along the vertical axis.",
+        "description": "Font, size, and styling for sensor numbers along the vertical axis. Rotation tilts those numbers.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "graph"
+        }
+    },
+    "graph.group_axisXLabel": {
+        "title": "X Axis (Label)",
+        "description": "Base style for the words that name an axis. The other axis label copies this until you change it. Horizontal bars rename this group to the Y axis.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph",
+            "anchor": "scales-limits-friendly-axis-numbers"
+        }
+    },
+    "graph.group_axisYLabel": {
+        "title": "Y Axis (Label)",
+        "description": "Style for the value axis title. It follows X Axis (Label) until you override it. Rotation starts at -90 degrees and is not copied from the other axis. Horizontal bars rename this to the X axis.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph",
+            "anchor": "scales-limits-friendly-axis-numbers"
+        }
+    },
+    "graph.group_defaultGraphAxisXLabel": {
+        "title": "X Axis (Label)",
+        "description": "Base style for the words that name an axis. The other axis label copies this until you change it. Horizontal bars rename this group to the Y axis.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph",
+            "anchor": "scales-limits-friendly-axis-numbers"
+        }
+    },
+    "graph.group_defaultGraphAxisYLabel": {
+        "title": "Y Axis (Label)",
+        "description": "Style for the value axis title. It follows X Axis (Label) until you override it. Rotation starts at -90 degrees and is not copied from the other axis. Horizontal bars rename this to the X axis.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph",
+            "anchor": "scales-limits-friendly-axis-numbers"
         }
     },
     "graph.group_text": {
@@ -4660,7 +4714,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "lightgrid",
-            "anchor": "4-grid-layout--behavior"
+            "anchor": "4-tile-layout"
         }
     },
     "lightgrid.itemHeight": {
@@ -4669,7 +4723,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "lightgrid",
-            "anchor": "4-grid-layout--behavior"
+            "anchor": "4-tile-layout"
         }
     },
     "lightgrid.itemWidth": {
@@ -4678,7 +4732,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "lightgrid",
-            "anchor": "4-grid-layout--behavior"
+            "anchor": "4-tile-layout"
         }
     },
     "lightgrid.itemSpacing": {
@@ -4687,7 +4741,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "lightgrid",
-            "anchor": "4-grid-layout--behavior"
+            "anchor": "4-tile-layout"
         }
     },
     "lightgrid.tileBackgroundColor": {
@@ -4696,7 +4750,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "lightgrid",
-            "anchor": "4-grid-layout--behavior"
+            "anchor": "4-tile-layout"
         }
     },
     "lightgrid.tileHoverColor": {
@@ -4705,7 +4759,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "lightgrid",
-            "anchor": "4-grid-layout--behavior"
+            "anchor": "4-tile-layout"
         }
     },
     "lightgrid.tileBackgroundOpacity": {
@@ -4714,7 +4768,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "lightgrid",
-            "anchor": "4-grid-layout--behavior"
+            "anchor": "4-tile-layout"
         }
     },
     "lightgrid.tileBlur": {
@@ -4723,7 +4777,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "lightgrid",
-            "anchor": "4-grid-layout--behavior"
+            "anchor": "4-tile-layout"
         }
     },
     "lightgrid.tileOutlineWidth": {
@@ -4732,7 +4786,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "lightgrid",
-            "anchor": "4-grid-layout--behavior"
+            "anchor": "4-tile-layout"
         }
     },
     "lightgrid.tileOutlineColor": {
@@ -4741,7 +4795,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "lightgrid",
-            "anchor": "4-grid-layout--behavior"
+            "anchor": "4-tile-layout"
         }
     },
     "lightgrid.tileOutlineOpacity": {
@@ -4750,7 +4804,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "lightgrid",
-            "anchor": "4-grid-layout--behavior"
+            "anchor": "4-tile-layout"
         }
     },
     "lightgrid.tileInnerGlow": {
@@ -4759,7 +4813,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "lightgrid",
-            "anchor": "4-grid-layout--behavior"
+            "anchor": "4-tile-layout"
         }
     },
     "lightgrid.tileInnerGlowColor": {
@@ -4768,7 +4822,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "lightgrid",
-            "anchor": "4-grid-layout--behavior"
+            "anchor": "4-tile-layout"
         }
     },
     "lightgrid.tileInnerGlowOpacity": {
@@ -4777,7 +4831,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "lightgrid",
-            "anchor": "4-grid-layout--behavior"
+            "anchor": "4-tile-layout"
         }
     },
     "lightgrid.toggleColorOn": {
@@ -4786,7 +4840,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "lightgrid",
-            "anchor": "4-grid-layout--behavior"
+            "anchor": "4-tile-layout"
         }
     },
     "lightgrid.toggleColorOff": {
@@ -4795,7 +4849,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "lightgrid",
-            "anchor": "4-grid-layout--behavior"
+            "anchor": "4-tile-layout"
         }
     },
     "lightgrid.alwaysShowPanel": {
@@ -5074,7 +5128,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "lightgrid",
-            "anchor": "4-grid-layout--behavior"
+            "anchor": "4-tile-layout"
         }
     },
     "lightgrid.iconColOff": {
@@ -5083,7 +5137,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "lightgrid",
-            "anchor": "4-grid-layout--behavior"
+            "anchor": "4-tile-layout"
         }
     },
     "lightgrid.iconColOn": {
@@ -5092,7 +5146,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "lightgrid",
-            "anchor": "4-grid-layout--behavior"
+            "anchor": "4-tile-layout"
         }
     },
     "lightgrid.useLightColor": {
@@ -5101,7 +5155,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "lightgrid",
-            "anchor": "4-grid-layout--behavior"
+            "anchor": "4-tile-layout"
         }
     },
     "lightgrid.iconColorize": {
@@ -5110,7 +5164,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "lightgrid",
-            "anchor": "4-grid-layout--behavior"
+            "anchor": "4-tile-layout"
         }
     },
     "lightgrid.labelPos": {
@@ -5119,7 +5173,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "lightgrid",
-            "anchor": "4-grid-layout--behavior"
+            "anchor": "4-tile-layout"
         }
     },
     "lightgrid.group_lgWidgetLabel": {
@@ -5128,7 +5182,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "lightgrid",
-            "anchor": "4-grid-layout--behavior"
+            "anchor": "4-tile-layout"
         }
     },
     "lightgrid.group_lgLightName": {
@@ -5137,7 +5191,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "lightgrid",
-            "anchor": "4-grid-layout--behavior"
+            "anchor": "4-tile-layout"
         }
     },
     "lightgrid.group_lgPanelTitle": {
@@ -5155,7 +5209,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "list",
-            "anchor": "1-content-source"
+            "anchor": "1-data-behavior"
         }
     },
     "list.maxLines": {
@@ -5164,7 +5218,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "list",
-            "anchor": "1-content-source"
+            "anchor": "1-data-behavior"
         }
     },
     "list.rawMode": {
@@ -5173,7 +5227,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "list",
-            "anchor": "1-content-source"
+            "anchor": "1-data-behavior"
         }
     },
     "list.triggerTopic": {
@@ -5236,7 +5290,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "list",
-            "anchor": "3-appearance"
+            "anchor": "4-appearance"
         }
     },
     "list.showTimestamp": {
@@ -5245,7 +5299,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "list",
-            "anchor": "3-appearance"
+            "anchor": "4-appearance"
         }
     },
     "list.enableCheckboxes": {
@@ -5254,7 +5308,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "list",
-            "anchor": "3-appearance"
+            "anchor": "4-appearance"
         }
     },
     "list.lineGap": {
@@ -5263,7 +5317,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "list",
-            "anchor": "3-appearance"
+            "anchor": "4-appearance"
         }
     },
     "list.readOnly": {
@@ -5272,7 +5326,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "list",
-            "anchor": "3-appearance"
+            "anchor": "4-appearance"
         }
     },
     "list.checkboxAlignment": {
@@ -5281,7 +5335,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "list",
-            "anchor": "3-appearance"
+            "anchor": "4-appearance"
         }
     },
     "list.strikethroughChecked": {
@@ -5290,7 +5344,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "list",
-            "anchor": "3-appearance"
+            "anchor": "4-appearance"
         }
     },
     "list.group_icon_style_iconSourceRow": {
@@ -5299,7 +5353,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "list",
-            "anchor": "4-icon"
+            "anchor": "5-icon"
         }
     },
     "list.group_icon_style_iconSourceCheckboxOn": {
@@ -5308,7 +5362,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "list",
-            "anchor": "4-icon"
+            "anchor": "5-icon"
         }
     },
     "list.group_icon_style_iconSourceCheckboxOff": {
@@ -5317,7 +5371,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "list",
-            "anchor": "4-icon"
+            "anchor": "5-icon"
         }
     },
     "list.iconGap": {
@@ -5326,7 +5380,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "list",
-            "anchor": "4-icon"
+            "anchor": "5-icon"
         }
     },
     "list.timeFormat": {
@@ -5335,7 +5389,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "list",
-            "anchor": "5-timestamp-format"
+            "anchor": "3-timestamp-format"
         }
     },
     "list.time24h": {
@@ -5344,7 +5398,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "list",
-            "anchor": "5-timestamp-format"
+            "anchor": "3-timestamp-format"
         }
     },
     "list.dateFormat": {
@@ -5353,7 +5407,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "list",
-            "anchor": "5-timestamp-format"
+            "anchor": "3-timestamp-format"
         }
     },
     "list.group_listLabel": {
@@ -5378,7 +5432,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "list",
-            "anchor": "5-timestamp-format"
+            "anchor": "3-timestamp-format"
         }
     },
     "menu.menuLayout": {
@@ -5387,7 +5441,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "menu",
-            "anchor": "1-behavior--layout"
+            "anchor": "1-menu-behavior"
         }
     },
     "menu.menuStyle": {
@@ -5396,7 +5450,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "menu",
-            "anchor": "1-behavior--layout"
+            "anchor": "1-menu-behavior"
         }
     },
     "menu.menuTriggerTopic": {
@@ -5423,7 +5477,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "menu",
-            "anchor": "1-behavior--layout"
+            "anchor": "1-menu-behavior"
         }
     },
     "menu.menuWAuto": {
@@ -5432,7 +5486,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "menu",
-            "anchor": "1-behavior--layout"
+            "anchor": "1-menu-behavior"
         }
     },
     "menu.menuHAuto": {
@@ -5441,7 +5495,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "menu",
-            "anchor": "1-behavior--layout"
+            "anchor": "1-menu-behavior"
         }
     },
     "menu.menuItemSpacing": {
@@ -5450,7 +5504,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "menu",
-            "anchor": "1-behavior--layout"
+            "anchor": "1-menu-behavior"
         }
     },
     "menu.menuItemRadius": {
@@ -5459,7 +5513,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "menu",
-            "anchor": "1-behavior--layout"
+            "anchor": "1-menu-behavior"
         }
     },
     "menu.menuSelectionGroup": {
@@ -6086,7 +6140,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table--element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.mdTableColumnWidthPx": {
@@ -6095,7 +6149,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table--element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.mdTableCustomColumnWidths": {
@@ -6104,7 +6158,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table--element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.mdIconColor": {
@@ -6113,7 +6167,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table--element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.mdIconOpacity": {
@@ -6122,7 +6176,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table--element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.mdIconAccentColor": {
@@ -6131,7 +6185,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table--element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.mdIconAccentOpacity": {
@@ -6140,7 +6194,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table--element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.mdTableBorderColor": {
@@ -6149,7 +6203,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table--element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.mdTableBorderOpacity": {
@@ -6158,7 +6212,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table--element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.mdSeparatorColor": {
@@ -6167,7 +6221,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table--element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.mdSeparatorOpacity": {
@@ -6176,7 +6230,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table--element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.mdTableHeaderBg": {
@@ -6185,7 +6239,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table--element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.mdTableHeaderBgOpacity": {
@@ -6194,7 +6248,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table--element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.mdTableHeaderAccentBg": {
@@ -6203,7 +6257,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table--element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.mdTableHeaderAccentBgOpacity": {
@@ -6212,7 +6266,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table--element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.mdTableRowBg": {
@@ -6221,7 +6275,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table--element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.mdTableRowBgOpacity": {
@@ -6230,7 +6284,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table--element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.mdTableRowAltBg": {
@@ -6239,7 +6293,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table--element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.mdTableRowAltBgOpacity": {
@@ -6248,7 +6302,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table--element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.mdHrColor": {
@@ -6257,7 +6311,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table--element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.mdHrOpacity": {
@@ -6266,7 +6320,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table--element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.mdBlock1Color": {
@@ -6275,7 +6329,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table--element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.mdBlock2Color": {
@@ -6284,7 +6338,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table--element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.mdBlock3Color": {
@@ -6293,7 +6347,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table--element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.mdBlock4Color": {
@@ -6302,7 +6356,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table--element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.textScroll": {
@@ -6418,7 +6472,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "menu",
-            "anchor": "1-behavior--layout"
+            "anchor": "1-menu-behavior"
         }
     },
     "menu.menuItemWidth": {
@@ -6427,7 +6481,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "menu",
-            "anchor": "1-behavior--layout"
+            "anchor": "1-menu-behavior"
         }
     },
     "menu.menuItemHeight": {
@@ -6436,7 +6490,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "menu",
-            "anchor": "1-behavior--layout"
+            "anchor": "1-menu-behavior"
         }
     },
     "menu.itemSpacing": {
@@ -6445,7 +6499,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "menu",
-            "anchor": "1-behavior--layout"
+            "anchor": "1-menu-behavior"
         }
     },
     "menu.itemCornerRadius": {
@@ -6454,7 +6508,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "menu",
-            "anchor": "1-behavior--layout"
+            "anchor": "1-menu-behavior"
         }
     },
     "menu.itemBgOn": {
@@ -6670,7 +6724,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "slider",
-            "anchor": "1-data-configuration"
+            "anchor": "1-data-behavior"
         }
     },
     "slider.customDisplayRange": {
@@ -6679,7 +6733,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "slider",
-            "anchor": "1-data-configuration"
+            "anchor": "1-data-behavior"
         }
     },
     "slider.displayMin": {
@@ -6688,7 +6742,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "slider",
-            "anchor": "1-data-configuration"
+            "anchor": "1-data-behavior"
         }
     },
     "slider.displayMax": {
@@ -6697,7 +6751,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "slider",
-            "anchor": "1-data-configuration"
+            "anchor": "1-data-behavior"
         }
     },
     "slider.displayDecimalPlaces": {
@@ -6706,7 +6760,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "slider",
-            "anchor": "1-data-configuration"
+            "anchor": "1-data-behavior"
         }
     },
     "slider.displayKeepTrailingZeros": {
@@ -6715,7 +6769,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "slider",
-            "anchor": "1-data-configuration"
+            "anchor": "1-data-behavior"
         }
     },
     "slider.trackBlur": {
@@ -9781,7 +9835,7 @@
     },
     "graph.group_defaultGraphAxisX": {
         "title": "Typography",
-        "description": "Font, size, color, and placement for the labels on the horizontal axis.",
+        "description": "Base style for the category tick numbers. The value axis copies this until you change it. Rotation tilts these numbers. Horizontal bars rename this group to the Y axis.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "graph",
@@ -9877,6 +9931,11 @@
         "description": "Nudges the value labels on a line graph up or down, in pixels. Negative values move up.",
         "help": null
     },
+    "graph.defaultGraphPointValInvertYNegative": {
+        "title": "Invert Y on Negative Values",
+        "description": "Flips the vertical offset direction when a data point value is negative, placing positive values above the line point and negative values below.",
+        "help": null
+    },
     "graph.group_defaultGraphPointVal": {
         "title": "Typography",
         "description": "Font, size, color, and placement for the value labels on a line graph.",
@@ -9932,6 +9991,11 @@
         "description": "Nudges the value labels on a line graph up or down, in pixels. Negative values move up.",
         "help": null
     },
+    "graph.pointValInvertYNegative": {
+        "title": "Invert Y on Negative Values",
+        "description": "Flips the vertical offset direction when a data point value is negative, placing positive values above the line point and negative values below.",
+        "help": null
+    },
     "graph.defaultGraphPointValBarFont": {
         "title": "Font",
         "description": "Font used for the value labels on a bar graph.",
@@ -9980,6 +10044,11 @@
     "graph.defaultGraphPointValBarOffY": {
         "title": "Offset Y",
         "description": "Nudges the value labels on a bar graph up or down, in pixels. Negative values move up.",
+        "help": null
+    },
+    "graph.defaultGraphPointValBarInvertYNegative": {
+        "title": "Invert Y on Negative Values",
+        "description": "Flips the vertical offset direction when a data point value is negative, placing positive values above the bar and negative values below.",
         "help": null
     },
     "graph.group_defaultGraphPointValBar": {
@@ -10035,6 +10104,11 @@
     "graph.pointValBarOffY": {
         "title": "Offset Y",
         "description": "Nudges the value labels on a bar graph up or down, in pixels. Negative values move up.",
+        "help": null
+    },
+    "graph.pointValBarInvertYNegative": {
+        "title": "Invert Y on Negative Values",
+        "description": "Flips the vertical offset direction when a data point value is negative, placing positive values above the bar and negative values below.",
         "help": null
     },
     "graph.defaultGraphLegendItemFont": {
@@ -11016,9 +11090,19 @@
         "description": "Color used for values on the high side of the baseline.",
         "help": null
     },
+    "graph.series.positiveColorOpacity": {
+        "title": "Positive Opacity",
+        "description": "Opacity percentage for positive lines or bars.",
+        "help": null
+    },
     "graph.series.negativeColor": {
         "title": "Negative Color",
         "description": "Color used for values on the low side of the baseline.",
+        "help": null
+    },
+    "graph.series.negativeColorOpacity": {
+        "title": "Negative Opacity",
+        "description": "Opacity percentage for negative lines or bars.",
         "help": null
     },
     "graph.series.lineWidth": {
@@ -12146,7 +12230,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "gauge",
-            "anchor": "1-data-configuration"
+            "anchor": "1-data-behavior"
         }
     },
     "gauge.defaultGaugeKeepTrailingZeros": {
@@ -12155,7 +12239,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "gauge",
-            "anchor": "1-data-configuration"
+            "anchor": "1-data-behavior"
         }
     },
     "gauge.defaultGaugeDisplayDecimalPlaces": {
@@ -12164,7 +12248,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "gauge",
-            "anchor": "1-data-configuration"
+            "anchor": "1-data-behavior"
         }
     },
     "gauge.defaultGaugeDisplayKeepTrailingZeros": {
@@ -12173,7 +12257,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "gauge",
-            "anchor": "1-data-configuration"
+            "anchor": "1-data-behavior"
         }
     },
     "gauge.defaultGaugeCustomDisplayRange": {
@@ -12182,7 +12266,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "gauge",
-            "anchor": "1-data-configuration"
+            "anchor": "1-data-behavior"
         }
     },
     "gauge.defaultGaugeDisplayMin": {
@@ -12191,7 +12275,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "gauge",
-            "anchor": "1-data-configuration"
+            "anchor": "1-data-behavior"
         }
     },
     "gauge.defaultGaugeDisplayMax": {
@@ -12200,7 +12284,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "gauge",
-            "anchor": "1-data-configuration"
+            "anchor": "1-data-behavior"
         }
     },
     "gauge.defaultGaugeBarThick": {
@@ -12421,6 +12505,160 @@
         "description": "Draws the labels on the vertical axis in a heavier weight.",
         "help": null
     },
+    "graph.axisYRotation": {
+        "title": "Rotation",
+        "description": "Tilts the value-axis numbers by degrees. 0 keeps them upright. The chart margin grows so the numbers stay on the canvas.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph",
+            "anchor": "scales-limits-friendly-axis-numbers"
+        }
+    },
+    "graph.defaultGraphAxisYRotation": {
+        "title": "Rotation",
+        "description": "Tilts the value-axis numbers by degrees. 0 keeps them upright. The chart margin grows so the numbers stay on the canvas.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph",
+            "anchor": "scales-limits-friendly-axis-numbers"
+        }
+    },
+    "graph.axisXLabelFont": {
+        "title": "Font",
+        "description": "Font used for the X axis title. The Y axis title uses this until you change it.",
+        "help": null
+    },
+    "graph.defaultGraphAxisXLabelFont": {
+        "title": "Font",
+        "description": "Font used for the X axis title. The Y axis title uses this until you change it.",
+        "help": null
+    },
+    "graph.axisXLabelFontSize": {
+        "title": "Font Size",
+        "description": "Text size for the X axis title, in pixels. The Y axis title uses this until you change it.",
+        "help": null
+    },
+    "graph.defaultGraphAxisXLabelFontSize": {
+        "title": "Font Size",
+        "description": "Text size for the X axis title, in pixels. The Y axis title uses this until you change it.",
+        "help": null
+    },
+    "graph.axisXLabelFontColor": {
+        "title": "Color",
+        "description": "Color of the X axis title. The Y axis title uses this until you change it.",
+        "help": null
+    },
+    "graph.defaultGraphAxisXLabelFontColor": {
+        "title": "Color",
+        "description": "Color of the X axis title. The Y axis title uses this until you change it.",
+        "help": null
+    },
+    "graph.axisXLabelFontOpacity": {
+        "title": "Opacity",
+        "description": "How solid the X axis title is. 100 is opaque and 0 hides it. The Y axis title uses this until you change it.",
+        "help": null
+    },
+    "graph.defaultGraphAxisXLabelFontOpacity": {
+        "title": "Opacity",
+        "description": "How solid the X axis title is. 100 is opaque and 0 hides it. The Y axis title uses this until you change it.",
+        "help": null
+    },
+    "graph.axisXLabelFontBold": {
+        "title": "Bold",
+        "description": "Draws the X axis title in a heavier weight. The Y axis title uses this until you change it.",
+        "help": null
+    },
+    "graph.defaultGraphAxisXLabelFontBold": {
+        "title": "Bold",
+        "description": "Draws the X axis title in a heavier weight. The Y axis title uses this until you change it.",
+        "help": null
+    },
+    "graph.axisXLabelRotation": {
+        "title": "Rotation",
+        "description": "Tilts this axis title by degrees. 0 keeps the words upright. When Bar Direction is Horizontal and this rotation is still the default, it starts at -90.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph",
+            "anchor": "scales-limits-friendly-axis-numbers"
+        }
+    },
+    "graph.defaultGraphAxisXLabelRotation": {
+        "title": "Rotation",
+        "description": "Tilts this axis title by degrees. 0 keeps the words upright. When Bar Direction is Horizontal and this rotation is still the default, it starts at -90.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph",
+            "anchor": "scales-limits-friendly-axis-numbers"
+        }
+    },
+    "graph.axisYLabelFont": {
+        "title": "Font",
+        "description": "Font used for the Y axis title. Leave it unset to follow X Axis (Label).",
+        "help": null
+    },
+    "graph.defaultGraphAxisYLabelFont": {
+        "title": "Font",
+        "description": "Font used for the Y axis title. Leave it unset to follow X Axis (Label).",
+        "help": null
+    },
+    "graph.axisYLabelFontSize": {
+        "title": "Font Size",
+        "description": "Text size for the Y axis title, in pixels. Leave it unset to follow X Axis (Label).",
+        "help": null
+    },
+    "graph.defaultGraphAxisYLabelFontSize": {
+        "title": "Font Size",
+        "description": "Text size for the Y axis title, in pixels. Leave it unset to follow X Axis (Label).",
+        "help": null
+    },
+    "graph.axisYLabelFontColor": {
+        "title": "Color",
+        "description": "Color of the Y axis title. Leave it unset to follow X Axis (Label).",
+        "help": null
+    },
+    "graph.defaultGraphAxisYLabelFontColor": {
+        "title": "Color",
+        "description": "Color of the Y axis title. Leave it unset to follow X Axis (Label).",
+        "help": null
+    },
+    "graph.axisYLabelFontOpacity": {
+        "title": "Opacity",
+        "description": "How solid the Y axis title is. 100 is opaque and 0 hides it. Leave it unset to follow X Axis (Label).",
+        "help": null
+    },
+    "graph.defaultGraphAxisYLabelFontOpacity": {
+        "title": "Opacity",
+        "description": "How solid the Y axis title is. 100 is opaque and 0 hides it. Leave it unset to follow X Axis (Label).",
+        "help": null
+    },
+    "graph.axisYLabelFontBold": {
+        "title": "Bold",
+        "description": "Draws the Y axis title in a heavier weight. Leave it unset to follow X Axis (Label).",
+        "help": null
+    },
+    "graph.defaultGraphAxisYLabelFontBold": {
+        "title": "Bold",
+        "description": "Draws the Y axis title in a heavier weight. Leave it unset to follow X Axis (Label).",
+        "help": null
+    },
+    "graph.axisYLabelRotation": {
+        "title": "Rotation",
+        "description": "Tilts this axis title by degrees. The starting angle is -90 so the words run along a vertical axis. When Bar Direction is Horizontal and this rotation is still the default, it starts at 0. This does not copy the other title rotation.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph",
+            "anchor": "scales-limits-friendly-axis-numbers"
+        }
+    },
+    "graph.defaultGraphAxisYLabelRotation": {
+        "title": "Rotation",
+        "description": "Tilts this axis title by degrees. The starting angle is -90 so the words run along a vertical axis. When Bar Direction is Horizontal and this rotation is still the default, it starts at 0. This does not copy the other title rotation.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph",
+            "anchor": "scales-limits-friendly-axis-numbers"
+        }
+    },
     "graph.defaultGraphAxisYFontSize": {
         "title": "Font Size",
         "description": "Text size for the labels on the vertical axis, in pixels.",
@@ -12502,6 +12740,16 @@
     "graph.defaultGraphBarDirection": {
         "title": "Bar Direction",
         "description": "Draws bars up from the baseline or out to the side.",
+        "help": null
+    },
+    "graph.defaultGraphBarGroupMode": {
+        "title": "Bar Series Layout",
+        "description": "Determines how multiple bar series are arranged across graphs:\n• Side by Side: Divides each category slot into separate columns placed next to each other.\n• Stacked: Layers all series bars directly on top of each other at the same baseline position.",
+        "help": null
+    },
+    "graph.defaultGraphBarStackGapStep": {
+        "title": "Stacked Gap Step",
+        "description": "Additional gap in pixels for each consecutive bar layered on top.",
         "help": null
     },
     "graph.defaultGraphBarGap": {
@@ -12920,6 +13168,16 @@
         "description": "How many horizontal grid lines to draw.",
         "help": null
     },
+    "graph.defaultGraphPositiveColorOpacity": {
+        "title": "Positive Color Opacity",
+        "description": "Default opacity percentage for positive lines and bars across graphs.",
+        "help": null
+    },
+    "graph.defaultGraphNegativeColorOpacity": {
+        "title": "Negative Color Opacity",
+        "description": "Default opacity percentage for negative lines and bars across graphs.",
+        "help": null
+    },
     "graph.defaultGraphPositiveStartOpacity": {
         "title": "Positive Start Opacity",
         "description": "How solid the fill above the baseline is at one end.",
@@ -13015,7 +13273,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "image",
-            "anchor": "3-appearance"
+            "anchor": "2-appearance"
         }
     },
     "image.defaultImageProp": {
@@ -13024,7 +13282,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "image",
-            "anchor": "3-appearance"
+            "anchor": "2-appearance"
         }
     },
     "image.defaultImageScale": {
@@ -13033,7 +13291,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "image",
-            "anchor": "3-appearance"
+            "anchor": "2-appearance"
         }
     },
     "image.defaultImageOpacity": {
@@ -13042,7 +13300,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "image",
-            "anchor": "3-appearance"
+            "anchor": "2-appearance"
         }
     },
     "image.defaultImageFallbackUrl": {
@@ -13096,7 +13354,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "lightgrid",
-            "anchor": "4-grid-layout-behavior"
+            "anchor": "4-tile-layout"
         }
     },
     "lightgrid.lgItemWidth": {
@@ -13105,7 +13363,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "lightgrid",
-            "anchor": "4-grid-layout-behavior"
+            "anchor": "4-tile-layout"
         }
     },
     "lightgrid.lgItemHeight": {
@@ -13114,7 +13372,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "lightgrid",
-            "anchor": "4-grid-layout-behavior"
+            "anchor": "4-tile-layout"
         }
     },
     "lightgrid.lgItemSpacing": {
@@ -13123,7 +13381,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "lightgrid",
-            "anchor": "4-grid-layout-behavior"
+            "anchor": "4-tile-layout"
         }
     },
     "lightgrid.lgAutoDeselect": {
@@ -13132,7 +13390,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "lightgrid",
-            "anchor": "4-grid-layout-behavior"
+            "anchor": "4-tile-layout"
         }
     },
     "lightgrid.lgDeselectTime": {
@@ -13141,7 +13399,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "lightgrid",
-            "anchor": "4-grid-layout-behavior"
+            "anchor": "4-tile-layout"
         }
     },
     "lightgrid.lgColTileBg": {
@@ -13337,7 +13595,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "list",
-            "anchor": "1-content-source"
+            "anchor": "1-data-behavior"
         }
     },
     "list.defaultListRawMode": {
@@ -13346,7 +13604,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "list",
-            "anchor": "1-content-source"
+            "anchor": "1-data-behavior"
         }
     },
     "list.defaultListShowIcons": {
@@ -13355,7 +13613,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "list",
-            "anchor": "4-icon"
+            "anchor": "5-icon"
         }
     },
     "list.defaultListIconSize": {
@@ -13364,7 +13622,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "list",
-            "anchor": "4-icon"
+            "anchor": "5-icon"
         }
     },
     "list.defaultListIconColor": {
@@ -13373,7 +13631,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "list",
-            "anchor": "4-icon"
+            "anchor": "5-icon"
         }
     },
     "list.defaultListIconGap": {
@@ -13382,7 +13640,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "list",
-            "anchor": "4-icon"
+            "anchor": "5-icon"
         }
     },
     "list.defaultListShowTimestamp": {
@@ -13391,7 +13649,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "list",
-            "anchor": "5-timestamp-format"
+            "anchor": "3-timestamp-format"
         }
     },
     "list.defaultListTimeFormat": {
@@ -13400,7 +13658,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "list",
-            "anchor": "5-timestamp-format"
+            "anchor": "3-timestamp-format"
         }
     },
     "list.defaultListDateFormat": {
@@ -13409,7 +13667,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "list",
-            "anchor": "5-timestamp-format"
+            "anchor": "3-timestamp-format"
         }
     },
     "list.defaultListTime24h": {
@@ -13418,7 +13676,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "list",
-            "anchor": "5-timestamp-format"
+            "anchor": "3-timestamp-format"
         }
     },
     "list.defaultListGap": {
@@ -13427,7 +13685,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "list",
-            "anchor": "3-appearance"
+            "anchor": "4-appearance"
         }
     },
     "list.defaultListLineHeight": {
@@ -13436,7 +13694,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "list",
-            "anchor": "3-appearance"
+            "anchor": "4-appearance"
         }
     },
     "list.lineHeight": {
@@ -13445,7 +13703,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "list",
-            "anchor": "3-appearance"
+            "anchor": "4-appearance"
         }
     },
     "list.defaultListTextWrap": {
@@ -13454,7 +13712,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "list",
-            "anchor": "3-appearance"
+            "anchor": "4-appearance"
         }
     },
     "list.textWrap": {
@@ -13463,7 +13721,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "list",
-            "anchor": "3-appearance"
+            "anchor": "4-appearance"
         }
     },
     "list.checkboxOn": {
@@ -13757,7 +14015,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "slider",
-            "anchor": "1-data-configuration"
+            "anchor": "1-data-behavior"
         }
     },
     "slider.defaultSliderAllowDecimals": {
@@ -13766,7 +14024,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "slider",
-            "anchor": "1-data-configuration"
+            "anchor": "1-data-behavior"
         }
     },
     "slider.defaultSliderStepSize": {
@@ -13775,7 +14033,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "slider",
-            "anchor": "1-data-configuration"
+            "anchor": "1-data-behavior"
         }
     },
     "slider.defaultSliderCustomDisplayRange": {
@@ -13784,7 +14042,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "slider",
-            "anchor": "1-data-configuration"
+            "anchor": "1-data-behavior"
         }
     },
     "slider.defaultSliderDisplayMin": {
@@ -13793,7 +14051,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "slider",
-            "anchor": "1-data-configuration"
+            "anchor": "1-data-behavior"
         }
     },
     "slider.defaultSliderDisplayMax": {
@@ -13802,7 +14060,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "slider",
-            "anchor": "1-data-configuration"
+            "anchor": "1-data-behavior"
         }
     },
     "slider.defaultSliderDisplayDecimalPlaces": {
@@ -13811,7 +14069,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "slider",
-            "anchor": "1-data-configuration"
+            "anchor": "1-data-behavior"
         }
     },
     "slider.defaultSliderDisplayKeepTrailingZeros": {
@@ -13820,7 +14078,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "slider",
-            "anchor": "1-data-configuration"
+            "anchor": "1-data-behavior"
         }
     },
     "slider.defaultSliderLabelLocation": {
@@ -14174,7 +14432,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table-element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.textMdEqualTableColumnWidths": {
@@ -14183,7 +14441,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table-element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.textMdSyncTableColumnWidths": {
@@ -14192,7 +14450,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table-element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.textMdTableColumnWidthPx": {
@@ -14201,7 +14459,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table-element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.textMdTableBorderRadius": {
@@ -14210,7 +14468,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table-element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.textMdTableCellPadding": {
@@ -14219,7 +14477,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table-element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.textMdTableBorderColor": {
@@ -14228,7 +14486,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table-element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.textMdTableBorderOpacity": {
@@ -14237,7 +14495,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table-element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.textMdTableHeaderBg": {
@@ -14246,7 +14504,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table-element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.textMdTableHeaderBgOpacity": {
@@ -14255,7 +14513,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table-element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.textMdTableHeaderAccentBg": {
@@ -14264,7 +14522,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table-element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.textMdTableHeaderAccentBgOpacity": {
@@ -14273,7 +14531,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table-element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.textMdTableRowBg": {
@@ -14282,7 +14540,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table-element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.textMdTableRowBgOpacity": {
@@ -14291,7 +14549,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table-element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.textMdTableRowAltBg": {
@@ -14300,7 +14558,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table-element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.textMdTableRowAltBgOpacity": {
@@ -14309,7 +14567,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table-element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.textMdSeparatorColor": {
@@ -14318,7 +14576,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table-element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.textMdSeparatorOpacity": {
@@ -14327,7 +14585,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table-element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.textMdHrColor": {
@@ -14336,7 +14594,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table-element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.textMdHrOpacity": {
@@ -14345,7 +14603,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table-element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.textMdIconColor": {
@@ -14354,7 +14612,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table-element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.textMdIconOpacity": {
@@ -14363,7 +14621,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table-element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.textMdIconAccentColor": {
@@ -14372,7 +14630,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table-element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.textMdIconAccentOpacity": {
@@ -14381,7 +14639,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table-element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.textMdIconWeight": {
@@ -14390,7 +14648,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table-element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.textMdBlock1Color": {
@@ -14399,7 +14657,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table-element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.textMdBlock2Color": {
@@ -14408,7 +14666,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table-element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.textMdBlock3Color": {
@@ -14417,7 +14675,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table-element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.textMdBlock4Color": {
@@ -14426,7 +14684,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table-element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.textMdCalendarWeekStart": {
@@ -14435,7 +14693,7 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",
-            "anchor": "2-markdown-table-element-colors"
+            "anchor": "2-markdown"
         }
     },
     "text.textMdLinkTarget": {
@@ -14982,20 +15240,22 @@
             "widgetSub": "graph"
         }
     },
-    "graph.categoryLabelRotation": {
-        "title": "X Axis Label Rotation",
-        "description": "Rotates horizontal axis labels by degrees to fit lengthy text and timestamps within compact graph widths.",
+    "graph.axisXRotation": {
+        "title": "Rotation",
+        "description": "Tilts the category-axis numbers by degrees. 0 keeps them upright. The chart margin grows so the numbers stay on the canvas. Horizontal bars rename this group to the Y axis.",
         "help": {
             "topic": "Widgets",
-            "widgetSub": "graph"
+            "widgetSub": "graph",
+            "anchor": "scales-limits-friendly-axis-numbers"
         }
     },
-    "defaultGraphCategoryLabelRotation": {
-        "title": "X Axis Label Rotation",
-        "description": "Rotates horizontal axis labels by degrees to fit lengthy text and timestamps within compact graph widths.",
+    "graph.defaultGraphAxisXRotation": {
+        "title": "Rotation",
+        "description": "Tilts the category-axis numbers by degrees. 0 keeps them upright. The chart margin grows so the numbers stay on the canvas. Horizontal bars rename this group to the Y axis.",
         "help": {
             "topic": "Widgets",
-            "widgetSub": "graph"
+            "widgetSub": "graph",
+            "anchor": "scales-limits-friendly-axis-numbers"
         }
     },
     "graph.showAxisY": {
@@ -15038,12 +15298,30 @@
             "widgetSub": "graph"
         }
     },
+    "graph.abbreviateLargeValues": {
+        "title": "Abbreviate Large Values (k, M)",
+        "description": "Shows large value-axis numbers as thousands and millions, such as 12.5k or 3.2M. Turn it off to print the full number.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph",
+            "anchor": "clean-numbers-tilted-labels"
+        }
+    },
     "defaultGraphDecimals": {
         "title": "Y Axis Decimals",
         "description": "Sets the number of decimal digits displayed on vertical axis value numbers.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "graph"
+        }
+    },
+    "defaultGraphAbbreviateLargeValues": {
+        "title": "Abbreviate Large Values (k, M)",
+        "description": "Shows large value-axis numbers as thousands and millions, such as 12.5k or 3.2M. Turn it off to print the full number.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph",
+            "anchor": "clean-numbers-tilted-labels"
         }
     },
     "graph.headroom": {
@@ -15126,20 +15404,40 @@
             "widgetSub": "graph"
         }
     },
-    "graph.valueLabelRotation": {
-        "title": "Y Axis Label Rotation",
-        "description": "Rotates vertical axis numbers by degrees to fit inside narrow vertical margins.",
+    "graph.axisXLabel": {
+        "title": "X Axis Label",
+        "description": "Words drawn along the category axis, outside the tick labels. Leave this empty to hide the title. Horizontal bars rename this to Y Axis Label.",
         "help": {
             "topic": "Widgets",
-            "widgetSub": "graph"
+            "widgetSub": "graph",
+            "anchor": "scales-limits-friendly-axis-numbers"
         }
     },
-    "defaultGraphValueLabelRotation": {
-        "title": "Y Axis Label Rotation",
-        "description": "Rotates vertical axis numbers by degrees to fit inside narrow vertical margins.",
+    "defaultGraphAxisXLabel": {
+        "title": "X Axis Label",
+        "description": "Words drawn along the category axis, outside the tick labels. Leave this empty to hide the title. Horizontal bars rename this to Y Axis Label.",
         "help": {
             "topic": "Widgets",
-            "widgetSub": "graph"
+            "widgetSub": "graph",
+            "anchor": "scales-limits-friendly-axis-numbers"
+        }
+    },
+    "graph.axisYLabel": {
+        "title": "Y Axis Label",
+        "description": "Words drawn along the value axis, outside the tick numbers. Leave this empty to hide the title. Horizontal bars rename this to X Axis Label.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph",
+            "anchor": "scales-limits-friendly-axis-numbers"
+        }
+    },
+    "defaultGraphAxisYLabel": {
+        "title": "Y Axis Label",
+        "description": "Words drawn along the value axis, outside the tick numbers. Leave this empty to hide the title. Horizontal bars rename this to X Axis Label.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "graph",
+            "anchor": "scales-limits-friendly-axis-numbers"
         }
     },
     "graph.showTickX": {

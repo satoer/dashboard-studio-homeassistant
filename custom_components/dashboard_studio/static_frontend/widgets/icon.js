@@ -2,7 +2,7 @@ class IconWidget extends BaseWidget {
 
     static get metadata() {
 
-        return { label: "Icon", shortName: "Icon", icon: "ph-star", category: "Graphics", color_dark: "hsl(10, 80%, 65%)", color_light: "hsl(10, 85%, 35%)", version: "2.3.1", date: "2026-11-02" };
+        return { label: "Icon", shortName: "Icon", icon: "ph-star", category: "Graphics", color_dark: "hsl(10, 80%, 65%)", color_light: "hsl(10, 85%, 35%)", version: "2.3.5", date: "2026-11-07" };
 
     }
 
@@ -919,7 +919,7 @@ class IconWidget extends BaseWidget {
 
             {
 
-                id: 'ic_data', title: 'Data Configuration', icon: 'ph-database',
+                id: 'ic_data', title: 'Data & Behavior', icon: 'ph-database',
 
                 fields: [
 

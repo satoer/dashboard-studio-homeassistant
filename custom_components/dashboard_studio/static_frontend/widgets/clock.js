@@ -69,7 +69,7 @@ class DsFlipDigitPiece {
 
 class ClockWidget extends BaseWidget {
     static get metadata() {
-        return { shortName: 'Clock', label: 'Clock', icon: 'ph-clock', category: 'Time', color_dark: 'hsl(330, 80%, 65%)', color_light: 'hsl(330, 85%, 35%)', version: '2.3.1', date: '2026-11-02' };
+        return { shortName: 'Clock', label: 'Clock', icon: 'ph-clock', category: 'Time', color_dark: 'hsl(330, 80%, 65%)', color_light: 'hsl(330, 85%, 35%)', version: '2.3.5', date: '2026-11-07' };
     }
 
     static DISPLAY_MODE_OPTIONS() {
@@ -591,7 +591,7 @@ class ClockWidget extends BaseWidget {
                 visibleWhen: (v) => gFlip(v)
             },
 
-            { type: 'heading', label: 'Date Time Text Appearance', cols: 12, dependsOn: depType, visibleWhen: (v) => gText(v) },
+            { type: 'heading', label: 'Date & Time', cols: 12, dependsOn: depType, visibleWhen: (v) => gText(v) },
             { key: 'defaultClockTextShowTime', type: 'checkbox', label: 'Show Time', cols: 4, dependsOn: depType, visibleWhen: (v) => gText(v) },
             { key: 'defaultClockTextSeparator', type: 'text', label: 'Time Separator Character', cols: 4, dependsOn: depType, visibleWhen: (v) => gText(v) },
             { key: 'defaultClockTextBlinkSeparator', type: 'checkbox', label: 'Blink Separator', cols: 4, dependsOn: depType, visibleWhen: (v) => gText(v) },
@@ -1271,7 +1271,7 @@ class ClockWidget extends BaseWidget {
             },
             {
                 id: 'c_flip',
-                title: 'Flip Clock Appearance',
+                title: 'Flip Clock',
                 icon: 'ph-square-split-vertical',
                 dependsOn: depMode,
                 visibleWhen: typeFlip,
@@ -1290,7 +1290,7 @@ class ClockWidget extends BaseWidget {
             },
             {
                 id: 'c_datetime_text_appearance',
-                title: 'Date Time Text Appearance',
+                title: 'Date & Time',
                 icon: 'ph-text-aa',
                 dependsOn: depMode,
                 visibleWhen: typeText,
