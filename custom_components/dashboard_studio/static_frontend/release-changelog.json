@@ -43,11 +43,53 @@
   "releases": [
     {
       "version": "2.3.5",
-      "date": "2026-11-06",
+      "date": "2026-11-07",
       "changes": [
         {
           "title": "New: Invert Graph Point Values on Negative Numbers",
           "description": "Added an Invert Y on negative values setting so point value labels automatically display below negative bars and data points and above positive ones.",
+          "tags": [
+            7
+          ]
+        },
+        {
+          "title": "New: Graph Axis Titles",
+          "description": "Name the category and value axes. The title is drawn outside the ticks when the field has text.",
+          "tags": [
+            7
+          ]
+        },
+        {
+          "title": "New: Graph Line and Bar Opacity",
+          "description": "Set how solid the positive and negative lines or bars are, separately from the fill.",
+          "tags": [
+            7
+          ]
+        },
+        {
+          "title": "New: Abbreviate Graph Axis Numbers",
+          "description": "Large value-axis numbers show as thousands and millions, such as 12.5k. Turn Abbreviate Large Values (k, M) off to print the full number.",
+          "tags": [
+            7
+          ]
+        },
+        {
+          "title": "Changed: Moved Rotate to the Typography Settings",
+          "description": "Category and value tick rotation now sit with the other axis text settings, under X Axis (Datapoints) and Y Axis (Value).",
+          "tags": [
+            7
+          ]
+        },
+        {
+          "title": "Fixed: Smaller Graph Fixes",
+          "description": "Time axes stay responsive, streaming holds the right edge, hover hits the bar under the pointer, and axis titles stay on their own side.",
+          "tags": [
+            7
+          ]
+        },
+        {
+          "title": "Fixed: Negative Graph Fill Color",
+          "description": "An unset negative fill now uses the negative line color shown in the picker.",
           "tags": [
             7
           ]

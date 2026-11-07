@@ -1707,6 +1707,11 @@
         color: #c084fc;
         border: 1px solid rgba(192, 132, 252, 0.35);
     }
+    .ds-stats-changelog-tag-changed {
+        background: rgba(251, 191, 36, 0.15);
+        color: #fbbf24;
+        border: 1px solid rgba(251, 191, 36, 0.35);
+    }
     .ds-stats-changelog-tag-fixed {
         background: rgba(52, 211, 153, 0.15);
         color: #34d399;
@@ -2918,7 +2923,7 @@
 
         var cat = '';
         var displayTitle = title;
-        var m = title.match(/^\s*(New|Improved|Fixed|Addition|Bugfix)\b[:\-]?\s*(.*)$/i);
+        var m = title.match(/^\s*(New|Improved|Changed|Fixed|Addition|Bugfix|Change)\b[:\-]?\s*(.*)$/i);
         if (m) {
             cat = m[1].toLowerCase();
             displayTitle = m[2];
@@ -2939,6 +2944,8 @@
             badgeHtml = '<span class="ds-stats-changelog-tag-pill ds-stats-changelog-tag-new">NEW</span>';
         } else if (cat === 'improved' || cat === 'improvement') {
             badgeHtml = '<span class="ds-stats-changelog-tag-pill ds-stats-changelog-tag-improved">IMPROVED</span>';
+        } else if (cat === 'changed' || cat === 'change') {
+            badgeHtml = '<span class="ds-stats-changelog-tag-pill ds-stats-changelog-tag-changed">CHANGED</span>';
         } else if (cat === 'fixed' || cat === 'bugfix' || cat === 'fix') {
             badgeHtml = '<span class="ds-stats-changelog-tag-pill ds-stats-changelog-tag-fixed">FIXED</span>';
         }
