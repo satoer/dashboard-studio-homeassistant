@@ -1213,11 +1213,12 @@ class HomeAssistantDriver extends BaseDataDriver {
             } else if (item.type === 'insight' && item.data) {
                 var rawIn = String(item.data.name || '').replace(/^(?:homey|homeassistant)\/insights?\//i, '');
                 var inTopic = 'homey/insight/' + rawIn;
-                var val = Array.isArray(item.data.data)
-                    ? item.data.data.map(function (pt) { return Array.isArray(pt) ? pt : [new Date(pt.t).getTime(), pt.v]; })
-                    : item.data.data;
+                var val = item.data.data;
                 this.updateStatsAndHistory(inTopic, val);
                 batch.set(inTopic, val);
+                if (rawIn && rawIn !== inTopic) {
+                    batch.set(rawIn, val);
+                }
             }
         }
         if (typeof Dashboard !== 'undefined' && typeof Dashboard.applyLocalTopicPayloadBatch === 'function') {
