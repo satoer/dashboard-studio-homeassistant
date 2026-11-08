@@ -27,7 +27,7 @@
     },
     "theme": {
         "title": "Theme",
-        "description": "Select the active color palette and visual styling preset applied across dashboard widgets.",
+        "description": "Selects the active color palette and visual styling preset applied across dashboard widgets. You can link this setting to a data topic to switch themes dynamically, such as automatically adapting palettes based on the time of day or activating custom event themes.",
         "help": {
             "topic": "Styling & Layering",
             "anchor": "2-themes-theme-explorer"
@@ -15534,6 +15534,14 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "clock"
+        }
+    },
+    "master.theme": {
+        "title": "Theme",
+        "description": "Selects the active color palette and visual styling preset applied across dashboard widgets. You can link this setting to a data topic to switch themes dynamically, such as automatically adapting palettes based on the time of day or activating custom event themes.",
+        "help": {
+            "topic": "Styling & Layering",
+            "anchor": "2-themes-theme-explorer"
         }
     }
 };

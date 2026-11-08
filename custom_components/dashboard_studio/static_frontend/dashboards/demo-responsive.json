@@ -443,6 +443,13 @@
       "defaultClockFlipLabelHour": "",
       "defaultClockFlipLabelMinute": "",
       "defaultClockFlipLabelSecond": "",
+      "image": {
+        "fitContainer": true,
+        "proportional": true,
+        "scale": 100,
+        "opacity": 100,
+        "fallbackUrl": "images/brokenlink.png"
+      },
       "text": {
         "textWrap": true,
         "linkTarget": "markdown",
@@ -580,6 +587,81 @@
       "textMdCodeOpacity": 100,
       "textMdCodeOffX": 0,
       "textMdCodeOffY": 0,
+      "switch": {
+        "mode": "toggle",
+        "style": "switch",
+        "buttonAlignment": "center",
+        "buttonLabelPosition": "top",
+        "labelHint": "truncated",
+        "bevel": false,
+        "scale": 1,
+        "buttonRadius": 12,
+        "buttonContentInset": 10,
+        "icons": {
+          "on": {
+            "size": 24,
+            "offsetX": 0,
+            "offsetY": 0,
+            "builtin": "ph-check-fat",
+            "color": "@onAccent",
+            "hoverColor": "@text"
+          },
+          "off": {
+            "color": "@icon"
+          }
+        },
+        "showIcon": true,
+        "backgroundColorOn": "@glow",
+        "backgroundColorOff": "@accentOff",
+        "backgroundColorHover": "@iconMuted",
+        "thumbColor": "@thumb",
+        "labelColor": "@textMuted",
+        "typography": {
+          "buttonLabelOutside": {
+            "fontSize": 12,
+            "textAlign": "center",
+            "textTransform": "uppercase",
+            "bold": false,
+            "italic": false,
+            "color": "@text",
+            "colorOff": "@textMuted",
+            "opacity": 100,
+            "offsetX": 0,
+            "offsetY": 0
+          },
+          "buttonLabelInside": {
+            "fontSize": 12,
+            "textAlign": "center",
+            "textTransform": "capitalize",
+            "bold": false,
+            "italic": false,
+            "color": "@onAccent",
+            "colorOff": "@thumb",
+            "opacity": 100,
+            "offsetX": 0,
+            "offsetY": 0
+          }
+        },
+        "enableGlow": true,
+        "glowColor": "@glow",
+        "glowRadius": 40,
+        "outlineWidth": 0,
+        "outlineColor": "@border",
+        "backgroundOpacity": 100,
+        "outlineOpacity": 100,
+        "buttonBlur": 0,
+        "buttonInnerGlow": 0,
+        "buttonInnerGlowColor": "@borderAccent",
+        "buttonInnerGlowOpacity": 100,
+        "thumbOutlineWidth": 0,
+        "thumbOutlineColor": "@accent",
+        "thumbOutlineOpacity": 100,
+        "thumbInnerGlow": 0,
+        "thumbInnerGlowColor": "@accent",
+        "thumbInnerGlowOpacity": 100
+      },
+      "defaultSwitchIconOnFilled": true,
+      "defaultSwitchIconOffFilled": true,
       "graph": {
         "chartType": "line",
         "smoothingAmount": 0,
@@ -791,72 +873,62 @@
         "placeholderColor": "@placeholder",
         "textPadding": 8
       },
-      "switch": {
-        "mode": "toggle",
-        "style": "switch",
-        "buttonAlignment": "center",
-        "buttonLabelPosition": "top",
-        "labelHint": "truncated",
-        "bevel": false,
-        "scale": 1,
-        "buttonRadius": 12,
-        "buttonContentInset": 10,
-        "icons": {
-          "on": {
-            "size": 24,
+      "slider": {
+        "trackColor": "@border",
+        "fillColor": "@accent",
+        "thumbColor": "@thumb",
+        "valueColor": "@text",
+        "trackThickness": 36,
+        "fillThickness": 24,
+        "thumbSize": 29,
+        "thumbShadow": true,
+        "showValue": true,
+        "valueLocation": "middle",
+        "labelLocation": "top",
+        "typography": {
+          "value": {
             "offsetX": 0,
             "offsetY": 0,
-            "builtin": "ph-check-fat",
-            "color": "@onAccent",
-            "hoverColor": "@text"
-          },
-          "off": {
-            "color": "@icon"
-          }
-        },
-        "showIcon": true,
-        "backgroundColorOn": "@glow",
-        "backgroundColorOff": "@accentOff",
-        "backgroundColorHover": "@iconMuted",
-        "thumbColor": "@thumb",
-        "labelColor": "@textMuted",
-        "typography": {
-          "buttonLabelOutside": {
-            "fontSize": 12,
+            "fontSize": 10,
             "textAlign": "center",
-            "textTransform": "uppercase",
-            "bold": false,
-            "italic": false,
-            "color": "@text",
-            "colorOff": "@textMuted",
-            "opacity": 100,
+            "fontFamily": "'Inter', sans-serif",
+            "bold": false
+          },
+          "caption": {
             "offsetX": 0,
             "offsetY": 0
           },
-          "buttonLabelInside": {
-            "fontSize": 12,
-            "textAlign": "center",
-            "textTransform": "capitalize",
+          "unit": {
+            "fontSize": 20,
+            "color": "@textMuted",
             "bold": false,
             "italic": false,
-            "color": "@onAccent",
-            "colorOff": "@thumb",
-            "opacity": 100,
-            "offsetX": 0,
-            "offsetY": 0
+            "opacity": 100
           }
         },
-        "enableGlow": true,
-        "glowColor": "@glow",
-        "glowRadius": 40,
-        "outlineWidth": 0,
-        "outlineColor": "@border",
-        "backgroundOpacity": 100,
-        "outlineOpacity": 100,
-        "buttonBlur": 0,
-        "buttonInnerGlow": 0,
-        "buttonInnerGlowColor": "@borderAccent",
-        "buttonInnerGlowOpacity": 100,
+        "vertical": false,
+        "allowDecimals": false,
+        "stepSize": 0.1,
+        "customDisplayRange": false,
+        "displayMin": 0,
+        "displayMax": 100,
+        "displayDecimalPlaces": 1,
+        "displayKeepTrailingZeros": false,
+        "trackOutlineWidth": 0,
+        "trackOutlineColor": "@borderAccent",
+        "trackOpacity": 100,
+        "trackOutlineOpacity": 100,
+        "trackBlur": 0,
+        "trackInnerGlow": 0,
+        "trackInnerGlowColor": "@accent",
+        "trackInnerGlowOpacity": 100,
+        "fillOpacity": 100,
+        "fillOutlineWidth": 0,
+        "fillOutlineColor": "@thumb",
+        "fillOutlineOpacity": 100,
+        "fillInnerGlow": 0,
+        "fillInnerGlowColor": "@thumb",
+        "fillInnerGlowOpacity": 100,
         "thumbOutlineWidth": 0,
         "thumbOutlineColor": "@accent",
         "thumbOutlineOpacity": 100,
@@ -864,8 +936,6 @@
         "thumbInnerGlowColor": "@accent",
         "thumbInnerGlowOpacity": 100
       },
-      "defaultSwitchIconOnFilled": true,
-      "defaultSwitchIconOffFilled": true,
       "label": {
         "widthAuto": true,
         "heightAuto": true,
@@ -906,9 +976,6 @@
         "barGlow": true,
         "barThickness": 12,
         "trackThickness": 16,
-        "roundGap": -25,
-        "horizontalGap": 8,
-        "sizeOffset": 0,
         "barType": "round",
         "layoutRound": "bottom",
         "layoutHorizontal": "right",
@@ -920,43 +987,8 @@
         "displayDecimalPlaces": 1,
         "displayKeepTrailingZeros": false,
         "solidBarColor": false,
-        "typography": {
-          "value": {
-            "bold": true,
-            "fontFamily": "",
-            "fontSize": 48,
-            "italic": false,
-            "color": "@text",
-            "opacity": 100,
-            "offsetX": 0,
-            "offsetY": 0
-          },
-          "caption": {
-            "fontSize": 12,
-            "textTransform": "uppercase",
-            "bold": false,
-            "italic": false,
-            "color": "@textMuted",
-            "opacity": 100,
-            "offsetX": 0,
-            "offsetY": 0
-          },
-          "unit": {
-            "fontSize": 20,
-            "bold": false,
-            "italic": false,
-            "color": "@textMuted",
-            "opacity": 100
-          },
-          "axis": {
-            "fontSize": 11,
-            "bold": false,
-            "italic": false,
-            "color": "@textMuted",
-            "opacity": 100
-          }
-        },
-        "showIcon": true,
+        "roundGap": -25,
+        "horizontalGap": 8,
         "trackOutlineWidth": 0,
         "trackOutlineColor": "@borderAccent",
         "trackOpacity": 100,
@@ -972,71 +1004,46 @@
         "barInnerGlow": 0,
         "barInnerGlowColor": "@thumb",
         "barInnerGlowOpacity": 100,
-        "captionAlignRound": "center",
-        "captionAlignHorizontal": "left"
-      },
-      "slider": {
-        "trackColor": "@border",
-        "fillColor": "@accent",
-        "thumbColor": "@thumb",
-        "valueColor": "@text",
-        "trackThickness": 36,
-        "fillThickness": 24,
-        "thumbSize": 29,
-        "thumbShadow": true,
-        "showValue": true,
-        "valueLocation": "middle",
-        "labelLocation": "top",
-        "vertical": false,
-        "allowDecimals": false,
-        "stepSize": 0.1,
-        "customDisplayRange": false,
-        "displayMin": 0,
-        "displayMax": 100,
-        "displayDecimalPlaces": 1,
-        "displayKeepTrailingZeros": false,
-        "trackOutlineWidth": 0,
-        "trackOutlineColor": "@borderAccent",
-        "trackOpacity": 100,
-        "trackOutlineOpacity": 100,
-        "trackBlur": 0,
-        "trackInnerGlow": 0,
-        "trackInnerGlowColor": "@accent",
-        "trackInnerGlowOpacity": 100,
-        "fillOpacity": 100,
-        "fillOutlineWidth": 0,
-        "fillOutlineColor": "@thumb",
-        "fillOutlineOpacity": 100,
-        "fillInnerGlow": 0,
-        "fillInnerGlowColor": "@thumb",
-        "fillInnerGlowOpacity": 100,
-        "thumbOutlineWidth": 0,
-        "thumbOutlineColor": "@accent",
-        "thumbOutlineOpacity": 100,
-        "thumbInnerGlow": 0,
-        "thumbInnerGlowColor": "@accent",
-        "thumbInnerGlowOpacity": 100,
+        "sizeOffset": 0,
+        "showIcon": true,
         "typography": {
-          "value": {
-            "fontFamily": "'Inter', sans-serif",
-            "fontSize": 10,
-            "textAlign": "center",
+          "caption": {
+            "fontSize": 12,
+            "color": "@textMuted",
+            "textTransform": "uppercase",
             "bold": false,
+            "italic": false,
+            "opacity": 100,
             "offsetX": 0,
             "offsetY": 0
           },
-          "caption": {
+          "value": {
+            "fontFamily": "",
+            "fontSize": 48,
+            "color": "@text",
+            "bold": true,
+            "italic": false,
+            "opacity": 100,
             "offsetX": 0,
             "offsetY": 0
           },
           "unit": {
             "fontSize": 20,
+            "color": "@textMuted",
             "bold": false,
             "italic": false,
+            "opacity": 100
+          },
+          "axis": {
+            "fontSize": 11,
             "color": "@textMuted",
+            "bold": false,
+            "italic": false,
             "opacity": 100
           }
-        }
+        },
+        "captionAlignRound": "center",
+        "captionAlignHorizontal": "left"
       },
       "battery": {
         "goodColor": "@success",
@@ -1050,51 +1057,24 @@
         "innerPadding": 4,
         "terminalSize": 10
       },
-      "image": {
-        "fitContainer": true,
-        "proportional": true,
-        "scale": 100,
-        "opacity": 100,
-        "fallbackUrl": "images/brokenlink.png"
-      },
-      "icon": {
-        "icons": {
-          "on": {
-            "color": "@danger",
-            "source": "phosphor",
-            "builtin": "",
-            "weight": "fill",
-            "customUrl": "",
-            "tintImage": false,
-            "accentColor": "@iconAccent"
-          },
-          "off": {
-            "color": "@icon",
-            "source": "phosphor",
-            "builtin": "ph-warning",
-            "weight": "fill",
-            "customUrl": "",
-            "tintImage": false,
-            "accentColor": "@iconAccent"
-          }
-        },
-        "filled": true,
-        "size": 80,
-        "animSpeed": 1,
-        "blink": false,
-        "glowOnActive": true,
-        "typography": {
-          "caption": {
-            "fontFamily": null,
-            "fontSize": null,
-            "textAlign": null,
-            "textTransform": null,
-            "bold": null,
-            "color": null,
-            "offsetX": null,
-            "offsetY": null
-          }
-        }
+      "arrow": {
+        "mainColor": "@accentSecondary",
+        "flowColor": "@success",
+        "reverseFlowColor": "@danger",
+        "glowColor": "@accentSoft",
+        "thickness": 10,
+        "headSize": 30,
+        "lineRadius": 5,
+        "headRound": 4,
+        "bendRadius": 15,
+        "customPoints": [],
+        "animationEnabled": true,
+        "animationSpeed": 2,
+        "animationReverse": false,
+        "flowWidth": 0,
+        "gradientWidth": 100,
+        "glowWidth": 15,
+        "glowOpacity": 50
       },
       "list": {
         "showIcons": true,
@@ -1261,13 +1241,6 @@
         "itemHeight": 60,
         "itemWidth": 0,
         "itemSpacing": 0,
-        "autoDeselect": false,
-        "deselectTime": 10,
-        "useLightColor": true,
-        "iconSize": 24,
-        "iconColorOff": null,
-        "iconColorOn": null,
-        "iconColorize": false,
         "tileBackgroundColor": "@surface",
         "tileHoverColor": "@accentSoft",
         "tileBackgroundOpacity": 100,
@@ -1279,12 +1252,19 @@
         "tileInnerGlowColor": "@borderAccent",
         "tileInnerGlowOpacity": 100,
         "tileTextColor": "@onSurface",
-        "toggleColorOn": "@glow",
-        "toggleColorOff": "@accentOff",
         "tileFontFamily": "'Inter', sans-serif",
         "tileBold": true,
+        "toggleColorOn": "@glow",
+        "toggleColorOff": "@accentOff",
+        "iconSize": 24,
+        "iconColorOff": null,
+        "iconColorOn": null,
+        "useLightColor": true,
+        "iconColorize": false,
         "popoverWidth": 260,
         "popoverHeight": 360,
+        "autoDeselect": false,
+        "deselectTime": 10,
         "typography": {
           "widgetLabel": {
             "fontFamily": null,
@@ -1316,24 +1296,44 @@
           }
         }
       },
-      "arrow": {
-        "mainColor": "@accentSecondary",
-        "flowColor": "@success",
-        "reverseFlowColor": "@danger",
-        "glowColor": "@accentSoft",
-        "thickness": 10,
-        "headSize": 30,
-        "lineRadius": 5,
-        "headRound": 4,
-        "bendRadius": 15,
-        "customPoints": [],
-        "animationEnabled": true,
-        "animationSpeed": 2,
-        "animationReverse": false,
-        "flowWidth": 0,
-        "gradientWidth": 100,
-        "glowWidth": 15,
-        "glowOpacity": 50
+      "icon": {
+        "icons": {
+          "on": {
+            "color": "@danger",
+            "source": "phosphor",
+            "builtin": "",
+            "weight": "fill",
+            "customUrl": "",
+            "tintImage": false,
+            "accentColor": "@iconAccent"
+          },
+          "off": {
+            "color": "@icon",
+            "source": "phosphor",
+            "builtin": "ph-warning",
+            "weight": "fill",
+            "customUrl": "",
+            "tintImage": false,
+            "accentColor": "@iconAccent"
+          }
+        },
+        "filled": true,
+        "animSpeed": 1,
+        "blink": false,
+        "glowOnActive": true,
+        "size": 80,
+        "typography": {
+          "caption": {
+            "fontFamily": null,
+            "fontSize": null,
+            "textAlign": null,
+            "textTransform": null,
+            "bold": null,
+            "color": null,
+            "offsetX": null,
+            "offsetY": null
+          }
+        }
       },
       "defaultDeactivatedColor": "@controlOff",
       "defaultDeactivatedColorAccent": "@textMuted"
@@ -1855,7 +1855,7 @@
         "x": 50,
         "y": 30,
         "width": 450,
-        "height": 355,
+        "height": 195,
         "page": 1,
         "label": "Smart Home Platforms & Hubs",
         "menuItems": [
@@ -2403,7 +2403,7 @@
         "x": 70,
         "y": 50,
         "width": 450,
-        "height": 289,
+        "height": 449,
         "page": 1,
         "label": "International Webshops & Electronics Distributors",
         "menuItems": [
@@ -2896,10 +2896,10 @@
         "layout": {
           "responsive": {
             "order": 1,
-            "columnSpan": 2,
+            "columnSpan": 1,
             "rowSpan": 1,
             "height": 0,
-            "preferredColumn": 1,
+            "preferredColumn": 2,
             "hidden": false
           }
         },
@@ -4349,8 +4349,8 @@
         "durationCustomUnit": "minutes",
         "gridHBotShow": true,
         "gridVLeftShow": true,
-        "gridHBaseShow": true,
-        "gridHInnerShow": true,
+        "gridHBaseShow": false,
+        "gridHInnerShow": false,
         "durationCustomValue": 1,
         "timelineAdvance": "time",
         "legendPosition": "right",
@@ -4367,11 +4367,7 @@
           "responsive": {
             "columnSpan": 2
           }
-        },
-        "showAxisX": true,
-        "showAxisY": true,
-        "gridVRightShow": false,
-        "gridVShow": true
+        }
       },
       "bindings": {
         "series": [
@@ -4731,6 +4727,272 @@
         "designHeight": 260,
         "originX": 310,
         "originY": 160
+      }
+    },
+    "group_mw7y52ei_1ga": {
+      "id": "group_mw7y52ei_1ga",
+      "name": "Egg Timer",
+      "locked": false,
+      "visible": true,
+      "bindings": {},
+      "overridePage": "",
+      "dimBackgroundWhenVisible": false,
+      "widgets": {
+        "switch_7252": {
+          "type": "switch",
+          "overrides": {
+            "x": 520,
+            "y": 340,
+            "page": 1,
+            "metaName": "New Switch / Button",
+            "layout": {
+              "responsive": {
+                "order": 10,
+                "columnSpan": 1,
+                "rowSpan": 1,
+                "cellHeight": 0,
+                "preferredColumn": 0,
+                "hidden": false
+              }
+            },
+            "style": "button",
+            "showIcon": true,
+            "textOnlyLabelVerticalAlign": "center",
+            "buttonLabelPosition": "inside_top",
+            "buttonLabel": "Reset",
+            "label": "",
+            "icons": {
+              "on": {
+                "source": "phosphor",
+                "builtin": "ph-arrow-counter-clockwise",
+                "filled": true,
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {
+                "source": "phosphor",
+                "builtin": "",
+                "filled": true,
+                "customUrl": "",
+                "tintImage": false
+              }
+            },
+            "width": 130,
+            "height": 100,
+            "zIndex": 11,
+            "container": {
+              "show": false
+            }
+          },
+          "bindings": {}
+        },
+        "text_7274": {
+          "type": "text",
+          "overrides": {
+            "x": 260,
+            "y": 150,
+            "page": 1,
+            "metaName": "New Text",
+            "layout": {
+              "responsive": {
+                "order": 14,
+                "columnSpan": 1,
+                "rowSpan": 1,
+                "cellHeight": 0,
+                "preferredColumn": 0,
+                "hidden": false
+              }
+            },
+            "container": {
+              "show": false
+            },
+            "width": 390,
+            "height": 110
+          },
+          "bindings": {}
+        },
+        "gauge_5194": {
+          "type": "gauge",
+          "overrides": {
+            "x": 260,
+            "y": 250,
+            "page": 1,
+            "metaName": "New Gauge",
+            "container": {
+              "show": false
+            },
+            "width": 380,
+            "height": 90,
+            "barType": "horizontal",
+            "gapRound": -25,
+            "gaugeSizeOffset": 0,
+            "showLabels": false,
+            "rotateLabels": false,
+            "labelOffset": 0,
+            "showIcon": true,
+            "iconSize": 66,
+            "typography": {
+              "value": {
+                "fontSize": 48,
+                "offsetY": 0
+              }
+            },
+            "valueAlignment": "left",
+            "gapHoriz": 8,
+            "icons": {
+              "on": {
+                "offsetY": 0,
+                "builtin": "ph-cooking-pot"
+              }
+            },
+            "unit": "%",
+            "label": "",
+            "layoutHorizontal": {
+              "responsive": {
+                "order": 13,
+                "columnSpan": 1,
+                "rowSpan": 1,
+                "cellHeight": 0,
+                "preferredColumn": 0,
+                "hidden": false
+              }
+            }
+          },
+          "bindings": {}
+        },
+        "empty_7682": {
+          "type": "empty",
+          "overrides": {
+            "x": 250,
+            "y": 120,
+            "page": 1,
+            "metaName": "Egg timer Container",
+            "layout": {
+              "responsive": {
+                "order": 9,
+                "columnSpan": 1,
+                "rowSpan": 1,
+                "cellHeight": 0,
+                "preferredColumn": 0,
+                "hidden": false
+              }
+            },
+            "width": 410,
+            "height": 330,
+            "label": "Egg Timer",
+            "zIndex": 8
+          },
+          "bindings": {}
+        },
+        "switch_7180247": {
+          "type": "switch",
+          "overrides": {
+            "x": 260,
+            "y": 340,
+            "page": 1,
+            "metaName": "New Switch / Button (Copy)",
+            "layout": {
+              "responsive": {
+                "order": 10,
+                "columnSpan": 1,
+                "rowSpan": 1,
+                "cellHeight": 0,
+                "preferredColumn": 0,
+                "hidden": false
+              }
+            },
+            "style": "button",
+            "showIcon": true,
+            "textOnlyLabelVerticalAlign": "center",
+            "buttonLabelPosition": "inside_top",
+            "buttonLabel": "Soft Egg",
+            "label": "",
+            "icons": {
+              "on": {
+                "source": "phosphor",
+                "builtin": "ph-egg",
+                "filled": true,
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {
+                "source": "phosphor",
+                "builtin": "",
+                "filled": true,
+                "customUrl": "",
+                "tintImage": false
+              }
+            },
+            "width": 130,
+            "height": 100,
+            "zIndex": 11,
+            "container": {
+              "show": false
+            }
+          },
+          "bindings": {}
+        },
+        "switch_2940549": {
+          "type": "switch",
+          "overrides": {
+            "x": 390,
+            "y": 340,
+            "page": 1,
+            "metaName": "New Switch / Button (Copy) (Copy)",
+            "layout": {
+              "responsive": {
+                "order": 10,
+                "columnSpan": 1,
+                "rowSpan": 1,
+                "cellHeight": 0,
+                "preferredColumn": 0,
+                "hidden": false
+              }
+            },
+            "style": "button",
+            "showIcon": true,
+            "textOnlyLabelVerticalAlign": "center",
+            "buttonLabelPosition": "inside_top",
+            "buttonLabel": "Hard Egg",
+            "label": "",
+            "icons": {
+              "on": {
+                "source": "phosphor",
+                "builtin": "ph-egg-crack",
+                "filled": true,
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {
+                "source": "phosphor",
+                "builtin": "",
+                "filled": true,
+                "customUrl": "",
+                "tintImage": false
+              }
+            },
+            "width": 130,
+            "height": 100,
+            "zIndex": 11,
+            "container": {
+              "show": false
+            }
+          },
+          "bindings": {}
+        }
+      },
+      "layout": {
+        "responsive": {
+          "order": 0,
+          "preferredColumn": 1,
+          "scaleMode": "rescale"
+        }
+      },
+      "composite": {
+        "designWidth": 410,
+        "designHeight": 330,
+        "originX": 250,
+        "originY": 120
       }
     }
   }
