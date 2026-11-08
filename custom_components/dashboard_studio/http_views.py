@@ -234,6 +234,16 @@ class DashboardStudioAdminView(HomeAssistantView):
                 {"locale": lang, "strings": flat},
                 headers={"Cache-Control": "no-cache, no-store, must-revalidate"},
             )
+        if action in ("version", "version-check"):
+            from .updater import async_check_latest_version
+
+            force = str(request.query.get("force") or "").lower() in ("1", "true", "yes")
+            info = await async_check_latest_version(request.app["hass"], force=force)
+            return web.json_response(info)
+        if action == "update-progress":
+            from .updater import GLOBAL_UPDATER
+
+            return web.json_response(GLOBAL_UPDATER.get_progress())
         return web.json_response({"error": "unknown_action"}, status=404)
 
     async def post(self, request: web.Request, action: str) -> web.Response:
@@ -311,6 +321,22 @@ class DashboardStudioAdminView(HomeAssistantView):
 
                 removed = await hass.async_add_executor_job(_clear_all_snaps)
             return web.json_response({"ok": True, "removed": removed})
+        if action == "update-start":
+            from .updater import GLOBAL_UPDATER, async_check_latest_version
+
+            download_url = str(body.get("download_url") or "")
+            target_version = str(body.get("target_version") or "")
+            if not download_url:
+                info = await async_check_latest_version(hass)
+                download_url = str(info.get("download_url") or "")
+                target_version = str(info.get("latest_version") or "")
+            if not download_url:
+                return web.json_response({"error": "no_download_url"}, status=400)
+            res = GLOBAL_UPDATER.start_update(hass, download_url, target_version)
+            return web.json_response(res)
+        if action == "restart":
+            await hass.services.async_call("homeassistant", "restart")
+            return web.json_response({"ok": True, "restarting": True})
         return web.json_response({"error": "unknown_action"}, status=404)
 
 
