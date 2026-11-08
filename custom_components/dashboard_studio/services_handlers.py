@@ -30,7 +30,7 @@ from .const import (
     SERVICE_WEBCAL_TO_MARKDOWN,
 )
 from .insights import resample_data, time_window, window_start
-from .rss_markdown import feed_response, feeds_to_markdown, parse_feed
+from .rss_markdown import build_rss_markdown, parse_feed, parse_feed_specs
 from .runtime import get_runtime
 
 _LOGGER = logging.getLogger(__name__)
@@ -272,33 +272,49 @@ async def async_handle_combine_ical(call: ServiceCall) -> ServiceResponse:
 
 async def async_handle_fetch_rss(call: ServiceCall) -> ServiceResponse:
     runtime = _runtime_or_error(call.hass)
-    urls = []
-    extra = str(call.data.get("urls") or "")
-    for piece in extra.replace(",", "\n").splitlines():
-        if piece.strip():
-            urls.append(piece.strip())
-    single = str(call.data.get("url") or "").strip()
-    if single and single not in urls:
-        urls.insert(0, single)
-    feeds = []
-    for url in urls:
-        feeds.append(parse_feed(await _fetch_text(call.hass, url)))
-    maximum = int(call.data.get("max_items") or 10)
-    markdown = feeds_to_markdown(
-        feeds,
-        max_items=maximum,
-        include_summary=call.data.get("include_summary", True) is not False,
-        include_links=call.data.get("include_links", True) is not False,
-        layout=str(call.data.get("layout") or "standard"),
-        date_format=str(call.data.get("date_format") or ""),
-        image_width=int(call.data.get("image_width") or 0),
+    raw_urls = str(call.data.get("urls") or call.data.get("url") or "")
+    feed_specs = parse_feed_specs(raw_urls)
+    if not feed_specs:
+        raise ValueError("Please provide at least one valid RSS or Atom feed URL starting with http:// or https://")
+
+    parsed_feeds: list[dict[str, Any] | None] = []
+    last_error: Exception | None = None
+    for spec in feed_specs:
+        try:
+            xml_text = await _fetch_text(call.hass, spec["url"])
+            parsed = parse_feed(xml_text)
+            parsed_feeds.append(parsed)
+        except Exception as err:  # noqa: BLE001
+            _LOGGER.warning("Could not fetch RSS feed %s: %s", spec["url"], err)
+            last_error = err
+            parsed_feeds.append(None)
+
+    if all(f is None for f in parsed_feeds):
+        raise RuntimeError(f"Could not load RSS feed: {last_error or 'connection failed'}")
+
+    max_items = int(call.data.get("max_items") or 10)
+    layout = str(call.data.get("layout") or "standard")
+    image_width = int(call.data.get("image_width") or 180)
+    date_format = str(call.data.get("date_format") or "default")
+    user_date_format = str(runtime.settings.get("calendarDateFormat") or "dd-mm-yyyy")
+    tz_name = _fallback_tz(call.hass)
+
+    result = build_rss_markdown(
+        feed_specs=feed_specs,
+        parsed_feeds=parsed_feeds,
+        layout=layout,
+        max_items=max_items,
+        date_format_mode=date_format,
+        user_date_format=user_date_format,
+        image_width=image_width,
+        tz_name=tz_name,
     )
+
     topic = str(call.data.get("topic") or "").strip()
     if topic:
-        await runtime.publish_custom(topic, markdown, retain=True)
-    response = {"markdown": markdown}
-    response.update(feed_response(feeds, maximum))
-    return response
+        await runtime.publish_custom(topic, result["markdown"], retain=True)
+
+    return result
 
 
 def async_register_services(hass: HomeAssistant) -> None:

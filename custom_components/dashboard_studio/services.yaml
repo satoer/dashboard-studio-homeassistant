@@ -361,78 +361,77 @@ combine_ical_data:
 
 fetch_rss_markdown:
   name: Fetch RSS / Atom feed as Markdown
-  description: Fetch an RSS 2.0 or Atom feed and format headlines into Markdown for Dashboard Studio widgets.
+  description: Fetch RSS 2.0 or Atom feeds and format headlines into a Dashboard Studio Markdown Table.
+  supports_response: "optional"
   fields:
-    url:
-      name: RSS / Atom Feed URL
-      description: HTTP/HTTPS URL of the RSS or Atom XML feed.
-      required: true
-      example: "https://feeds.bbci.co.uk/news/rss.xml"
-      selector:
-        text:
-    max_items:
-      name: Max Items
-      description: Maximum number of feed items to include.
-      required: false
-      default: 10
-      selector:
-        number:
-          min: 1
-          max: 100
-          mode: box
-    include_summary:
-      name: Include Item Summary
-      description: Include the article summary/description under each headline.
-      required: false
-      default: true
-      selector:
-        boolean:
-    include_links:
-      name: Include Clickable Links
-      description: Format headlines as clickable Markdown links.
-      required: false
-      default: true
-      selector:
-        boolean:
-    topic:
-      name: Target Topic (Optional)
-      description: Optional topic to publish the formatted RSS Markdown to.
-      required: false
-      example: "news/headlines"
-      selector:
-        text:
     urls:
-      name: Additional Feed URLs
-      description: Extra RSS or Atom URLs, one per line. The Feed URL above is included as well.
-      required: false
+      name: RSS / Atom URL(s)
+      description: "One URL per line. Optional options per line separated by pipe (|) in any order: Label, icon (ph-...), or color (#hex or @color)."
+      required: true
+      example: "https://feeds.bbci.co.uk/news/rss.xml | BBC News | ph-newspaper | #d61a1a\nhttps://www.nu.nl/rss/Algemeen | NU.nl | @markerTint2"
       selector:
         text:
           multiline: true
     layout:
       name: Layout
-      description: standard, full, compact, or headlines.
+      description: Article layout style.
       required: false
-      default: standard
+      default: "standard"
       selector:
         select:
           options:
-            - standard
-            - full
-            - compact
-            - headlines
-    date_format:
-      name: Date Format
-      description: Optional date pattern such as dd-mm-yyyy.
-      required: false
-      selector:
-        text:
+            - label: "Standard (Summary & Date)"
+              value: "standard"
+            - label: "Full with Images"
+              value: "full"
+            - label: "Compact (Headline & Date)"
+              value: "compact"
+            - label: "Headlines Only"
+              value: "headlines"
     image_width:
-      name: Image Width
-      description: Width in pixels for an extracted article image. Leave at 0 to skip the image tag.
+      name: Preview Image Width
+      description: Image width in pixels for Full with Images layout.
       required: false
-      default: 0
+      default: 180
       selector:
         number:
-          min: 0
-          max: 1200
+          min: 40
+          max: 800
+          step: 10
           mode: box
+    max_items:
+      name: Max Articles
+      description: Maximum number of articles to return across all feeds.
+      required: false
+      default: 10
+      selector:
+        number:
+          min: 1
+          max: 50
+          step: 1
+          mode: box
+    date_format:
+      name: Date Format
+      description: How publication timestamps are presented.
+      required: false
+      default: "default"
+      selector:
+        select:
+          options:
+            - label: "App Settings Format (Today / Yesterday relative)"
+              value: "default"
+            - label: "Relative Only"
+              value: "relative"
+            - label: "Date & Time"
+              value: "date_time"
+            - label: "Time Only"
+              value: "time_only"
+            - label: "Hidden"
+              value: "hidden"
+    topic:
+      name: Dashboard Topic (Optional)
+      description: Topic to publish the formatted RSS Markdown table to.
+      required: false
+      example: "rssfeed"
+      selector:
+        text:
