@@ -144,6 +144,8 @@ Click faders icon next to bound property to configure:
   - `max(a, b, ...)`: Returns largest argument.
   - `abs(n)`: Absolute numerical value.
   - `number(n)`: Coerces string or argument to number.
+  - `contains(text, part)` / `containsanycase(text, part)`: Returns 1 if `part` appears inside `text`.
+  - `countdown(target, [format])`: Live ticking countdown. Targets: duration string (`"5m"`), seconds (`300`), topic (`value`), calendar date (`"2026-12-25"`). Formats: default (`mm:ss`/`hh:mm:ss`), `"timer"` (`HH:MM:SS`), `"compact"` (`1h 30m`), `"compact-full"`, `"words"`, `"days"`, `"hours"`, `"minutes"`, `"seconds"`, `"percent"` (0-100), `"percent-remaining"` (100-0), `"isDone"` (0 while running, 1 when done), `"isRunning"` (1 while running, 0 when done). Auto-coerces clock/duration strings to numbers in numeric widgets and comparisons.
 - **Nested Formulas & Multi-Band Thresholds:**
   - Place nested `if()` calls in the else branch to map ranges.
   - Rule: Evaluate **highest** threshold on outside first so upper values match immediately.

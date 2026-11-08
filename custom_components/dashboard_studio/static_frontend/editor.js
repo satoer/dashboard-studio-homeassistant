@@ -6626,7 +6626,7 @@ const Editor = {
             masterSchema.splice(boxIndex + 1, 0, DashboardDialog.masterSchemaGroup());
         }
 
-        const bothGroupIds = { m_conn: true, m_editor: true, m_canvas: true, m_theme: true, m_dse: true, driver_specifics: true, m_dialog_box: true };
+        const bothGroupIds = { m_conn: true, m_editor: true, m_canvas: true, m_regional: true, m_theme: true, m_dse: true, driver_specifics: true, m_dialog_box: true };
         masterSchema.forEach(function (group) {
             if (group && bothGroupIds[group.id]) group.editorTier = 'both';
         });
@@ -8634,12 +8634,24 @@ const Editor = {
                     btn.className = 'btn-tool w-full justify-center';
                     btn.textContent = f.label || 'Action';
                     if (f.title) btn.title = f.title;
+                    if (f.key) btn.setAttribute('data-editor-tooltip', f.key);
                     btn.onclick = () => {
                         this._flushActiveInput();
-                        if (typeof f.onClick === 'function' && !isGlobal && this.currentId) {
-                            const widget = Dashboard.widgets[this.currentId];
-                            if (widget) f.onClick(widget);
-                            return;
+                        if (typeof f.onClick === 'function') {
+                            try {
+                                if (isGlobal) {
+                                    f.onClick(null, true);
+                                    return;
+                                }
+                                if (this.currentId) {
+                                    const widget = Dashboard.widgets[this.currentId];
+                                    if (widget) f.onClick(widget, false);
+                                    return;
+                                }
+                            } catch (err) {
+                                console.error('[Editor] action_button onClick error:', err);
+                                return;
+                            }
                         }
                         if (f.previewAnimationSlot && !isGlobal && this.currentId
                             && typeof WidgetAnimations !== 'undefined'
@@ -10009,6 +10021,18 @@ const Editor = {
                                 });
                             }
 
+                            if (isGlobal && f.key === 'locale' && typeof DashboardI18n !== 'undefined') {
+                                const selLoc = String(e.target.value || '');
+                                if (selLoc.indexOf('preset:') === 0 && typeof DashboardI18n.getSavedCustomPresets === 'function') {
+                                    const pName = selLoc.slice(7);
+                                    const presets = DashboardI18n.getSavedCustomPresets();
+                                    if (presets && presets[pName]) {
+                                        Dashboard.updateGlobal({ customLocale: presets[pName] }, true);
+                                    }
+                                } else if (selLoc === 'custom' && typeof DashboardI18n.openCustomTranslationDialog === 'function') {
+                                    DashboardI18n.openCustomTranslationDialog();
+                                }
+                            }
                             if (f.key === 'canvasPreset') {
                                 const parts = e.target.value.split(',');
                                 if (parts.length === 2) {

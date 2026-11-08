@@ -8,6 +8,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers import device_registry as dr
+from homeassistant.helpers.network import NoURLAvailableError, get_url
 from homeassistant.helpers.typing import ConfigType
 
 from .const import DOMAIN, SETUP_PATH
@@ -53,13 +54,18 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     async_register_services(hass)
 
     device_registry = dr.async_get(hass)
+    try:
+        configuration_url: str | None = f"{get_url(hass)}{SETUP_PATH}"
+    except (NoURLAvailableError, Exception):  # noqa: BLE001
+        configuration_url = None
+
     device_registry.async_get_or_create(
         config_entry_id=entry.entry_id,
         identifiers={(DOMAIN, "dashboard_studio_server")},
         manufacturer="Dashboard Studio",
         model="Dashboard Studio Runtime & Designer",
         name="Dashboard Studio",
-        configuration_url=SETUP_PATH,
+        configuration_url=configuration_url,
     )
     return True
 

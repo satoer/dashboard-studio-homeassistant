@@ -1,0 +1,77 @@
+{
+  "code": "no",
+  "name": "Norsk (Norwegian)",
+  "timeFormat": "24h",
+  "dateFormat": "DD-MM-YYYY",
+  "firstDayOfWeek": "monday",
+  "units": {
+    "y": "år",
+    "d": "d",
+    "h": "t",
+    "m": "m",
+    "s": "s",
+    "year": "år",
+    "years": "år",
+    "day": "dag",
+    "days": "dager",
+    "hour": "time",
+    "hours": "timer",
+    "minute": "minutt",
+    "minutes": "minutter",
+    "second": "sekund",
+    "seconds": "sekunder",
+    "and": "og",
+    "done": ""
+  },
+  "calendar": {
+    "weekdays": [
+      "Søndag",
+      "Mandag",
+      "Tirsdag",
+      "Onsdag",
+      "Torsdag",
+      "Fredag",
+      "Lørdag"
+    ],
+    "weekdaysShort": [
+      "Søn",
+      "Man",
+      "Tir",
+      "Ons",
+      "Tor",
+      "Fre",
+      "Lør"
+    ],
+    "months": [
+      "Januar",
+      "Februar",
+      "Mars",
+      "April",
+      "Mai",
+      "Juni",
+      "Juli",
+      "August",
+      "September",
+      "Oktober",
+      "November",
+      "Desember"
+    ],
+    "monthsShort": [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "Mai",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Okt",
+      "Nov",
+      "Des"
+    ],
+    "weekPrefix": "Uke",
+    "am": "AM",
+    "pm": "PM"
+  }
+}

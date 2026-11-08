@@ -1,5 +1,5 @@
-window.DASHBOARD_VERSION = "2.3.5";
-window.LATEST_MIGRATION_VERSION = "2.3.0";
+window.DASHBOARD_VERSION = "2.4.0";
+window.LATEST_MIGRATION_VERSION = "2.4.0";
 
 /**
  * Global Session Console Ring Buffer for Diagnostics & Debug Reports.

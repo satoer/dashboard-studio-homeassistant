@@ -259,7 +259,7 @@ const DashboardMigrator = {
         return 0;
     },
 
-    LATEST_MIGRATION_VERSION: '2.3.0',
+    LATEST_MIGRATION_VERSION: '2.4.0',
 
     MIGRATION_RULES: [
         { version: '1.1.2', description: 'Label standardization and UI property keys' },
@@ -276,7 +276,8 @@ const DashboardMigrator = {
         { version: '1.9.3', description: 'Text per-role vertical spacing' },
         { version: '1.9.4', description: 'Typography forward-heal' },
         { version: '2.0.0', description: 'Responsive Columns and V2 nested save format' },
-        { version: '2.3.0', description: 'Graph multi-series' }
+        { version: '2.3.0', description: 'Graph multi-series' },
+        { version: '2.4.0', description: 'Master dashboard localization and unified clock locale' }
     ],
 
     getLatestMigrationVersion: function () {
@@ -1159,6 +1160,51 @@ const DashboardMigrator = {
             });
         }
         return merged;
+    },
+
+    _normalizeClockLocaleToV240: function (raw) {
+        if (raw === undefined || raw === null) return '';
+        const s = String(raw).trim();
+        if (!s) return '';
+        if (s === 'auto' || s === 'custom' || s.indexOf('preset:') === 0) return s;
+        const base = s.toLowerCase().split(/[-_]/)[0];
+        if (base === 'nb' || base === 'nn') return 'no';
+        const supported = ['en', 'nl', 'de', 'fr', 'es', 'it', 'da', 'sv', 'no', 'pl', 'ru', 'ko', 'ar'];
+        if (supported.indexOf(base) !== -1) return base;
+        return s;
+    },
+
+    _clockMasterLocalePreNormalize: function (data) {
+        if (!data || typeof data !== 'object' || !data.master || typeof data.master !== 'object') return '';
+        const m = data.master;
+        if (m.defaultClockTextLocale) return String(m.defaultClockTextLocale);
+        if (m.defaultClockFlipLocale) return String(m.defaultClockFlipLocale);
+        if (m.widgetDefaults && m.widgetDefaults.clock && typeof m.widgetDefaults.clock === 'object') {
+            const c = m.widgetDefaults.clock;
+            if (c.textLocale) return String(c.textLocale);
+            if (c.flipLocale) return String(c.flipLocale);
+        }
+        return '';
+    },
+
+    _dashboardHasLegacyClockLocaleKeys: function (data) {
+        if (!data || typeof data !== 'object') return false;
+        const m = data.master;
+        if (m && typeof m === 'object') {
+            if (m.defaultClockTextLocale !== undefined || m.defaultClockFlipLocale !== undefined) return true;
+            if (m.widgetDefaults && m.widgetDefaults.clock && typeof m.widgetDefaults.clock === 'object') {
+                const c = m.widgetDefaults.clock;
+                if (c.textLocale !== undefined || c.flipLocale !== undefined) return true;
+            }
+        }
+        let foundWidget = false;
+        this._forEachWidget(data, function (w) {
+            if (foundWidget || !w || w.type !== 'clock' || !w.overrides) return;
+            if (w.overrides.textLocale !== undefined || w.overrides.flipLocale !== undefined) {
+                foundWidget = true;
+            }
+        });
+        return foundWidget;
     },
 
     _dropKeysWithCorrections: function (bag, keys) {
@@ -4942,6 +4988,11 @@ const DashboardMigrator = {
             needsVersionBatches = true;
         }
 
+        const hasLegacyClockLocale = this._dashboardHasLegacyClockLocaleKeys(data);
+        if (hasLegacyClockLocale) {
+            needsVersionBatches = true;
+        }
+
         // Same or newer than latest migration rules: do not run semver migrations or master normalization
         // (avoids false "upgraded" prompts and any mutation on current-version dashboards).
         if (!needsVersionBatches) {
@@ -5786,6 +5837,7 @@ const DashboardMigrator = {
         // Silent for UI — no bullet in Dashboard Upgraded (see dashboard.loadDashboardData).
         // Graph bag first: the round trip below drops pre-2.2 graph color keys.
         const graphBagPreNormalize = this._graphMasterBagForMigration(migratedData);
+        const clockLocalePreNormalize = this._clockMasterLocalePreNormalize(migratedData);
         if (typeof MasterLayout !== 'undefined' && typeof MasterLayout.normalizeMasterToNested === 'function') {
             MasterLayout.normalizeMasterToNested(migratedData);
         }
@@ -5970,6 +6022,82 @@ const DashboardMigrator = {
             if (masterScaleChanged) {
                 hasChanges = true;
                 addChangeLabel('Graph: Dynamic Floor and Dynamic Ceiling master settings (2.3.0)');
+            }
+        }
+
+        // ====================================================================
+        // MIGRATION BATCH: < 2.4.0
+        // Master dashboard localization & unified Clock widget locale
+        // ====================================================================
+        if (this.compareVersions(originalVersion, '2.4.0') < 0 || hasLegacyClockLocale) {
+            let localeMigrated = false;
+            if (migratedData.master && typeof migratedData.master === 'object') {
+                const m = migratedData.master;
+                const rawMasterClockLoc = clockLocalePreNormalize
+                    || m.defaultClockTextLocale
+                    || m.defaultClockFlipLocale
+                    || (m.widgetDefaults && m.widgetDefaults.clock && (m.widgetDefaults.clock.textLocale || m.widgetDefaults.clock.flipLocale))
+                    || '';
+                if (m.defaultClockTextLocale !== undefined) {
+                    delete m.defaultClockTextLocale;
+                    localeMigrated = true;
+                }
+                if (m.defaultClockFlipLocale !== undefined) {
+                    delete m.defaultClockFlipLocale;
+                    localeMigrated = true;
+                }
+                if (m.widgetDefaults && m.widgetDefaults.clock && typeof m.widgetDefaults.clock === 'object') {
+                    const cDef = m.widgetDefaults.clock;
+                    if (cDef.textLocale !== undefined) {
+                        delete cDef.textLocale;
+                        localeMigrated = true;
+                    }
+                    if (cDef.flipLocale !== undefined) {
+                        delete cDef.flipLocale;
+                        localeMigrated = true;
+                    }
+                }
+                if (rawMasterClockLoc) {
+                    const normMasterLoc = this._normalizeClockLocaleToV240(rawMasterClockLoc);
+                    if (normMasterLoc && normMasterLoc !== 'auto' && normMasterLoc !== 'en') {
+                        if (!m.environment || typeof m.environment !== 'object') m.environment = {};
+                        if (!m.environment.locale || m.environment.locale === 'auto') {
+                            m.environment.locale = normMasterLoc;
+                            localeMigrated = true;
+                        }
+                    }
+                }
+            }
+            this._forEachWidget(migratedData, (w) => {
+                if (!w || w.type !== 'clock' || !w.overrides || typeof w.overrides !== 'object') return;
+                const o = w.overrides;
+                const hasTextLoc = o.textLocale !== undefined;
+                const hasFlipLoc = o.flipLocale !== undefined;
+                if (hasTextLoc || hasFlipLoc) {
+                    const rawLoc = hasTextLoc ? o.textLocale : o.flipLocale;
+                    if (o.locale === undefined && rawLoc !== undefined && rawLoc !== null && String(rawLoc).trim() !== '') {
+                        const normLoc = this._normalizeClockLocaleToV240(rawLoc);
+                        o.locale = normLoc || 'auto';
+                    }
+                    delete o.textLocale;
+                    delete o.flipLocale;
+                    localeMigrated = true;
+                }
+                if (w.bindings && typeof w.bindings === 'object') {
+                    const b = w.bindings;
+                    if (b.textLocale !== undefined || b.flipLocale !== undefined) {
+                        const topic = b.textLocale || b.flipLocale;
+                        if (!b.locale && topic) b.locale = topic;
+                        delete b.textLocale;
+                        delete b.flipLocale;
+                        localeMigrated = true;
+                    }
+                }
+            });
+            if (localeMigrated) {
+                hasChanges = true;
+                semanticMigrationApplied = true;
+                addChangeLabel('Localization: Master regional settings and unified Clock language (2.4.0)');
             }
         }
 

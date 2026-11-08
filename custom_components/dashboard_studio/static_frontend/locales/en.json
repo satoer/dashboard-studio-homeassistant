@@ -1,0 +1,77 @@
+{
+  "code": "en",
+  "name": "English",
+  "timeFormat": "24h",
+  "dateFormat": "DD-MM-YYYY",
+  "firstDayOfWeek": "monday",
+  "units": {
+    "y": "y",
+    "d": "d",
+    "h": "h",
+    "m": "m",
+    "s": "s",
+    "year": "year",
+    "years": "years",
+    "day": "day",
+    "days": "days",
+    "hour": "hour",
+    "hours": "hours",
+    "minute": "minute",
+    "minutes": "minutes",
+    "second": "second",
+    "seconds": "seconds",
+    "and": "and",
+    "done": ""
+  },
+  "calendar": {
+    "weekdays": [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday"
+    ],
+    "weekdaysShort": [
+      "Sun",
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri",
+      "Sat"
+    ],
+    "months": [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December"
+    ],
+    "monthsShort": [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec"
+    ],
+    "weekPrefix": "Week",
+    "am": "AM",
+    "pm": "PM"
+  }
+}

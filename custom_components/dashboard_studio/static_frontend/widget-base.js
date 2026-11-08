@@ -2321,7 +2321,10 @@ class BaseWidget {
             }
         }
 
-        if (depth === 0) this._lastFormulaType = null;
+        if (depth === 0) {
+            this._lastFormulaType = null;
+            this._lastFormulaEvaluated = false;
+        }
 
         let transformMode = this.overrides[key + '_bind_transformMode'];
         if (transformMode === undefined || transformMode === null) {
@@ -2343,11 +2346,16 @@ class BaseWidget {
                 // Text search must see a sentence. Other checkbox formulas still require a number.
                 const compactFormula = formulaStr.replace(/\s+\(/g, '(');
                 const searchesText = compactFormula.indexOf('contains(') !== -1
-                    || compactFormula.indexOf('containsanycase(') !== -1;
+                    || compactFormula.indexOf('containsanycase(') !== -1
+                    || compactFormula.indexOf('countdown(') !== -1
+                    || compactFormula.indexOf('if(') !== -1;
                 const coerced = FormulaEngine.toNumber(value);
                 if (searchesText || !coerced.failed) {
-                    const ev = FormulaEngine.evaluate(formulaStr, value, resolveFn);
-                    if (!ev.failed && ev.type === 'number' && Number.isFinite(ev.value)) {
+                    const ev = FormulaEngine.evaluate(formulaStr, value, resolveFn, { countdownContext: this.id + '::' + key });
+                    const numOut = (!ev.failed && ev.type === 'number') ? { v: ev.value } : (!ev.failed ? FormulaEngine.toNumber(ev.value) : { failed: true });
+                    if (!numOut.failed && Number.isFinite(numOut.v)) {
+                        if (depth === 0) this._lastFormulaEvaluated = true;
+                        ev.value = numOut.v;
                         return ev.value === 0 ? 0 : 1;
                     }
                 }
@@ -2381,14 +2389,17 @@ class BaseWidget {
 
         if (formulaStr !== '' && typeof FormulaEngine !== 'undefined'
                 && modeStr !== 'stringMap' && modeStr !== 'numericFormula') {
-            const ev = FormulaEngine.evaluate(formulaStr, value, resolveFn);
+            const ev = FormulaEngine.evaluate(formulaStr, value, resolveFn, { countdownContext: this.id + '::' + key });
             if (!ev.failed) {
                 if (ev.type === 'number') {
                     if (Number.isFinite(ev.value)) value = ev.value;
                 } else {
                     value = ev.value;
                 }
-                if (depth === 0) this._lastFormulaType = ev.type;
+                if (depth === 0) {
+                    this._lastFormulaType = ev.type;
+                    this._lastFormulaEvaluated = true;
+                }
             }
         }
 
@@ -2934,7 +2945,7 @@ class BaseWidget {
         value = this._finalizeBindingValue(key, value);
         if (BaseWidget._bindingValueExpectsBoolean(this, key, masterDefault)) {
             value = BaseWidget.coerceBindingBoolean(value);
-        } else if (fromLiveBinding && this._isDisplayedTextSetting(key)) {
+        } else if ((fromLiveBinding || this._lastFormulaEvaluated) && this._isDisplayedTextSetting(key)) {
             value = BaseWidget.displayText(value);
         }
         return value;
@@ -3056,6 +3067,9 @@ class BaseWidget {
 
             const expandedCorrections = {};
             Object.keys(flattened).forEach((k) => {
+                if (k.indexOf('_bind_formula') === k.length - 13 && typeof flattened[k] === 'string' && flattened[k].trim() !== '') {
+                    keysToResolve.add(k.slice(0, -13));
+                }
                 if (k.indexOf('_correct_') !== -1 && typeof flattened[k] !== 'object') {
                     expandedCorrections[k] = flattened[k];
                     if (k.endsWith('_correct_en') && flattened[k] === true) {
@@ -4289,6 +4303,11 @@ class BaseWidget {
             && typeof Dashboard._requestResponsiveReflow === 'function') {
             Dashboard._requestResponsiveReflow(this.id);
         }
+        if (!warming) {
+            this._syncCountdownHeartbeatRegistration();
+        }
+        if (false) {
+        }
     }
 
     select() {
@@ -4310,6 +4329,12 @@ class BaseWidget {
 
     destroy() {
         this.onRemove();
+        if (typeof FormulaEngine !== 'undefined' && typeof FormulaEngine.clearWidgetCountdowns === 'function') {
+            FormulaEngine.clearWidgetCountdowns(this.id);
+        }
+        if (typeof Dashboard !== 'undefined' && typeof Dashboard.unregisterCountdownWidget === 'function') {
+            Dashboard.unregisterCountdownWidget(this.id);
+        }
         if (this._fittedSizeRaf != null && typeof cancelAnimationFrame === 'function') {
             cancelAnimationFrame(this._fittedSizeRaf);
             this._fittedSizeRaf = null;
@@ -4365,7 +4390,41 @@ class BaseWidget {
         if (node.style[key] !== next) node.style[key] = next;
     }
 
+        _hasPropertyFormulaCountdown() {
+        if (typeof FormulaEngine === 'undefined' || typeof FormulaEngine.hasCountdown !== 'function') return false;
+        const o = this.overrides || {};
+        const keys = Object.keys(o);
+        for (let i = 0; i < keys.length; i++) {
+            const k = keys[i];
+            if (k.indexOf('_bind_formula') === k.length - 13 && typeof o[k] === 'string' && FormulaEngine.hasCountdown(o[k])) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     // Hooks for subclasses
+    _syncCountdownHeartbeatRegistration() {
+        if (typeof Dashboard === 'undefined' || typeof FormulaEngine === 'undefined') return;
+        const hasPropCountdowns = typeof FormulaEngine.hasActiveCountdownsForWidget === 'function'
+            && FormulaEngine.hasActiveCountdownsForWidget(this.id);
+        const hasExtra = this._hasActiveExtraCountdowns === true;
+        if (hasPropCountdowns || hasExtra) {
+            if (typeof Dashboard.registerCountdownWidget === 'function') {
+                Dashboard.registerCountdownWidget(this.id);
+            }
+        } else {
+            if (typeof Dashboard.unregisterCountdownWidget === 'function') {
+                Dashboard.unregisterCountdownWidget(this.id);
+            }
+        }
+    }
+
+    tickCountdowns() {
+        this._widgetConfigEpoch += 1;
+        this.render();
+    }
+
     onRemove() { }
     _renderSpecific() { }
     /**

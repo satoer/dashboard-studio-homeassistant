@@ -1,6 +1,6 @@
 class ListWidget extends BaseWidget {
     static get metadata() {
-        return { label: "List / Log", shortName: "List", icon: "ph-list-dashes", category: "Text", color_dark: "hsl(280, 80%, 65%)", color_light: "hsl(280, 85%, 35%)", version: "2.3.5", date: "2026-11-07" };
+        return { label: "List / Log", shortName: "List", icon: "ph-list-dashes", category: "Text", color_dark: "hsl(280, 80%, 65%)", color_light: "hsl(280, 85%, 35%)", version: "2.4.0", date: "2026-11-07" };
     }
 
     static get LIST_ICON_SLOT_NAMES() {
@@ -555,10 +555,12 @@ class ListWidget extends BaseWidget {
             {
                 key: 'defaultListDateFormat', type: 'select', label: 'Date Format', options: [
                     { value: 'none', text: 'None' },
+                    { value: 'auto', text: 'Auto (from Dashboard)' },
                     { value: 'DD-MM', text: 'DD-MM' },
                     { value: 'DD-MM-YYYY', text: 'DD-MM-YYYY' },
                     { value: 'MM-DD', text: 'MM-DD' },
-                    { value: 'MM-DD-YYYY', text: 'MM-DD-YYYY' }
+                    { value: 'MM-DD-YYYY', text: 'MM-DD-YYYY' },
+                    { value: 'YYYY-MM-DD', text: 'YYYY-MM-DD' }
                 ], cols: 12
             },
 
@@ -689,7 +691,14 @@ class ListWidget extends BaseWidget {
                     : (c.defaultListFontBold || false)),
             listTimestampCase: c.listTimestampCase || c.defaultListTimestampCase || c.defaultListCase || 'none',
             timeFormat: c.timeFormat || c.defaultListTimeFormat || "HH:mm",
-            time24h: c.time24h !== undefined && c.time24h !== null ? c.time24h : (c.defaultListTime24h !== undefined ? c.defaultListTime24h : true),
+            time24h: (() => {
+                if (c.time24h !== undefined && c.time24h !== null) return !!c.time24h;
+                if (c.defaultListTime24h === false) return false;
+                if (typeof DashboardI18n !== 'undefined' && DashboardI18n.getEffectiveIs24Hour) {
+                    return DashboardI18n.getEffectiveIs24Hour();
+                }
+                return c.defaultListTime24h !== undefined ? c.defaultListTime24h : true;
+            })(),
             dateFormat: c.dateFormat || c.defaultListDateFormat || "none",
 
             iconSizeRow: getNum(c.iconSizeRow, c.defaultListIconSize),
@@ -800,10 +809,12 @@ class ListWidget extends BaseWidget {
             key: 'dateFormat', type: 'select', label: 'Date Format', cols: 12, defaultKey: 'defaultListDateFormat',
             options: [
                 { value: 'none', text: 'None' },
+                { value: 'auto', text: 'Auto (from Dashboard)' },
                 { value: 'DD-MM', text: 'DD-MM' },
                 { value: 'DD-MM-YYYY', text: 'DD-MM-YYYY' },
                 { value: 'MM-DD', text: 'MM-DD' },
-                { value: 'MM-DD-YYYY', text: 'MM-DD-YYYY' }
+                { value: 'MM-DD-YYYY', text: 'MM-DD-YYYY' },
+                { value: 'YYYY-MM-DD', text: 'YYYY-MM-DD' }
             ]
         };
         ListWidget.attachListFieldVisibleWhen(dateFormatField, ListWidget.showTimestampFields, ['showTimestamp']);
@@ -1257,19 +1268,28 @@ class ListWidget extends BaseWidget {
         }
 
         if (!c.time24h && timeStr) {
-            timeStr += ` ${date.getHours() >= 12 ? 'PM' : 'AM'}`;
+            const dict = (typeof DashboardI18n !== 'undefined' && DashboardI18n.getDictionary)
+                ? DashboardI18n.getDictionary()
+                : null;
+            const amLabel = (dict && dict.am) ? String(dict.am) : 'AM';
+            const pmLabel = (dict && dict.pm) ? String(dict.pm) : 'PM';
+            timeStr += ` ${date.getHours() >= 12 ? pmLabel : amLabel}`;
         }
 
         let dateStr = "";
         const day = pad(date.getDate());
         const month = pad(date.getMonth() + 1);
         const year = date.getFullYear();
+        const effDateFmt = (c.dateFormat === 'auto')
+            ? ((typeof DashboardI18n !== 'undefined' && DashboardI18n.getEffectiveDateFormat) ? DashboardI18n.getEffectiveDateFormat() : 'DD-MM-YYYY')
+            : c.dateFormat;
 
-        switch (c.dateFormat) {
+        switch (effDateFmt) {
             case 'DD-MM': dateStr = `${day}-${month}`; break;
             case 'DD-MM-YYYY': dateStr = `${day}-${month}-${year}`; break;
             case 'MM-DD': dateStr = `${month}-${day}`; break;
             case 'MM-DD-YYYY': dateStr = `${month}-${day}-${year}`; break;
+            case 'YYYY-MM-DD': dateStr = `${year}-${month}-${day}`; break;
         }
 
         if (dateStr && timeStr) return `${dateStr} ${timeStr}`;

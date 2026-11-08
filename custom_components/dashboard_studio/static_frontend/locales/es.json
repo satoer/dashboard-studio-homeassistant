@@ -1,0 +1,77 @@
+{
+  "code": "es",
+  "name": "Español (Spanish)",
+  "timeFormat": "24h",
+  "dateFormat": "DD-MM-YYYY",
+  "firstDayOfWeek": "monday",
+  "units": {
+    "y": "a",
+    "d": "d",
+    "h": "h",
+    "m": "m",
+    "s": "s",
+    "year": "año",
+    "years": "años",
+    "day": "día",
+    "days": "días",
+    "hour": "hora",
+    "hours": "horas",
+    "minute": "minuto",
+    "minutes": "minutos",
+    "second": "segundo",
+    "seconds": "segundos",
+    "and": "y",
+    "done": ""
+  },
+  "calendar": {
+    "weekdays": [
+      "Domingo",
+      "Lunes",
+      "Martes",
+      "Miércoles",
+      "Jueves",
+      "Viernes",
+      "Sábado"
+    ],
+    "weekdaysShort": [
+      "Dom",
+      "Lun",
+      "Mar",
+      "Mié",
+      "Jue",
+      "Vie",
+      "Sáb"
+    ],
+    "months": [
+      "Enero",
+      "Febrero",
+      "Marzo",
+      "Abril",
+      "Mayo",
+      "Junio",
+      "Julio",
+      "Agosto",
+      "Septiembre",
+      "Octubre",
+      "Noviembre",
+      "Diciembre"
+    ],
+    "monthsShort": [
+      "Ene",
+      "Feb",
+      "Mar",
+      "Abr",
+      "May",
+      "Jun",
+      "Jul",
+      "Ago",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dic"
+    ],
+    "weekPrefix": "Semana",
+    "am": "AM",
+    "pm": "PM"
+  }
+}

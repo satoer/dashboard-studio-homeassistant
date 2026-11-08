@@ -69,7 +69,7 @@ class DsFlipDigitPiece {
 
 class ClockWidget extends BaseWidget {
     static get metadata() {
-        return { shortName: 'Clock', label: 'Clock', icon: 'ph-clock', category: 'Time', color_dark: 'hsl(330, 80%, 65%)', color_light: 'hsl(330, 85%, 35%)', version: '2.3.5', date: '2026-11-07' };
+        return { shortName: 'Clock', label: 'Clock', icon: 'ph-clock', category: 'Time', color_dark: 'hsl(330, 80%, 65%)', color_light: 'hsl(330, 85%, 35%)', version: '2.4.0', date: '2026-11-07' };
     }
 
     static DISPLAY_MODE_OPTIONS() {
@@ -115,7 +115,13 @@ class ClockWidget extends BaseWidget {
 
     /** Standalone "week" word for ISO week number prefix (Date Time Text segment). */
     static weekPrefixForLocale(locale) {
-        const loc = locale || 'en-GB';
+        if (typeof DashboardI18n !== 'undefined' && DashboardI18n.getDictionary) {
+            const dict = DashboardI18n.getDictionary(locale);
+            if (dict && dict.weekPrefix) return String(dict.weekPrefix);
+        }
+        const loc = (typeof DashboardI18n !== 'undefined' && DashboardI18n.getEffectiveBcp47Tag)
+            ? DashboardI18n.getEffectiveBcp47Tag(locale)
+            : (locale || 'en-GB');
         let s = ClockWidget._intlDisplayName(loc, 'dateTimeField', 'weekOfYear', 'long');
         if (!s) s = ClockWidget._intlDisplayName(loc, 'dateTimeField', 'weekOfYear', 'short');
         if (!s) s = ClockWidget._intlDisplayName(loc, 'unit', 'week', 'long');
@@ -126,7 +132,17 @@ class ClockWidget extends BaseWidget {
 
     /** Localized column caption for flip clock (hour / minute / second). */
     static flipUnitCaption(locale, unit) {
-        const loc = locale || 'en-GB';
+        if (typeof DashboardI18n !== 'undefined' && DashboardI18n.getDictionary) {
+            const dict = DashboardI18n.getDictionary(locale);
+            if (dict && dict.units) {
+                if (unit === 'minute' && dict.units.minutes) return String(dict.units.minutes);
+                if (unit === 'second' && dict.units.seconds) return String(dict.units.seconds);
+                if (unit !== 'minute' && unit !== 'second' && dict.units.hours) return String(dict.units.hours);
+            }
+        }
+        const loc = (typeof DashboardI18n !== 'undefined' && DashboardI18n.getEffectiveBcp47Tag)
+            ? DashboardI18n.getEffectiveBcp47Tag(locale)
+            : (locale || 'en-GB');
         const u = unit === 'minute' ? 'minute' : unit === 'second' ? 'second' : 'hour';
         let s = ClockWidget._intlDisplayName(loc, 'dateTimeField', u, 'long');
         if (!s) s = ClockWidget._intlDisplayName(loc, 'dateTimeField', u, 'short');
@@ -438,7 +454,6 @@ class ClockWidget extends BaseWidget {
             defaultClockTextShowSecond: true,
             defaultClockTextSeparator: ':',
             defaultClockTextBlinkSeparator: false,
-            defaultClockTextLocale: 'en-GB',
 
             defaultClockAnalogNumFs: 20,
             defaultClockAnalogNumFont: "'Inter', sans-serif",
@@ -479,8 +494,6 @@ class ClockWidget extends BaseWidget {
             defaultClockTimeDateCase: 'none',
             defaultClockTimeDateBold: false,
             defaultClockTimeDateItalic: false,
-
-            defaultClockFlipLocale: 'en-GB',
 
             defaultClockTextWeekPrefix: '',
             defaultClockFlipLabelHour: '',
@@ -565,7 +578,6 @@ class ClockWidget extends BaseWidget {
             { key: 'defaultClockFlipShowSeconds', type: 'checkbox', label: 'Show Seconds', cols: 6, dependsOn: depType, visibleWhen: (v) => gFlip(v) },
             { key: 'defaultClockFlipSeparator', type: 'number', label: 'Flip Separator (px)', cols: 6, dependsOn: depType, visibleWhen: (v) => gFlip(v) },
             { key: 'defaultClockFlipCardRadius', type: 'number', label: 'Card Roundness (px)', cols: 6, dependsOn: depType, visibleWhen: (v) => gFlip(v) },
-            { key: 'defaultClockFlipLocale', type: 'select', label: 'Language / Locale', options: locOpts, cols: 12, dependsOn: depType, visibleWhen: (v) => gFlip(v) },
             {
                 key: 'defaultClockFlipLabelHour',
                 type: 'text',
@@ -606,7 +618,6 @@ class ClockWidget extends BaseWidget {
             { key: 'defaultClockTextDateSeg3', type: 'select', label: 'Date Part 4', options: ClockWidget.TEXT_SEGMENT_OPTIONS(), cols: 6, dependsOn: depDateGlobal, visibleWhen: (v) => gShowDate(v) },
             { key: 'defaultClockTextDateSeg4', type: 'select', label: 'Date Part 5', options: ClockWidget.TEXT_SEGMENT_OPTIONS(), cols: 6, dependsOn: depDateGlobal, visibleWhen: (v) => gShowDate(v) },
             { key: 'defaultClockTextDateLinebreak', type: 'checkbox', label: 'Line Break After Date', cols: 6, dependsOn: depDateGlobal, visibleWhen: (v) => gShowDate(v) },
-            { key: 'defaultClockTextLocale', type: 'select', label: 'Language / Locale', options: locOpts, cols: 12, dependsOn: depType, visibleWhen: (v) => gText(v) },
             {
                 key: 'defaultClockTextWeekPrefix',
                 type: 'text',
@@ -939,11 +950,11 @@ class ClockWidget extends BaseWidget {
             useSystemTime: true,
             timezone: 'UTC',
             clockUse12Hour: false,
+            locale: 'auto',
             flipCardRadius: 12,
             flipSeparator: 6,
             flipShowLabels: true,
             flipShowSeconds: true,
-            flipLocale: 'en-GB',
             flipLabelHour: '',
             flipLabelMinute: '',
             flipLabelSecond: '',
@@ -961,7 +972,6 @@ class ClockWidget extends BaseWidget {
             textShowSecond: true,
             textTimeSeparator: ':',
             textBlinkSeparator: false,
-            textLocale: 'en-GB',
             textWeekPrefix: '',
             audio: (typeof DashboardAudio !== 'undefined' && DashboardAudio.defaultAudio)
                 ? DashboardAudio.defaultAudio(ClockWidget.AUDIO_TRIGGERS)
@@ -1037,7 +1047,17 @@ class ClockWidget extends BaseWidget {
             displayMode: c.displayMode || c.defaultClockDisplayMode || 'analog',
             useSystemTime: c.useSystemTime !== undefined ? c.useSystemTime : (__nullish(c.defaultClockUseSystemTime, true)),
             timezone: c.timezone || c.defaultClockTimezone || 'UTC',
-            clockUse12Hour: c.clockUse12Hour !== undefined ? c.clockUse12Hour : (__nullish(c.defaultClockUse12Hour, false)),
+            clockUse12Hour: (() => {
+                if (this.overrides && this.overrides.clockUse12Hour !== undefined && this.overrides.clockUse12Hour !== null) {
+                    return !!c.clockUse12Hour;
+                }
+                if (c.defaultClockUse12Hour === true) return true;
+                if (typeof DashboardI18n !== 'undefined' && DashboardI18n.getEffectiveIs24Hour) {
+                    return !DashboardI18n.getEffectiveIs24Hour();
+                }
+                return !!c.defaultClockUse12Hour;
+            })(),
+            locale: c.locale || c.textLocale || c.flipLocale || 'auto',
 
             flipUpperColor: c.flipUpperColor || c.defaultClockFlipUpperColor,
             flipLowerColor: c.flipLowerColor || c.defaultClockFlipLowerColor,
@@ -1049,7 +1069,7 @@ class ClockWidget extends BaseWidget {
             })(),
             flipShowLabels: c.flipShowLabels !== undefined ? c.flipShowLabels : (__nullish(c.defaultClockFlipShowLabels, true)),
             flipShowSeconds: c.flipShowSeconds !== undefined ? c.flipShowSeconds : (__nullish(c.defaultClockFlipShowSeconds, true)),
-            flipLocale: c.flipLocale || c.defaultClockFlipLocale || 'en-GB',
+            flipLocale: c.locale || c.flipLocale || c.textLocale || 'auto',
             flipLabelHour: c.flipLabelHour != null ? c.flipLabelHour : (c.defaultClockFlipLabelHour != null ? c.defaultClockFlipLabelHour : ''),
             flipLabelMinute: c.flipLabelMinute != null ? c.flipLabelMinute : (c.defaultClockFlipLabelMinute != null ? c.defaultClockFlipLabelMinute : ''),
             flipLabelSecond: c.flipLabelSecond != null ? c.flipLabelSecond : (c.defaultClockFlipLabelSecond != null ? c.defaultClockFlipLabelSecond : ''),
@@ -1068,7 +1088,7 @@ class ClockWidget extends BaseWidget {
             textShowSecond: c.textShowSecond !== undefined ? c.textShowSecond : (__nullish(c.defaultClockTextShowSecond, true)),
             textTimeSeparator: c.textTimeSeparator != null && c.textTimeSeparator !== '' ? c.textTimeSeparator : (c.defaultClockTextSeparator || ':'),
             textBlinkSeparator: c.textBlinkSeparator !== undefined ? c.textBlinkSeparator : (__nullish(c.defaultClockTextBlinkSeparator, false)),
-            textLocale: c.textLocale || c.defaultClockTextLocale || 'en-GB',
+            textLocale: c.locale || c.textLocale || c.flipLocale || 'auto',
             textWeekPrefix: c.textWeekPrefix != null ? c.textWeekPrefix : (c.defaultClockTextWeekPrefix != null ? c.defaultClockTextWeekPrefix : '')
         };
 
@@ -1083,7 +1103,12 @@ class ClockWidget extends BaseWidget {
         const depMode = ClockWidget.MODE_GROUP_DEPS();
         const depTz = ClockWidget.TIME_SOURCE_DEPS();
         const tzOpts = ClockWidget.timezoneOptions().map((z) => ({ value: z, text: z }));
-        const locOpts = ClockWidget.LOCALE_OPTIONS().map((l) => ({ value: l, text: l }));
+        const locOpts = [
+            { value: 'auto', text: 'Inherit from Dashboard (Default)' },
+            ...((typeof DashboardI18n !== 'undefined' && DashboardI18n.getLanguageSelectOptions)
+                ? DashboardI18n.getLanguageSelectOptions({ includeAuto: false })
+                : ClockWidget.LOCALE_OPTIONS().map((l) => ({ value: l, text: l })))
+        ];
         const typeAnalog = (v, isG) => ClockWidget.editorClockType(v, isG) === 'analog';
         const typeFlip = (v, isG) => ClockWidget.editorClockType(v, isG) === 'flip';
         const typeText = (v, isG) => ClockWidget.editorClockType(v, isG) === 'text';
@@ -1282,7 +1307,7 @@ class ClockWidget extends BaseWidget {
                     { key: 'flipShowSeconds', type: 'checkbox', label: 'Show Seconds', cols: 3, defaultKey: 'defaultClockFlipShowSeconds' },
                     { key: 'flipSeparator', type: 'number', label: 'Flip Separator (px)', cols: 3, defaultKey: 'defaultClockFlipSeparator' },
                     { key: 'flipCardRadius', type: 'number', label: 'Card Roundness (px)', cols: 3, defaultKey: 'defaultClockFlipCardRadius' },
-                    { key: 'flipLocale', type: 'select', label: 'Language / Locale', options: locOpts, cols: 12, defaultKey: 'defaultClockFlipLocale', dependsOn: depMode },
+                    { key: 'locale', type: 'select', label: 'Language / Locale Override', options: locOpts, cols: 12, default: 'auto', dependsOn: depMode },
                     { key: 'flipLabelHour', type: 'text', label: 'Custom Hour Label (Optional)', cols: 4, defaultKey: 'defaultClockFlipLabelHour' },
                     { key: 'flipLabelMinute', type: 'text', label: 'Custom Minute Label (Optional)', cols: 4, defaultKey: 'defaultClockFlipLabelMinute' },
                     { key: 'flipLabelSecond', type: 'text', label: 'Custom Second Label (Optional)', cols: 4, defaultKey: 'defaultClockFlipLabelSecond' }
@@ -1318,7 +1343,7 @@ class ClockWidget extends BaseWidget {
                         dependsOn: depDateParts,
                         visibleWhen: visTextDateDetail
                     },
-                    { key: 'textLocale', type: 'select', label: 'Language / Locale', options: locOpts, cols: 12, defaultKey: 'defaultClockTextLocale' }
+                    { key: 'locale', type: 'select', label: 'Language / Locale Override', options: locOpts, cols: 12, default: 'auto' }
                 ]
             },
             {
@@ -1534,20 +1559,32 @@ class ClockWidget extends BaseWidget {
         const useSys = c.useSystemTime !== false;
         const tz = useSys ? null : (c.timezone || c.defaultClockTimezone || 'UTC');
         const inst = new Date(st.epochMs);
+        const dict = (typeof DashboardI18n !== 'undefined' && DashboardI18n.getDictionary)
+            ? DashboardI18n.getDictionary(locale)
+            : null;
+        const bcp47 = (typeof DashboardI18n !== 'undefined' && DashboardI18n.getEffectiveBcp47Tag)
+            ? DashboardI18n.getEffectiveBcp47Tag(locale)
+            : (locale || 'en-GB');
         try {
             switch (kind) {
                 case 'day':
-                    return ClockWidget._getTextSegmentDtf(locale, tz, 'day', 'numeric').format(inst);
+                    return ClockWidget._getTextSegmentDtf(bcp47, tz, 'day', 'numeric').format(inst);
                 case 'day2Digit':
                     return (st.day < 10 ? '0' : '') + st.day;
                 case 'monthNum':
-                    return ClockWidget._getTextSegmentDtf(locale, tz, 'month', 'numeric').format(inst);
+                    return ClockWidget._getTextSegmentDtf(bcp47, tz, 'month', 'numeric').format(inst);
                 case 'monthNum2Digit':
                     return (st.month < 10 ? '0' : '') + st.month;
                 case 'monthName':
-                    return ClockWidget._getTextSegmentDtf(locale, tz, 'month', 'long').format(inst);
+                    if (dict && Array.isArray(dict.months) && dict.months[st.month - 1]) {
+                        return String(dict.months[st.month - 1]);
+                    }
+                    return ClockWidget._getTextSegmentDtf(bcp47, tz, 'month', 'long').format(inst);
                 case 'weekday':
-                    return ClockWidget._getTextSegmentDtf(locale, tz, 'weekday', 'long').format(inst);
+                    if (dict && Array.isArray(dict.weekdays) && dict.weekdays[st.dow]) {
+                        return String(dict.weekdays[st.dow]);
+                    }
+                    return ClockWidget._getTextSegmentDtf(bcp47, tz, 'weekday', 'long').format(inst);
                 case 'week':
                     return String(ClockWidget.isoWeekNumber(st.year, st.month, st.day));
                 case 'weekLabeled': {
@@ -1557,9 +1594,9 @@ class ClockWidget extends BaseWidget {
                     return `${prefix} ${wn}`;
                 }
                 case 'yearLong':
-                    return ClockWidget._getTextSegmentDtf(locale, tz, 'year', 'numeric').format(inst);
+                    return ClockWidget._getTextSegmentDtf(bcp47, tz, 'year', 'numeric').format(inst);
                 case 'yearShort':
-                    return ClockWidget._getTextSegmentDtf(locale, tz, 'year', '2-digit').format(inst);
+                    return ClockWidget._getTextSegmentDtf(bcp47, tz, 'year', '2-digit').format(inst);
                 default:
                     return '';
             }
@@ -1581,7 +1618,12 @@ class ClockWidget extends BaseWidget {
         let h = st.h24;
         let ampmStr = '';
         if (c.clockUse12Hour) {
-            ampmStr = st.h24 >= 12 ? 'PM' : 'AM';
+            const dict = (typeof DashboardI18n !== 'undefined' && DashboardI18n.getDictionary)
+                ? DashboardI18n.getDictionary(c.locale || c.textLocale)
+                : null;
+            const amLabel = (dict && dict.am) ? String(dict.am) : 'AM';
+            const pmLabel = (dict && dict.pm) ? String(dict.pm) : 'PM';
+            ampmStr = st.h24 >= 12 ? pmLabel : amLabel;
             h = st.h24 % 12;
             if (h === 0) h = 12;
         }
@@ -1674,7 +1716,7 @@ class ClockWidget extends BaseWidget {
     _ensureFlipPieces(showSeconds, use12h, c) {
         const needAmpm = use12h;
         const cols = 2 + (showSeconds ? 1 : 0) + (needAmpm ? 1 : 0);
-        const loc = (c && c.flipLocale) || 'en-GB';
+        const loc = (c && (c.locale || c.flipLocale)) || 'auto';
         const trimLab = (key) => {
             const v = c && c[key] != null ? c[key] : '';
             return String(v).trim();
@@ -1684,21 +1726,24 @@ class ClockWidget extends BaseWidget {
             if (t) return t;
             return ClockWidget.flipUnitCaption(loc, unit);
         };
-        const captionKey = [loc, trimLab('flipLabelHour'), trimLab('flipLabelMinute'), trimLab('flipLabelSecond')].join('\u0001');
+        const hCap = caption('hour', 'flipLabelHour');
+        const mCap = caption('minute', 'flipLabelMinute');
+        const sCap = caption('second', 'flipLabelSecond');
+        const captionKey = [loc, hCap, mCap, sCap].join('\u0001');
         const rebuildKey = `${cols}|${captionKey}`;
         if (this._flipCols === cols && this._flipPieces && this._flipRebuildKey === rebuildKey) return;
         this._flipCols = cols;
         this._flipRebuildKey = rebuildKey;
         this.flipInner.innerHTML = '';
         this._flipPieces = [];
-        const hPiece = new DsFlipDigitPiece(caption('hour', 'flipLabelHour'));
+        const hPiece = new DsFlipDigitPiece(hCap);
         this.flipInner.appendChild(hPiece.el);
         this._flipPieces.push(hPiece);
-        const mPiece = new DsFlipDigitPiece(caption('minute', 'flipLabelMinute'));
+        const mPiece = new DsFlipDigitPiece(mCap);
         this.flipInner.appendChild(mPiece.el);
         this._flipPieces.push(mPiece);
         if (showSeconds) {
-            const sPiece = new DsFlipDigitPiece(caption('second', 'flipLabelSecond'));
+            const sPiece = new DsFlipDigitPiece(sCap);
             this.flipInner.appendChild(sPiece.el);
             this._flipPieces.push(sPiece);
         }
@@ -1789,7 +1834,12 @@ class ClockWidget extends BaseWidget {
             let hDisp = st.h24;
             let ampm = '';
             if (c.clockUse12Hour) {
-                ampm = st.h24 >= 12 ? 'PM' : 'AM';
+                const dict = (typeof DashboardI18n !== 'undefined' && DashboardI18n.getDictionary)
+                    ? DashboardI18n.getDictionary(c.locale || c.flipLocale)
+                    : null;
+                const amLabel = (dict && dict.am) ? String(dict.am) : 'AM';
+                const pmLabel = (dict && dict.pm) ? String(dict.pm) : 'PM';
+                ampm = st.h24 >= 12 ? pmLabel : amLabel;
                 hDisp = st.h24 % 12;
                 if (hDisp === 0) hDisp = 12;
             }
@@ -1805,7 +1855,7 @@ class ClockWidget extends BaseWidget {
         }
 
         if (mode === 'text') {
-            const locale = c.textLocale || 'en-GB';
+            const locale = c.locale || c.textLocale || 'auto';
             const parts = [];
             if (c.textShowDate) {
                 [c.textDateSeg0, c.textDateSeg1, c.textDateSeg2, c.textDateSeg3, c.textDateSeg4].forEach((seg) => {

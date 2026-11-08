@@ -1,6 +1,6 @@
 class GraphWidget extends BaseWidget {
     static get metadata() {
-        return { shortName: "Graph", label: "Graph", icon: "ph-chart-line", category: "Data", color_dark: "hsl(160, 80%, 65%)", color_light: "hsl(160, 85%, 35%)", version: "2.3.5", date: "2026-11-07" };
+        return { shortName: "Graph", label: "Graph", icon: "ph-chart-line", category: "Data", color_dark: "hsl(160, 80%, 65%)", color_light: "hsl(160, 85%, 35%)", version: "2.4.0", date: "2026-11-07" };
     }
 
     static getLegendPositionOptions(values, isGlobal) {
@@ -417,10 +417,12 @@ class GraphWidget extends BaseWidget {
 
     static get GRAPH_DATE_FORMAT_OPTIONS() {
         return [
+            { value: 'auto', text: 'Auto (from Dashboard)' },
             { value: 'DD-MM', text: 'DD-MM' },
             { value: 'DD-MM-YYYY', text: 'DD-MM-YYYY' },
             { value: 'MM-DD', text: 'MM-DD' },
-            { value: 'MM-DD-YYYY', text: 'MM-DD-YYYY' }
+            { value: 'MM-DD-YYYY', text: 'MM-DD-YYYY' },
+            { value: 'YYYY-MM-DD', text: 'YYYY-MM-DD' }
         ];
     }
 
@@ -1756,7 +1758,7 @@ class GraphWidget extends BaseWidget {
             defaultGraphShowAxisX: false,
             defaultGraphTimeFormat: "Datapoints",
             defaultGraphTime24h: true,
-            defaultGraphDateFormat: "DD-MM-YYYY",
+            defaultGraphDateFormat: "auto",
             defaultGraphConvertToLocalTime: true,
             defaultGraphTimeOffset: 0,
             defaultGraphTimezoneConvert: false,
@@ -2758,8 +2760,15 @@ class GraphWidget extends BaseWidget {
             headroom: BaseWidget.clampNumber(c.headroom !== undefined && c.headroom !== null ? c.headroom : (c.defaultGraphHeadroom || 0), 0, 100),
             showAxisX: c.showAxisX !== undefined && c.showAxisX !== null ? c.showAxisX : c.defaultGraphShowAxisX,
             timeFormat: c.timeFormat || c.defaultGraphTimeFormat || "Datapoints",
-            time24h: c.time24h !== undefined && c.time24h !== null ? c.time24h : (c.defaultGraphTime24h !== undefined ? c.defaultGraphTime24h : true),
-            dateFormat: c.dateFormat || c.defaultGraphDateFormat || "DD-MM-YYYY",
+            time24h: (function () {
+                if (c.time24h !== undefined && c.time24h !== null) return c.time24h === true;
+                if (c.defaultGraphTime24h === false) return false;
+                if (typeof DashboardI18n !== 'undefined' && DashboardI18n.getEffectiveIs24Hour) {
+                    return DashboardI18n.getEffectiveIs24Hour();
+                }
+                return c.defaultGraphTime24h !== undefined ? c.defaultGraphTime24h : true;
+            })(),
+            dateFormat: c.dateFormat || c.defaultGraphDateFormat || "auto",
             convertToLocalTime: c.convertToLocalTime !== undefined && c.convertToLocalTime !== null
                 ? c.convertToLocalTime
                 : (c.defaultGraphConvertToLocalTime !== undefined && c.defaultGraphConvertToLocalTime !== null ? c.defaultGraphConvertToLocalTime : true),
@@ -4908,7 +4917,12 @@ class GraphWidget extends BaseWidget {
             }
 
             if (!c.time24h && timeStr) {
-                timeStr += ` ${rawHours >= 12 ? 'PM' : 'AM'}`;
+                const dict = (typeof DashboardI18n !== 'undefined' && DashboardI18n.getDictionary)
+                    ? DashboardI18n.getDictionary()
+                    : null;
+                const amLabel = (dict && dict.am) ? String(dict.am) : 'AM';
+                const pmLabel = (dict && dict.pm) ? String(dict.pm) : 'PM';
+                timeStr += ` ${rawHours >= 12 ? pmLabel : amLabel}`;
             }
         }
 
@@ -4917,11 +4931,15 @@ class GraphWidget extends BaseWidget {
             const day = pad(useLocal ? date.getDate() : date.getUTCDate());
             const month = pad((useLocal ? date.getMonth() : date.getUTCMonth()) + 1);
             const year = useLocal ? date.getFullYear() : date.getUTCFullYear();
-            switch (c.dateFormat) {
+            const effDateFmt = (c.dateFormat === 'auto')
+                ? ((typeof DashboardI18n !== 'undefined' && DashboardI18n.getEffectiveDateFormat) ? DashboardI18n.getEffectiveDateFormat() : 'DD-MM-YYYY')
+                : c.dateFormat;
+            switch (effDateFmt) {
                 case 'DD-MM': dateStr = `${day}-${month}`; break;
                 case 'DD-MM-YYYY': dateStr = `${day}-${month}-${year}`; break;
                 case 'MM-DD': dateStr = `${month}-${day}`; break;
                 case 'MM-DD-YYYY': dateStr = `${month}-${day}-${year}`; break;
+                case 'YYYY-MM-DD': dateStr = `${year}-${month}-${day}`; break;
             }
         }
 

@@ -3693,6 +3693,7 @@ body.edit-mode:not(.hold-live-preview) .lg-popover.selected .resize-handle {
 #icon-modal,
 #changelog-modal,
 #reset-canvas-wizard-modal,
+#ds-custom-translation-modal,
 .ds-dialog-host-backdrop {
     position: fixed;
     inset: 0;
@@ -3714,6 +3715,7 @@ body.edit-mode:not(.hold-live-preview) .lg-popover.selected .resize-handle {
 #changelog-modal.show,
 #reset-canvas-wizard-modal.show,
 #widget-preset-picker-modal.show,
+#ds-custom-translation-modal.show,
 .ds-dialog-host-backdrop.show {
     display: flex;
     animation: ds-dialog-fade-in 150ms ease-out both;
@@ -3813,6 +3815,11 @@ body.edit-mode.ui-light .ds-color-picker-panel {
 
 #reset-canvas-wizard-modal .modal-content {
     width: min(1100px, 94vw);
+    max-height: 90vh;
+}
+
+#ds-custom-translation-modal .modal-content {
+    width: min(880px, 95vw);
     max-height: 90vh;
 }
 

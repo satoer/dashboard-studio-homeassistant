@@ -87,6 +87,11 @@
         preloadImagesOnAllPages: ['environment', 'preloadImagesOnAllPages'],
         hideScrollbars: ['environment', 'hideScrollbars'],
         quickToolbar: ['environment', 'quickToolbar'],
+        locale: ['environment', 'locale'],
+        timeFormat: ['environment', 'timeFormat'],
+        dateFormat: ['environment', 'dateFormat'],
+        firstDayOfWeek: ['environment', 'firstDayOfWeek'],
+        customLocale: ['environment', 'customLocale'],
 
         canvasWidth: ['environment', 'canvas', 'width'],
         canvasHeight: ['environment', 'canvas', 'height'],
@@ -746,7 +751,6 @@
     addWD('clock', 'defaultClockTextShowSecond', ['textShowSecond']);
     addWD('clock', 'defaultClockTextSeparator', ['textSeparator']);
     addWD('clock', 'defaultClockTextBlinkSeparator', ['textBlinkSeparator']);
-    addWD('clock', 'defaultClockTextLocale', ['textLocale']);
     addTypo('clock', 'defaultClockAnalogNum', ['typography', 'analogNumbers']);
     addTypo('clock', 'defaultClockFlipNum', ['typography', 'flipNumbers']);
     addTypo('clock', 'defaultClockFlipLabel', ['typography', 'flipLabel']);
@@ -1479,8 +1483,10 @@
             if (CLOCK_ALIAS_KEYS[key]) return;
             if (GRAPH_AXIS_ALIAS_KEYS[key]) return;
             if (key === 'defaultTrackOutlineColor' || key === 'defaultTrackOutlineWidth') return;
+            if (key === 'defaultClockFlipLocale' || key === 'defaultClockTextLocale') return;
             const val = bag[key];
             if (val === undefined) return;
+            if (key === 'customLocale' && !isPlainObject(val)) return;
             if (key === 'defaultGap') {
                 if (!isPlainObject(out.widgetDefaults.gauge)) out.widgetDefaults.gauge = {};
                 if (out.widgetDefaults.gauge.horizontalGap === undefined) {

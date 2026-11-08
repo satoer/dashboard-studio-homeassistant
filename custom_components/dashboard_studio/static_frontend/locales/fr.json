@@ -1,0 +1,77 @@
+{
+  "code": "fr",
+  "name": "Français (French)",
+  "timeFormat": "24h",
+  "dateFormat": "DD-MM-YYYY",
+  "firstDayOfWeek": "monday",
+  "units": {
+    "y": "a",
+    "d": "j",
+    "h": "h",
+    "m": "m",
+    "s": "s",
+    "year": "an",
+    "years": "ans",
+    "day": "jour",
+    "days": "jours",
+    "hour": "heure",
+    "hours": "heures",
+    "minute": "minute",
+    "minutes": "minutes",
+    "second": "seconde",
+    "seconds": "secondes",
+    "and": "et",
+    "done": ""
+  },
+  "calendar": {
+    "weekdays": [
+      "Dimanche",
+      "Lundi",
+      "Mardi",
+      "Mercredi",
+      "Jeudi",
+      "Vendredi",
+      "Samedi"
+    ],
+    "weekdaysShort": [
+      "Dim",
+      "Lun",
+      "Mar",
+      "Mer",
+      "Jeu",
+      "Ven",
+      "Sam"
+    ],
+    "months": [
+      "Janvier",
+      "Février",
+      "Mars",
+      "Avril",
+      "Mai",
+      "Juin",
+      "Juillet",
+      "Août",
+      "Septembre",
+      "Octobre",
+      "Novembre",
+      "Décembre"
+    ],
+    "monthsShort": [
+      "Jan",
+      "Fév",
+      "Mar",
+      "Avr",
+      "Mai",
+      "Juin",
+      "Juil",
+      "Août",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Déc"
+    ],
+    "weekPrefix": "Semaine",
+    "am": "AM",
+    "pm": "PM"
+  }
+}

@@ -35,31 +35,31 @@
         "slot5_max": 3000,
         "slot5_speed": 40,
         "slot5_enable": true,
-        "slot6_topic": "custom/topic6",
         "slot6_type": "random",
-        "slot6_min": 0,
-        "slot6_max": 100,
-        "slot6_speed": 1,
-        "slot7_topic": "custom/topic7",
+        "slot6_min": 15,
+        "slot6_max": 15,
+        "slot6_speed": 0,
         "slot7_type": "random",
-        "slot7_min": 0,
-        "slot7_max": 100,
-        "slot7_speed": 1,
-        "slot8_topic": "custom/topic8",
+        "slot7_min": 20,
+        "slot7_max": 20,
+        "slot7_speed": 0,
         "slot8_type": "random",
-        "slot8_min": 0,
-        "slot8_max": 100,
-        "slot8_speed": 1,
-        "slot9_topic": "custom/topic9",
+        "slot8_min": 30,
+        "slot8_max": 30,
+        "slot8_speed": 0,
         "slot9_type": "random",
-        "slot9_min": 0,
-        "slot9_max": 100,
-        "slot9_speed": 1,
+        "slot9_min": 25,
+        "slot9_max": 25,
+        "slot9_speed": 0,
         "slot10_topic": "custom/topic10",
         "slot10_type": "random",
         "slot10_min": 0,
         "slot10_max": 100,
-        "slot10_speed": 1
+        "slot10_speed": 1,
+        "slot6_enable": false,
+        "slot7_enable": false,
+        "slot8_enable": false,
+        "slot9_enable": false
       }
     },
     "environment": {
@@ -1828,6 +1828,45 @@
             "onPayload": "true",
             "offPayload": "false",
             "pageTo": "18",
+            "urlTo": "https://",
+            "urlNewTab": false,
+            "selectionGroup": "",
+            "sendOffOnGroupDeselect": false
+          },
+          {
+            "label": "Countdowns & Timers",
+            "mode": "push",
+            "actionType": "page",
+            "icons": {
+              "on": {
+                "source": "phosphor",
+                "builtin": "ph-timer",
+                "weight": "fill",
+                "customUrl": "",
+                "tintImage": false
+              },
+              "off": {
+                "source": "phosphor",
+                "builtin": "ph-timer",
+                "weight": "duotone",
+                "tintImage": false
+              }
+            },
+            "iconColorOverrides": {
+              "on": {
+                "enabled": false,
+                "color": "#ffffff"
+              },
+              "off": {
+                "enabled": false,
+                "color": "#94a3b8"
+              }
+            },
+            "state": false,
+            "outputTopic": "",
+            "onPayload": "true",
+            "offPayload": "false",
+            "pageTo": "19",
             "urlTo": "https://",
             "urlNewTab": false,
             "selectionGroup": "",
@@ -9106,6 +9145,366 @@
         },
         "width": 150,
         "height": 180
+      },
+      "bindings": {}
+    },
+    "text_p19_title": {
+      "type": "text",
+      "overrides": {
+        "x": 20,
+        "y": 20,
+        "width": 1020,
+        "height": 80,
+        "page": "19",
+        "text": "# LIVE COUNTDOWN & TIMER LAB\n*Interactive cooldown locks, dynamic smart gauges, and real-time deep-space clocks*",
+        "metaName": "Title - Countdown Lab"
+      },
+      "bindings": {}
+    },
+    "switch_p19_back": {
+      "type": "switch",
+      "overrides": {
+        "x": 1060,
+        "y": 20,
+        "width": 100,
+        "height": 80,
+        "page": "19",
+        "buttonLabel": "BACK",
+        "actionType": "page",
+        "pageTo": 4,
+        "icons": {
+          "on": {
+            "source": "phosphor",
+            "builtin": "ph-arrow-u-up-left",
+            "weight": "fill",
+            "size": 24
+          }
+        },
+        "mode": "push",
+        "style": "button",
+        "metaName": "Button - Back (P19)",
+        "buttonLabelPosition": "inside_bottom"
+      },
+      "bindings": {}
+    },
+    "switch_p19_warp_btn": {
+      "type": "switch",
+      "overrides": {
+        "x": 20,
+        "y": 110,
+        "width": 360,
+        "height": 85,
+        "page": "19",
+        "buttonLabel": "ENGAGE HYPERDRIVE (15s)",
+        "buttonLabelPosition": "inside_bottom",
+        "actionType": "topic",
+        "outputTopic": "local/warp_cooldown",
+        "onPayload": "15s",
+        "mode": "push",
+        "style": "button",
+        "metaName": "Button - Warp Drive",
+        "container": {
+          "show": false
+        },
+        "padding": 0,
+        "btnRadius": 12,
+        "icons": {
+          "on": {
+            "source": "phosphor",
+            "builtin": "ph-rocket-launch",
+            "weight": "fill",
+            "size": 34
+          }
+        },
+        "deactivated_bind_formula": "countdown(value, \"isRunning\")"
+      },
+      "bindings": {
+        "deactivated": "local/warp_cooldown"
+      }
+    },
+    "gauge_p19_warp_gauge": {
+      "type": "gauge",
+      "overrides": {
+        "x": 20,
+        "y": 210,
+        "width": 360,
+        "height": 60,
+        "page": "19",
+        "label": "Capacitor Recharge",
+        "unit": "%",
+        "min": 0,
+        "max": 100,
+        "value": 0,
+        "showIcon": false,
+        "barType": "horizontal",
+        "trackThickness": 16,
+        "metaName": "Gauge - Warp Capacitor",
+        "layoutHorizontal": "left",
+        "value_bind_formula": "countdown(value, \"percent\")"
+      },
+      "bindings": {
+        "value": "local/warp_cooldown"
+      }
+    },
+    "text_p19_warp_status": {
+      "type": "text",
+      "overrides": {
+        "x": 20,
+        "y": 285,
+        "width": 360,
+        "height": 440,
+        "page": "19",
+        "metaName": "Text - Warp Status",
+        "textVerticalAlign": "top",
+        "text": "### :ph-lightning|26|@accent: Jump Core Telemetry\n\n| System Metric | Real-time Value |\n| :--- | :--- |\n| **Engine State** | {{if(countdown({{local/warp_cooldown}}, \"isDone\") == 1, \"✨ Thrusters Charged (Ready)\", if(countdown({{local/warp_cooldown}}, \"seconds\") > 10, \"🔥 Field Acceleration (Stage 1)\", if(countdown({{local/warp_cooldown}}, \"seconds\") > 5, \"⚡ Quantum Dampening (Stage 2)\", if(countdown({{local/warp_cooldown}}, \"isRunning\") == 1, \"❄️ Final Stabilization (Stage 3)\", \"✨ Standby (Ready)\"))))}} |\n| **Lock Duration** | {{countdown({{local/warp_cooldown}}, \"timer\")}} |\n| **Core Charge** | {{countdown({{local/warp_cooldown}}, \"percent\")}}% |\n| **Time Remaining** | {{countdown({{local/warp_cooldown}}, \"words\")}} |\n\n[block3:Controls are locked during jump cooldown. Re-engagement is prohibited until thrusters reach 100%.]\n\n#### :ph-cpu|22|@accent: Nav-Computer Feed\n- **Quantum foam flux:** 0.042 mN\n- **Relativistic dilation:** 1.0004c\n- **Sub-light barrier:** Stable nominal"
+      },
+      "bindings": {}
+    },
+    "switch_p19_warp_reset": {
+      "type": "switch",
+      "overrides": {
+        "x": 20,
+        "y": 737,
+        "width": 360,
+        "height": 63,
+        "page": "19",
+        "buttonLabel": "EMERGENCY COOLDOWN OVERRIDE",
+        "buttonLabelPosition": "inside_right",
+        "actionType": "topic",
+        "outputTopic": "local/warp_cooldown",
+        "onPayload": "0s",
+        "mode": "push",
+        "style": "button",
+        "metaName": "Button - Warp Override",
+        "container": {
+          "show": false
+        },
+        "padding": 0,
+        "btnRadius": 10,
+        "icons": {
+          "on": {
+            "source": "phosphor",
+            "builtin": "ph-arrow-counter-clockwise",
+            "weight": "bold",
+            "size": 22
+          }
+        }
+      },
+      "bindings": {}
+    },
+    "switch_p19_pizza_btn": {
+      "type": "switch",
+      "overrides": {
+        "x": 405,
+        "y": 110,
+        "width": 172,
+        "height": 85,
+        "page": "19",
+        "buttonLabel": "PIZZA BAKE (20s)",
+        "buttonLabelPosition": "inside_bottom",
+        "actionType": "topic",
+        "outputTopic": "local/oven_timer",
+        "onPayload": "20s",
+        "mode": "push",
+        "style": "button",
+        "metaName": "Button - Bake Pizza",
+        "container": {
+          "show": false
+        },
+        "padding": 0,
+        "btnRadius": 12,
+        "icons": {
+          "on": {
+            "source": "phosphor",
+            "builtin": "ph-pizza",
+            "weight": "fill",
+            "size": 34
+          }
+        }
+      },
+      "bindings": {}
+    },
+    "switch_p19_popcorn_btn": {
+      "type": "switch",
+      "overrides": {
+        "x": 593,
+        "y": 110,
+        "width": 172,
+        "height": 85,
+        "page": "19",
+        "buttonLabel": "POPCORN (10s)",
+        "buttonLabelPosition": "inside_bottom",
+        "actionType": "topic",
+        "outputTopic": "local/oven_timer",
+        "onPayload": "10s",
+        "mode": "push",
+        "style": "button",
+        "metaName": "Button - Popcorn",
+        "container": {
+          "show": false
+        },
+        "padding": 0,
+        "btnRadius": 12,
+        "icons": {
+          "on": {
+            "source": "phosphor",
+            "builtin": "ph-popcorn",
+            "weight": "fill",
+            "size": 34
+          }
+        }
+      },
+      "bindings": {}
+    },
+    "gauge_p19_oven_gauge": {
+      "type": "gauge",
+      "overrides": {
+        "x": 405,
+        "y": 210,
+        "width": 172,
+        "height": 150,
+        "page": "19",
+        "label": "Oven Bake",
+        "unit": "%",
+        "min": 0,
+        "max": 100,
+        "value": 0,
+        "showIcon": false,
+        "barType": "round",
+        "trackThickness": 16,
+        "metaName": "Gauge - Oven Progress",
+        "value_bind_formula": "if(value == \"0s\", 0, if(countdown(value, \"isRunning\") == 1, countdown(value, \"percent\"), 0))"
+      },
+      "bindings": {
+        "value": "local/oven_timer"
+      }
+    },
+    "text_p19_oven_status": {
+      "type": "text",
+      "overrides": {
+        "x": 593,
+        "y": 210,
+        "width": 172,
+        "height": 150,
+        "page": "19",
+        "metaName": "Text - Oven Status",
+        "textVerticalAlign": "top",
+        "text": "### :ph-fire|24|@accent: Oven Bake\n\n**Status:** {{if(countdown({{local/oven_timer}}, \"isDone\") == 1, \"🔔 Ding! Crispy & Ready!\", if(countdown({{local/oven_timer}}, \"seconds\") > 12, \"🔥 Rapid Searing (Stage 1)\", if(countdown({{local/oven_timer}}, \"seconds\") > 4, \"🧀 Melting Toppings (Stage 2)\", if(countdown({{local/oven_timer}}, \"isRunning\") == 1, \"✨ Crust Crisping (Stage 3)\", \"Cold Standby\"))))}}\n\n**Clock:** {{countdown({{local/oven_timer}}, \"timer\")}}\n\n[block1:Pre-heated 220°C]"
+      },
+      "bindings": {}
+    },
+    "switch_p19_espresso_btn": {
+      "type": "switch",
+      "overrides": {
+        "x": 405,
+        "y": 375,
+        "width": 172,
+        "height": 68,
+        "page": "19",
+        "buttonLabel": "START BREW (30s)",
+        "buttonLabelPosition": "inside_bottom",
+        "actionType": "topic",
+        "outputTopic": "local/espresso_timer",
+        "onPayload": "30s",
+        "mode": "push",
+        "style": "button",
+        "metaName": "Button - Espresso Start",
+        "container": {
+          "show": false
+        },
+        "padding": 0,
+        "btnRadius": 12,
+        "icons": {
+          "on": {
+            "source": "phosphor",
+            "builtin": "ph-coffee",
+            "weight": "fill",
+            "size": 26
+          }
+        }
+      },
+      "bindings": {}
+    },
+    "switch_p19_espresso_stop": {
+      "type": "switch",
+      "overrides": {
+        "x": 593,
+        "y": 375,
+        "width": 172,
+        "height": 68,
+        "page": "19",
+        "buttonLabel": "STOP / RESET",
+        "buttonLabelPosition": "inside_bottom",
+        "actionType": "topic",
+        "outputTopic": "local/espresso_timer",
+        "onPayload": "0s",
+        "mode": "push",
+        "style": "button",
+        "metaName": "Button - Espresso Cancel",
+        "container": {
+          "show": false
+        },
+        "padding": 0,
+        "btnRadius": 12,
+        "icons": {
+          "on": {
+            "source": "phosphor",
+            "builtin": "ph-x-circle",
+            "weight": "bold",
+            "size": 24
+          }
+        }
+      },
+      "bindings": {}
+    },
+    "slider_p19_espresso_slider": {
+      "type": "slider",
+      "overrides": {
+        "x": 405,
+        "y": 452,
+        "width": 360,
+        "height": 44,
+        "page": "19",
+        "metaName": "Slider - Brew Progress",
+        "labelLocation": "none",
+        "unit": "%",
+        "min": 0,
+        "max": 100,
+        "value": 0,
+        "showVal": true,
+        "vertical": false,
+        "valueLocation": "right",
+        "value_bind_formula": "if(value == \"0s\", 0, if(countdown(value, \"isRunning\") == 1, countdown(value, \"percent\"), 0))"
+      },
+      "bindings": {
+        "value": "local/espresso_timer"
+      }
+    },
+    "text_p19_espresso_status": {
+      "type": "text",
+      "overrides": {
+        "x": 405,
+        "y": 506,
+        "width": 360,
+        "height": 294,
+        "page": "19",
+        "metaName": "Text - Espresso Status",
+        "textVerticalAlign": "top",
+        "text": "### :ph-coffee|26|@accent: Espresso Extraction Lab\n\n| Extraction Metric | Live Telemetry |\n| :--- | :--- |\n| **Brew State** | {{if(countdown({{local/espresso_timer}}, \"isDone\") == 1, \"☕ Crema Locked • Ready!\", if(countdown({{local/espresso_timer}}, \"seconds\") > 22, \"💧 Pre-Infusion Bloom (Stage 1)\", if(countdown({{local/espresso_timer}}, \"seconds\") > 8, \"⚡ 9-Bar Extraction (Stage 2)\", if(countdown({{local/espresso_timer}}, \"isRunning\") == 1, \"✨ Golden Crema Flow (Stage 3)\", \"Portafilter Locked\"))))}} |\n| **Shot Clock** | {{countdown({{local/espresso_timer}}, \"timer\")}} |\n| **Extraction Bar** | {{countdown({{local/espresso_timer}}, \"percent\")}}% |\n| **Remaining Time** | {{countdown({{local/espresso_timer}}, \"words\")}} |\n\n[block2:Pump: 9.0 bar • Temp: 93.5°C • Crema lock]"
+      },
+      "bindings": {}
+    },
+    "text_p19_deep_space": {
+      "type": "text",
+      "overrides": {
+        "x": 790,
+        "y": 110,
+        "width": 370,
+        "height": 690,
+        "page": "19",
+        "metaName": "Text - Deep Space Events",
+        "textVerticalAlign": "top",
+        "text": "# :ph-planet|32|@accent: Mission Horizon\n*Confirmed astronomical & deep-space exploration milestones*\n\n---\n\n### :ph-moon-stars|24|@accent: Artemis III Crewed Landing\n**Target:** 2028-09-01 &nbsp;•&nbsp; **Remaining:** {{countdown(\"2028-09-01\", \"compact\")}}\n[block1:NASA astronauts touch down on the lunar south pole.]\n\n### :ph-meteor|24|@danger: Asteroid Apophis Flyby\n**Target:** 2029-04-13 &nbsp;•&nbsp; **Remaining:** {{countdown(\"2029-04-13 21:46\", \"compact\")}}\n[block3:Passes within 31,600 km of Earth: closer than TV satellites!]\n\n### :ph-broadcast|24|@warning: Voyager 1 RTG Depletion\n**Target:** 2030-01-01 &nbsp;•&nbsp; **Remaining:** {{countdown(\"2030-01-01\", \"days\")}} days\n[block2:Humanity's most distant explorer enters perpetual silence.]\n\n### :ph-sun|24|@accent: Total Solar Eclipse\n**Target:** 2027-08-02 &nbsp;•&nbsp; **Remaining:** {{countdown(\"2027-08-02 10:00\", \"compact\")}}\n[block1:Total darkness over Spain, Gibraltar, and North Africa.]\n\n[block2:Apophis sub-GEO Earth flyby in words: {{countdown(\"2029-04-13 21:46\", \"words\")}}]"
       },
       "bindings": {}
     }

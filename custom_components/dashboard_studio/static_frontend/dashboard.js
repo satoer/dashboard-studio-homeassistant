@@ -8665,6 +8665,8 @@ const Dashboard = {
                     }
                 }
                 this._flushDirtyWidgets(true);
+                this._syncCountdownHeartbeatTimer();
+                this._tickCountdownWidgets();
                 if (this._isResponsiveLayoutMode && this._isResponsiveLayoutMode()) {
                     this._requestResponsiveReflow();
                 }
@@ -13954,7 +13956,83 @@ const Dashboard = {
             if (this.loopCallbacks.size > 0 && !this._loopRafId) {
                 this._loopRafId = requestAnimationFrame(() => this.loop());
             }
+            this._tickCountdownWidgets();
         }
+        this._syncCountdownHeartbeatTimer();
+    },
+
+    _countdownWidgetIds: new Set(),
+    _countdownHeartbeatTimer: null,
+    _countdownHeartbeatUsesWorker: false,
+
+    registerCountdownWidget: function (id) {
+        if (!id) return;
+        this._countdownWidgetIds.add(String(id));
+        this._syncCountdownHeartbeatTimer();
+    },
+
+    unregisterCountdownWidget: function (id) {
+        if (!id) return;
+        this._countdownWidgetIds.delete(String(id));
+        this._syncCountdownHeartbeatTimer();
+    },
+
+    _syncCountdownHeartbeatTimer: function () {
+        const shouldRun = !this._pageHidden && this._countdownWidgetIds && this._countdownWidgetIds.size > 0;
+        if (!shouldRun) {
+            if (this._countdownHeartbeatTimer !== null) {
+                if (this._countdownHeartbeatUsesWorker && typeof WorkerTimer !== 'undefined' && WorkerTimer && typeof WorkerTimer.clearInterval === 'function') {
+                    WorkerTimer.clearInterval(this._countdownHeartbeatTimer);
+                } else {
+                    clearInterval(this._countdownHeartbeatTimer);
+                }
+                this._countdownHeartbeatTimer = null;
+                this._countdownHeartbeatUsesWorker = false;
+            }
+            return;
+        }
+        if (this._countdownHeartbeatTimer !== null) return;
+        const self = this;
+        const tickFn = function () {
+            self._tickCountdownWidgets();
+        };
+        if (typeof WorkerTimer !== 'undefined' && WorkerTimer && typeof WorkerTimer.setInterval === 'function') {
+            this._countdownHeartbeatUsesWorker = true;
+            this._countdownHeartbeatTimer = WorkerTimer.setInterval(tickFn, 1000);
+        } else {
+            this._countdownHeartbeatUsesWorker = false;
+            this._countdownHeartbeatTimer = setInterval(tickFn, 1000);
+        }
+    },
+
+    _tickCountdownWidgets: function () {
+        if (this._pageHidden || !this._countdownWidgetIds || this._countdownWidgetIds.size === 0) {
+            this._syncCountdownHeartbeatTimer();
+            return;
+        }
+        const ids = Array.from(this._countdownWidgetIds);
+        for (let i = 0; i < ids.length; i++) {
+            const wid = ids[i];
+            const w = this.widgets && this.widgets[wid];
+            if (!w) {
+                this._countdownWidgetIds.delete(wid);
+                continue;
+            }
+            const onPage = (typeof this._widgetCoversActivePage === 'function')
+                ? this._widgetCoversActivePage(wid, w)
+                : true;
+            if (!onPage) continue;
+            try {
+                if (typeof w.tickCountdowns === 'function') {
+                    w.tickCountdowns();
+                } else {
+                    w.render();
+                }
+            } catch (err) {
+                console.error('[Dashboard] Countdown tick failed for', wid, err);
+            }
+        }
+        this._syncCountdownHeartbeatTimer();
     },
 
     registerTicker: function (id, cb) { 

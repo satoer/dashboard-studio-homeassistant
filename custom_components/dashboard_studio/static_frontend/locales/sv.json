@@ -1,0 +1,77 @@
+{
+  "code": "sv",
+  "name": "Svenska (Swedish)",
+  "timeFormat": "24h",
+  "dateFormat": "YYYY-MM-DD",
+  "firstDayOfWeek": "monday",
+  "units": {
+    "y": "år",
+    "d": "d",
+    "h": "t",
+    "m": "m",
+    "s": "s",
+    "year": "år",
+    "years": "år",
+    "day": "dag",
+    "days": "dagar",
+    "hour": "timme",
+    "hours": "timmar",
+    "minute": "minut",
+    "minutes": "minuter",
+    "second": "sekund",
+    "seconds": "sekunder",
+    "and": "och",
+    "done": ""
+  },
+  "calendar": {
+    "weekdays": [
+      "Söndag",
+      "Måndag",
+      "Tisdag",
+      "Onsdag",
+      "Torsdag",
+      "Fredag",
+      "Lördag"
+    ],
+    "weekdaysShort": [
+      "Sön",
+      "Mån",
+      "Tis",
+      "Ons",
+      "Tor",
+      "Fre",
+      "Lör"
+    ],
+    "months": [
+      "Januari",
+      "Februari",
+      "Mars",
+      "April",
+      "Maj",
+      "Juni",
+      "Juli",
+      "Augusti",
+      "September",
+      "Oktober",
+      "November",
+      "December"
+    ],
+    "monthsShort": [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "Maj",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Okt",
+      "Nov",
+      "Dec"
+    ],
+    "weekPrefix": "Vecka",
+    "am": "AM",
+    "pm": "PM"
+  }
+}

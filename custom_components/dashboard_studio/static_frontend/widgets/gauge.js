@@ -2516,6 +2516,7 @@ class GaugeWidget extends BaseWidget {
         const hitKeys = this._bindingKeysForTopic(topic);
         if (hitKeys.length !== 1 || hitKeys[0] !== 'value') return false;
         if (this.usesFormulaTopic(topic, { value: true })) return false;
+        if (typeof this._hasPropertyFormulaCountdown === 'function' && this._hasPropertyFormulaCountdown()) return false;
 
         const c = this.config;
         if (typeof DashboardAudio !== 'undefined') {

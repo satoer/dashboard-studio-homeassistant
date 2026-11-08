@@ -1,0 +1,77 @@
+{
+  "code": "da",
+  "name": "Dansk (Danish)",
+  "timeFormat": "24h",
+  "dateFormat": "DD-MM-YYYY",
+  "firstDayOfWeek": "monday",
+  "units": {
+    "y": "år",
+    "d": "d",
+    "h": "t",
+    "m": "m",
+    "s": "s",
+    "year": "år",
+    "years": "år",
+    "day": "dag",
+    "days": "dage",
+    "hour": "time",
+    "hours": "timer",
+    "minute": "minut",
+    "minutes": "minutter",
+    "second": "sekund",
+    "seconds": "sekunder",
+    "and": "og",
+    "done": ""
+  },
+  "calendar": {
+    "weekdays": [
+      "Søndag",
+      "Mandag",
+      "Tirsdag",
+      "Onsdag",
+      "Torsdag",
+      "Fredag",
+      "Lørdag"
+    ],
+    "weekdaysShort": [
+      "Søn",
+      "Man",
+      "Tir",
+      "Ons",
+      "Tor",
+      "Fre",
+      "Lør"
+    ],
+    "months": [
+      "Januar",
+      "Februar",
+      "Marts",
+      "April",
+      "Maj",
+      "Juni",
+      "Juli",
+      "August",
+      "September",
+      "Oktober",
+      "November",
+      "December"
+    ],
+    "monthsShort": [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "Maj",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Okt",
+      "Nov",
+      "Dec"
+    ],
+    "weekPrefix": "Uge",
+    "am": "AM",
+    "pm": "PM"
+  }
+}

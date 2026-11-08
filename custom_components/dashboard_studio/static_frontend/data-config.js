@@ -14,6 +14,1647 @@ window.BASE_FONTS = [
 // Temporarily keep this for backward compatibility until editor.js is updated
 window.AVAILABLE_FONTS = [...window.BASE_FONTS];
 
+// CENTRAL LOCALIZATION & REGIONAL HELPER
+window.DashboardI18n = (function () {
+    var PRESETS_STORAGE_KEY = 'ds_custom_locale_presets';
+
+    var BUILTIN_LOCALES = {
+        "en": {
+                "code": "en",
+                "name": "English",
+                "units": {
+                        "y": "y",
+                        "d": "d",
+                        "h": "h",
+                        "m": "m",
+                        "s": "s",
+                        "year": "year",
+                        "years": "years",
+                        "day": "day",
+                        "days": "days",
+                        "hour": "hour",
+                        "hours": "hours",
+                        "minute": "minute",
+                        "minutes": "minutes",
+                        "second": "second",
+                        "seconds": "seconds",
+                        "and": "and",
+                        "done": ""
+                },
+                "calendar": {
+                        "weekdays": [
+                                "Sunday",
+                                "Monday",
+                                "Tuesday",
+                                "Wednesday",
+                                "Thursday",
+                                "Friday",
+                                "Saturday"
+                        ],
+                        "weekdaysShort": [
+                                "Sun",
+                                "Mon",
+                                "Tue",
+                                "Wed",
+                                "Thu",
+                                "Fri",
+                                "Sat"
+                        ],
+                        "months": [
+                                "January",
+                                "February",
+                                "March",
+                                "April",
+                                "May",
+                                "June",
+                                "July",
+                                "August",
+                                "September",
+                                "October",
+                                "November",
+                                "December"
+                        ],
+                        "monthsShort": [
+                                "Jan",
+                                "Feb",
+                                "Mar",
+                                "Apr",
+                                "May",
+                                "Jun",
+                                "Jul",
+                                "Aug",
+                                "Sep",
+                                "Oct",
+                                "Nov",
+                                "Dec"
+                        ],
+                        "weekPrefix": "Week",
+                        "am": "AM",
+                        "pm": "PM"
+                }
+        },
+        "nl": {
+                "code": "nl",
+                "name": "Nederlands (Dutch)",
+                "units": {
+                        "y": "j",
+                        "d": "d",
+                        "h": "u",
+                        "m": "m",
+                        "s": "s",
+                        "year": "jaar",
+                        "years": "jaar",
+                        "day": "dag",
+                        "days": "dagen",
+                        "hour": "uur",
+                        "hours": "uur",
+                        "minute": "minuut",
+                        "minutes": "minuten",
+                        "second": "seconde",
+                        "seconds": "seconden",
+                        "and": "en",
+                        "done": ""
+                },
+                "calendar": {
+                        "weekdays": [
+                                "Zondag",
+                                "Maandag",
+                                "Dinsdag",
+                                "Woensdag",
+                                "Donderdag",
+                                "Vrijdag",
+                                "Zaterdag"
+                        ],
+                        "weekdaysShort": [
+                                "Zo",
+                                "Ma",
+                                "Di",
+                                "Wo",
+                                "Do",
+                                "Vr",
+                                "Za"
+                        ],
+                        "months": [
+                                "Januari",
+                                "Februari",
+                                "Maart",
+                                "April",
+                                "Mei",
+                                "Juni",
+                                "Juli",
+                                "Augustus",
+                                "September",
+                                "Oktober",
+                                "November",
+                                "December"
+                        ],
+                        "monthsShort": [
+                                "Jan",
+                                "Feb",
+                                "Mrt",
+                                "Apr",
+                                "Mei",
+                                "Jun",
+                                "Jul",
+                                "Aug",
+                                "Sep",
+                                "Okt",
+                                "Nov",
+                                "Dec"
+                        ],
+                        "weekPrefix": "Week",
+                        "am": "AM",
+                        "pm": "PM"
+                }
+        },
+        "de": {
+                "code": "de",
+                "name": "Deutsch (German)",
+                "units": {
+                        "y": "j",
+                        "d": "T",
+                        "h": "Std",
+                        "m": "Min",
+                        "s": "Sek",
+                        "year": "Jahr",
+                        "years": "Jahre",
+                        "day": "Tag",
+                        "days": "Tage",
+                        "hour": "Stunde",
+                        "hours": "Stunden",
+                        "minute": "Minute",
+                        "minutes": "Minuten",
+                        "second": "Sekunde",
+                        "seconds": "Sekunden",
+                        "and": "und",
+                        "done": ""
+                },
+                "calendar": {
+                        "weekdays": [
+                                "Sonntag",
+                                "Montag",
+                                "Dienstag",
+                                "Mittwoch",
+                                "Donnerstag",
+                                "Freitag",
+                                "Samstag"
+                        ],
+                        "weekdaysShort": [
+                                "So",
+                                "Mo",
+                                "Di",
+                                "Mi",
+                                "Do",
+                                "Fr",
+                                "Sa"
+                        ],
+                        "months": [
+                                "Januar",
+                                "Februar",
+                                "März",
+                                "April",
+                                "Mai",
+                                "Juni",
+                                "Juli",
+                                "August",
+                                "September",
+                                "Oktober",
+                                "November",
+                                "Dezember"
+                        ],
+                        "monthsShort": [
+                                "Jan",
+                                "Feb",
+                                "Mär",
+                                "Apr",
+                                "Mai",
+                                "Jun",
+                                "Jul",
+                                "Aug",
+                                "Sep",
+                                "Okt",
+                                "Nov",
+                                "Dez"
+                        ],
+                        "weekPrefix": "KW",
+                        "am": "AM",
+                        "pm": "PM"
+                }
+        },
+        "fr": {
+                "code": "fr",
+                "name": "Français (French)",
+                "units": {
+                        "y": "a",
+                        "d": "j",
+                        "h": "h",
+                        "m": "m",
+                        "s": "s",
+                        "year": "an",
+                        "years": "ans",
+                        "day": "jour",
+                        "days": "jours",
+                        "hour": "heure",
+                        "hours": "heures",
+                        "minute": "minute",
+                        "minutes": "minutes",
+                        "second": "seconde",
+                        "seconds": "secondes",
+                        "and": "et",
+                        "done": ""
+                },
+                "calendar": {
+                        "weekdays": [
+                                "Dimanche",
+                                "Lundi",
+                                "Mardi",
+                                "Mercredi",
+                                "Jeudi",
+                                "Vendredi",
+                                "Samedi"
+                        ],
+                        "weekdaysShort": [
+                                "Dim",
+                                "Lun",
+                                "Mar",
+                                "Mer",
+                                "Jeu",
+                                "Ven",
+                                "Sam"
+                        ],
+                        "months": [
+                                "Janvier",
+                                "Février",
+                                "Mars",
+                                "Avril",
+                                "Mai",
+                                "Juin",
+                                "Juillet",
+                                "Août",
+                                "Septembre",
+                                "Octobre",
+                                "Novembre",
+                                "Décembre"
+                        ],
+                        "monthsShort": [
+                                "Jan",
+                                "Fév",
+                                "Mar",
+                                "Avr",
+                                "Mai",
+                                "Juin",
+                                "Juil",
+                                "Août",
+                                "Sep",
+                                "Oct",
+                                "Nov",
+                                "Déc"
+                        ],
+                        "weekPrefix": "Semaine",
+                        "am": "AM",
+                        "pm": "PM"
+                }
+        },
+        "es": {
+                "code": "es",
+                "name": "Español (Spanish)",
+                "units": {
+                        "y": "a",
+                        "d": "d",
+                        "h": "h",
+                        "m": "m",
+                        "s": "s",
+                        "year": "año",
+                        "years": "años",
+                        "day": "día",
+                        "days": "días",
+                        "hour": "hora",
+                        "hours": "horas",
+                        "minute": "minuto",
+                        "minutes": "minutos",
+                        "second": "segundo",
+                        "seconds": "segundos",
+                        "and": "y",
+                        "done": ""
+                },
+                "calendar": {
+                        "weekdays": [
+                                "Domingo",
+                                "Lunes",
+                                "Martes",
+                                "Miércoles",
+                                "Jueves",
+                                "Viernes",
+                                "Sábado"
+                        ],
+                        "weekdaysShort": [
+                                "Dom",
+                                "Lun",
+                                "Mar",
+                                "Mié",
+                                "Jue",
+                                "Vie",
+                                "Sáb"
+                        ],
+                        "months": [
+                                "Enero",
+                                "Febrero",
+                                "Marzo",
+                                "Abril",
+                                "Mayo",
+                                "Junio",
+                                "Julio",
+                                "Agosto",
+                                "Septiembre",
+                                "Octubre",
+                                "Noviembre",
+                                "Diciembre"
+                        ],
+                        "monthsShort": [
+                                "Ene",
+                                "Feb",
+                                "Mar",
+                                "Abr",
+                                "May",
+                                "Jun",
+                                "Jul",
+                                "Ago",
+                                "Sep",
+                                "Oct",
+                                "Nov",
+                                "Dic"
+                        ],
+                        "weekPrefix": "Semana",
+                        "am": "AM",
+                        "pm": "PM"
+                }
+        },
+        "it": {
+                "code": "it",
+                "name": "Italiano (Italian)",
+                "units": {
+                        "y": "a",
+                        "d": "g",
+                        "h": "h",
+                        "m": "m",
+                        "s": "s",
+                        "year": "anno",
+                        "years": "anni",
+                        "day": "giorno",
+                        "days": "giorni",
+                        "hour": "ora",
+                        "hours": "ore",
+                        "minute": "minuto",
+                        "minutes": "minuti",
+                        "second": "secondo",
+                        "seconds": "secondi",
+                        "and": "e",
+                        "done": ""
+                },
+                "calendar": {
+                        "weekdays": [
+                                "Domenica",
+                                "Lunedì",
+                                "Martedì",
+                                "Mercoledì",
+                                "Giovedì",
+                                "Venerdì",
+                                "Sabato"
+                        ],
+                        "weekdaysShort": [
+                                "Dom",
+                                "Lun",
+                                "Mar",
+                                "Mer",
+                                "Gio",
+                                "Ven",
+                                "Sab"
+                        ],
+                        "months": [
+                                "Gennaio",
+                                "Febbraio",
+                                "Marzo",
+                                "Aprile",
+                                "Maggio",
+                                "Giugno",
+                                "Luglio",
+                                "Agosto",
+                                "Settembre",
+                                "Ottobre",
+                                "Novembre",
+                                "Dicembre"
+                        ],
+                        "monthsShort": [
+                                "Gen",
+                                "Feb",
+                                "Mar",
+                                "Apr",
+                                "Mag",
+                                "Giu",
+                                "Lug",
+                                "Ago",
+                                "Set",
+                                "Ott",
+                                "Nov",
+                                "Dic"
+                        ],
+                        "weekPrefix": "Settimana",
+                        "am": "AM",
+                        "pm": "PM"
+                }
+        },
+        "da": {
+                "code": "da",
+                "name": "Dansk (Danish)",
+                "units": {
+                        "y": "år",
+                        "d": "d",
+                        "h": "t",
+                        "m": "m",
+                        "s": "s",
+                        "year": "år",
+                        "years": "år",
+                        "day": "dag",
+                        "days": "dage",
+                        "hour": "time",
+                        "hours": "timer",
+                        "minute": "minut",
+                        "minutes": "minutter",
+                        "second": "sekund",
+                        "seconds": "sekunder",
+                        "and": "og",
+                        "done": ""
+                },
+                "calendar": {
+                        "weekdays": [
+                                "Søndag",
+                                "Mandag",
+                                "Tirsdag",
+                                "Onsdag",
+                                "Torsdag",
+                                "Fredag",
+                                "Lørdag"
+                        ],
+                        "weekdaysShort": [
+                                "Søn",
+                                "Man",
+                                "Tir",
+                                "Ons",
+                                "Tor",
+                                "Fre",
+                                "Lør"
+                        ],
+                        "months": [
+                                "Januar",
+                                "Februar",
+                                "Marts",
+                                "April",
+                                "Maj",
+                                "Juni",
+                                "Juli",
+                                "August",
+                                "September",
+                                "Oktober",
+                                "November",
+                                "December"
+                        ],
+                        "monthsShort": [
+                                "Jan",
+                                "Feb",
+                                "Mar",
+                                "Apr",
+                                "Maj",
+                                "Jun",
+                                "Jul",
+                                "Aug",
+                                "Sep",
+                                "Okt",
+                                "Nov",
+                                "Dec"
+                        ],
+                        "weekPrefix": "Uge",
+                        "am": "AM",
+                        "pm": "PM"
+                }
+        },
+        "sv": {
+                "code": "sv",
+                "name": "Svenska (Swedish)",
+                "units": {
+                        "y": "år",
+                        "d": "d",
+                        "h": "t",
+                        "m": "m",
+                        "s": "s",
+                        "year": "år",
+                        "years": "år",
+                        "day": "dag",
+                        "days": "dagar",
+                        "hour": "timme",
+                        "hours": "timmar",
+                        "minute": "minut",
+                        "minutes": "minuter",
+                        "second": "sekund",
+                        "seconds": "sekunder",
+                        "and": "och",
+                        "done": ""
+                },
+                "calendar": {
+                        "weekdays": [
+                                "Söndag",
+                                "Måndag",
+                                "Tisdag",
+                                "Onsdag",
+                                "Torsdag",
+                                "Fredag",
+                                "Lördag"
+                        ],
+                        "weekdaysShort": [
+                                "Sön",
+                                "Mån",
+                                "Tis",
+                                "Ons",
+                                "Tor",
+                                "Fre",
+                                "Lör"
+                        ],
+                        "months": [
+                                "Januari",
+                                "Februari",
+                                "Mars",
+                                "April",
+                                "Maj",
+                                "Juni",
+                                "Juli",
+                                "Augusti",
+                                "September",
+                                "Oktober",
+                                "November",
+                                "December"
+                        ],
+                        "monthsShort": [
+                                "Jan",
+                                "Feb",
+                                "Mar",
+                                "Apr",
+                                "Maj",
+                                "Jun",
+                                "Jul",
+                                "Aug",
+                                "Sep",
+                                "Okt",
+                                "Nov",
+                                "Dec"
+                        ],
+                        "weekPrefix": "Vecka",
+                        "am": "AM",
+                        "pm": "PM"
+                }
+        },
+        "no": {
+                "code": "no",
+                "name": "Norsk (Norwegian)",
+                "units": {
+                        "y": "år",
+                        "d": "d",
+                        "h": "t",
+                        "m": "m",
+                        "s": "s",
+                        "year": "år",
+                        "years": "år",
+                        "day": "dag",
+                        "days": "dager",
+                        "hour": "time",
+                        "hours": "timer",
+                        "minute": "minutt",
+                        "minutes": "minutter",
+                        "second": "sekund",
+                        "seconds": "sekunder",
+                        "and": "og",
+                        "done": ""
+                },
+                "calendar": {
+                        "weekdays": [
+                                "Søndag",
+                                "Mandag",
+                                "Tirsdag",
+                                "Onsdag",
+                                "Torsdag",
+                                "Fredag",
+                                "Lørdag"
+                        ],
+                        "weekdaysShort": [
+                                "Søn",
+                                "Man",
+                                "Tir",
+                                "Ons",
+                                "Tor",
+                                "Fre",
+                                "Lør"
+                        ],
+                        "months": [
+                                "Januar",
+                                "Februar",
+                                "Mars",
+                                "April",
+                                "Mai",
+                                "Juni",
+                                "Juli",
+                                "August",
+                                "September",
+                                "Oktober",
+                                "November",
+                                "Desember"
+                        ],
+                        "monthsShort": [
+                                "Jan",
+                                "Feb",
+                                "Mar",
+                                "Apr",
+                                "Mai",
+                                "Jun",
+                                "Jul",
+                                "Aug",
+                                "Sep",
+                                "Okt",
+                                "Nov",
+                                "Des"
+                        ],
+                        "weekPrefix": "Uke",
+                        "am": "AM",
+                        "pm": "PM"
+                }
+        },
+        "pl": {
+                "code": "pl",
+                "name": "Polski (Polish)",
+                "units": {
+                        "y": "r",
+                        "d": "d",
+                        "h": "godz",
+                        "m": "min",
+                        "s": "sek",
+                        "year": "rok",
+                        "years": "lat",
+                        "day": "dzień",
+                        "days": "dni",
+                        "hour": "godzina",
+                        "hours": "godzin",
+                        "minute": "minuta",
+                        "minutes": "minut",
+                        "second": "sekunda",
+                        "seconds": "sekund",
+                        "and": "i",
+                        "done": ""
+                },
+                "calendar": {
+                        "weekdays": [
+                                "Niedziela",
+                                "Poniedziałek",
+                                "Wtorek",
+                                "Środa",
+                                "Czwartek",
+                                "Piątek",
+                                "Sobota"
+                        ],
+                        "weekdaysShort": [
+                                "Nie",
+                                "Pon",
+                                "Wto",
+                                "Śro",
+                                "Czw",
+                                "Pią",
+                                "Sob"
+                        ],
+                        "months": [
+                                "Styczeń",
+                                "Luty",
+                                "Marzec",
+                                "Kwiecień",
+                                "Maj",
+                                "Czerwiec",
+                                "Lipiec",
+                                "Sierpień",
+                                "Wrzesień",
+                                "Październik",
+                                "Listopad",
+                                "Grudzień"
+                        ],
+                        "monthsShort": [
+                                "Sty",
+                                "Lut",
+                                "Mar",
+                                "Kwi",
+                                "Maj",
+                                "Cze",
+                                "Lip",
+                                "Sie",
+                                "Wrz",
+                                "Paź",
+                                "Lis",
+                                "Gru"
+                        ],
+                        "weekPrefix": "Tydzień",
+                        "am": "AM",
+                        "pm": "PM"
+                }
+        },
+        "ru": {
+                "code": "ru",
+                "name": "Русский (Russian)",
+                "units": {
+                        "y": "г",
+                        "d": "д",
+                        "h": "ч",
+                        "m": "м",
+                        "s": "с",
+                        "year": "год",
+                        "years": "лет",
+                        "day": "день",
+                        "days": "дней",
+                        "hour": "час",
+                        "hours": "часов",
+                        "minute": "минута",
+                        "minutes": "минут",
+                        "second": "секунда",
+                        "seconds": "секунд",
+                        "and": "и",
+                        "done": ""
+                },
+                "calendar": {
+                        "weekdays": [
+                                "Воскресенье",
+                                "Понедельник",
+                                "Вторник",
+                                "Среда",
+                                "Четверг",
+                                "Пятница",
+                                "Суббота"
+                        ],
+                        "weekdaysShort": [
+                                "Вс",
+                                "Пн",
+                                "Вт",
+                                "Ср",
+                                "Чт",
+                                "Пт",
+                                "Сб"
+                        ],
+                        "months": [
+                                "Январь",
+                                "Февраль",
+                                "Март",
+                                "Апрель",
+                                "Май",
+                                "Июнь",
+                                "Июль",
+                                "Август",
+                                "Сентябрь",
+                                "Октябрь",
+                                "Ноябрь",
+                                "Декабрь"
+                        ],
+                        "monthsShort": [
+                                "Янв",
+                                "Фев",
+                                "Мар",
+                                "Апр",
+                                "Май",
+                                "Июн",
+                                "Июл",
+                                "Авг",
+                                "Сен",
+                                "Окт",
+                                "Ноя",
+                                "Дек"
+                        ],
+                        "weekPrefix": "Неделя",
+                        "am": "AM",
+                        "pm": "PM"
+                }
+        },
+        "ko": {
+                "code": "ko",
+                "name": "한국어 (Korean)",
+                "units": {
+                        "y": "년",
+                        "d": "일",
+                        "h": "시간",
+                        "m": "분",
+                        "s": "초",
+                        "year": "년",
+                        "years": "년",
+                        "day": "일",
+                        "days": "일",
+                        "hour": "시간",
+                        "hours": "시간",
+                        "minute": "분",
+                        "minutes": "분",
+                        "second": "초",
+                        "seconds": "초",
+                        "and": "",
+                        "done": ""
+                },
+                "calendar": {
+                        "weekdays": [
+                                "일요일",
+                                "월요일",
+                                "화요일",
+                                "수요일",
+                                "목요일",
+                                "금요일",
+                                "토요일"
+                        ],
+                        "weekdaysShort": [
+                                "일",
+                                "월",
+                                "화",
+                                "수",
+                                "목",
+                                "금",
+                                "토"
+                        ],
+                        "months": [
+                                "1월",
+                                "2월",
+                                "3월",
+                                "4월",
+                                "5월",
+                                "6월",
+                                "7월",
+                                "8월",
+                                "9월",
+                                "10월",
+                                "11월",
+                                "12월"
+                        ],
+                        "monthsShort": [
+                                "1월",
+                                "2월",
+                                "3월",
+                                "4월",
+                                "5월",
+                                "6월",
+                                "7월",
+                                "8월",
+                                "9월",
+                                "10월",
+                                "11월",
+                                "12월"
+                        ],
+                        "weekPrefix": "주차",
+                        "am": "오전",
+                        "pm": "오후"
+                }
+        },
+        "ar": {
+                "code": "ar",
+                "name": "العربية (Arabic)",
+                "units": {
+                        "y": "س",
+                        "d": "ي",
+                        "h": "س",
+                        "m": "د",
+                        "s": "ث",
+                        "year": "سنة",
+                        "years": "سنوات",
+                        "day": "يوم",
+                        "days": "أيام",
+                        "hour": "ساعة",
+                        "hours": "ساعات",
+                        "minute": "دقيقة",
+                        "minutes": "دقائق",
+                        "second": "ثانية",
+                        "seconds": "ثوان",
+                        "and": "و",
+                        "done": ""
+                },
+                "calendar": {
+                        "weekdays": [
+                                "الأحد",
+                                "الإثنين",
+                                "الثلاثاء",
+                                "الأربعاء",
+                                "الخميس",
+                                "الجمعة",
+                                "السبت"
+                        ],
+                        "weekdaysShort": [
+                                "أحد",
+                                "إثنين",
+                                "ثلاثاء",
+                                "أربعاء",
+                                "خميس",
+                                "جمعة",
+                                "سبت"
+                        ],
+                        "months": [
+                                "يناير",
+                                "فبراير",
+                                "مارس",
+                                "أبريل",
+                                "مايو",
+                                "يونيو",
+                                "يوليو",
+                                "أغسطس",
+                                "سبتمبر",
+                                "أكتوبر",
+                                "نوفمبر",
+                                "ديسمبر"
+                        ],
+                        "monthsShort": [
+                                "يناير",
+                                "فبراير",
+                                "مارس",
+                                "أبريل",
+                                "مايو",
+                                "يونيو",
+                                "يوليو",
+                                "أغسطس",
+                                "سبتمبر",
+                                "أكتوبر",
+                                "نوفمبر",
+                                "ديسمبر"
+                        ],
+                        "weekPrefix": "أسبوع",
+                        "am": "ص",
+                        "pm": "م"
+                }
+        }
+};
+
+    var BUILTIN_ORDER = ['en', 'nl', 'de', 'fr', 'es', 'it', 'da', 'sv', 'no', 'pl', 'ru', 'ko', 'ar'];
+
+    var BCP47_MAP = {
+        en: 'en-GB', nl: 'nl-NL', de: 'de-DE', fr: 'fr-FR', es: 'es-ES',
+        it: 'it-IT', da: 'da-DK', sv: 'sv-SE', no: 'nb-NO', pl: 'pl-PL',
+        ru: 'ru-RU', ko: 'ko-KR', ar: 'ar-SA'
+    };
+
+    function normalizeLocaleCode(raw) {
+        if (raw === undefined || raw === null) return 'auto';
+        var s = String(raw).trim();
+        if (!s || s.toLowerCase() === 'auto') return 'auto';
+        if (s === 'custom' || s.indexOf('preset:') === 0) return s;
+        var lower = s.toLowerCase();
+        if (BUILTIN_LOCALES[lower]) return lower;
+        var primary = lower.split(/[-_]/)[0];
+        if (primary === 'nb' || primary === 'nn') return 'no';
+        if (BUILTIN_LOCALES[primary]) return primary;
+        return 'en';
+    }
+
+    function detectBrowserLocaleCode() {
+        try {
+            var nav = (typeof navigator !== 'undefined' && (navigator.language || navigator.userLanguage)) || 'en';
+            var norm = normalizeLocaleCode(nav);
+            return (norm && norm !== 'auto' && BUILTIN_LOCALES[norm]) ? norm : 'en';
+        } catch (e) {
+            return 'en';
+        }
+    }
+
+    function getSavedCustomPresets() {
+        try {
+            if (typeof localStorage === 'undefined') return {};
+            var raw = localStorage.getItem(PRESETS_STORAGE_KEY);
+            if (!raw) return {};
+            var parsed = JSON.parse(raw);
+            return (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) ? parsed : {};
+        } catch (e) {
+            return {};
+        }
+    }
+
+    function saveCustomPresetToStorage(name, dict) {
+        if (!name || !dict) return;
+        try {
+            if (typeof localStorage === 'undefined') return;
+            var all = getSavedCustomPresets();
+            all[name] = {
+                name: name,
+                units: Object.assign({}, BUILTIN_LOCALES.en.units, dict.units || {}),
+                calendar: Object.assign({}, BUILTIN_LOCALES.en.calendar, dict.calendar || {})
+            };
+            localStorage.setItem(PRESETS_STORAGE_KEY, JSON.stringify(all));
+        } catch (e) { /* ignore */ }
+    }
+
+    function cloneDictionary(src) {
+        var base = BUILTIN_LOCALES.en;
+        var u = Object.assign({}, base.units, (src && src.units) || {});
+        var cSrc = (src && src.calendar) || {};
+        var c = {
+            weekdays: Array.isArray(cSrc.weekdays) && cSrc.weekdays.length === 7 ? cSrc.weekdays.slice() : base.calendar.weekdays.slice(),
+            weekdaysShort: Array.isArray(cSrc.weekdaysShort) && cSrc.weekdaysShort.length === 7 ? cSrc.weekdaysShort.slice() : base.calendar.weekdaysShort.slice(),
+            months: Array.isArray(cSrc.months) && cSrc.months.length === 12 ? cSrc.months.slice() : base.calendar.months.slice(),
+            monthsShort: Array.isArray(cSrc.monthsShort) && cSrc.monthsShort.length === 12 ? cSrc.monthsShort.slice() : base.calendar.monthsShort.slice(),
+            weekPrefix: (cSrc.weekPrefix !== undefined && cSrc.weekPrefix !== null) ? String(cSrc.weekPrefix) : base.calendar.weekPrefix,
+            am: (cSrc.am !== undefined && cSrc.am !== null) ? String(cSrc.am) : base.calendar.am,
+            pm: (cSrc.pm !== undefined && cSrc.pm !== null) ? String(cSrc.pm) : base.calendar.pm
+        };
+        return {
+            code: (src && src.code) || 'custom',
+            name: (src && src.name) || 'Custom',
+            units: u,
+            calendar: c
+        };
+    }
+
+    function getEffectiveLocaleSetting(overrideLocale) {
+        if (overrideLocale !== undefined && overrideLocale !== null && String(overrideLocale).trim() !== '' && String(overrideLocale).trim().toLowerCase() !== 'auto') {
+            return normalizeLocaleCode(overrideLocale);
+        }
+        var masterLoc = (typeof MASTER_SETTINGS !== 'undefined' && MASTER_SETTINGS && MASTER_SETTINGS.locale) ? MASTER_SETTINGS.locale : 'auto';
+        var norm = normalizeLocaleCode(masterLoc);
+        if (norm === 'auto') return detectBrowserLocaleCode();
+        return norm;
+    }
+
+    function getEffectiveBcp47Tag(overrideLocale) {
+        var code = getEffectiveLocaleSetting(overrideLocale);
+        if (BCP47_MAP[code]) return BCP47_MAP[code];
+        var browserCode = detectBrowserLocaleCode();
+        return BCP47_MAP[browserCode] || 'en-GB';
+    }
+
+    function getDictionary(overrideLocale) {
+        var code = getEffectiveLocaleSetting(overrideLocale);
+        if (code === 'custom' || (typeof code === 'string' && code.indexOf('preset:') === 0)) {
+            if (typeof code === 'string' && code.indexOf('preset:') === 0) {
+                var pName = code.slice(7);
+                var presets = getSavedCustomPresets();
+                if (presets[pName]) {
+                    return cloneDictionary(presets[pName]);
+                }
+            }
+            if (typeof MASTER_SETTINGS !== 'undefined' && MASTER_SETTINGS && MASTER_SETTINGS.customLocale && typeof MASTER_SETTINGS.customLocale === 'object') {
+                return cloneDictionary(MASTER_SETTINGS.customLocale);
+            }
+            var fallbackCode = detectBrowserLocaleCode();
+            return cloneDictionary(BUILTIN_LOCALES[fallbackCode] || BUILTIN_LOCALES.en);
+        }
+        return cloneDictionary(BUILTIN_LOCALES[code] || BUILTIN_LOCALES.en);
+    }
+
+    function getLanguageSelectOptions(includeInheritForWidget) {
+        var opts = [];
+        if (includeInheritForWidget) {
+            opts.push({ value: 'auto', text: 'Inherit from Dashboard (Default)' });
+        } else {
+            opts.push({ value: 'auto', text: 'Auto (Browser Default)' });
+        }
+        for (var i = 0; i < BUILTIN_ORDER.length; i++) {
+            var k = BUILTIN_ORDER[i];
+            var entry = BUILTIN_LOCALES[k];
+            if (entry) {
+                opts.push({ value: k, text: entry.name });
+            }
+        }
+        var presets = getSavedCustomPresets();
+        var presetNames = Object.keys(presets);
+        if (typeof MASTER_SETTINGS !== 'undefined' && MASTER_SETTINGS && MASTER_SETTINGS.customLocale && MASTER_SETTINGS.customLocale.name) {
+            var embName = String(MASTER_SETTINGS.customLocale.name).trim();
+            if (embName && !presets[embName]) {
+                presetNames.push(embName);
+            }
+        }
+        presetNames.sort(function (a, b) { return a.toLowerCase().localeCompare(b.toLowerCase()); });
+        for (var p = 0; p < presetNames.length; p++) {
+            var pn = presetNames[p];
+            opts.push({ value: 'preset:' + pn, text: pn + ' (Custom Preset)' });
+        }
+        opts.push({ value: 'custom', text: 'Custom...' });
+        return opts;
+    }
+
+    function getEffectiveTimeFormat() {
+        var tf = (typeof MASTER_SETTINGS !== 'undefined' && MASTER_SETTINGS && MASTER_SETTINGS.timeFormat) ? String(MASTER_SETTINGS.timeFormat).trim() : 'auto';
+        if (tf === '24h' || tf === '12h') return tf;
+        try {
+            if (typeof Intl !== 'undefined' && typeof Intl.DateTimeFormat === 'function') {
+                var ro = new Intl.DateTimeFormat(undefined, { hour: 'numeric' }).resolvedOptions();
+                if (ro && typeof ro.hour12 === 'boolean') {
+                    return ro.hour12 ? '12h' : '24h';
+                }
+            }
+        } catch (e) { /* ignore */ }
+        return '24h';
+    }
+
+    function getEffectiveIs24Hour(widgetOverride) {
+        if (widgetOverride === true) return true;
+        if (widgetOverride === false) return false;
+        return getEffectiveTimeFormat() !== '12h';
+    }
+
+    function getEffectiveDateFormat(overrideFormat) {
+        if (overrideFormat && overrideFormat !== 'auto') return String(overrideFormat);
+        var df = (typeof MASTER_SETTINGS !== 'undefined' && MASTER_SETTINGS && MASTER_SETTINGS.dateFormat) ? String(MASTER_SETTINGS.dateFormat).trim() : 'auto';
+        if (df === 'DD-MM-YYYY' || df === 'MM-DD-YYYY' || df === 'YYYY-MM-DD') return df;
+        try {
+            if (typeof Intl !== 'undefined' && typeof Intl.DateTimeFormat === 'function') {
+                var fmt = new Intl.DateTimeFormat(undefined, { year: 'numeric', month: '2-digit', day: '2-digit' });
+                if (typeof fmt.formatToParts === 'function') {
+                    var parts = fmt.formatToParts(new Date(2026, 10, 25));
+                    var order = [];
+                    for (var i = 0; i < parts.length; i++) {
+                        var t = parts[i].type;
+                        if (t === 'year' || t === 'month' || t === 'day') order.push(t);
+                    }
+                    if (order[0] === 'year') return 'YYYY-MM-DD';
+                    if (order[0] === 'month') return 'MM-DD-YYYY';
+                    return 'DD-MM-YYYY';
+                }
+            }
+        } catch (e) { /* ignore */ }
+        return 'DD-MM-YYYY';
+    }
+
+    function getEffectiveFirstDayOfWeek(overrideStart) {
+        if (overrideStart === 'monday' || overrideStart === 'sunday') return overrideStart;
+        var fd = (typeof MASTER_SETTINGS !== 'undefined' && MASTER_SETTINGS && MASTER_SETTINGS.firstDayOfWeek) ? String(MASTER_SETTINGS.firstDayOfWeek).trim().toLowerCase() : 'auto';
+        if (fd === 'monday' || fd === 'sunday') return fd;
+        try {
+            var nav = (typeof navigator !== 'undefined' && (navigator.language || navigator.userLanguage)) || '';
+            if (typeof Intl !== 'undefined' && typeof Intl.Locale === 'function' && nav) {
+                var loc = new Intl.Locale(nav);
+                var wi = loc.weekInfo || (typeof loc.getWeekInfo === 'function' ? loc.getWeekInfo() : null);
+                if (wi && wi.firstDay !== undefined) {
+                    return (wi.firstDay === 7 || wi.firstDay === 0) ? 'sunday' : 'monday';
+                }
+            }
+            var low = String(nav).toLowerCase();
+            if (low.indexOf('en-us') === 0 || low.indexOf('en-ca') === 0 || low.indexOf('ko') === 0 || low.indexOf('ar') === 0 || low.indexOf('ja') === 0) {
+                return 'sunday';
+            }
+        } catch (e) { /* ignore */ }
+        return 'monday';
+    }
+
+    function openCustomTranslationDialog() {
+        if (typeof document === 'undefined') return;
+        var existing = document.getElementById('ds-custom-translation-modal');
+        if (existing && existing.parentNode) {
+            existing.parentNode.removeChild(existing);
+        }
+
+        var activeDict = getDictionary();
+        var curLoc = (typeof MASTER_SETTINGS !== 'undefined' && MASTER_SETTINGS && MASTER_SETTINGS.locale) ? String(MASTER_SETTINGS.locale) : 'auto';
+        var initialPresetName = '';
+        if (curLoc.indexOf('preset:') === 0) {
+            initialPresetName = curLoc.slice(7);
+        } else if (curLoc === 'custom' && typeof MASTER_SETTINGS !== 'undefined' && MASTER_SETTINGS.customLocale && MASTER_SETTINGS.customLocale.name) {
+            initialPresetName = String(MASTER_SETTINGS.customLocale.name);
+        }
+
+        var overlay = document.createElement('div');
+        overlay.id = 'ds-custom-translation-modal';
+        overlay.className = 'ds-dialog-backdrop show';
+        overlay.style.position = 'fixed';
+        overlay.style.top = '0';
+        overlay.style.left = '0';
+        overlay.style.right = '0';
+        overlay.style.bottom = '0';
+        overlay.style.width = '100vw';
+        overlay.style.height = '100vh';
+        overlay.style.zIndex = '10050';
+        overlay.style.display = 'flex';
+        overlay.style.alignItems = 'center';
+        overlay.style.justifyContent = 'center';
+        overlay.style.boxSizing = 'border-box';
+        overlay.style.padding = '16px';
+        overlay.style.backgroundColor = 'var(--dialog-scrim, rgba(2, 6, 23, 0.75))';
+        overlay.style.backdropFilter = 'var(--dialog-scrim-blur, blur(14px) saturate(1.2))';
+        overlay.style.webkitBackdropFilter = 'var(--dialog-scrim-blur, blur(14px) saturate(1.2))';
+
+        var dialog = document.createElement('div');
+        dialog.className = 'modal-content ds-dialog';
+        dialog.style.width = 'min(880px, 95vw)';
+        dialog.style.maxHeight = '90vh';
+        dialog.style.display = 'flex';
+        dialog.style.flexDirection = 'column';
+
+        var header = document.createElement('div');
+        header.className = 'modal-header flex items-center justify-between px-5 py-3.5 border-b editor-hairline';
+        header.innerHTML = '<h3 class="ds-dialog-title flex items-center gap-2 font-bold text-sm"><i class="ph-bold ph-translate ds-dialog-title-icon text-lg"></i><span>Edit / Customize Translations</span></h3>';
+        var closeBtn = document.createElement('button');
+        closeBtn.type = 'button';
+        closeBtn.className = 'ds-dialog-close';
+        closeBtn.title = 'Close';
+        closeBtn.innerHTML = '<i class="ph-bold ph-x"></i>';
+        function closeModal() {
+            if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+            if (typeof document !== 'undefined' && document.removeEventListener) {
+                document.removeEventListener('keydown', onKeyDown);
+            }
+        }
+        function onKeyDown(e) {
+            if (e.key === 'Escape') closeModal();
+        }
+        closeBtn.onclick = closeModal;
+        header.appendChild(closeBtn);
+        dialog.appendChild(header);
+
+        var body = document.createElement('div');
+        body.className = 'modal-body p-5 overflow-y-auto flex-1 flex flex-col gap-4 scrollbar-thin';
+
+        var topBar = document.createElement('div');
+        topBar.className = 'grid grid-cols-12 gap-3 items-end p-3 rounded-lg border editor-hairline editor-surface-inset';
+
+        var presetWrap = document.createElement('div');
+        presetWrap.className = 'col-span-6 flex flex-col gap-1';
+        var presetLbl = document.createElement('label');
+        presetLbl.className = 'control-label';
+        presetLbl.textContent = 'Preset Name (optional - saves to Language dropdown)';
+        var presetInp = document.createElement('input');
+        presetInp.type = 'text';
+        presetInp.className = 'control-input w-full';
+        presetInp.placeholder = 'e.g. Nederlands (Kort) or Frisian';
+        presetInp.value = initialPresetName;
+        presetWrap.appendChild(presetLbl);
+        presetWrap.appendChild(presetInp);
+
+        var baseWrap = document.createElement('div');
+        baseWrap.className = 'col-span-6 flex flex-col gap-1';
+        var baseLbl = document.createElement('label');
+        baseLbl.className = 'control-label';
+        baseLbl.textContent = 'Load Template from Language';
+        var baseSel = document.createElement('select');
+        baseSel.className = 'control-input w-full';
+        var placeholderOpt = document.createElement('option');
+        placeholderOpt.value = '';
+        placeholderOpt.textContent = '-- Keep Current Values --';
+        baseSel.appendChild(placeholderOpt);
+        for (var bi = 0; bi < BUILTIN_ORDER.length; bi++) {
+            var bk = BUILTIN_ORDER[bi];
+            var bo = document.createElement('option');
+            bo.value = bk;
+            bo.textContent = BUILTIN_LOCALES[bk].name;
+            baseSel.appendChild(bo);
+        }
+        baseWrap.appendChild(baseLbl);
+        baseWrap.appendChild(baseSel);
+
+        topBar.appendChild(presetWrap);
+        topBar.appendChild(baseWrap);
+        body.appendChild(topBar);
+
+        var columnsGrid = document.createElement('div');
+        columnsGrid.className = 'grid grid-cols-2 gap-4';
+
+        var unitInputs = {};
+        var calSingleInputs = {};
+        var calArrayInputs = {
+            weekdays: [],
+            weekdaysShort: [],
+            months: [],
+            monthsShort: []
+        };
+
+        var leftCol = document.createElement('div');
+        leftCol.className = 'flex flex-col gap-3 p-3 rounded-lg border editor-hairline';
+        var leftTitle = document.createElement('div');
+        leftTitle.className = 'font-bold text-xs uppercase tracking-wider text-[var(--ui-accent)] border-b editor-hairline pb-1.5';
+        leftTitle.textContent = 'Countdown & Duration Units';
+        leftCol.appendChild(leftTitle);
+
+        var unitRows = [
+            { key: 'y', label: 'Years Short (y)' },
+            { key: 'd', label: 'Days Short (d)' },
+            { key: 'h', label: 'Hours Short (h)' },
+            { key: 'm', label: 'Minutes Short (m)' },
+            { key: 's', label: 'Seconds Short (s)' },
+            { key: 'year', label: 'Year (Singular)' },
+            { key: 'years', label: 'Years (Plural)' },
+            { key: 'day', label: 'Day (Singular)' },
+            { key: 'days', label: 'Days (Plural)' },
+            { key: 'hour', label: 'Hour (Singular)' },
+            { key: 'hours', label: 'Hours (Plural)' },
+            { key: 'minute', label: 'Minute (Singular)' },
+            { key: 'minutes', label: 'Minutes (Plural)' },
+            { key: 'second', label: 'Second (Singular)' },
+            { key: 'seconds', label: 'Seconds (Plural)' },
+            { key: 'and', label: 'Conjunction (and)' },
+            { key: 'done', label: 'Ending Text (e.g. Done or empty)' }
+        ];
+
+        var unitGrid = document.createElement('div');
+        unitGrid.className = 'grid grid-cols-2 gap-2';
+        unitRows.forEach(function (ur) {
+            var cell = document.createElement('div');
+            cell.className = 'flex flex-col gap-1';
+            var l = document.createElement('label');
+            l.className = 'control-label';
+            l.textContent = ur.label;
+            var inp = document.createElement('input');
+            inp.type = 'text';
+            inp.className = 'control-input w-full';
+            inp.value = activeDict.units[ur.key] != null ? String(activeDict.units[ur.key]) : '';
+            unitInputs[ur.key] = inp;
+            cell.appendChild(l);
+            cell.appendChild(inp);
+            unitGrid.appendChild(cell);
+        });
+        leftCol.appendChild(unitGrid);
+
+        var calMiscTitle = document.createElement('div');
+        calMiscTitle.className = 'font-bold text-xs uppercase tracking-wider text-[var(--ui-accent)] border-b editor-hairline pb-1.5 mt-2';
+        calMiscTitle.textContent = 'Clock & Week Labels';
+        leftCol.appendChild(calMiscTitle);
+
+        var miscGrid = document.createElement('div');
+        miscGrid.className = 'grid grid-cols-3 gap-2';
+        [
+            { key: 'weekPrefix', label: 'Week Prefix' },
+            { key: 'am', label: 'AM Label' },
+            { key: 'pm', label: 'PM Label' }
+        ].forEach(function (mr) {
+            var cell = document.createElement('div');
+            cell.className = 'flex flex-col gap-1';
+            var l = document.createElement('label');
+            l.className = 'control-label';
+            l.textContent = mr.label;
+            var inp = document.createElement('input');
+            inp.type = 'text';
+            inp.className = 'control-input w-full';
+            inp.value = activeDict.calendar[mr.key] != null ? String(activeDict.calendar[mr.key]) : '';
+            calSingleInputs[mr.key] = inp;
+            cell.appendChild(l);
+            cell.appendChild(inp);
+            miscGrid.appendChild(cell);
+        });
+        leftCol.appendChild(miscGrid);
+
+        var rightCol = document.createElement('div');
+        rightCol.className = 'flex flex-col gap-3 p-3 rounded-lg border editor-hairline';
+        var rightTitle = document.createElement('div');
+        rightTitle.className = 'font-bold text-xs uppercase tracking-wider text-[var(--ui-accent)] border-b editor-hairline pb-1.5';
+        rightTitle.textContent = 'Calendar & Clock Names';
+        rightCol.appendChild(rightTitle);
+
+        var enWeekdays = BUILTIN_LOCALES.en.calendar.weekdays;
+        var wdHeader = document.createElement('div');
+        wdHeader.className = 'grid grid-cols-12 gap-2 text-[10px] uppercase font-bold editor-muted-text';
+        wdHeader.innerHTML = '<div class="col-span-3">Day</div><div class="col-span-5">Full Name</div><div class="col-span-4">Short</div>';
+        rightCol.appendChild(wdHeader);
+
+        var wdDisplayOrder = [1, 2, 3, 4, 5, 6, 0];
+        wdDisplayOrder.forEach(function (dayIdx) {
+            var row = document.createElement('div');
+            row.className = 'grid grid-cols-12 gap-2 items-center';
+            var lbl = document.createElement('div');
+            lbl.className = 'col-span-3 text-[11px] editor-muted-text truncate';
+            lbl.textContent = enWeekdays[dayIdx];
+            var fullInp = document.createElement('input');
+            fullInp.type = 'text';
+            fullInp.className = 'control-input col-span-5';
+            fullInp.value = activeDict.calendar.weekdays[dayIdx] || '';
+            var shortInp = document.createElement('input');
+            shortInp.type = 'text';
+            shortInp.className = 'control-input col-span-4';
+            shortInp.value = activeDict.calendar.weekdaysShort[dayIdx] || '';
+            calArrayInputs.weekdays[dayIdx] = fullInp;
+            calArrayInputs.weekdaysShort[dayIdx] = shortInp;
+            row.appendChild(lbl);
+            row.appendChild(fullInp);
+            row.appendChild(shortInp);
+            rightCol.appendChild(row);
+        });
+
+        var moHeader = document.createElement('div');
+        moHeader.className = 'grid grid-cols-12 gap-2 text-[10px] uppercase font-bold editor-muted-text mt-2 border-t editor-hairline pt-2';
+        moHeader.innerHTML = '<div class="col-span-3">Month</div><div class="col-span-5">Full Name</div><div class="col-span-4">Short</div>';
+        rightCol.appendChild(moHeader);
+
+        var enMonthsShort = BUILTIN_LOCALES.en.calendar.monthsShort;
+        for (var mIdx = 0; mIdx < 12; mIdx++) {
+            var mRow = document.createElement('div');
+            mRow.className = 'grid grid-cols-12 gap-2 items-center';
+            var mLbl = document.createElement('div');
+            mLbl.className = 'col-span-3 text-[11px] editor-muted-text truncate';
+            mLbl.textContent = enMonthsShort[mIdx];
+            var mFullInp = document.createElement('input');
+            mFullInp.type = 'text';
+            mFullInp.className = 'control-input col-span-5';
+            mFullInp.value = activeDict.calendar.months[mIdx] || '';
+            var mShortInp = document.createElement('input');
+            mShortInp.type = 'text';
+            mShortInp.className = 'control-input col-span-4';
+            mShortInp.value = activeDict.calendar.monthsShort[mIdx] || '';
+            calArrayInputs.months[mIdx] = mFullInp;
+            calArrayInputs.monthsShort[mIdx] = mShortInp;
+            mRow.appendChild(mLbl);
+            mRow.appendChild(mFullInp);
+            mRow.appendChild(mShortInp);
+            rightCol.appendChild(mRow);
+        }
+
+        columnsGrid.appendChild(leftCol);
+        columnsGrid.appendChild(rightCol);
+        body.appendChild(columnsGrid);
+        dialog.appendChild(body);
+
+        function populateInputsFromDict(dict) {
+            var d = cloneDictionary(dict);
+            Object.keys(unitInputs).forEach(function (k) {
+                unitInputs[k].value = d.units[k] != null ? String(d.units[k]) : '';
+            });
+            Object.keys(calSingleInputs).forEach(function (k) {
+                calSingleInputs[k].value = d.calendar[k] != null ? String(d.calendar[k]) : '';
+            });
+            for (var i = 0; i < 7; i++) {
+                if (calArrayInputs.weekdays[i]) calArrayInputs.weekdays[i].value = d.calendar.weekdays[i] || '';
+                if (calArrayInputs.weekdaysShort[i]) calArrayInputs.weekdaysShort[i].value = d.calendar.weekdaysShort[i] || '';
+            }
+            for (var m = 0; m < 12; m++) {
+                if (calArrayInputs.months[m]) calArrayInputs.months[m].value = d.calendar.months[m] || '';
+                if (calArrayInputs.monthsShort[m]) calArrayInputs.monthsShort[m].value = d.calendar.monthsShort[m] || '';
+            }
+        }
+
+        function collectDictFromInputs() {
+            var u = {};
+            Object.keys(unitInputs).forEach(function (k) {
+                if (k === 'done') {
+                    u[k] = unitInputs[k].value.trim();
+                } else {
+                    u[k] = unitInputs[k].value.trim() || BUILTIN_LOCALES.en.units[k];
+                }
+            });
+            var wFull = [];
+            var wShort = [];
+            for (var i = 0; i < 7; i++) {
+                wFull.push((calArrayInputs.weekdays[i] && calArrayInputs.weekdays[i].value.trim()) || BUILTIN_LOCALES.en.calendar.weekdays[i]);
+                wShort.push((calArrayInputs.weekdaysShort[i] && calArrayInputs.weekdaysShort[i].value.trim()) || BUILTIN_LOCALES.en.calendar.weekdaysShort[i]);
+            }
+            var mFull = [];
+            var mShort = [];
+            for (var m = 0; m < 12; m++) {
+                mFull.push((calArrayInputs.months[m] && calArrayInputs.months[m].value.trim()) || BUILTIN_LOCALES.en.calendar.months[m]);
+                mShort.push((calArrayInputs.monthsShort[m] && calArrayInputs.monthsShort[m].value.trim()) || BUILTIN_LOCALES.en.calendar.monthsShort[m]);
+            }
+            var pName = presetInp.value.trim();
+            return {
+                code: 'custom',
+                name: pName || 'Custom',
+                units: u,
+                calendar: {
+                    weekdays: wFull,
+                    weekdaysShort: wShort,
+                    months: mFull,
+                    monthsShort: mShort,
+                    weekPrefix: calSingleInputs.weekPrefix ? calSingleInputs.weekPrefix.value : 'W',
+                    am: (calSingleInputs.am && calSingleInputs.am.value.trim()) || 'AM',
+                    pm: (calSingleInputs.pm && calSingleInputs.pm.value.trim()) || 'PM'
+                }
+            };
+        }
+
+        baseSel.onchange = function () {
+            var code = baseSel.value;
+            if (code && BUILTIN_LOCALES[code]) {
+                populateInputsFromDict(BUILTIN_LOCALES[code]);
+            }
+        };
+
+        var footer = document.createElement('div');
+        footer.className = 'modal-footer ds-dialog-footer flex items-center justify-between px-5 py-3.5 border-t editor-hairline';
+
+        var ioGroup = document.createElement('div');
+        ioGroup.className = 'flex items-center gap-2';
+
+        var exportBtn = document.createElement('button');
+        exportBtn.type = 'button';
+        exportBtn.className = 'btn-tool ds-dialog-button';
+        exportBtn.innerHTML = '<i class="ph-bold ph-download-simple"></i><span>Export JSON</span>';
+        exportBtn.onclick = function () {
+            var dict = collectDictFromInputs();
+            var safeName = (dict.name || 'custom-locale').toLowerCase().replace(/[^a-z0-9-_]+/g, '-');
+            var blob = new Blob([JSON.stringify(dict, null, 2)], { type: 'application/json' });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'locale-' + safeName + '.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        };
+
+        var importBtn = document.createElement('button');
+        importBtn.type = 'button';
+        importBtn.className = 'btn-tool ds-dialog-button';
+        importBtn.innerHTML = '<i class="ph-bold ph-folder-open"></i><span>Import JSON</span>';
+        importBtn.onclick = function () {
+            var fileInp = document.createElement('input');
+            fileInp.type = 'file';
+            fileInp.accept = '.json,application/json';
+            fileInp.onchange = function (ev) {
+                var f = ev.target.files && ev.target.files[0];
+                if (!f) return;
+                var reader = new FileReader();
+                reader.onload = function () {
+                    try {
+                        var parsed = JSON.parse(String(reader.result || '{}'));
+                        if (!parsed || typeof parsed !== 'object' || (!parsed.units && !parsed.calendar)) {
+                            if (typeof CustomDialog !== 'undefined' && CustomDialog.alert) {
+                                void CustomDialog.alert('Invalid translation JSON file.', 'Import Error');
+                            }
+                            return;
+                        }
+                        if (parsed.name && typeof parsed.name === 'string') {
+                            presetInp.value = parsed.name;
+                        }
+                        populateInputsFromDict(parsed);
+                    } catch (err) {
+                        if (typeof CustomDialog !== 'undefined' && CustomDialog.alert) {
+                            void CustomDialog.alert('Could not parse JSON file: ' + err.message, 'Import Error');
+                        }
+                    }
+                };
+                reader.readAsText(f);
+            };
+            fileInp.click();
+        };
+
+        ioGroup.appendChild(exportBtn);
+        ioGroup.appendChild(importBtn);
+
+        var actionGroup = document.createElement('div');
+        actionGroup.className = 'flex items-center gap-2';
+
+        var cancelBtn = document.createElement('button');
+        cancelBtn.type = 'button';
+        cancelBtn.className = 'btn-tool ds-dialog-button';
+        cancelBtn.textContent = 'Cancel';
+        cancelBtn.onclick = closeModal;
+
+        var saveBtn = document.createElement('button');
+        saveBtn.type = 'button';
+        saveBtn.className = 'btn-tool ds-dialog-button primary';
+        saveBtn.innerHTML = '<i class="ph-bold ph-check"></i><span>Save & Apply</span>';
+        saveBtn.onclick = function () {
+            var dict = collectDictFromInputs();
+            var pName = presetInp.value.trim();
+            var nextLocaleVal = 'custom';
+            if (pName) {
+                saveCustomPresetToStorage(pName, dict);
+                nextLocaleVal = 'preset:' + pName;
+            }
+            if (typeof Dashboard !== 'undefined' && typeof Dashboard.updateGlobal === 'function') {
+                Dashboard.updateGlobal({
+                    locale: nextLocaleVal,
+                    customLocale: dict
+                }, false);
+            } else if (typeof MASTER_SETTINGS !== 'undefined') {
+                MASTER_SETTINGS.locale = nextLocaleVal;
+                MASTER_SETTINGS.customLocale = dict;
+            }
+            if (typeof Editor !== 'undefined' && Editor.currentId === 'GLOBAL_SETTINGS' && typeof Editor.renderGlobalEditor === 'function') {
+                Editor.renderGlobalEditor();
+            }
+            closeModal();
+        };
+
+        actionGroup.appendChild(cancelBtn);
+        actionGroup.appendChild(saveBtn);
+
+        footer.appendChild(ioGroup);
+        footer.appendChild(actionGroup);
+        dialog.appendChild(footer);
+
+        overlay.appendChild(dialog);
+        overlay.addEventListener('click', function (ev) {
+            if (ev.target === overlay) {
+                closeModal();
+            }
+        });
+        if (typeof document !== 'undefined' && document.addEventListener) {
+            document.addEventListener('keydown', onKeyDown);
+        }
+        document.body.appendChild(overlay);
+    }
+
+    return {
+        BUILTIN_LOCALES: BUILTIN_LOCALES,
+        BUILTIN_ORDER: BUILTIN_ORDER,
+        normalizeLocaleCode: normalizeLocaleCode,
+        detectBrowserLocaleCode: detectBrowserLocaleCode,
+        getEffectiveLocaleSetting: getEffectiveLocaleSetting,
+        getEffectiveBcp47Tag: getEffectiveBcp47Tag,
+        getDictionary: getDictionary,
+        getLanguageSelectOptions: getLanguageSelectOptions,
+        getEffectiveTimeFormat: getEffectiveTimeFormat,
+        getEffectiveIs24Hour: getEffectiveIs24Hour,
+        getEffectiveDateFormat: getEffectiveDateFormat,
+        getEffectiveFirstDayOfWeek: getEffectiveFirstDayOfWeek,
+        getSavedCustomPresets: getSavedCustomPresets,
+        saveCustomPresetToStorage: saveCustomPresetToStorage,
+        openCustomTranslationDialog: openCustomTranslationDialog
+    };
+})();
+
 // MASTER SETTINGS - CORE CONFIGURATION
 const MASTER_SETTINGS = {
     // --- Data Connection ---
@@ -31,6 +1672,13 @@ const MASTER_SETTINGS = {
     editorZoom: 100,
     /** Editor layout preference: icon Quick Toolbar (nested under environment on save). */
     quickToolbar: { visibility: 'auto', enabled: true, mode: 'docked', x: 0, y: 0, columns: 1, rows: 0 },
+
+    // --- Regional & Localization ---
+    locale: 'auto',
+    timeFormat: 'auto',
+    dateFormat: 'auto',
+    firstDayOfWeek: 'auto',
+    customLocale: null,
 
     // --- Canvas & Grid ---
     canvasBg: "@background",
@@ -945,7 +2593,6 @@ const MASTER_SETTINGS = {
     defaultClockFlipShowSeconds: true,
     defaultClockFlipSeparator: 6,
     defaultClockFlipCardRadius: 12,
-    defaultClockFlipLocale: "en-GB",
     defaultClockFlipLabelHour: "",
     defaultClockFlipLabelMinute: "",
     defaultClockFlipLabelSecond: "",
@@ -963,7 +2610,6 @@ const MASTER_SETTINGS = {
     defaultClockTextDateSeg3: "yearLong",
     defaultClockTextDateSeg4: "none",
     defaultClockTextDateLinebreak: true,
-    defaultClockTextLocale: "en-GB",
     defaultClockTextWeekPrefix: "",
     defaultClockAnalogNumFont: "'Inter', sans-serif",
     defaultClockAnalogNumFs: 20,
@@ -1330,6 +2976,84 @@ const MASTER_SCHEMA = [
                 step: 0.1,
                 editorTier: 'advanced',
                 hint: 'How long to press a Switch or Button when Hold to Activate is enabled before that action runs.'
+            }
+        ]
+    },
+    {
+        id: 'm_regional', title: 'Regional & Localization', icon: 'ph-translate', editorTier: 'both',
+        fields: [
+            {
+                key: 'locale',
+                type: 'select',
+                label: 'Language / Locale',
+                cols: 12,
+                default: 'auto',
+                editorTier: 'both',
+                dynamicOptions: function () {
+                    if (typeof DashboardI18n !== 'undefined' && typeof DashboardI18n.getLanguageSelectOptions === 'function') {
+                        return DashboardI18n.getLanguageSelectOptions(false);
+                    }
+                    return [{ value: 'auto', text: 'Auto (Browser Default)' }, { value: 'en', text: 'English' }];
+                },
+                dependsOn: ['locale', 'customLocale'],
+                hint: 'Default language for countdown units, weekday names, and month names across the dashboard.'
+            },
+            {
+                key: 'editTranslations',
+                type: 'action_button',
+                label: 'Edit / Customize Translations...',
+                cols: 12,
+                editorTier: 'both',
+                noBind: true,
+                title: 'Open the Custom Translation Dialog to view, edit, export, or import localized words and save custom presets.',
+                onClick: function () {
+                    if (typeof DashboardI18n !== 'undefined' && typeof DashboardI18n.openCustomTranslationDialog === 'function') {
+                        DashboardI18n.openCustomTranslationDialog();
+                    }
+                }
+            },
+            {
+                key: 'timeFormat',
+                type: 'select',
+                label: 'Time Format',
+                cols: 4,
+                default: 'auto',
+                editorTier: 'both',
+                options: [
+                    { value: 'auto', text: 'Auto' },
+                    { value: '24h', text: '24-Hour' },
+                    { value: '12h', text: '12-Hour (AM/PM)' }
+                ],
+                hint: 'Default time display format for Clock, List, and Graph widgets.'
+            },
+            {
+                key: 'dateFormat',
+                type: 'select',
+                label: 'Date Format',
+                cols: 4,
+                default: 'auto',
+                editorTier: 'both',
+                options: [
+                    { value: 'auto', text: 'Auto' },
+                    { value: 'DD-MM-YYYY', text: 'DD-MM-YYYY' },
+                    { value: 'MM-DD-YYYY', text: 'MM-DD-YYYY' },
+                    { value: 'YYYY-MM-DD', text: 'YYYY-MM-DD' }
+                ],
+                hint: 'Default date display format for List and Graph widgets.'
+            },
+            {
+                key: 'firstDayOfWeek',
+                type: 'select',
+                label: 'First Day of Week',
+                cols: 4,
+                default: 'auto',
+                editorTier: 'both',
+                options: [
+                    { value: 'auto', text: 'Auto' },
+                    { value: 'monday', text: 'Monday' },
+                    { value: 'sunday', text: 'Sunday' }
+                ],
+                hint: 'Default first day of the week for Markdown calendars in the Text widget.'
             }
         ]
     },

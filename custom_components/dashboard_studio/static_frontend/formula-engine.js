@@ -19,23 +19,127 @@ const FormulaEngine = (function () {
         xor: true,
         nor: true,
         contains: true,
-        containsanycase: true
+        containsanycase: true,
+        countdown: true
     };
     const PARSE_CACHE_MAX = 256;
     const parseCache = Object.create(null);
     const parseCacheOrder = [];
+    const countdownStore = Object.create(null);
+    let activeCountdownContext = null;
+
+    const DURATION_UNIT_SECONDS = {
+        y: 31536000, yr: 31536000, yrs: 31536000, year: 31536000, years: 31536000,
+        j: 31536000, jr: 31536000, jaar: 31536000, jaren: 31536000,
+        jahr: 31536000, jahre: 31536000,
+        an: 31536000, ans: 31536000,
+        año: 31536000, años: 31536000, ano: 31536000, anos: 31536000,
+        år: 31536000, ar: 31536000,
+        rok: 31536000, lata: 31536000, lat: 31536000,
+        d: 86400, day: 86400, days: 86400, dag: 86400, dagen: 86400, tag: 86400, tage: 86400, jour: 86400, jours: 86400,
+        h: 3600, hr: 3600, hrs: 3600, hour: 3600, hours: 3600, u: 3600, uur: 3600, uren: 3600, std: 3600, stunde: 3600, stunden: 3600, heure: 3600, heures: 3600,
+        m: 60, min: 60, mins: 60, minute: 60, minutes: 60, minuut: 60, minuten: 60, minuto: 60, minutos: 60,
+        s: 1, sec: 1, secs: 1, second: 1, seconds: 1, seconde: 1, seconden: 1, sek: 1, sekunde: 1, sekunden: 1, segundo: 1, segundos: 1
+    };
+
+    const CLOCK_STR_RE = /^(?:(\d+)\s*[a-zA-Z]+\s+)?(\d{1,4}):(\d{2})(?::(\d{2}))?$/;
+    const DURATION_TOKEN_RE = /(\d+(?:\.\d+)?)\s*([a-zA-Z]+)/g;
+    const CALENDAR_DATE_RE = /^(\d{4})-(\d{1,2})-(\d{1,2})(?:[T\s]+(\d{1,2}):(\d{2})(?::(\d{2}))?)?$/;
+
+    function parseDurationOrClockToSeconds(str) {
+        if (typeof str !== 'string') return NaN;
+        const s = str.trim();
+        if (s === '') return NaN;
+        if (CALENDAR_DATE_RE.test(s)) return NaN;
+
+        const clockMatch = /(?:^|\s+)(\d{1,4}):(\d{2})(?::(\d{2}))?$/.exec(s);
+        if (clockMatch) {
+            let clockSec = 0;
+            if (clockMatch[3] !== undefined) {
+                clockSec = (parseInt(clockMatch[1], 10) * 3600) + (parseInt(clockMatch[2], 10) * 60) + parseInt(clockMatch[3], 10);
+            } else {
+                clockSec = (parseInt(clockMatch[1], 10) * 60) + parseInt(clockMatch[2], 10);
+            }
+            const leading = s.slice(0, clockMatch.index).trim();
+            if (leading === '') return clockSec;
+            const leadingDur = parseDurationOrClockToSeconds(leading);
+            if (Number.isFinite(leadingDur)) return leadingDur + clockSec;
+        }
+
+        DURATION_TOKEN_RE.lastIndex = 0;
+        let total = 0;
+        let matchedCount = 0;
+        let dm;
+        while ((dm = DURATION_TOKEN_RE.exec(s)) !== null) {
+            const val = parseFloat(dm[1]);
+            const unitKey = dm[2].toLowerCase();
+            const mult = DURATION_UNIT_SECONDS[unitKey];
+            if (!Number.isFinite(val) || !mult) return NaN;
+            total += val * mult;
+            matchedCount++;
+        }
+        if (matchedCount > 0) {
+            const leftover = s.replace(DURATION_TOKEN_RE, '').replace(/[\s,]+/g, '');
+            if (leftover === '') return total;
+        }
+        return NaN;
+    }
+
+    function parseCalendarDateToMs(str) {
+        if (typeof str !== 'string') return NaN;
+        const s = str.trim();
+        const m = CALENDAR_DATE_RE.exec(s);
+        if (m) {
+            const year = parseInt(m[1], 10);
+            const month = parseInt(m[2], 10);
+            const day = parseInt(m[3], 10);
+            const hour = m[4] !== undefined ? parseInt(m[4], 10) : 0;
+            const min = m[5] !== undefined ? parseInt(m[5], 10) : 0;
+            const sec = m[6] !== undefined ? parseInt(m[6], 10) : 0;
+            const dt = new Date(year, month - 1, day, hour, min, sec, 0);
+            const ms = dt.getTime();
+            if (Number.isFinite(ms)) return ms;
+        }
+        if (s.indexOf('-') !== -1 || s.indexOf('/') !== -1) {
+            const parsed = Date.parse(s);
+            if (Number.isFinite(parsed)) return parsed;
+        }
+        return NaN;
+    }
 
     function toNumber(v) {
         if (v === true) return { v: 1 };
         if (v === false) return { v: 0 };
         if (typeof v === 'string') {
-            const t = v.trim().toLowerCase();
-            if (t === 'true') return { v: 1 };
-            if (t === 'false') return { v: 0 };
+            const t = v.trim();
+            const low = t.toLowerCase();
+            if (low === 'true') return { v: 1 };
+            if (low === 'false') return { v: 0 };
+            if (t !== '') {
+                const direct = Number(t);
+                if (Number.isFinite(direct)) return { v: direct };
+                const durSec = parseDurationOrClockToSeconds(t);
+                if (Number.isFinite(durSec)) return { v: durSec };
+            }
+            return { failed: true };
         }
         const n = Number(v);
         if (!Number.isFinite(n)) return { failed: true };
         return { v: n };
+    }
+
+    function coerceEvalNodeToNumber(ev) {
+        if (!ev || ev.failed) return { failed: true };
+        if (ev.type === 'number') {
+            return Number.isFinite(ev.v) ? { v: ev.v, type: 'number' } : { failed: true };
+        }
+        if (ev.type === 'string') {
+            const numRes = toNumber(ev.v);
+            if (!numRes.failed && Number.isFinite(numRes.v)) {
+                return { v: numRes.v, type: 'number' };
+            }
+        }
+        return { failed: true };
     }
 
     function isHexDigit(ch) {
@@ -93,7 +197,12 @@ const FormulaEngine = (function () {
     function valuesEqual(l, r) {
         if (l.type === 'number' && r.type === 'number') return l.v === r.v;
         if (l.type === 'string' && r.type === 'string') {
-            return String(l.v).trim().toLowerCase() === String(r.v).trim().toLowerCase();
+            if (String(l.v).trim().toLowerCase() === String(r.v).trim().toLowerCase()) return true;
+        }
+        if ((l.type === 'number' || l.type === 'string') && (r.type === 'number' || r.type === 'string')) {
+            const ln = coerceEvalNodeToNumber(l);
+            const rn = coerceEvalNodeToNumber(r);
+            if (!ln.failed && !rn.failed) return ln.v === rn.v;
         }
         if (l.type === 'color' && r.type === 'color') return l.v === r.v;
         if (l.type === 'token' && r.type === 'token') return l.v === r.v;
@@ -360,6 +469,9 @@ const FormulaEngine = (function () {
             if ((name === 'contains' || name === 'containsanycase') && args.length !== 2) {
                 return { error: name + '() requires 2 arguments' };
             }
+            if (name === 'countdown' && (args.length < 1 || args.length > 3)) {
+                return { error: 'countdown() requires 1, 2, or 3 arguments' };
+            }
             return { t: 'call', fn: name, args: args };
         }
 
@@ -415,6 +527,274 @@ const FormulaEngine = (function () {
             }
         }
         return false;
+    }
+
+    function astHasCountdown(node) {
+        if (!node || node.error) return false;
+        if (node.t === 'un') return astHasCountdown(node.e);
+        if (node.t === 'bin') return astHasCountdown(node.l) || astHasCountdown(node.r);
+        if (node.t === 'call') {
+            if (node.fn === 'countdown') return true;
+            if (node.args) {
+                let i;
+                for (i = 0; i < node.args.length; i++) {
+                    if (astHasCountdown(node.args[i])) return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    function hasCountdown(rawString) {
+        const norm = normalize(rawString);
+        if (norm === '') return false;
+        const parsed = parseFormula(norm);
+        if (parsed.error || !parsed.ast) return false;
+        return astHasCountdown(parsed.ast);
+    }
+
+    function pad2(n) {
+        const v = Math.max(0, Math.floor(n));
+        return v < 10 ? '0' + v : String(v);
+    }
+
+    const KNOWN_COUNTDOWN_FORMATS = {
+        'default': true,
+        'timer': true,
+        'compact': true,
+        'compact-full': true,
+        'words': true,
+        'words-full': true,
+        'years': true,
+        'days': true,
+        'hours': true,
+        'minutes': true,
+        'seconds': true,
+        'percent': true,
+        'percent-remaining': true,
+        'isdone': true,
+        'isrunning': true
+    };
+
+    function getLocaleUnits() {
+        if (typeof window !== 'undefined' && window.DashboardI18n && typeof window.DashboardI18n.getDictionary === 'function') {
+            const dict = window.DashboardI18n.getDictionary();
+            if (dict && dict.units) return dict.units;
+        }
+        return {
+            y: 'y', d: 'd', h: 'h', m: 'm', s: 's',
+            year: 'year', years: 'years',
+            day: 'day', days: 'days',
+            hour: 'hour', hours: 'hours',
+            minute: 'minute', minutes: 'minutes',
+            second: 'second', seconds: 'seconds',
+            and: 'and',
+            done: ''
+        };
+    }
+
+    function parseCountdownTarget(targetEv, nowMs) {
+        if (!targetEv || targetEv.failed) return null;
+        if (targetEv.type === 'number') {
+            if (!Number.isFinite(targetEv.v)) return null;
+            const durMs = Math.max(0, targetEv.v * 1000);
+            return {
+                kind: 'duration',
+                startTimeMs: nowMs,
+                endTimeMs: nowMs + durMs,
+                totalDurationMs: durMs
+            };
+        }
+        if (targetEv.type === 'string') {
+            const rawStr = String(targetEv.v).trim();
+            if (rawStr === '') return null;
+            const directNum = Number(rawStr);
+            if (Number.isFinite(directNum)) {
+                const durMsN = Math.max(0, directNum * 1000);
+                return {
+                    kind: 'duration',
+                    startTimeMs: nowMs,
+                    endTimeMs: nowMs + durMsN,
+                    totalDurationMs: durMsN
+                };
+            }
+            const calMs = parseCalendarDateToMs(rawStr);
+            if (Number.isFinite(calMs)) {
+                return {
+                    kind: 'date',
+                    startTimeMs: nowMs,
+                    endTimeMs: calMs,
+                    totalDurationMs: Math.max(0, calMs - nowMs)
+                };
+            }
+            const durSec = parseDurationOrClockToSeconds(rawStr);
+            if (Number.isFinite(durSec)) {
+                const durMsS = Math.max(0, durSec * 1000);
+                return {
+                    kind: 'duration',
+                    startTimeMs: nowMs,
+                    endTimeMs: nowMs + durMsS,
+                    totalDurationMs: durMsS
+                };
+            }
+        }
+        return null;
+    }
+
+    function evalCountdown(node, scope) {
+        const targetEv = evalAst(node.args[0], scope);
+        if (targetEv.failed) return { failed: true };
+
+        let formatStr = '';
+        let doneText = null;
+
+        if (node.args.length === 3) {
+            const fmtEv = evalAst(node.args[1], scope);
+            if (fmtEv.failed) return { failed: true };
+            formatStr = String(fmtEv.v || '').trim();
+            const doneEv = evalAst(node.args[2], scope);
+            if (!doneEv.failed && doneEv.v !== undefined && doneEv.v !== null) {
+                doneText = String(doneEv.v);
+            }
+        } else if (node.args.length === 2) {
+            const secondEv = evalAst(node.args[1], scope);
+            if (secondEv.failed) return { failed: true };
+            const secondVal = String(secondEv.v || '').trim();
+            const secondValLow = secondVal.toLowerCase();
+            if (KNOWN_COUNTDOWN_FORMATS[secondValLow]) {
+                formatStr = secondVal;
+            } else {
+                formatStr = '';
+                doneText = secondVal;
+            }
+        }
+
+        const fmtLow = formatStr.toLowerCase();
+        const nowMs = Date.now();
+        const targetKey = targetEv.type + ':' + String(targetEv.v).trim();
+        const ctxKey = scope.countdownContext || '__default__';
+        if (!countdownStore[ctxKey]) {
+            countdownStore[ctxKey] = Object.create(null);
+        }
+        const ctxBucket = countdownStore[ctxKey];
+        if (scope.visitedCountdowns) {
+            scope.visitedCountdowns[targetKey] = true;
+        }
+        let entry = ctxBucket[targetKey];
+        if (!entry || entry.targetKey !== targetKey) {
+            const parsedTarget = parseCountdownTarget(targetEv, nowMs);
+            if (!parsedTarget) return { failed: true };
+            entry = {
+                targetKey: targetKey,
+                kind: parsedTarget.kind,
+                startTimeMs: parsedTarget.startTimeMs,
+                endTimeMs: parsedTarget.endTimeMs,
+                totalDurationMs: parsedTarget.totalDurationMs,
+                completedTickDone: (parsedTarget.endTimeMs - nowMs) <= 0
+            };
+            ctxBucket[targetKey] = entry;
+        }
+
+        const remainingMs = Math.max(0, entry.endTimeMs - nowMs);
+        if (remainingMs <= 0) {
+            entry.completedTickDone = true;
+        } else {
+            entry.completedTickDone = false;
+        }
+        const totalSec = remainingMs > 0 ? Math.ceil(remainingMs / 1000) : 0;
+        const u = getLocaleUnits();
+
+        if (doneText === null && u && u.done !== undefined && u.done !== null && String(u.done).trim() !== '') {
+            doneText = String(u.done);
+        }
+
+        if (fmtLow === 'years') {
+            return { v: Math.floor(totalSec / 31536000), type: 'number' };
+        }
+        if (fmtLow === 'days') {
+            return { v: Math.floor(totalSec / 86400), type: 'number' };
+        }
+        if (fmtLow === 'hours') {
+            return { v: Math.floor(totalSec / 3600), type: 'number' };
+        }
+        if (fmtLow === 'minutes') {
+            return { v: Math.floor(totalSec / 60), type: 'number' };
+        }
+        if (fmtLow === 'seconds') {
+            return { v: totalSec, type: 'number' };
+        }
+        if (fmtLow === 'percent') {
+            if (entry.totalDurationMs <= 0) return { v: 100, type: 'number' };
+            const elapsedPct = Math.round(((entry.totalDurationMs - remainingMs) / entry.totalDurationMs) * 100);
+            return { v: Math.min(100, Math.max(0, elapsedPct)), type: 'number' };
+        }
+        if (fmtLow === 'percent-remaining') {
+            if (entry.totalDurationMs <= 0) return { v: 0, type: 'number' };
+            const remPct = Math.round((remainingMs / entry.totalDurationMs) * 100);
+            return { v: Math.min(100, Math.max(0, remPct)), type: 'number' };
+        }
+        if (fmtLow === 'isdone') {
+            return { v: remainingMs <= 0 ? 1 : 0, type: 'number' };
+        }
+        if (fmtLow === 'isrunning') {
+            return { v: remainingMs > 0 ? 1 : 0, type: 'number' };
+        }
+
+        if (remainingMs <= 0 && doneText !== null) {
+            return { v: doneText, type: 'string' };
+        }
+
+        const SEC_IN_YEAR = 31536000;
+        const y = Math.floor(totalSec / SEC_IN_YEAR);
+        const remAfterYears = totalSec % SEC_IN_YEAR;
+        const d = Math.floor(remAfterYears / 86400);
+        const h = Math.floor((remAfterYears % 86400) / 3600);
+        const m = Math.floor((remAfterYears % 3600) / 60);
+        const s = remAfterYears % 60;
+
+        if (fmtLow === 'timer') {
+            const totalH = (y * 365 * 24) + (d * 24) + h;
+            return { v: pad2(totalH) + ':' + pad2(m) + ':' + pad2(s), type: 'string' };
+        }
+
+        if (fmtLow === 'compact' || fmtLow === 'compact-full') {
+            const parts = [];
+            if (y > 0) parts.push(y + (u.y || 'y'));
+            if (d > 0) parts.push(d + (u.d || 'd'));
+            if (h > 0) parts.push(h + (u.h || 'h'));
+            if (m > 0) parts.push(m + (u.m || 'm'));
+            if (s > 0) parts.push(s + (u.s || 's'));
+            if (parts.length === 0) {
+                return { v: '0' + (u.s || 's'), type: 'string' };
+            }
+            const limit = fmtLow === 'compact' ? 2 : parts.length;
+            return { v: parts.slice(0, limit).join(' '), type: 'string' };
+        }
+
+        if (fmtLow === 'words' || fmtLow === 'words-full') {
+            const wordParts = [];
+            if (y > 0) wordParts.push(y + ' ' + (y === 1 ? (u.year || 'year') : (u.years || 'years')));
+            if (d > 0) wordParts.push(d + ' ' + (d === 1 ? (u.day || 'day') : (u.days || 'days')));
+            if (h > 0) wordParts.push(h + ' ' + (h === 1 ? (u.hour || 'hour') : (u.hours || 'hours')));
+            if (m > 0) wordParts.push(m + ' ' + (m === 1 ? (u.minute || 'minute') : (u.minutes || 'minutes')));
+            if (s > 0) wordParts.push(s + ' ' + (s === 1 ? (u.second || 'second') : (u.seconds || 'seconds')));
+            if (wordParts.length === 0) {
+                return { v: '0 ' + (u.seconds || 'seconds'), type: 'string' };
+            }
+            const limit = fmtLow === 'words' ? 2 : wordParts.length;
+            return { v: wordParts.slice(0, limit).join(', '), type: 'string' };
+        }
+
+        if (y > 0) {
+            return { v: y + (u.y || 'y') + ' ' + d + (u.d || 'd') + ' ' + pad2(h) + ':' + pad2(m) + ':' + pad2(s), type: 'string' };
+        }
+        if (d > 0) {
+            return { v: d + (u.d || 'd') + ' ' + pad2(h) + ':' + pad2(m) + ':' + pad2(s), type: 'string' };
+        }
+        if (h > 0) {
+            return { v: pad2(h) + ':' + pad2(m) + ':' + pad2(s), type: 'string' };
+        }
+        return { v: pad2(m) + ':' + pad2(s), type: 'string' };
     }
 
     const PATH_SHAPED_RE = /^[A-Za-z0-9_.$-]+(\/[A-Za-z0-9_.$-]+)*$/;
@@ -533,9 +913,8 @@ const FormulaEngine = (function () {
             return { v: tr.v, type: 'number' };
         }
         if (node.t === 'un') {
-            const inner = evalAst(node.e, scope);
+            const inner = coerceEvalNodeToNumber(evalAst(node.e, scope));
             if (inner.failed) return { failed: true };
-            if (inner.type !== 'number') return { failed: true };
             return { v: node.op === '-' ? -inner.v : inner.v, type: 'number' };
         }
         if (node.t === 'bin') {
@@ -555,21 +934,25 @@ const FormulaEngine = (function () {
                 return { failed: true };
             }
             if (op === '-' || op === '*' || op === '/') {
-                if (l.type !== 'number' || r.type !== 'number') return { failed: true };
+                const ln = coerceEvalNodeToNumber(l);
+                const rn = coerceEvalNodeToNumber(r);
+                if (ln.failed || rn.failed) return { failed: true };
                 let result;
-                if (op === '-') result = l.v - r.v;
-                else if (op === '*') result = l.v * r.v;
-                else result = l.v / r.v;
+                if (op === '-') result = ln.v - rn.v;
+                else if (op === '*') result = ln.v * rn.v;
+                else result = ln.v / rn.v;
                 if (!Number.isFinite(result)) return { failed: true };
                 return { v: result, type: 'number' };
             }
             if (op === '>' || op === '>=' || op === '<' || op === '<=') {
-                if (l.type !== 'number' || r.type !== 'number') return { failed: true };
+                const ln = coerceEvalNodeToNumber(l);
+                const rn = coerceEvalNodeToNumber(r);
+                if (ln.failed || rn.failed) return { failed: true };
                 let result;
-                if (op === '>') result = l.v > r.v ? 1 : 0;
-                else if (op === '>=') result = l.v >= r.v ? 1 : 0;
-                else if (op === '<') result = l.v < r.v ? 1 : 0;
-                else result = l.v <= r.v ? 1 : 0;
+                if (op === '>') result = ln.v > rn.v ? 1 : 0;
+                else if (op === '>=') result = ln.v >= rn.v ? 1 : 0;
+                else if (op === '<') result = ln.v < rn.v ? 1 : 0;
+                else result = ln.v <= rn.v ? 1 : 0;
                 return { v: result, type: 'number' };
             }
             if (op === '==' || op === '!=') {
@@ -581,11 +964,13 @@ const FormulaEngine = (function () {
         if (node.t === 'call') {
             const fn = node.fn;
             if (fn === 'if') {
-                const cond = evalAst(node.args[0], scope);
+                const cond = coerceEvalNodeToNumber(evalAst(node.args[0], scope));
                 if (cond.failed) return { failed: true };
-                if (cond.type !== 'number') return { failed: true };
                 const branch = evalAst(cond.v ? node.args[1] : node.args[2], scope);
                 return branch;
+            }
+            if (fn === 'countdown') {
+                return evalCountdown(node, scope);
             }
             if (fn === 'contains' || fn === 'containsanycase') {
                 const hayEv = evalAst(node.args[0], scope);
@@ -596,9 +981,8 @@ const FormulaEngine = (function () {
             const evArgs = [];
             let i;
             for (i = 0; i < node.args.length; i++) {
-                const ev = evalAst(node.args[i], scope);
+                const ev = coerceEvalNodeToNumber(evalAst(node.args[i], scope));
                 if (ev.failed) return { failed: true };
-                if (ev.type !== 'number') return { failed: true };
                 evArgs.push(ev.v);
             }
             let result;
@@ -684,17 +1068,80 @@ const FormulaEngine = (function () {
         const resolver = typeof resolveTopicFn === 'function' ? resolveTopicFn : function () {
             return { failed: true };
         };
+        const countdownCtx = (opts && opts.countdownContext)
+            ? String(opts.countdownContext)
+            : (activeCountdownContext || ('__formula__::' + norm));
+        const hasCd = astHasCountdown(parsed.ast);
+        const visitedCountdowns = hasCd ? Object.create(null) : null;
         const scope = {
             value: numericInput,
             resolveTopic: resolver,
-            disallowValue: disallowValue
+            disallowValue: disallowValue,
+            countdownContext: countdownCtx,
+            visitedCountdowns: visitedCountdowns
         };
         const result = evalAst(parsed.ast, scope);
+        if (hasCd && countdownStore[countdownCtx]) {
+            const bucket = countdownStore[countdownCtx];
+            const keys = Object.keys(bucket);
+            for (let ki = 0; ki < keys.length; ki++) {
+                const tk = keys[ki];
+                if (!visitedCountdowns[tk]) {
+                    delete bucket[tk];
+                }
+            }
+            if (Object.keys(bucket).length === 0) {
+                delete countdownStore[countdownCtx];
+            }
+        }
         if (result.failed) return { value: numericInput, failed: true };
         if (result.type === 'number' && !Number.isFinite(result.v)) {
             return { value: numericInput, failed: true };
         }
         return { value: result.v, type: result.type, failed: false };
+    }
+
+    function withCountdownContext(contextKey, fn) {
+        const prev = activeCountdownContext;
+        activeCountdownContext = contextKey ? String(contextKey) : null;
+        try {
+            return fn();
+        } finally {
+            activeCountdownContext = prev;
+        }
+    }
+
+    function clearWidgetCountdowns(widgetId) {
+        if (!widgetId) return;
+        const prefix = String(widgetId) + '::';
+        const keys = Object.keys(countdownStore);
+        for (let i = 0; i < keys.length; i++) {
+            if (keys[i].indexOf(prefix) === 0) {
+                delete countdownStore[keys[i]];
+            }
+        }
+    }
+
+    function hasActiveCountdownsForWidget(widgetId) {
+        if (!widgetId) return false;
+        const prefix = String(widgetId) + '::';
+        const keys = Object.keys(countdownStore);
+        for (let i = 0; i < keys.length; i++) {
+            const k = keys[i];
+            if (k.indexOf(prefix) === 0) {
+                const bucket = countdownStore[k];
+                if (bucket) {
+                    const tKeys = Object.keys(bucket);
+                    for (let j = 0; j < tKeys.length; j++) {
+                        const entry = bucket[tKeys[j]];
+                        if (entry && !entry.completedTickDone) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     function isDefaultFormula(raw) {
@@ -1442,6 +1889,11 @@ const FormulaEngine = (function () {
         coerceValue: coerceValue,
         isDefaultFormula: isDefaultFormula,
         looksLikeFormula: looksLikeFormula,
+        hasCountdown: hasCountdown,
+        withCountdownContext: withCountdownContext,
+        clearWidgetCountdowns: clearWidgetCountdowns,
+        hasActiveCountdownsForWidget: hasActiveCountdownsForWidget,
+        parseDurationOrClockToSeconds: parseDurationOrClockToSeconds,
         scanDoubleBraceTokens: scanDoubleBraceTokens,
         createFormulaInput: createFormulaInput,
         PRESETS: PRESETS,

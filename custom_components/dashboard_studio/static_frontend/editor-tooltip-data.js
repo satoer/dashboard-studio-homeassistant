@@ -619,7 +619,7 @@
         "description": "Comma-separated font names loaded from Google Fonts for custom dashboard typography.",
         "help": {
             "topic": "Editor Interface Guide",
-            "anchor": "15-typography"
+            "anchor": "16-typography"
         }
     },
     "defaultLabelCase": {
@@ -627,7 +627,7 @@
         "description": "Controls default capitalization formatting for widget title headers:\n• UPPERCASE: Converts all characters in widget titles to capital letters.\n• Capitalize: Formats titles with the first letter of each word capitalized.\n• lowercase: Formats all characters in widget titles to lowercase.\n• None: Preserves exact text casing as entered or received from data topics.",
         "help": {
             "topic": "Editor Interface Guide",
-            "anchor": "15-typography"
+            "anchor": "16-typography"
         }
     },
     "defaultLabelBold": {
@@ -635,7 +635,7 @@
         "description": "Renders standard widget labels in bold font weight by default.",
         "help": {
             "topic": "Editor Interface Guide",
-            "anchor": "15-typography"
+            "anchor": "16-typography"
         }
     },
     "defaultLabelLineHeight": {
@@ -643,7 +643,7 @@
         "description": "Vertical line height multiplier for text spacing.",
         "help": {
             "topic": "Editor Interface Guide",
-            "anchor": "15-typography"
+            "anchor": "16-typography"
         }
     },
     "defaultFsGeneral": {
@@ -651,7 +651,7 @@
         "description": "Global fallback text color applied to dynamic sensor readings and values.",
         "help": {
             "topic": "Editor Interface Guide",
-            "anchor": "15-typography"
+            "anchor": "16-typography"
         }
     },
     "defaultFsUnit": {
@@ -659,7 +659,7 @@
         "description": "Fallback typography font size in pixels for primary numerical values.",
         "help": {
             "topic": "Editor Interface Guide",
-            "anchor": "15-typography"
+            "anchor": "16-typography"
         }
     },
     "defaultWidth": {
@@ -667,7 +667,7 @@
         "description": "Standard width in pixels assigned to newly added widgets.",
         "help": {
             "topic": "Editor Interface Guide",
-            "anchor": "16-master-widget-settings"
+            "anchor": "17-master-widget-settings"
         }
     },
     "defaultHeight": {
@@ -675,7 +675,7 @@
         "description": "Standard height in pixels assigned to newly added widgets.",
         "help": {
             "topic": "Editor Interface Guide",
-            "anchor": "16-master-widget-settings"
+            "anchor": "17-master-widget-settings"
         }
     },
     "defaultPadding": {
@@ -683,7 +683,7 @@
         "description": "Internal spacing in pixels between widget edges and contents.",
         "help": {
             "topic": "Editor Interface Guide",
-            "anchor": "16-master-widget-settings"
+            "anchor": "17-master-widget-settings"
         }
     },
     "defaultBorderOpacity": {
@@ -6804,7 +6804,7 @@
         "description": "Fine-tune color tone, saturation intensity, contrast, and brightness across your active theme.",
         "help": {
             "topic": "Editor Interface Guide",
-            "anchor": "13-theme-colors"
+            "anchor": "14-theme-colors"
         }
     },
     "theme-corrections-reset": {
@@ -6817,7 +6817,7 @@
         "description": "Rotate every theme color around the color wheel from minus 180 to plus 180 degrees. Zero keeps the current palette.",
         "help": {
             "topic": "Editor Interface Guide",
-            "anchor": "13-theme-colors"
+            "anchor": "14-theme-colors"
         }
     },
     "theme-color-intensity": {
@@ -6825,7 +6825,7 @@
         "description": "Scale color saturation from 0% monochrome to 200% vivid color. 100% keeps current theme palette intensity.",
         "help": {
             "topic": "Editor Interface Guide",
-            "anchor": "13-theme-colors"
+            "anchor": "14-theme-colors"
         }
     },
     "theme-brightness": {
@@ -6833,7 +6833,7 @@
         "description": "Scale overall theme lightness from 0% to 200%. 100% keeps current theme palette values intact.",
         "help": {
             "topic": "Editor Interface Guide",
-            "anchor": "13-theme-colors"
+            "anchor": "14-theme-colors"
         }
     },
     "theme-contrast": {
@@ -6841,7 +6841,7 @@
         "description": "Spread dark theme colors darker and light theme colors lighter from 0% to 200%. 100% preserves normal theme contrast.",
         "help": {
             "topic": "Editor Interface Guide",
-            "anchor": "13-theme-colors"
+            "anchor": "14-theme-colors"
         }
     },
     "theme-reset-defaults-to-theme": {
@@ -6849,7 +6849,7 @@
         "description": "Restore all widget default colors to match active theme tokens without modifying per-widget customizations.",
         "help": {
             "topic": "Editor Interface Guide",
-            "anchor": "13-theme-colors"
+            "anchor": "14-theme-colors"
         }
     },
     "widget-presets": {
@@ -15486,6 +15486,54 @@
         "help": {
             "topic": "Widgets",
             "widgetSub": "lightgrid"
+        }
+    },
+    "locale": {
+        "title": "Language & Locale",
+        "description": "Sets the global display language for dates, weekdays, months, countdown timers, and clock labels across the dashboard:\n• Auto (Browser Default): Automatically detects the language from the tablet or browser settings.\n• Built-in Languages: Applies one of the 13 included language dictionaries across all widgets.\n• Saved Custom Presets: Applies a named custom translation preset saved in the editor.\n• Custom / Edit Translations: Opens the translation editor to customize individual words and units.",
+        "help": {
+            "topic": "Editor Interface Guide",
+            "anchor": "13-regional-localization"
+        }
+    },
+    "editTranslations": {
+        "title": "Edit Custom Translations",
+        "description": "Opens the Custom Language & Translations dialog where you can customize countdown units (years, days, hours, minutes, seconds), custom ending text when elapsed, clock labels, months, and weekdays, or save reusable language presets.",
+        "help": {
+            "topic": "Editor Interface Guide",
+            "anchor": "13-regional-localization"
+        }
+    },
+    "timeFormat": {
+        "title": "Time Format",
+        "description": "Sets the global 12-hour or 24-hour clock preference inherited by Clock, List, and Graph widgets:\n• Auto (From Locale): Uses the standard 12-hour or 24-hour clock convention for the active language.\n• 24-Hour (14:30): Displays hours from 00 to 23 across all widgets.\n• 12-Hour (2:30 PM): Displays hours from 1 to 12 with localized AM and PM indicators.",
+        "help": {
+            "topic": "Editor Interface Guide",
+            "anchor": "13-regional-localization"
+        }
+    },
+    "dateFormat": {
+        "title": "Date Format",
+        "description": "Sets the global calendar date order inherited by List and Graph widgets when their date format is set to Auto:\n• Auto (From Locale): Selects the natural day, month, and year order for the active language.\n• DD-MM-YYYY: Day, month, and four-digit year separated by hyphens (31-12-2026).\n• DD/MM/YYYY: Day, month, and four-digit year separated by slashes (31/12/2026).\n• MM/DD/YYYY: Month, day, and four-digit year separated by slashes (12/31/2026).\n• YYYY-MM-DD: ISO year, month, and day order (2026-12-31).\n• DD MMM YYYY: Day, short localized month name, and year (31 Dec 2026).",
+        "help": {
+            "topic": "Editor Interface Guide",
+            "anchor": "13-regional-localization"
+        }
+    },
+    "firstDayOfWeek": {
+        "title": "First Day of Week",
+        "description": "Sets the starting weekday column for markdown calendars in Text widgets and ISO week calculations:\n• Auto (From Locale): Starts the week on Monday or Sunday based on the active language convention.\n• Monday: Starts every calendar week on Monday.\n• Sunday: Starts every calendar week on Sunday.",
+        "help": {
+            "topic": "Editor Interface Guide",
+            "anchor": "13-regional-localization"
+        }
+    },
+    "clock.locale": {
+        "title": "Language Override",
+        "description": "Sets the language used for weekday names, month names, week prefixes, and flip clock unit labels on this clock widget. Choose Auto to follow the Master Dashboard Language & Locale setting.",
+        "help": {
+            "topic": "Widgets",
+            "widgetSub": "clock"
         }
     }
 };

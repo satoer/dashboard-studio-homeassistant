@@ -74,6 +74,20 @@
           ]
         },
         {
+          "title": "New: Stacked Graph Bars",
+          "description": "Bar graphs can place several series on top of each other in the same category. Side by side is still available.",
+          "tags": [
+            7
+          ]
+        },
+        {
+          "title": "New: Narrower Bars in a Stack",
+          "description": "Stacked Gap Step makes each bar drawn on top a little narrower than the one under it, so the lower bars stay visible.",
+          "tags": [
+            7
+          ]
+        },
+        {
           "title": "Changed: Moved Rotate to the Typography Settings",
           "description": "Category and value tick rotation now sit with the other axis text settings, under X Axis (Datapoints) and Y Axis (Value).",
           "tags": [

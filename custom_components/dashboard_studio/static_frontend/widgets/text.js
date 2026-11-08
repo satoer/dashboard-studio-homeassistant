@@ -20,7 +20,7 @@ class TextWidget extends BaseWidget {
             category: 'Text',
             color_dark: 'hsl(300, 80%, 65%)',
             color_light: 'hsl(300, 85%, 35%)',
-            version: '2.3.5',
+            version: '2.4.0',
             date: '2026-11-07'
         };
     }
@@ -45,8 +45,8 @@ class TextWidget extends BaseWidget {
             textMdEqualTableColumnWidths: false,
             textMdTableColumnWidthPx: 0,
             textMdTableStyle: 'minimal',
-            /** 'monday' | 'sunday' | 'saturday' — which columns get weekend highlight for Calendar table styles. */
-            textMdCalendarWeekStart: 'monday',
+            /** 'auto' | 'monday' | 'sunday' | 'saturday' — which columns get weekend highlight for Calendar table styles. */
+            textMdCalendarWeekStart: 'auto',
             textMdTableBorderRadius: 5,
             textMdTableCellPadding: 10,
             textMdTableBorderColor: '@border',
@@ -560,6 +560,7 @@ class TextWidget extends BaseWidget {
                 cols: 12,
                 defaultKey: 'textMdCalendarWeekStart',
                 options: [
+                    { value: 'auto', text: 'Auto (from Dashboard)' },
                     { value: 'monday', text: 'Europe (Monday)' },
                     { value: 'sunday', text: 'Americas / Japan (Sunday)' },
                     { value: 'saturday', text: 'Middle East (Saturday)' }
@@ -687,6 +688,8 @@ class TextWidget extends BaseWidget {
                 return;
             }
             if (attrName === 'class' && tag === 'span') {
+                const cv = data.attrValue == null ? '' : String(data.attrValue).trim();
+                if (cv === 'ds-formula-countdown') return;
                 data.keepAttr = false;
                 return;
             }
@@ -1006,6 +1009,9 @@ class TextWidget extends BaseWidget {
         if (primary !== undefined && primary !== null) {
             return { v: primary };
         }
+        if (typeof topicPath === 'string' && topicPath.indexOf('local/') === 0) {
+            return { v: '0s' };
+        }
         return { failed: true };
     }
 
@@ -1243,6 +1249,22 @@ class TextWidget extends BaseWidget {
         return out;
     }
 
+    static _isTokenInsideMarkdownDirectiveParam(raw, tokStart) {
+        const lineStart = raw.lastIndexOf('\n', tokStart - 1) + 1;
+        const prefix = raw.slice(lineStart, tokStart);
+        const lastOpenBr = prefix.lastIndexOf('[');
+        const lastCloseBr = prefix.lastIndexOf(']');
+        if (lastOpenBr > lastCloseBr) {
+            const bracketPrefix = prefix.slice(lastOpenBr);
+            if (/^\[cell\b/i.test(bracketPrefix)) return true;
+            if (/^\[(?:color|blink)\s*:[^:]*$/i.test(bracketPrefix)) return true;
+            if (lastOpenBr > 0 && prefix.charAt(lastOpenBr - 1) === '!') return true;
+        }
+        const lastPh = prefix.lastIndexOf(':ph(');
+        if (lastPh >= 0 && prefix.indexOf('):', lastPh) < 0) return true;
+        return false;
+    }
+
     _getMarkdownPlaceholderPlan(src) {
         const raw = src === undefined || src === null ? '' : String(src);
         if (this._mdPlaceholderPlan && this._mdPlaceholderPlan.src === raw) {
@@ -1257,12 +1279,18 @@ class TextWidget extends BaseWidget {
             const inner = String(scanned[i].inner || '').trim();
             if (TextWidget._markdownLooksLikeFormula(inner)) {
                 formulaCount += 1;
+                const hasCd = (typeof FormulaEngine !== 'undefined' && typeof FormulaEngine.hasCountdown === 'function')
+                    ? FormulaEngine.hasCountdown(inner)
+                    : false;
                 tokens.push({
                     kind: 'formula',
                     start: scanned[i].start,
                     end: scanned[i].end,
                     inner: inner,
-                    overCap: formulaCount > cap
+                    overCap: formulaCount > cap,
+                    hasCountdown: hasCd,
+                    countdownId: 'cd_' + i,
+                    inDirectiveParam: hasCd ? TextWidget._isTokenInsideMarkdownDirectiveParam(raw, scanned[i].start) : false
                 });
             } else {
                 tokens.push({
@@ -1277,7 +1305,7 @@ class TextWidget extends BaseWidget {
         return this._mdPlaceholderPlan;
     }
 
-    _evaluateMarkdownFormula(inner) {
+    _evaluateMarkdownFormula(inner, countdownId) {
         if (typeof FormulaEngine === 'undefined' || typeof FormulaEngine.evaluate !== 'function') {
             return '-';
         }
@@ -1290,14 +1318,23 @@ class TextWidget extends BaseWidget {
             }
             return { v: hit.v, type: typeof hit.v === 'number' ? 'number' : 'string' };
         };
-        const ev = FormulaEngine.evaluate(inner, undefined, resolveFn, { disallowValue: true });
+        const cdCtx = this.id + '::__md__::' + (countdownId || inner);
+        const ev = FormulaEngine.evaluate(inner, undefined, resolveFn, {
+            disallowValue: true,
+            countdownContext: cdCtx
+        });
         if (!ev || ev.failed) return '-';
         if (ev.value === undefined || ev.value === null) return '-';
         return ev.value;
     }
 
-    _resolveMarkdownDynamicPlaceholders(src, escapeInserted) {
+    _resolveMarkdownDynamicPlaceholders(src, escapeInserted, wrapCountdowns) {
         const raw = src === undefined || src === null ? '' : String(src);
+        if (wrapCountdowns === true) {
+            this._activeMdCountdownTokens = [];
+            this._activeMdDirectiveCountdowns = [];
+            this._hasActiveExtraCountdowns = false;
+        }
         if (raw.indexOf('{{') < 0) return raw;
         const plan = this._getMarkdownPlaceholderPlan(raw);
         if (!plan.tokens.length) return raw;
@@ -1312,17 +1349,40 @@ class TextWidget extends BaseWidget {
             if (!tok.inner) {
                 resolved = '';
             } else if (tok.kind === 'formula') {
-                resolved = tok.overCap ? '-' : this._evaluateMarkdownFormula(tok.inner);
+                resolved = tok.overCap ? '-' : this._evaluateMarkdownFormula(tok.inner, tok.countdownId);
             } else {
                 resolved = this._resolveMarkdownDataPath(tok.inner);
             }
             if (resolved === undefined || resolved === null) resolved = '-';
             if (typeof resolved === 'string') resolved = TextWidget.expandEscapedNewlines(resolved);
             else resolved = String(resolved);
-            out += esc ? TextWidget._escapePlainText(resolved) : resolved;
+            if (wrapCountdowns === true && tok.kind === 'formula' && tok.hasCountdown && !tok.overCap) {
+                if (tok.inDirectiveParam) {
+                    this._activeMdDirectiveCountdowns.push({
+                        id: tok.countdownId,
+                        inner: tok.inner,
+                        lastVal: resolved
+                    });
+                    out += esc ? TextWidget._escapePlainText(resolved) : resolved;
+                } else {
+                    this._activeMdCountdownTokens.push({
+                        id: tok.countdownId,
+                        inner: tok.inner
+                    });
+                    out += '<span class="ds-formula-countdown" data-countdown-id="' + tok.countdownId + '">'
+                        + TextWidget._escapePlainText(resolved) + '</span>';
+                }
+            } else {
+                out += esc ? TextWidget._escapePlainText(resolved) : resolved;
+            }
             last = tok.end;
         }
         out += raw.slice(last);
+        if (wrapCountdowns === true && (this._activeMdCountdownTokens.length > 0 || this._activeMdDirectiveCountdowns.length > 0)) {
+            this._hasActiveExtraCountdowns = typeof FormulaEngine !== 'undefined'
+                && typeof FormulaEngine.hasActiveCountdownsForWidget === 'function'
+                && FormulaEngine.hasActiveCountdownsForWidget(this.id);
+        }
         return out;
     }
 
@@ -1815,7 +1875,7 @@ class TextWidget extends BaseWidget {
         ];
         return P.sanitize(html, {
             ALLOWED_TAGS: allowedTags,
-            ALLOWED_ATTR: ['class', 'style', 'src', 'alt', 'title', 'href', 'target', 'rel', 'data-md-align', 'data-md-w', 'data-md-h', 'data-text-md-col', 'data-text-md-img-tint', 'data-text-md-blink'],
+            ALLOWED_ATTR: ['class', 'style', 'src', 'alt', 'title', 'href', 'target', 'rel', 'data-md-align', 'data-md-w', 'data-md-h', 'data-text-md-col', 'data-text-md-img-tint', 'data-text-md-blink', 'data-countdown-id'],
             ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|sms|cid|xmpp|help):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i
         });
     }
@@ -2642,8 +2702,13 @@ class TextWidget extends BaseWidget {
         };
         c.mdTableStyle = resolveMd('mdTableStyle', 'textMdTableStyle', 'minimal');
         {
-            const rawWs = resolveMd('mdCalendarWeekStart', 'textMdCalendarWeekStart', 'monday');
-            const wsl = String(rawWs == null ? '' : rawWs).toLowerCase();
+            const rawWs = resolveMd('mdCalendarWeekStart', 'textMdCalendarWeekStart', 'auto');
+            let wsl = String(rawWs == null ? '' : rawWs).toLowerCase();
+            if (!wsl || wsl === 'auto') {
+                wsl = (typeof DashboardI18n !== 'undefined' && typeof DashboardI18n.getEffectiveFirstDayOfWeek === 'function')
+                    ? DashboardI18n.getEffectiveFirstDayOfWeek()
+                    : 'monday';
+            }
             c.mdCalendarWeekStart = (wsl === 'sunday' || wsl === 'saturday' || wsl === 'monday') ? wsl : 'monday';
         }
         c.mdTableBorderRadius = resolveMdInt('mdTableBorderRadius', 'textMdTableBorderRadius', 5, 0, 64);
@@ -3057,6 +3122,7 @@ class TextWidget extends BaseWidget {
                         key: 'mdCalendarWeekStart', type: 'select', label: 'Region (first day of week)', cols: 6,
                         defaultKey: 'textMdCalendarWeekStart',
                         options: [
+                            { value: 'auto', text: 'Auto (from Dashboard)' },
                             { value: 'monday', text: 'Europe (Monday)' },
                             { value: 'sunday', text: 'Americas / Japan (Sunday)' },
                             { value: 'saturday', text: 'Middle East (Saturday)' }
@@ -3388,7 +3454,7 @@ class TextWidget extends BaseWidget {
         raw = TextWidget.expandEscapedNewlines(raw);
         const phOpts = this._getMarkdownPhosphorIconOpts();
         // Resolve {{topic}} before icon/block preprocessing so live payloads match bound Text Content.
-        const pre = this._resolveMarkdownDynamicPlaceholders(raw, false);
+        const pre = this._resolveMarkdownDynamicPlaceholders(raw, false, true);
         return this._applyLinkTargetToHtml(TextWidget._renderMarkdownFragmentToSafeHtml(pre, {
             phOpts: phOpts,
             hadEscapedNewlines: hadEscapedNewlines,
@@ -4087,7 +4153,10 @@ class TextWidget extends BaseWidget {
             + String(c.mdIconAccentOpacity != null ? c.mdIconAccentOpacity : '') + '\x02'
             + String(c.mdIconColor || '') + '\x02'
             + String(c.mdIconOpacity != null ? c.mdIconOpacity : '');
-        return themeSig + '\x01' + iconSig + '\x01' + String(c.mdLinkTarget || 'markdown');
+        var localeSig = (typeof DashboardI18n !== 'undefined' && typeof DashboardI18n.getEffectiveLocaleSetting === 'function')
+            ? (DashboardI18n.getEffectiveLocaleSetting() + '\x02' + JSON.stringify(typeof MASTER_SETTINGS !== 'undefined' ? MASTER_SETTINGS.customLocale : null))
+            : '';
+        return themeSig + '\x01' + iconSig + '\x01' + String(c.mdLinkTarget || 'markdown') + '\x01' + localeSig;
     }
 
     /**
@@ -5143,6 +5212,75 @@ class TextWidget extends BaseWidget {
         if (root && root !== this.mdRoot) {
             this._applyDropShadow(c, root);
         }
+    }
+
+    _hasPropertyFormulaCountdown() {
+        if (typeof FormulaEngine === 'undefined' || typeof FormulaEngine.hasCountdown !== 'function') return false;
+        const o = this.overrides || {};
+        const keys = Object.keys(o);
+        for (let i = 0; i < keys.length; i++) {
+            const k = keys[i];
+            if (k.indexOf('_bind_formula') === k.length - 13 && typeof o[k] === 'string' && FormulaEngine.hasCountdown(o[k])) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    tickCountdowns() {
+        if (this._hasPropertyFormulaCountdown()) {
+            this._cachedContentSig = null;
+            super.tickCountdowns();
+            return;
+        }
+        const dirTokens = this._activeMdDirectiveCountdowns || [];
+        for (let di = 0; di < dirTokens.length; di++) {
+            const dt = dirTokens[di];
+            let nextDirVal = this._evaluateMarkdownFormula(dt.inner, dt.id);
+            if (nextDirVal === undefined || nextDirVal === null) nextDirVal = '-';
+            nextDirVal = typeof nextDirVal === 'string' ? TextWidget.expandEscapedNewlines(nextDirVal) : String(nextDirVal);
+            if (nextDirVal !== dt.lastVal) {
+                this._cachedContentSig = null;
+                super.tickCountdowns();
+                return;
+            }
+        }
+        const root = this.mdRoot;
+        const tokens = this._activeMdCountdownTokens || [];
+        if (!root || tokens.length === 0) {
+            this._cachedContentSig = null;
+            super.tickCountdowns();
+            return;
+        }
+        const tokenMap = Object.create(null);
+        for (let ti = 0; ti < tokens.length; ti++) {
+            const tok = tokens[ti];
+            let val = this._evaluateMarkdownFormula(tok.inner, tok.id);
+            if (val === undefined || val === null) val = '-';
+            val = typeof val === 'string' ? TextWidget.expandEscapedNewlines(val) : String(val);
+            tokenMap[tok.id] = val;
+        }
+        const spans = root.querySelectorAll('.ds-formula-countdown[data-countdown-id]');
+        let lenChanged = false;
+        for (let si = 0; si < spans.length; si++) {
+            const span = spans[si];
+            const cid = span.getAttribute('data-countdown-id');
+            if (cid && Object.prototype.hasOwnProperty.call(tokenMap, cid)) {
+                const prevText = span.textContent || '';
+                const nextText = tokenMap[cid];
+                if (prevText !== nextText) {
+                    if (prevText.length !== nextText.length) lenChanged = true;
+                    span.textContent = nextText;
+                }
+            }
+        }
+        if (lenChanged && this.config && this.config.mdAutoFitText === true) {
+            this._syncTextAutoFit(this.config);
+        }
+        this._hasActiveExtraCountdowns = typeof FormulaEngine !== 'undefined'
+            && typeof FormulaEngine.hasActiveCountdownsForWidget === 'function'
+            && FormulaEngine.hasActiveCountdownsForWidget(this.id);
+        this._syncCountdownHeartbeatRegistration();
     }
 
 }
