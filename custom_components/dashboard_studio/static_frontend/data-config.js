@@ -1257,13 +1257,13 @@ window.DashboardI18n = (function () {
         dialog.appendChild(header);
 
         var body = document.createElement('div');
-        body.className = 'modal-body p-5 overflow-y-auto flex-1 flex flex-col gap-4 scrollbar-thin';
+        body.className = 'modal-body ds-trans-body scrollbar-thin';
 
         var topBar = document.createElement('div');
-        topBar.className = 'grid grid-cols-12 gap-3 items-end p-3 rounded-lg border editor-hairline editor-surface-inset';
+        topBar.className = 'ds-trans-topbar';
 
         var presetWrap = document.createElement('div');
-        presetWrap.className = 'col-span-6 flex flex-col gap-1';
+        presetWrap.className = 'flex flex-col gap-1';
         var presetLbl = document.createElement('label');
         presetLbl.className = 'control-label';
         presetLbl.textContent = 'Preset Name (optional - saves to Language dropdown)';
@@ -1276,7 +1276,7 @@ window.DashboardI18n = (function () {
         presetWrap.appendChild(presetInp);
 
         var baseWrap = document.createElement('div');
-        baseWrap.className = 'col-span-6 flex flex-col gap-1';
+        baseWrap.className = 'flex flex-col gap-1';
         var baseLbl = document.createElement('label');
         baseLbl.className = 'control-label';
         baseLbl.textContent = 'Load Template from Language';
@@ -1300,8 +1300,39 @@ window.DashboardI18n = (function () {
         topBar.appendChild(baseWrap);
         body.appendChild(topBar);
 
-        var columnsGrid = document.createElement('div');
-        columnsGrid.className = 'grid grid-cols-2 gap-4';
+        // Segmented Tab Controls
+        var segmented = document.createElement('div');
+        segmented.className = 'ds-trans-segmented';
+
+        var tabDefs = [
+            { id: 'countdown', label: 'Countdown & Duration', icon: 'ph-timer' },
+            { id: 'weekdays', label: 'Weekdays (7)', icon: 'ph-calendar' },
+            { id: 'months', label: 'Months (12)', icon: 'ph-calendar-blank' }
+        ];
+        var tabButtons = {};
+        var tabPanes = {};
+
+        tabDefs.forEach(function (td, idx) {
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'ds-trans-tab-btn' + (idx === 0 ? ' is-active' : '');
+            btn.innerHTML = '<i class="ph-bold ' + td.icon + '"></i><span>' + td.label + '</span>';
+            btn.onclick = function () {
+                tabDefs.forEach(function (other) {
+                    tabButtons[other.id].classList.remove('is-active');
+                    tabPanes[other.id].classList.add('is-hidden');
+                });
+                btn.classList.add('is-active');
+                tabPanes[td.id].classList.remove('is-hidden');
+            };
+            tabButtons[td.id] = btn;
+            segmented.appendChild(btn);
+
+            var pane = document.createElement('div');
+            pane.className = 'ds-trans-pane' + (idx === 0 ? '' : ' is-hidden');
+            tabPanes[td.id] = pane;
+        });
+        body.appendChild(segmented);
 
         var unitInputs = {};
         var calSingleInputs = {};
@@ -1312,63 +1343,120 @@ window.DashboardI18n = (function () {
             monthsShort: []
         };
 
-        var leftCol = document.createElement('div');
-        leftCol.className = 'flex flex-col gap-3 p-3 rounded-lg border editor-hairline';
-        var leftTitle = document.createElement('div');
-        leftTitle.className = 'font-bold text-xs uppercase tracking-wider text-[var(--ui-accent)] border-b editor-hairline pb-1.5';
-        leftTitle.textContent = 'Countdown & Duration Units';
-        leftCol.appendChild(leftTitle);
+        // --- TAB 1: Countdown & Duration Units ---
+        var paneCountdown = tabPanes.countdown;
 
-        var unitRows = [
-            { key: 'y', label: 'Years Short (y)' },
-            { key: 'd', label: 'Days Short (d)' },
-            { key: 'h', label: 'Hours Short (h)' },
-            { key: 'm', label: 'Minutes Short (m)' },
-            { key: 's', label: 'Seconds Short (s)' },
-            { key: 'year', label: 'Year (Singular)' },
-            { key: 'years', label: 'Years (Plural)' },
-            { key: 'day', label: 'Day (Singular)' },
-            { key: 'days', label: 'Days (Plural)' },
-            { key: 'hour', label: 'Hour (Singular)' },
-            { key: 'hours', label: 'Hours (Plural)' },
-            { key: 'minute', label: 'Minute (Singular)' },
-            { key: 'minutes', label: 'Minutes (Plural)' },
-            { key: 'second', label: 'Second (Singular)' },
-            { key: 'seconds', label: 'Seconds (Plural)' },
-            { key: 'and', label: 'Conjunction (and)' },
-            { key: 'done', label: 'Ending Text (e.g. Done or empty)' }
+        var uTitle = document.createElement('div');
+        uTitle.className = 'ds-trans-section-title';
+        uTitle.textContent = 'Duration Units Matrix';
+        paneCountdown.appendChild(uTitle);
+
+        var uTable = document.createElement('div');
+        uTable.className = 'ds-trans-table';
+
+        var uHeader = document.createElement('div');
+        uHeader.className = 'ds-trans-row ds-trans-unit-row ds-trans-unit-header';
+        uHeader.innerHTML = '<div>Unit</div><div>Short (Abbr)</div><div>Singular (1)</div><div>Plural (2+)</div>';
+        uTable.appendChild(uHeader);
+
+        var unitSpecs = [
+            { name: 'Years', shortKey: 'y', singKey: 'year', plurKey: 'years', shortHolder: 'y', singHolder: 'year', plurHolder: 'years' },
+            { name: 'Days', shortKey: 'd', singKey: 'day', plurKey: 'days', shortHolder: 'd', singHolder: 'day', plurHolder: 'days' },
+            { name: 'Hours', shortKey: 'h', singKey: 'hour', plurKey: 'hours', shortHolder: 'h', singHolder: 'hour', plurHolder: 'hours' },
+            { name: 'Minutes', shortKey: 'm', singKey: 'minute', plurKey: 'minutes', shortHolder: 'm', singHolder: 'minute', plurHolder: 'minutes' },
+            { name: 'Seconds', shortKey: 's', singKey: 'second', plurKey: 'seconds', shortHolder: 's', singHolder: 'second', plurHolder: 'seconds' }
         ];
 
-        var unitGrid = document.createElement('div');
-        unitGrid.className = 'grid grid-cols-2 gap-2';
-        unitRows.forEach(function (ur) {
-            var cell = document.createElement('div');
-            cell.className = 'flex flex-col gap-1';
-            var l = document.createElement('label');
-            l.className = 'control-label';
-            l.textContent = ur.label;
-            var inp = document.createElement('input');
-            inp.type = 'text';
-            inp.className = 'control-input w-full';
-            inp.value = activeDict.units[ur.key] != null ? String(activeDict.units[ur.key]) : '';
-            unitInputs[ur.key] = inp;
-            cell.appendChild(l);
-            cell.appendChild(inp);
-            unitGrid.appendChild(cell);
-        });
-        leftCol.appendChild(unitGrid);
+        unitSpecs.forEach(function (spec) {
+            var row = document.createElement('div');
+            row.className = 'ds-trans-row ds-trans-unit-row';
 
-        var calMiscTitle = document.createElement('div');
-        calMiscTitle.className = 'font-bold text-xs uppercase tracking-wider text-[var(--ui-accent)] border-b editor-hairline pb-1.5 mt-2';
-        calMiscTitle.textContent = 'Clock & Week Labels';
-        leftCol.appendChild(calMiscTitle);
+            var lbl = document.createElement('div');
+            lbl.className = 'ds-trans-row-label';
+            lbl.textContent = spec.name;
+
+            var sInp = document.createElement('input');
+            sInp.type = 'text';
+            sInp.className = 'control-input';
+            sInp.placeholder = spec.shortHolder;
+            sInp.value = activeDict.units[spec.shortKey] != null ? String(activeDict.units[spec.shortKey]) : '';
+            unitInputs[spec.shortKey] = sInp;
+
+            var singInp = document.createElement('input');
+            singInp.type = 'text';
+            singInp.className = 'control-input';
+            singInp.placeholder = spec.singHolder;
+            singInp.value = activeDict.units[spec.singKey] != null ? String(activeDict.units[spec.singKey]) : '';
+            unitInputs[spec.singKey] = singInp;
+
+            var plurInp = document.createElement('input');
+            plurInp.type = 'text';
+            plurInp.className = 'control-input';
+            plurInp.placeholder = spec.plurHolder;
+            plurInp.value = activeDict.units[spec.plurKey] != null ? String(activeDict.units[spec.plurKey]) : '';
+            unitInputs[spec.plurKey] = plurInp;
+
+            row.appendChild(lbl);
+            row.appendChild(sInp);
+            row.appendChild(singInp);
+            row.appendChild(plurInp);
+            uTable.appendChild(row);
+        });
+        paneCountdown.appendChild(uTable);
+
+        // Conjunction & Elapsed text
+        var conjTitle = document.createElement('div');
+        conjTitle.className = 'ds-trans-section-title mt-2';
+        conjTitle.textContent = 'Sentence Conjunction & Elapsed Text';
+        paneCountdown.appendChild(conjTitle);
+
+        var conjGrid = document.createElement('div');
+        conjGrid.className = 'grid grid-cols-2 gap-3';
+
+        var andWrap = document.createElement('div');
+        andWrap.className = 'flex flex-col gap-1';
+        var andLbl = document.createElement('label');
+        andLbl.className = 'control-label';
+        andLbl.textContent = 'Conjunction (and - e.g. 2 hours and 5 minutes)';
+        var andInp = document.createElement('input');
+        andInp.type = 'text';
+        andInp.className = 'control-input w-full';
+        andInp.placeholder = 'and';
+        andInp.value = activeDict.units.and != null ? String(activeDict.units.and) : '';
+        unitInputs.and = andInp;
+        andWrap.appendChild(andLbl);
+        andWrap.appendChild(andInp);
+
+        var doneWrap = document.createElement('div');
+        doneWrap.className = 'flex flex-col gap-1';
+        var doneLbl = document.createElement('label');
+        doneLbl.className = 'control-label';
+        doneLbl.textContent = 'Elapsed Ending Text (e.g. Done, Klaar, or blank)';
+        var doneInp = document.createElement('input');
+        doneInp.type = 'text';
+        doneInp.className = 'control-input w-full';
+        doneInp.placeholder = 'e.g. Done (or leave empty for 0:00)';
+        doneInp.value = activeDict.units.done != null ? String(activeDict.units.done) : '';
+        unitInputs.done = doneInp;
+        doneWrap.appendChild(doneLbl);
+        doneWrap.appendChild(doneInp);
+
+        conjGrid.appendChild(andWrap);
+        conjGrid.appendChild(doneWrap);
+        paneCountdown.appendChild(conjGrid);
+
+        // Clock & Calendar Indicators
+        var clkTitle = document.createElement('div');
+        clkTitle.className = 'ds-trans-section-title mt-2';
+        clkTitle.textContent = 'Clock & Calendar Indicators';
+        paneCountdown.appendChild(clkTitle);
 
         var miscGrid = document.createElement('div');
-        miscGrid.className = 'grid grid-cols-3 gap-2';
+        miscGrid.className = 'grid grid-cols-3 gap-3';
         [
-            { key: 'weekPrefix', label: 'Week Prefix' },
-            { key: 'am', label: 'AM Label' },
-            { key: 'pm', label: 'PM Label' }
+            { key: 'weekPrefix', label: 'Week Prefix (e.g. W)', placeholder: 'W' },
+            { key: 'am', label: 'AM Label', placeholder: 'AM' },
+            { key: 'pm', label: 'PM Label', placeholder: 'PM' }
         ].forEach(function (mr) {
             var cell = document.createElement('div');
             cell.className = 'flex flex-col gap-1';
@@ -1378,81 +1466,133 @@ window.DashboardI18n = (function () {
             var inp = document.createElement('input');
             inp.type = 'text';
             inp.className = 'control-input w-full';
+            inp.placeholder = mr.placeholder;
             inp.value = activeDict.calendar[mr.key] != null ? String(activeDict.calendar[mr.key]) : '';
             calSingleInputs[mr.key] = inp;
             cell.appendChild(l);
             cell.appendChild(inp);
             miscGrid.appendChild(cell);
         });
-        leftCol.appendChild(miscGrid);
+        paneCountdown.appendChild(miscGrid);
 
-        var rightCol = document.createElement('div');
-        rightCol.className = 'flex flex-col gap-3 p-3 rounded-lg border editor-hairline';
-        var rightTitle = document.createElement('div');
-        rightTitle.className = 'font-bold text-xs uppercase tracking-wider text-[var(--ui-accent)] border-b editor-hairline pb-1.5';
-        rightTitle.textContent = 'Calendar & Clock Names';
-        rightCol.appendChild(rightTitle);
+        // --- TAB 2: Weekdays ---
+        var paneWeekdays = tabPanes.weekdays;
+
+        var wdTitle = document.createElement('div');
+        wdTitle.className = 'ds-trans-section-title';
+        wdTitle.textContent = 'Days of the Week (Monday to Sunday)';
+        paneWeekdays.appendChild(wdTitle);
+
+        var wdTable = document.createElement('div');
+        wdTable.className = 'ds-trans-table';
+
+        var wdHeader = document.createElement('div');
+        wdHeader.className = 'ds-trans-row ds-trans-day-row ds-trans-unit-header';
+        wdHeader.innerHTML = '<div>Reference</div><div>Full Name</div><div>Short Abbreviation</div>';
+        wdTable.appendChild(wdHeader);
 
         var enWeekdays = BUILTIN_LOCALES.en.calendar.weekdays;
-        var wdHeader = document.createElement('div');
-        wdHeader.className = 'grid grid-cols-12 gap-2 text-[10px] uppercase font-bold editor-muted-text';
-        wdHeader.innerHTML = '<div class="col-span-3">Day</div><div class="col-span-5">Full Name</div><div class="col-span-4">Short</div>';
-        rightCol.appendChild(wdHeader);
-
         var wdDisplayOrder = [1, 2, 3, 4, 5, 6, 0];
         wdDisplayOrder.forEach(function (dayIdx) {
             var row = document.createElement('div');
-            row.className = 'grid grid-cols-12 gap-2 items-center';
+            row.className = 'ds-trans-row ds-trans-day-row';
+
             var lbl = document.createElement('div');
-            lbl.className = 'col-span-3 text-[11px] editor-muted-text truncate';
+            lbl.className = 'ds-trans-row-label';
             lbl.textContent = enWeekdays[dayIdx];
+
             var fullInp = document.createElement('input');
             fullInp.type = 'text';
-            fullInp.className = 'control-input col-span-5';
+            fullInp.className = 'control-input';
+            fullInp.placeholder = enWeekdays[dayIdx];
             fullInp.value = activeDict.calendar.weekdays[dayIdx] || '';
+
             var shortInp = document.createElement('input');
             shortInp.type = 'text';
-            shortInp.className = 'control-input col-span-4';
+            shortInp.className = 'control-input';
+            shortInp.placeholder = BUILTIN_LOCALES.en.calendar.weekdaysShort[dayIdx];
             shortInp.value = activeDict.calendar.weekdaysShort[dayIdx] || '';
+
             calArrayInputs.weekdays[dayIdx] = fullInp;
             calArrayInputs.weekdaysShort[dayIdx] = shortInp;
+
             row.appendChild(lbl);
             row.appendChild(fullInp);
             row.appendChild(shortInp);
-            rightCol.appendChild(row);
+            wdTable.appendChild(row);
         });
+        paneWeekdays.appendChild(wdTable);
 
-        var moHeader = document.createElement('div');
-        moHeader.className = 'grid grid-cols-12 gap-2 text-[10px] uppercase font-bold editor-muted-text mt-2 border-t editor-hairline pt-2';
-        moHeader.innerHTML = '<div class="col-span-3">Month</div><div class="col-span-5">Full Name</div><div class="col-span-4">Short</div>';
-        rightCol.appendChild(moHeader);
+        // --- TAB 3: Months ---
+        var paneMonths = tabPanes.months;
 
+        var moTitle = document.createElement('div');
+        moTitle.className = 'ds-trans-section-title';
+        moTitle.textContent = 'Months of the Year (January to December)';
+        paneMonths.appendChild(moTitle);
+
+        var moGrid = document.createElement('div');
+        moGrid.className = 'ds-trans-month-grid';
+
+        var leftMoCol = document.createElement('div');
+        leftMoCol.className = 'ds-trans-table';
+        var rightMoCol = document.createElement('div');
+        rightMoCol.className = 'ds-trans-table';
+
+        var moHeaderLeft = document.createElement('div');
+        moHeaderLeft.className = 'ds-trans-row ds-trans-month-row ds-trans-unit-header';
+        moHeaderLeft.innerHTML = '<div>Month</div><div>Full Name</div><div>Short</div>';
+        leftMoCol.appendChild(moHeaderLeft);
+
+        var moHeaderRight = document.createElement('div');
+        moHeaderRight.className = 'ds-trans-row ds-trans-month-row ds-trans-unit-header';
+        moHeaderRight.innerHTML = '<div>Month</div><div>Full Name</div><div>Short</div>';
+        rightMoCol.appendChild(moHeaderRight);
+
+        var enMonths = BUILTIN_LOCALES.en.calendar.months;
         var enMonthsShort = BUILTIN_LOCALES.en.calendar.monthsShort;
+
         for (var mIdx = 0; mIdx < 12; mIdx++) {
             var mRow = document.createElement('div');
-            mRow.className = 'grid grid-cols-12 gap-2 items-center';
+            mRow.className = 'ds-trans-row ds-trans-month-row';
+
             var mLbl = document.createElement('div');
-            mLbl.className = 'col-span-3 text-[11px] editor-muted-text truncate';
+            mLbl.className = 'ds-trans-row-label';
             mLbl.textContent = enMonthsShort[mIdx];
+
             var mFullInp = document.createElement('input');
             mFullInp.type = 'text';
-            mFullInp.className = 'control-input col-span-5';
+            mFullInp.className = 'control-input';
+            mFullInp.placeholder = enMonths[mIdx];
             mFullInp.value = activeDict.calendar.months[mIdx] || '';
+
             var mShortInp = document.createElement('input');
             mShortInp.type = 'text';
-            mShortInp.className = 'control-input col-span-4';
+            mShortInp.className = 'control-input';
+            mShortInp.placeholder = enMonthsShort[mIdx];
             mShortInp.value = activeDict.calendar.monthsShort[mIdx] || '';
+
             calArrayInputs.months[mIdx] = mFullInp;
             calArrayInputs.monthsShort[mIdx] = mShortInp;
+
             mRow.appendChild(mLbl);
             mRow.appendChild(mFullInp);
             mRow.appendChild(mShortInp);
-            rightCol.appendChild(mRow);
+
+            if (mIdx < 6) {
+                leftMoCol.appendChild(mRow);
+            } else {
+                rightMoCol.appendChild(mRow);
+            }
         }
 
-        columnsGrid.appendChild(leftCol);
-        columnsGrid.appendChild(rightCol);
-        body.appendChild(columnsGrid);
+        moGrid.appendChild(leftMoCol);
+        moGrid.appendChild(rightMoCol);
+        paneMonths.appendChild(moGrid);
+
+        body.appendChild(paneCountdown);
+        body.appendChild(paneWeekdays);
+        body.appendChild(paneMonths);
         dialog.appendChild(body);
 
         function populateInputsFromDict(dict) {

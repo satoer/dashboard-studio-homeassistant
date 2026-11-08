@@ -796,10 +796,10 @@ body.editor-tooltips-active [data-editor-tooltip]:hover {
     box-sizing: border-box;
 }
 
+body.ui-light .editor-tooltip-flyout,
 body.edit-mode.ui-light .editor-tooltip-flyout {
-    background: var(--glass-panel-bg-solid, #ffffff);
-    background: var(--glass-panel-bg, rgba(255, 255, 255, 0.94));
-    color: var(--ui-text, #1e293b);
+    background: rgba(255, 255, 255, 0.88);
+    color: var(--ui-text, #0f172a);
 }
 
 .editor-tooltip-shadow {
@@ -815,8 +815,9 @@ body.edit-mode.ui-light .editor-tooltip-flyout {
     will-change: transform, opacity;
 }
 
+body.ui-light .editor-tooltip-shadow,
 body.edit-mode.ui-light .editor-tooltip-shadow {
-    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.22), 0 2px 8px rgba(0, 0, 0, 0.10);
 }
 
 .editor-tooltip-shadow.is-visible {
@@ -868,8 +869,9 @@ body.edit-mode.ui-light .editor-tooltip-shadow {
     vector-effect: non-scaling-stroke;
 }
 
+body.ui-light .editor-tooltip-frame-path,
 body.edit-mode.ui-light .editor-tooltip-frame-path {
-    stroke: var(--ui-border, rgba(0, 0, 0, 0.15));
+    stroke: var(--ui-border, rgba(0, 0, 0, 0.12));
 }
 
 .editor-tooltip-content {
@@ -987,8 +989,16 @@ body.edit-mode.ui-light .editor-tooltip-help-btn:hover {
     color: var(--ui-text, #ffffff);
 }
 
+body.ui-light .editor-tooltip-body,
+body.edit-mode.ui-light .editor-tooltip-body,
+body.ui-light .editor-tooltip-bullet-item,
+body.edit-mode.ui-light .editor-tooltip-bullet-item {
+    color: #334155;
+}
+
+body.ui-light .editor-tooltip-bullet-title,
 body.edit-mode.ui-light .editor-tooltip-bullet-title {
-    color: var(--ui-text, #1e293b);
+    color: var(--ui-text, #0f172a);
 }
 
 .editor-zoom {
@@ -3819,8 +3829,135 @@ body.edit-mode.ui-light .ds-color-picker-panel {
 }
 
 #ds-custom-translation-modal .modal-content {
-    width: min(880px, 95vw);
-    max-height: 90vh;
+    width: min(860px, 95vw);
+    max-height: 88vh;
+}
+
+/* Custom Translation Dialog Layout & Components */
+.ds-trans-body {
+    padding: 1.25rem 1.5rem;
+    overflow-y: auto;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.15rem;
+}
+
+.ds-trans-topbar {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    grid-gap: 1rem;
+}
+
+.ds-trans-segmented {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.25rem;
+    border-radius: var(--radius-control, 0.75rem);
+    background: var(--surface-bg, rgba(15, 23, 42, 0.45));
+    border: 1px solid var(--glass-border, var(--ui-border));
+}
+
+.ds-trans-tab-btn {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: calc(var(--radius-control, 0.75rem) - 2px);
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--text-muted, var(--ui-text-muted));
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-family: inherit;
+}
+
+.ds-trans-tab-btn:hover {
+    color: var(--text-main, var(--ui-text));
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.ds-trans-tab-btn.is-active {
+    background: var(--glass-panel-bg-solid, rgba(40, 50, 92, 0.85));
+    border-color: var(--glass-border-highlight, rgba(255, 255, 255, 0.2));
+    color: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+}
+
+.ds-trans-tab-btn.is-active i {
+    color: var(--accent, var(--ui-accent));
+}
+
+.ds-trans-pane {
+    display: flex;
+    flex-direction: column;
+    gap: 1.15rem;
+}
+
+.ds-trans-pane.is-hidden {
+    display: none !important;
+}
+
+.ds-trans-section-title {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--accent, var(--ui-accent));
+    margin-bottom: 0.35rem;
+}
+
+.ds-trans-table {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+}
+
+.ds-trans-row {
+    display: grid;
+    align-items: center;
+    gap: 0.75rem;
+    grid-gap: 0.75rem;
+}
+
+.ds-trans-unit-row {
+    grid-template-columns: 85px 1fr 1.6fr 1.6fr;
+}
+
+.ds-trans-unit-header {
+    font-size: var(--type-micro, 10px);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: var(--type-micro-tracking, 0.06em);
+    color: var(--text-muted, var(--ui-text-muted));
+    padding-bottom: 0.15rem;
+}
+
+.ds-trans-row-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted, var(--ui-text-muted));
+}
+
+.ds-trans-day-row {
+    grid-template-columns: 95px 1.5fr 1fr;
+}
+
+.ds-trans-month-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    grid-gap: 1.5rem;
+}
+
+.ds-trans-month-row {
+    grid-template-columns: 45px 1.4fr 1fr;
 }
 
 .changelog-modal-body {
