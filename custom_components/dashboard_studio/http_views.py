@@ -128,7 +128,20 @@ class DashboardStudioAppView(HomeAssistantView):
             rel = "index.html"
         if rel == "setup" or rel == "setup/":
             page = Path(__file__).resolve().parent / "panel" / "admin.html"
-            return web.FileResponse(page)
+            return web.FileResponse(
+                page,
+                headers={"Cache-Control": "no-cache, no-store, must-revalidate"},
+            )
+        if rel == "ds-iconset.js":
+            here = Path(__file__).resolve().parent
+            iconset = here / "ds-iconset.js"
+            if not iconset.is_file():
+                iconset = resolve_frontend_dir() / "ds-iconset.js"
+            if iconset.is_file():
+                return web.FileResponse(
+                    iconset,
+                    headers={"Cache-Control": "no-cache, must-revalidate", "Content-Type": "application/javascript"},
+                )
         if rel == "settings.json":
             runtime = get_runtime(hass)
             body = runtime.client_settings() if runtime else {}
