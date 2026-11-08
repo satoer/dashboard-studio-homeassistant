@@ -3,8 +3,8 @@ send:
   description: Send a custom value or payload to any Dashboard Studio topic.
   fields:
     topic:
-      name: Topic
-      description: Target topic path (for example custom/weather or homeassistant/message).
+      name: Topic / Event Name
+      description: Target topic path (e.g. custom/weather, homeassistant/message, or event name).
       required: true
       example: "custom/notification"
       selector:
@@ -29,14 +29,14 @@ send_insights:
   description: Query Home Assistant history/statistics for an entity and publish it to a Dashboard Studio chart topic.
   fields:
     entity_id:
-      name: Entity
-      description: Home Assistant entity whose historical states should be queried.
+      name: Entity / Insight Source
+      description: Home Assistant entity or sensor whose historical states should be queried.
       required: true
       example: "sensor.living_room_temperature"
       selector:
         entity:
     timespan:
-      name: Timespan
+      name: Timespan / Time Range
       description: Time window to query from Home Assistant history.
       required: true
       default: "24h"
@@ -82,18 +82,18 @@ send_insights:
 
 send_insights_advanced:
   name: Send Recorder / History data to chart (Advanced)
-  description: Query Home Assistant history with custom aggregation, resolution, and time buckets and publish to a chart topic.
+  description: Query Home Assistant history with custom aggregation, resolution, and time buckets, publish to a chart topic, and return summary statistics.
   supports_response: "optional"
   fields:
     entity_id:
-      name: Entity
-      description: Home Assistant entity whose historical states should be queried.
+      name: Entity / Insight Source
+      description: Home Assistant entity or sensor whose historical states should be queried.
       required: true
       example: "sensor.power_consumption"
       selector:
         entity:
     timespan:
-      name: Timespan
+      name: Timespan / Time Range
       description: Time window to query from Home Assistant history.
       required: true
       default: "24h"
@@ -188,7 +188,7 @@ reload:
   description: Force all connected Dashboard Studio viewers to reload or switch to a specific dashboard file.
   fields:
     dashboard:
-      name: Dashboard Filename (Optional)
+      name: Dashboard Name / Filename (Optional)
       description: Leave empty to reload the current dashboard, or specify a dashboard name (e.g. default or wall_tablet.json) to switch.
       required: false
       example: "default"

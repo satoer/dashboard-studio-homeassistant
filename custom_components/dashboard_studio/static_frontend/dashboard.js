@@ -796,10 +796,16 @@ const Dashboard = {
                     const wasHidden = widget.elements && widget.elements.wrapper && widget.elements.wrapper.style.display === 'none';
                     try {
                         widget.render();
-                        if (wasHidden) {
+                        const isNowHidden = widget.elements && widget.elements.wrapper && widget.elements.wrapper.style.display === 'none';
+                        if (wasHidden !== isNowHidden) {
                             hasPageMovement = true;
-                            if (typeof widget.resumeFromBackground === 'function') widget.resumeFromBackground();
-                            this._syncWidgetPageChrome(widget, true);
+                            if (wasHidden && !isNowHidden) {
+                                if (typeof widget.resumeFromBackground === 'function') widget.resumeFromBackground();
+                                this._syncWidgetPageChrome(widget, true);
+                            } else if (!wasHidden && isNowHidden) {
+                                if (typeof widget.pauseForBackground === 'function') widget.pauseForBackground();
+                                this._syncWidgetPageChrome(widget, false);
+                            }
                         }
                     } catch (err) {
                         console.error('[Dashboard] Widget render failed:', id, err);
@@ -3669,7 +3675,18 @@ const Dashboard = {
             if (!fullPass && (!dirty || !dirty[id])) continue;
             const w = self.widgets[id];
             if (!w || !w.elements || !w.elements.wrapper || !w.elements.container) continue;
-            if (w.elements.wrapper.style.display === 'none') continue;
+            if (w.elements.wrapper.style.display === 'none') {
+                if (w._responsiveRowStart !== undefined || w._responsiveColStart !== undefined || w._responsiveRowSpan !== undefined) {
+                    w._responsiveRowStart = undefined;
+                    w._responsiveColStart = undefined;
+                    w._responsiveRowSpan = undefined;
+                    w._responsiveColumnSpan = undefined;
+                    w.elements.wrapper.style.gridColumn = '';
+                    w.elements.wrapper.style.gridRow = '';
+                    anyPlacementChanged = true;
+                }
+                continue;
+            }
             if (typeof self.getWidgetCompositeContext === 'function' && self.getWidgetCompositeContext(id)) continue;
             const resp = getResp ? (getResp(w.overrides) || {}) : (w.overrides && w.overrides.layout && w.overrides.layout.responsive) || {};
 
@@ -6572,6 +6589,7 @@ const Dashboard = {
     _applySingleGroupVisibility: function (groupId) {
         if (this._isResponsiveLayoutMode()) {
             this._renderGroupComposite(groupId);
+            this._requestResponsiveReflow();
             return;
         }
         const ids = this.getGroupMemberIds(groupId);
@@ -6584,6 +6602,7 @@ const Dashboard = {
     refreshAllGroupsVisibility: function () {
         if (this._isResponsiveLayoutMode()) {
             this._renderAllGroupComposites();
+            this._requestResponsiveReflow();
             return;
         }
         const seen = {};

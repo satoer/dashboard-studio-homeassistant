@@ -21,6 +21,7 @@ from .const import (
 )
 
 CONF_TOPIC = "topic"
+CONF_NAME = "name"
 CONF_DASHBOARD = "dashboard"
 CONF_PAGE = "page"
 
@@ -40,6 +41,7 @@ TRIGGER_SCHEMA = DEVICE_TRIGGER_BASE_SCHEMA.extend(
     {
         vol.Required(CONF_TYPE): vol.In(TRIGGER_TYPES),
         vol.Optional(CONF_TOPIC): cv.string,
+        vol.Optional(CONF_NAME): cv.string,
         vol.Optional(CONF_DASHBOARD): cv.string,
         vol.Optional(CONF_PAGE): cv.string,
     }
@@ -73,6 +75,7 @@ async def async_get_trigger_capabilities(
             "extra_fields": vol.Schema(
                 {
                     vol.Optional(CONF_TOPIC): str,
+                    vol.Optional(CONF_NAME): str,
                 }
             )
         }
@@ -81,6 +84,7 @@ async def async_get_trigger_capabilities(
             "extra_fields": vol.Schema(
                 {
                     vol.Optional(CONF_DASHBOARD): str,
+                    vol.Optional(CONF_NAME): str,
                 }
             )
         }
@@ -89,6 +93,7 @@ async def async_get_trigger_capabilities(
             "extra_fields": vol.Schema(
                 {
                     vol.Optional(CONF_DASHBOARD): str,
+                    vol.Optional(CONF_NAME): str,
                     vol.Optional(CONF_PAGE): str,
                 }
             )
@@ -108,20 +113,24 @@ async def async_attach_trigger(
 
     if trigger_type == TRIGGER_TYPE_WIDGET_TRIGGER:
         event_type = EVENT_TRIGGER
-        if config.get(CONF_TOPIC):
-            event_data[CONF_TOPIC] = str(config[CONF_TOPIC]).strip()
+        target = str(config.get(CONF_TOPIC) or config.get(CONF_NAME) or "").strip()
+        if target:
+            event_data[CONF_TOPIC] = target
     elif trigger_type == TRIGGER_TYPE_DASHBOARD_LOADED:
         event_type = EVENT_LOADED
-        if config.get(CONF_DASHBOARD):
-            event_data[CONF_DASHBOARD] = str(config[CONF_DASHBOARD]).strip()
+        dash = str(config.get(CONF_DASHBOARD) or config.get(CONF_NAME) or "").strip()
+        if dash:
+            event_data[CONF_DASHBOARD] = dash
     elif trigger_type == TRIGGER_TYPE_DASHBOARD_SAVED:
         event_type = EVENT_SAVED
-        if config.get(CONF_DASHBOARD):
-            event_data[CONF_DASHBOARD] = str(config[CONF_DASHBOARD]).strip()
+        dash = str(config.get(CONF_DASHBOARD) or config.get(CONF_NAME) or "").strip()
+        if dash:
+            event_data[CONF_DASHBOARD] = dash
     else:
         event_type = EVENT_PAGE_OPENED
-        if config.get(CONF_DASHBOARD):
-            event_data[CONF_DASHBOARD] = str(config[CONF_DASHBOARD]).strip()
+        dash = str(config.get(CONF_DASHBOARD) or config.get(CONF_NAME) or "").strip()
+        if dash:
+            event_data[CONF_DASHBOARD] = dash
         if config.get(CONF_PAGE):
             event_data[CONF_PAGE] = str(config[CONF_PAGE]).strip()
 

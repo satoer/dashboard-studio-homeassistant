@@ -72,7 +72,7 @@ async def async_get_condition_capabilities(
             "extra_fields": vol.Schema(
                 {
                     vol.Required(CONF_DASHBOARD, default="default"): str,
-                    vol.Required(CONF_PAGE, default="Home"): str,
+                    vol.Required(CONF_PAGE, default="1"): str,
                 }
             )
         }
@@ -90,6 +90,15 @@ def async_condition_from_config(
     slug = _slugify_dashboard(dashboard)
     entity_id = f"binary_sensor.dashboard_studio_{slug}_open"
 
+    def _page_matches(val: Any) -> bool:
+        target = page.lower()
+        s = str(val or "").strip().lower()
+        if s == target:
+            return True
+        if target.isdigit() and s.isdigit():
+            return int(target) == int(s)
+        return False
+
     @callback
     def test_is_open(
         hass: HomeAssistant, variables: TemplateVarsType = None
@@ -98,13 +107,12 @@ def async_condition_from_config(
         if state is None or state.state != "on":
             return False
         if cond_type == CONDITION_TYPE_IS_OPEN_PAGE and page:
-            target = page.lower()
-            current_page = str(state.attributes.get("page", "")).strip().lower()
-            if current_page == target:
+            current_page = state.attributes.get("page")
+            if _page_matches(current_page):
                 return True
             active_pages = state.attributes.get("active_pages", [])
             if isinstance(active_pages, list):
-                return any(str(p).strip().lower() == target for p in active_pages)
+                return any(_page_matches(p) for p in active_pages)
             return False
         return True
 

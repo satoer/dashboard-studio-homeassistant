@@ -148,7 +148,7 @@ async def _history_entries(
 
 async def async_handle_send(call: ServiceCall) -> None:
     runtime = _runtime_or_error(call.hass)
-    topic = str(call.data.get("topic") or "").strip()
+    topic = str(call.data.get("topic") or call.data.get("name") or "").strip()
     if not topic:
         return
     retain = call.data.get("retain", True) is not False
@@ -157,13 +157,28 @@ async def async_handle_send(call: ServiceCall) -> None:
 
 async def async_handle_reload(call: ServiceCall) -> None:
     runtime = _runtime_or_error(call.hass)
-    await runtime.async_reload_viewers(call.data.get("dashboard"))
+    raw = call.data.get("dashboard") or call.data.get("dashboard_name") or call.data.get("name")
+    dashboard_name = str(raw).strip() if raw is not None else None
+    await runtime.async_reload_viewers(dashboard_name or None)
+
+
+def _normalize_timespan(raw: str) -> str:
+    s = str(raw or "24h").strip().lower()
+    mapping = {
+        "last_hour": "1h",
+        "last_6_hours": "6h",
+        "last_24_hours": "24h",
+        "last_7_days": "7d",
+        "last_30_days": "30d",
+        "last_year": "365d",
+    }
+    return mapping.get(s, s)
 
 
 async def async_handle_send_insights(call: ServiceCall) -> None:
     runtime = _runtime_or_error(call.hass)
-    entity_id = str(call.data.get("entity_id") or "")
-    timespan = str(call.data.get("timespan") or "24h")
+    entity_id = str(call.data.get("entity_id") or call.data.get("insight_id") or "")
+    timespan = _normalize_timespan(call.data.get("timespan") or call.data.get("time_range") or "24h")
     topic = str(call.data.get("topic") or "").strip() or entity_id
     datapoints = call.data.get("datapoints")
     entries, start, end = await _history_entries(call.hass, entity_id, timespan)
@@ -173,8 +188,8 @@ async def async_handle_send_insights(call: ServiceCall) -> None:
 
 async def async_handle_send_insights_advanced(call: ServiceCall) -> ServiceResponse:
     runtime = _runtime_or_error(call.hass)
-    entity_id = str(call.data.get("entity_id") or "")
-    timespan = str(call.data.get("timespan") or "24h")
+    entity_id = str(call.data.get("entity_id") or call.data.get("insight_id") or "")
+    timespan = _normalize_timespan(call.data.get("timespan") or call.data.get("time_range") or "24h")
     topic = str(call.data.get("topic") or "").strip() or entity_id
     datapoints = call.data.get("datapoints")
     resolution = str(call.data.get("resolution") or "auto")
@@ -195,6 +210,7 @@ async def async_handle_send_insights_advanced(call: ServiceCall) -> ServiceRespo
     lowest = round(min(numeric_values), 2) if numeric_values else None
     average = round(sum(numeric_values) / len(numeric_values), 2) if numeric_values else None
     last_val = round(numeric_values[-1], 2) if numeric_values else None
+    raw_json = json.dumps(points)
 
     return {
         "highest": highest,
@@ -202,8 +218,12 @@ async def async_handle_send_insights_advanced(call: ServiceCall) -> ServiceRespo
         "average": average,
         "last": last_val,
         "points": len(points),
-        "raw_json": json.dumps(points),
+        "raw_json": raw_json,
         "data": points,
+        "insight_highest": highest,
+        "insight_lowest": lowest,
+        "insight_average": average,
+        "insight_raw": raw_json,
     }
 
 

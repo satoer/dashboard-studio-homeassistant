@@ -361,9 +361,16 @@ class DashboardStudioRuntime:
         if event == "dashboard_saved":
             raw_name = payload.get("name") or payload.get("dashboard")
             dash = normalize_dashboard_id(raw_name) or "default"
+            clean_name = str(raw_name or dash).replace(".json", "")
+            now_iso = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
             self.hass.bus.async_fire(
                 EVENT_SAVED,
-                {"dashboard": dash, "dashboard_name": raw_name or dash},
+                {
+                    "dashboard": dash,
+                    "dashboard_name": clean_name,
+                    "name": clean_name,
+                    "timestamp": now_iso,
+                },
             )
             return {"ok": True}
         if event == "file_list":
@@ -458,19 +465,29 @@ class DashboardStudioRuntime:
         page = normalize_page_id(payload.get("page")) if payload.get("page") is not None else "1"
         self.sessions.set(client.client_id, dash, page)
         self.publish_open_sensors()
+        now_iso = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
+        clean_name = str(raw_name or dash).replace(".json", "")
         if loaded:
             self.hass.bus.async_fire(
                 EVENT_LOADED,
-                {"dashboard": dash, "dashboard_name": raw_name or dash, "page": page},
+                {
+                    "dashboard": dash,
+                    "dashboard_name": clean_name,
+                    "name": clean_name,
+                    "page": page,
+                    "timestamp": now_iso,
+                },
             )
         elif not payload.get("restore"):
             self.hass.bus.async_fire(
                 EVENT_PAGE_OPENED,
                 {
                     "dashboard": dash,
-                    "dashboard_name": raw_name or dash,
+                    "dashboard_name": clean_name,
+                    "name": clean_name,
                     "page": page,
                     "page_name": "" if payload.get("page") is None else str(payload.get("page")),
+                    "timestamp": now_iso,
                 },
             )
         return {"ok": True}
