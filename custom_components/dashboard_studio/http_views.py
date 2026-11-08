@@ -356,13 +356,13 @@ def _list_admin_files(runtime, storage_type: str, base: str) -> list:
         if base:
             return list_snapshots(runtime.root, base)
         return list_all_snapshots(runtime.root)
-    return list_json_files(runtime.root, storage_type, runtime.factory_root())
+    return list_json_files(runtime.root, storage_type, factory_root=None)
 
 
 def _list_admin_media(runtime, kind: str) -> list:
     from .storage_files import list_media
 
-    return list_media(runtime.root, kind, runtime.factory_root())
+    return list_media(runtime.root, kind, factory_root=None)
 
 
 def _safe_join(root: Path, relative: str) -> Path | None:

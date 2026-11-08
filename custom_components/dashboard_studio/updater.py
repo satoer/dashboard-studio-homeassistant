@@ -181,6 +181,8 @@ class ComponentUpdateManager:
         self.message: str = ""
         self.error: str | None = None
         self.target_version: str = ""
+        self.restart_required: bool = False
+        self.backend_changed: bool = False
         self._task: asyncio.Task | None = None
 
     def get_progress(self) -> dict[str, Any]:
@@ -191,6 +193,8 @@ class ComponentUpdateManager:
             "message": self.message,
             "error": self.error,
             "target_version": self.target_version,
+            "restart_required": self.restart_required,
+            "backend_changed": self.backend_changed,
         }
 
     def start_update(
@@ -205,6 +209,8 @@ class ComponentUpdateManager:
         self.message = "Initializing download..."
         self.error = None
         self.target_version = target_version
+        self.restart_required = False
+        self.backend_changed = False
 
         self._task = hass.async_create_task(
             self._async_run_update(hass, download_url, target_version)
@@ -254,18 +260,28 @@ class ComponentUpdateManager:
             self.progress = 72
             self.message = "Verifying downloaded archive..."
 
-            await hass.async_add_executor_job(
+            backend_changed = await hass.async_add_executor_job(
                 self._extract_and_install, temp_zip, component_dir
             )
+            self.backend_changed = backend_changed
+            self.restart_required = backend_changed
 
             self.progress = 100
             self.status = "completed"
             display_ver = format_display_version(target_version)
-            self.message = f"Successfully updated to {display_ver}! Home Assistant restart required."
+            if backend_changed:
+                self.message = (
+                    f"Successfully updated to {display_ver}! Python backend changes detected — Home Assistant restart recommended."
+                )
+            else:
+                self.message = (
+                    f"Successfully updated to {display_ver}! Only frontend files were updated — reload the page to apply changes."
+                )
             _LOGGER.info(
-                "Dashboard Studio successfully updated to %s in %s",
+                "Dashboard Studio successfully updated to %s in %s (backend_changed=%s)",
                 display_ver,
                 component_dir,
+                backend_changed,
             )
 
         except Exception as err:
@@ -280,10 +296,12 @@ class ComponentUpdateManager:
             except Exception:
                 pass
 
-    def _extract_and_install(self, zip_path: Path, dest_dir: Path) -> None:
-        """Verify archive contents and extract them safely over the component directory."""
+    def _extract_and_install(self, zip_path: Path, dest_dir: Path) -> bool:
+        """Verify archive contents, detect backend modifications, and extract files safely."""
         if not zipfile.is_zipfile(zip_path):
             raise ValueError("Downloaded file is not a valid zip archive.")
+
+        backend_changed = False
 
         with zipfile.ZipFile(zip_path, "r") as archive:
             names = archive.namelist()
@@ -296,7 +314,44 @@ class ComponentUpdateManager:
                         subfolder_prefix = name[: name.rfind("manifest.json")]
                         break
 
-            self.progress = 78
+            self.progress = 74
+            self.message = "Checking for code changes..."
+
+            # Detect whether any Python backend files or services were modified
+            archive_py_files: set[str] = set()
+            for member in archive.infolist():
+                if member.is_dir():
+                    continue
+
+                rel_name = member.filename
+                if subfolder_prefix and rel_name.startswith(subfolder_prefix):
+                    rel_name = rel_name[len(subfolder_prefix) :]
+
+                clean_path = os.path.normpath(rel_name).lstrip("/\\")
+                if ".." in clean_path.split(os.sep):
+                    continue
+
+                if clean_path.endswith(".py") or clean_path == "services.yaml":
+                    archive_py_files.add(clean_path)
+                    target_file = dest_dir / clean_path
+                    if not target_file.is_file():
+                        backend_changed = True
+                    else:
+                        try:
+                            archive_bytes = archive.read(member)
+                            existing_bytes = target_file.read_bytes()
+                            if archive_bytes != existing_bytes:
+                                backend_changed = True
+                        except Exception:
+                            backend_changed = True
+
+            # Check if any existing root .py files were removed
+            for existing_py in dest_dir.glob("*.py"):
+                if existing_py.is_file() and existing_py.name not in archive_py_files:
+                    backend_changed = True
+                    break
+
+            self.progress = 80
             self.message = "Extracting files..."
 
             # Extract files safely
@@ -319,12 +374,14 @@ class ComponentUpdateManager:
                 with archive.open(member) as source, target_file.open("wb") as target:
                     shutil.copyfileobj(source, target)
 
-        self.progress = 92
+        self.progress = 94
         self.message = "Cleaning Python cache..."
         # Clean any stale pycache directories
         for pycache in dest_dir.rglob("__pycache__"):
             if pycache.is_dir():
                 shutil.rmtree(pycache, ignore_errors=True)
+
+        return backend_changed
 
 
 GLOBAL_UPDATER = ComponentUpdateManager()
