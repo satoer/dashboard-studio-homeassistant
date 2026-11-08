@@ -3069,6 +3069,14 @@
         return 0;
     }
 
+    /**
+     * Returns the platform build number (stamped by the Home Assistant publisher), or 0 when absent.
+     */
+    function getDashboardBuild() {
+        var build = parseInt(typeof window !== 'undefined' ? window.DASHBOARD_BUILD : 0, 10);
+        return build > 0 ? build : 0;
+    }
+
     async function loadChangelogData() {
         if (changelogData) return changelogData;
         if (changelogLoadingPromise) return changelogLoadingPromise;
@@ -3448,7 +3456,7 @@
                     <div class="ds-stats-about-box">
                         <img src="images/dashboardstudio_logo_darkmode.svg" alt="Dashboard Studio" class="ds-stats-about-logo logo-dark">
                         <img src="images/dashboardstudio_logo_lightmode.svg" alt="Dashboard Studio" class="ds-stats-about-logo logo-light">
-                        <div class="ds-stats-about-title">Dashboard Studio <span class="ds-stats-about-ver">v${escapeHtml(window.DASHBOARD_VERSION || '2.1.1')}</span><span id="ds-stats-about-ver-badge-slot"></span></div>
+                        <div class="ds-stats-about-title">Dashboard Studio <span class="ds-stats-about-ver">v${escapeHtml(window.DASHBOARD_VERSION || '2.1.1')}${getDashboardBuild() ? ' · build ' + getDashboardBuild() : ''}</span><span id="ds-stats-about-ver-badge-slot"></span></div>
                         <div id="ds-stats-about-version-status" class="ds-stats-about-version-status"></div>
                         <div class="ds-stats-about-tagline">
                             Visualize your home, exactly how you imagine it. Crafted with passion and precision by <strong>Satoer Creations</strong> for Homey, MQTT, Node-RED, and modern smart homes.
@@ -3480,7 +3488,7 @@
                             </a>
                         </div>
                         <div style="font-size:0.74rem;color:var(--text-muted);margin-top:0.75rem;">
-                            &copy; 2024-2026 Satoer Creations. All rights reserved. Version ${escapeHtml(window.DASHBOARD_VERSION || '2.1.1')}.
+                            &copy; 2024-2026 Satoer Creations. All rights reserved. Version ${escapeHtml(window.DASHBOARD_VERSION || '2.1.1')}${getDashboardBuild() ? ' (build ' + getDashboardBuild() + ')' : ''}.
                         </div>
                     </div>
                     </div>

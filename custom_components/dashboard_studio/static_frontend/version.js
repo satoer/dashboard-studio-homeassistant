@@ -1,5 +1,7 @@
 window.DASHBOARD_VERSION = "2.4.0";
 window.LATEST_MIGRATION_VERSION = "2.4.0";
+// Platform build number (Home Assistant publisher stamps this); 0 = no build, shown only in the About box.
+window.DASHBOARD_BUILD = 1;
 
 /**
  * Global Session Console Ring Buffer for Diagnostics & Debug Reports.
