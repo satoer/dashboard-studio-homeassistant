@@ -339,7 +339,7 @@
     },
     "canvasPreset": {
         "title": "Canvas Preset",
-        "description": "Quickly apply predefined dimensions for common wall tablets like iPad, Fire HD, or Nest Hub.",
+        "description": "Quickly apply predefined dimensions for common wall tablets like iPad, Fire HD, or Nest Hub. Tip: Pick your exact tablet model so widgets align with zero black bars or awkward scaling.",
         "help": {
             "topic": "Editor Interface Guide",
             "anchor": "12-dashboard-environment"
@@ -379,7 +379,7 @@
     },
     "canvasBgColor": {
         "title": "Background Color",
-        "description": "Primary canvas background color or start color for background gradients.",
+        "description": "Primary canvas background color or start color for background gradients. Tip: Link this to an automation topic to dynamically tint the dashboard, like soft amber in the evening or pulsing red during security alerts.",
         "help": {
             "topic": "Editor Interface Guide",
             "anchor": "12-dashboard-environment"
@@ -419,7 +419,7 @@
     },
     "canvasBgImage": {
         "title": "Background Image",
-        "description": "Path or gallery URL for full-screen canvas background artwork.",
+        "description": "Path or gallery URL for full-screen canvas background artwork. Tip: Link to a weather topic to dynamically display sunny, rainy, or snowy artwork that mirrors current outdoor conditions.",
         "help": {
             "topic": "Image Gallery Manager"
         }
@@ -473,7 +473,7 @@
     },
     "swipeLeftAction": {
         "title": "Swipe Left Action",
-        "description": "Specifies the action triggered when swiping left across the dashboard:\n• Go to Next Page: Navigates forward to the subsequent dashboard page.\n• Go to Previous Page: Navigates backward to the preceding dashboard page.\n• Go to Specific Page: Jumps directly to a chosen target dashboard page.\n• Trigger Topic: Fires an automation topic command or webhook without changing pages.",
+        "description": "Specifies the action triggered when swiping left across the dashboard:\n• Go to Next Page: Navigates forward to the subsequent dashboard page.\n• Go to Previous Page: Navigates backward to the preceding dashboard page.\n• Go to Specific Page: Jumps directly to a chosen target dashboard page.\n• Trigger Topic: Fires an automation topic command or webhook without changing pages.\nTip: Use Trigger Topic to control smart home scenes without tapping buttons, like swiping to activate party mode or turn off all audio.",
         "help": {
             "topic": "Editor Interface Guide",
             "anchor": "12-dashboard-environment"
@@ -503,7 +503,7 @@
     },
     "swipeRightAction": {
         "title": "Swipe Right Action",
-        "description": "Specifies the action triggered when swiping right across the dashboard:\n• Go to Next Page: Navigates forward to the subsequent dashboard page.\n• Go to Previous Page: Navigates backward to the preceding dashboard page.\n• Go to Specific Page: Jumps directly to a chosen target dashboard page.\n• Trigger Topic: Fires an automation topic command or webhook without changing pages.",
+        "description": "Specifies the action triggered when swiping right across the dashboard:\n• Go to Next Page: Navigates forward to the subsequent dashboard page.\n• Go to Previous Page: Navigates backward to the preceding dashboard page.\n• Go to Specific Page: Jumps directly to a chosen target dashboard page.\n• Trigger Topic: Fires an automation topic command or webhook without changing pages.\nTip: Use Trigger Topic to control smart home scenes without tapping buttons, like swiping to activate party mode or turn off all audio.",
         "help": {
             "topic": "Editor Interface Guide",
             "anchor": "12-dashboard-environment"
@@ -533,7 +533,7 @@
     },
     "swipeUpAction": {
         "title": "Swipe Up Action",
-        "description": "Specifies the action triggered when swiping up across the dashboard:\n• Go to Next Page: Navigates forward to the subsequent dashboard page.\n• Go to Previous Page: Navigates backward to the preceding dashboard page.\n• Go to Specific Page: Jumps directly to a chosen target dashboard page.\n• Trigger Topic: Fires an automation topic command or webhook without changing pages.",
+        "description": "Specifies the action triggered when swiping up across the dashboard:\n• Go to Next Page: Navigates forward to the subsequent dashboard page.\n• Go to Previous Page: Navigates backward to the preceding dashboard page.\n• Go to Specific Page: Jumps directly to a chosen target dashboard page.\n• Trigger Topic: Fires an automation topic command or webhook without changing pages.\nTip: Use Trigger Topic to control smart home scenes without tapping buttons, like swiping up to turn off all living room lights.",
         "help": {
             "topic": "Editor Interface Guide",
             "anchor": "12-dashboard-environment"
@@ -563,7 +563,7 @@
     },
     "swipeDownAction": {
         "title": "Swipe Down Action",
-        "description": "Specifies the action triggered when swiping down across the dashboard:\n• Go to Next Page: Navigates forward to the subsequent dashboard page.\n• Go to Previous Page: Navigates backward to the preceding dashboard page.\n• Go to Specific Page: Jumps directly to a chosen target dashboard page.\n• Trigger Topic: Fires an automation topic command or webhook without changing pages.",
+        "description": "Specifies the action triggered when swiping down across the dashboard:\n• Go to Next Page: Navigates forward to the subsequent dashboard page.\n• Go to Previous Page: Navigates backward to the preceding dashboard page.\n• Go to Specific Page: Jumps directly to a chosen target dashboard page.\n• Trigger Topic: Fires an automation topic command or webhook without changing pages.\nTip: Use Trigger Topic to control smart home scenes without tapping buttons, like swiping down to activate goodnight mode.",
         "help": {
             "topic": "Editor Interface Guide",
             "anchor": "12-dashboard-environment"
@@ -1062,7 +1062,7 @@
     },
     "arrow.animationEnabled": {
         "title": "Enable Flow Animation",
-        "description": "Animates traveling pulses along the line to visualize live energy or liquid flow.",
+        "description": "Animates traveling pulses along the line to visualize live energy or fluid flow. Tip: Link to net solar production, grid feed-in, heat pump circulation, or water pipe flows to visualize dynamic home energy flow charts.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "arrow"
@@ -1070,7 +1070,7 @@
     },
     "arrow.animationSpeed": {
         "title": "Flow Speed",
-        "description": "Time in seconds for a flow particle to traverse the full path length.",
+        "description": "Speed of animated flow pulses traversing the path. Tip: Bind animation speed to a power wattage formula so higher solar production or charging speeds make the flow particles rush faster.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "arrow"
@@ -1078,7 +1078,7 @@
     },
     "arrow.animationReverse": {
         "title": "Reverse Direction",
-        "description": "Reverses flow travel direction along the path.",
+        "description": "Reverses flow travel direction along the path. Tip: Bind this to your battery or grid export topic so particles automatically flow forward when importing grid power and reverse backward when exporting excess solar.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "arrow"
@@ -1150,7 +1150,7 @@
     },
     "battery.lowThreshold": {
         "title": "Low Battery Threshold",
-        "description": "Percentage below which the battery indicator turns red to warn of critical level.",
+        "description": "Percentage below which the battery indicator turns red to warn of critical level. Tip: Set to 20% to get an early warning before smart locks, Zigbee door sensors, or remotes die.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "battery"
@@ -1214,7 +1214,7 @@
     },
     "battery.charging": {
         "title": "Charging Trigger",
-        "description": "Topic or boolean flag indicating whether the battery is currently charging.",
+        "description": "Topic or boolean flag indicating whether the battery is currently charging. Tip: Link this to your EV charger or tablet battery state to display an animated charging bolt overlay.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "battery"
@@ -1270,7 +1270,7 @@
     },
     "clock.timeOffset": {
         "title": "Time Offset",
-        "description": "Manual offset in minutes added to local time for secondary timezone clocks.",
+        "description": "Manual offset in minutes added to local time for secondary timezone clocks. Tip: Create a multi-city world clock bar for family abroad or international office hours.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "clock"
@@ -1278,7 +1278,7 @@
     },
     "clock.timezone": {
         "title": "Timezone",
-        "description": "Specific geographic timezone identifier (e.g. America/New_York).",
+        "description": "Specific geographic timezone identifier (e.g. America/New_York). Tip: Set dedicated timezones for vacation homes, remote servers, or loved ones in different regions.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "clock"
@@ -1526,7 +1526,7 @@
     },
     "editbox.sendBehavior": {
         "title": "Send Trigger",
-        "description": "Controls when entered text is transmitted:\n• Live (On Type): Transmits input data continuously with each keystroke as you type.\n• Keyboard (Enter): Transmits input data when pressing Enter, keeping keyboard focus.\n• Keyboard (Enter) & Exit: Transmits data when pressing Enter and removes keyboard focus.\n• Trigger Topic: Sends the current value only when an external trigger topic fires.\n• Open URL: Navigates to a dynamic URL constructed with the entered text.",
+        "description": "Controls when entered text is transmitted:\n• Live (On Type): Transmits input data continuously with each keystroke as you type.\n• Keyboard (Enter): Transmits input data when pressing Enter, keeping keyboard focus.\n• Keyboard (Enter) & Exit: Transmits data when pressing Enter and removes keyboard focus.\n• Trigger Topic: Sends the current value only when an external trigger topic fires.\n• Open URL: Navigates to a dynamic URL constructed with the entered text.\nTip: Use 'Keyboard (Enter) & Exit' for wall tablets to automatically dismiss the on-screen software keyboard once you press send.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "editbox"
@@ -1534,7 +1534,7 @@
     },
     "editbox.clearOnSend": {
         "title": "Clear on Send",
-        "description": "Automatically empties the input field after sending its text to the output topic.",
+        "description": "Automatically empties the input field after sending its text to the output topic. Tip: Enable this for chat inputs, notification dispatchers, or sending temporary search queries so the field is fresh for the next message.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "editbox"
@@ -1606,7 +1606,7 @@
     },
     "editbox.triggerTopic": {
         "title": "Send Trigger Topic",
-        "description": "Optional topic that causes the editbox to submit its current text value when triggered.",
+        "description": "Optional topic that causes the editbox to submit its current text value when triggered. Tip: Pair with an external button or NFC scan to submit values without touching the keyboard.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "editbox"
@@ -1718,7 +1718,7 @@
     },
     "gauge.customDisplayRange": {
         "title": "Custom Display Scale",
-        "description": "Remap displayed numerical text independently from physical dial angle.",
+        "description": "Remaps the displayed numerical text independently from the physical dial angle. Tip: Useful when raw sensor data is 0 to 1 (like humidity or dim level) and you want the readout to display 0 to 100% without modifying the topic.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "gauge"
@@ -1750,7 +1750,7 @@
     },
     "gauge.abbreviateLargeValues": {
         "title": "Abbreviate Large Values",
-        "description": "Format large numbers with compact metric suffixes like k or M.",
+        "description": "Formats large numbers with compact metric suffixes like k or M. Tip: Excellent for power and solar generation meters (e.g. 4.8 kW instead of 4800 W) or total energy consumption (kWh, MWh).",
         "help": {
             "topic": "Widgets",
             "widgetSub": "gauge"
@@ -1846,7 +1846,7 @@
     },
     "graph.fillArea": {
         "title": "Fill Under Curve",
-        "description": "Renders a translucent color gradient fill between the line curve and bottom axis.",
+        "description": "Renders a translucent color gradient fill between the line curve and bottom axis. Tip: Creates striking energy and solar production graphs where the area beneath the curve highlights total daily generation.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "graph"
@@ -1982,7 +1982,7 @@
     },
     "icon.rotation": {
         "title": "Icon Rotation Angle",
-        "description": "Rotate the icon in degrees (0 to 360) for directional arrows or custom orientations.",
+        "description": "Rotates the icon in degrees (0 to 360). Tip: Link rotation to an azimuth or wind direction sensor to have a compass needle or wind arrow rotate dynamically in real time.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "icon"
@@ -2030,7 +2030,7 @@
     },
     "image.fallbackUrl": {
         "title": "Fallback Backup Image",
-        "description": "Backup image URL displayed if camera stream or primary source link fails.",
+        "description": "Backup image URL displayed if camera stream or primary source link fails. Tip: Show a camera offline icon or standby card so your dashboard never displays broken image placeholders.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "image"
@@ -2158,7 +2158,7 @@
     },
     "lightgrid.colorMode": {
         "title": "Color Control Mode",
-        "description": "Light control capabilities: Simple Toggle, Brightness Dimmer, or Full RGB Color.",
+        "description": "Selects the lighting adjustment interface: Simple Toggle, Brightness Dimmer, Tunable White, or Full RGB Color. Tip: Tailor the control panel to each fixture type so ceiling spots show color temperature while LED accent strips open full hue and saturation sliders.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "lightgrid"
@@ -2166,7 +2166,7 @@
     },
     "lightgrid.multiSelect": {
         "title": "Multi-Light Selection",
-        "description": "Allows selecting multiple room lights simultaneously for grouped adjustments.",
+        "description": "Allows selecting multiple room lights simultaneously for grouped adjustments. Tip: Tap several lights across a zone to synchronize brightness, warmth, or power in one swipe.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "lightgrid"
@@ -2343,7 +2343,7 @@
     },
     "slider.min": {
         "title": "Minimum Value",
-        "description": "Lowest numerical value at the start of the slider track.",
+        "description": "Defines the lowest numerical value at the start of the slider track. Tip: For Homey dim capabilities use 0 (or 0 to 100 with a formula), and for thermostats set a realistic comfort floor like 15 degrees.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "slider"
@@ -2351,7 +2351,7 @@
     },
     "slider.max": {
         "title": "Maximum Value",
-        "description": "Highest numerical value at the end of the slider track.",
+        "description": "Defines the highest numerical value at the end of the slider track. Tip: For Homey dim capabilities use 1 (or 100 with a percent formula), and for thermostats set a realistic comfort ceiling like 25 degrees.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "slider"
@@ -2367,7 +2367,7 @@
     },
     "slider.vertical": {
         "title": "Vertical Orientation",
-        "description": "Orient slider track vertically for volume faders or thermostat temperature controls.",
+        "description": "Renders the slider track vertically instead of horizontally. Tip: Ideal for audio mixing faders, HVAC temperature setpoints, roller blind heights, or compact vertical sidebar columns.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "slider"
@@ -2375,7 +2375,7 @@
     },
     "slider.sendValueMode": {
         "title": "Value Send Behavior",
-        "description": "Determines when slider values are published to your smart-home controller:\n• Send value on release: Transmits the final value only after letting go, reducing network traffic.\n• Send value directly on movement: Streams values continuously in real time as you drag the handle.",
+        "description": "Determines when slider values are published to your smart-home controller:\n• Send value on release: Transmits the final value only after letting go, reducing network traffic.\n• Send value directly on movement: Streams values continuously in real time as you drag the handle.\nTip: Use 'Send value directly on movement' for real-time light dimming and audio volume, or 'Send value on release' for motorized window blinds, thermostats, and slow network devices.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "slider"
@@ -2383,7 +2383,7 @@
     },
     "slider.allowDecimals": {
         "title": "Allow Fractional Values",
-        "description": "Permits decimal numbers on the slider output instead of rounding to whole integers.",
+        "description": "Permits decimal numbers on the slider output instead of rounding to whole integers. Tip: Enable for precise climate control thermostats that support 0.5 degree steps.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "slider"
@@ -2473,7 +2473,7 @@
     },
     "switch.mode": {
         "title": "Switch Operation Mode",
-        "description": "Determines the electrical switching behavior of the widget:\n• Toggle Switch: Alternates between On and Off states with each tap, maintaining state.\n• Push Button (Momentary): Activates while pressed and immediately reverts when released.",
+        "description": "Determines the electrical switching behavior of the widget:\n• Toggle Switch: Alternates between On and Off states with each tap, maintaining state.\n• Push Button (Momentary): Activates while pressed and immediately reverts when released.\nTip: Use Momentary mode for garage doors, gate buzzers, doorbell chimes, or cycling smart scenes.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "switch"
@@ -2481,7 +2481,7 @@
     },
     "switch.style": {
         "title": "Button Visual Style",
-        "description": "Selects the visual container design for the switch:\n• Switch (Pill): Classic toggle pill slider with sliding thumb indicator.\n• Button (Rect): Modern interactive push card with custom background and borders.\n• Image Only: Clickable icon or image without background button frames.\n• Text Only: Lightweight text link button without border containers.\n• Invisible: Transparent touch zone placed over custom dashboard background artwork.",
+        "description": "Selects the visual container design for the switch:\n• Switch (Pill): Classic toggle pill slider with sliding thumb indicator.\n• Button (Rect): Modern interactive push card with custom background and borders.\n• Image Only: Clickable icon or image without background button frames.\n• Text Only: Lightweight text link button without border containers.\n• Invisible: Transparent touch zone placed over custom dashboard background artwork.\nTip: Use the Invisible style to build interactive floor plans by placing invisible tap zones over rooms and furniture.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "switch"
@@ -2489,7 +2489,7 @@
     },
     "switch.actionType": {
         "title": "Interaction Action",
-        "description": "Specifies what happens when tapping the switch or button:\n• Send Topic: Publishes an automation command or payload to your controller.\n• Go to Page: Switches the dashboard view directly to another page.\n• Open URL: Launches an external website or mobile app deep link in your browser.",
+        "description": "Specifies what happens when tapping the switch or button:\n• Send Topic: Publishes an automation command or payload to your controller.\n• Go to Page: Switches the dashboard view directly to another page.\n• Open URL: Launches an external website or mobile app deep link in your browser.\nTip: Use Go to Page to create custom navigation bars, room jump shortcuts, or sub-menu cards.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "switch"
@@ -2497,7 +2497,7 @@
     },
     "switch.separateOnOffTopics": {
         "title": "Separate On and Off Topics",
-        "description": "Use distinct MQTT or API topics for switching on vs switching off devices.",
+        "description": "Separates the activation and deactivation command paths. Tip: Essential for legacy relays, IR blasters, and AV receivers that require discrete Power On and Power Off codes.",
         "help": {
             "topic": "Connecting Widgets & Data (Topics)"
         }
@@ -2581,7 +2581,7 @@
     },
     "switch.selectionGroup": {
         "title": "Radio Selection Group",
-        "description": "Name of a mutually exclusive group where selecting one button automatically turns off others.",
+        "description": "Creates mutually exclusive radio-button behavior where activating one button automatically deselects others. Tip: Perfect for HVAC mode selectors (Heat, Cool, Auto, Off), audio input selectors, or light scene presets.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "switch"
@@ -2589,7 +2589,7 @@
     },
     "text.text": {
         "title": "Markdown & Text Content",
-        "description": "Supports full Markdown formatting, tables, headings, checklists, and dynamic {{topic}} tokens.",
+        "description": "Supports full Markdown formatting, tables, headings, checklists, and dynamic {{topic}} tokens. Tip: Embed live sensors and formulas directly inside rich prose like 'Living room is {{temp}}°C and {{countdown(dinner)}} left until dinner'.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "text"
@@ -2661,7 +2661,7 @@
     },
     "text.mdAutoFitText": {
         "title": "Dynamic Auto-Fit Font Scaling",
-        "description": "Automatically shrinks or grows font size so text fills available space without clipping.",
+        "description": "Automatically adjusts font size so text fills available space without clipping. Tip: Great for dynamic sensor values or room status greetings where character count varies.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "text"
@@ -3168,7 +3168,7 @@
     },
     "icon.group_icon_style_iconSourceOn": {
         "title": "Active Icon Style",
-        "description": "Icon graphic, active color tint, and size displayed when the linked state evaluates to true.",
+        "description": "Icon graphic, active color tint, and size displayed when the linked state evaluates to true. Tip: Switch between different icon symbols for On vs Off, such as a closed lock vs open padlock, or an empty garage vs parked car.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "icon",
@@ -3186,7 +3186,7 @@
     },
     "icon.blink": {
         "title": "Blink on Active",
-        "description": "Continuously flash or pulse the icon while in the active state to attract attention for alarms.",
+        "description": "Continuously flashes or pulses the icon while in the active state. Tip: Use for high-priority alerts like smoke alarms, water leak detectors, open security gates, or urgent notifications.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "icon",
@@ -3240,7 +3240,7 @@
     },
     "image.svgRaw": {
         "title": "Raw SVG Code",
-        "description": "Inline SVG markup code to render directly on canvas with crisp vector scaling.",
+        "description": "Inline SVG markup code to render directly on canvas with crisp vector scaling. Tip: Paste raw vector icons, animated floor plans, or vehicle graphics for ultra-sharp rendering on 4K wall tablets.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "image",
@@ -3258,7 +3258,7 @@
     },
     "image.liveRefresh": {
         "title": "Enable Live Refresh",
-        "description": "Periodically re-fetch the image file to support live security cameras and dynamic weather radar feeds.",
+        "description": "Periodically re-fetches the image file. Tip: Essential for live security camera snapshots (e.g. refresh every 2 seconds) or dynamic weather radar maps updating every 5 minutes.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "image",
@@ -3577,7 +3577,7 @@
     },
     "gauge.startColor": {
         "title": "Gauge Start Color",
-        "description": "Color at the low end of the gauge scale. Blends smoothly into middle and end colors.",
+        "description": "Color at the low end of the gauge scale. Tip: Set green for low power, yellow for moderate load, and red for peak grid consumption to build an intuitive traffic-light energy meter.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "gauge",
@@ -3991,7 +3991,7 @@
     },
     "graph.lineGaps": {
         "title": "Handle Missing Data Gaps",
-        "description": "Determines how periods without incoming data are drawn:\n• Break on Missing Time: Leaves an empty gap when data stops arriving to highlight sensor dropouts.\n• Connect Points: Bridges directly across missing intervals with unbroken lines.",
+        "description": "Determines how periods without incoming data are drawn:\n• Break on Missing Time: Leaves an empty gap when data stops arriving to highlight sensor dropouts.\n• Connect Points: Bridges directly across missing intervals with unbroken lines.\nTip: Use Break on Missing Time for battery-powered sensors so you immediately spot offline devices or dead batteries.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "graph",
@@ -4063,7 +4063,7 @@
     },
     "graph.type": {
         "title": "Visual Graph Type",
-        "description": "Selects the rendering technique for data series:\n• Line: Connects consecutive data points with crisp straight angled segments.\n• Smooth: Curves lines gracefully between points using cubic spline interpolation.\n• Stepped: Draws horizontal and vertical step lines, ideal for binary or relay states.\n• Bar: Plots data points as vertical rectangular bars.\n• Text: Overlays latest numeric readings directly on the plot area.",
+        "description": "Selects the rendering technique for data series:\n• Line: Connects consecutive data points with crisp straight angled segments.\n• Smooth: Curves lines gracefully between points using cubic spline interpolation.\n• Stepped: Draws horizontal and vertical step lines, ideal for binary states like heating relays, motion detectors, and door contacts.\n• Bar: Plots data points as vertical rectangular bars, great for hourly energy usage or rain precipitation.\n• Text: Overlays latest numeric readings directly on the plot area.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "graph",
@@ -5295,7 +5295,7 @@
     },
     "list.showTimestamp": {
         "title": "Show Event Timestamp",
-        "description": "Displays the date and time when each log entry was received.",
+        "description": "Displays the date and time when each log entry was received. Tip: Perfect for sensor event logs, motion detector triggers, and smart doorbell ring histories.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "list",
@@ -5304,7 +5304,7 @@
     },
     "list.enableCheckboxes": {
         "title": "Interactive Checkboxes",
-        "description": "Adds clickable checkmarks to items for interactive tasks and shopping lists.",
+        "description": "Adds clickable checkmarks to items for interactive tasks and shopping lists. Tip: Build interactive grocery checklists or chore trackers where checking off items syncs back to your home automation hub.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "list",
@@ -5322,7 +5322,7 @@
     },
     "list.readOnly": {
         "title": "Read Only Mode",
-        "description": "Disables checkbox toggling and item selection. Ideal for view-only security logs.",
+        "description": "Disables checkbox toggling and item selection. Tip: Enable this for security camera detection logs, door access histories, or automated system audit streams.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "list",
@@ -5455,7 +5455,7 @@
     },
     "menu.menuTriggerTopic": {
         "title": "Menu Trigger Topic",
-        "description": "Topic to open (true) or collapse (false) the menu remotely from Homey flows or MQTT.",
+        "description": "Topic to open (true) or collapse (false) the menu remotely from Homey flows or MQTT. Tip: Automatically slide out a security drawer when doorbell rings or motion is detected, and auto-close when clear.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "menu",
@@ -5464,7 +5464,7 @@
     },
     "menu.menuStatusTopic": {
         "title": "Menu Status Topic",
-        "description": "Topic published when the menu opens or closes to synchronize dashboard state.",
+        "description": "Topic published when the menu opens or closes to synchronize dashboard state. Tip: Use this to dim ambient room lights or adjust background layers when opening an off-canvas control drawer.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "menu",
@@ -5869,7 +5869,7 @@
     },
     "switch.extraOutputTopics": {
         "title": "Additional Output Topics",
-        "description": "Publish simultaneous command payloads to multiple extra MQTT or Homey topics on a single click.",
+        "description": "Broadcasts additional commands across secondary topics on a single tap. Tip: Trigger multi-room party scenes, disarm alarms while unlocking doors, or synchronize multiple hubs at once.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "switch",
@@ -6361,7 +6361,7 @@
     },
     "text.textScroll": {
         "title": "Continuous Text Marquee",
-        "description": "Controls continuous text animation:\n• None: Keeps text stationary within the widget container.\n• Horizontal: Scrolls overflowing text horizontally like a news marquee ticker.\n• Vertical: Scrolls multi-line text upward continuously like a teleprompter.",
+        "description": "Controls continuous text animation:\n• None: Keeps text stationary within the widget container.\n• Horizontal: Scrolls overflowing text horizontally like a news marquee ticker.\n• Vertical: Scrolls multi-line text upward continuously like a teleprompter.\nTip: Use Horizontal scroll for RSS news feeds, weather forecasts, or music track titles that exceed card width.",
         "help": {
             "topic": "Widgets",
             "widgetSub": "text",

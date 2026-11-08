@@ -12,12 +12,21 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from .calendar_ical import (
     calendar_window,
     coerce_calendar_source,
+    derive_calendar_id,
     filter_events,
+    filter_events_range,
     merge_ics_documents,
     occurrences_to_ics,
+    resolve_filter_range,
     summary_text,
 )
-from .calendar_markdown import event_blocks, events_to_markdown, select_merged_events, source_blocks
+from .calendar_markdown import (
+    event_blocks,
+    events_to_markdown,
+    generate_calendar_markdown,
+    select_merged_events,
+    source_blocks,
+)
 from .const import (
     DOMAIN,
     SERVICE_COMBINE_ICAL_DATA,
@@ -202,72 +211,187 @@ def _fallback_tz(hass: HomeAssistant) -> str:
     return str(getattr(hass.config, "time_zone", None) or "UTC")
 
 
+async def _extract_calendar_events(
+    hass: HomeAssistant,
+    raw_input: Any,
+    runtime,
+    fallback_tz: str,
+) -> tuple[list[dict[str, Any]], str | None, str | None]:
+    if not raw_input:
+        return [], None, None
+
+    if isinstance(raw_input, dict):
+        if "events" in raw_input and isinstance(raw_input["events"], list):
+            return raw_input["events"], raw_input.get("filterStart"), raw_input.get("filterEnd")
+        if "filtered_events_json" in raw_input:
+            return await _extract_calendar_events(hass, raw_input["filtered_events_json"], runtime, fallback_tz)
+        if "combined_events_json" in raw_input:
+            return await _extract_calendar_events(hass, raw_input["combined_events_json"], runtime, fallback_tz)
+
+    text = str(raw_input).strip()
+    if text.startswith("{"):
+        try:
+            payload = json.loads(text)
+            if isinstance(payload, dict):
+                if isinstance(payload.get("events"), list):
+                    return payload["events"], payload.get("filterStart"), payload.get("filterEnd")
+                if "filtered_events_json" in payload:
+                    return await _extract_calendar_events(hass, payload["filtered_events_json"], runtime, fallback_tz)
+                if "combined_events_json" in payload:
+                    return await _extract_calendar_events(hass, payload["combined_events_json"], runtime, fallback_tz)
+        except Exception:  # noqa: BLE001
+            pass
+
+    ics_raw = await _maybe_fetch_ics(hass, text)
+    cal_id = derive_calendar_id(text)
+    start_dt, end_dt = resolve_filter_range("previous_current_next_month", settings=runtime.settings, tz_name=fallback_tz)
+    events = filter_events_range(ics_raw, start_dt, end_dt, calendar_id=cal_id, fallback_tz=fallback_tz)
+    return events, start_dt.isoformat().replace("+00:00", "Z"), end_dt.isoformat().replace("+00:00", "Z")
+
+
 async def async_handle_load_filter_ical(call: ServiceCall) -> ServiceResponse:
     runtime = _runtime_or_error(call.hass)
-    raw = await _maybe_fetch_ics(call.hass, str(call.data.get("url") or ""))
-    timeframe = str(call.data.get("timeframe") or "7d")
-    events = filter_events(raw, timeframe, int(call.data.get("max_events") or 50), fallback_tz=_fallback_tz(call.hass))
-    text = summary_text(events)
-    window_start, window_end = calendar_window(timeframe)
+    url = str(call.data.get("url") or "").strip()
+    if not url:
+        raise ValueError("Please provide a valid iCal URL starting with http:// or https://")
+
+    target_mode = str(call.data.get("target_mode") or call.data.get("timeframe") or "previous_current_next_month").strip()
+    custom_start = str(call.data.get("custom_start") or "").strip()
+    custom_end = str(call.data.get("custom_end") or "").strip()
+    max_events = int(call.data.get("max_events") or 0)
+    fallback_tz = _fallback_tz(call.hass)
+
+    raw = await _maybe_fetch_ics(call.hass, url)
+    start_dt, end_dt = resolve_filter_range(
+        target_mode,
+        custom_start,
+        custom_end,
+        settings=runtime.settings,
+        tz_name=fallback_tz,
+    )
+    cal_id = derive_calendar_id(url)
+    events = filter_events_range(
+        raw,
+        start_dt,
+        end_dt,
+        calendar_id=cal_id,
+        fallback_tz=fallback_tz,
+        max_events=max_events,
+    )
+
+    payload = {
+        "filterStart": start_dt.isoformat().replace("+00:00", "Z"),
+        "filterEnd": end_dt.isoformat().replace("+00:00", "Z"),
+        "events": events,
+    }
+    filtered_events_json = json.dumps(payload)
     topic = str(call.data.get("topic") or "").strip()
     if topic:
-        await runtime.publish_custom(topic, text, retain=True)
+        await runtime.publish_custom(topic, filtered_events_json, retain=True)
+
+    text = summary_text(events)
     return {
-        "ical_data": occurrences_to_ics(events),
+        "filtered_events_json": filtered_events_json,
+        "events": events,
+        "filterStart": payload["filterStart"],
+        "filterEnd": payload["filterEnd"],
         "event_count": len(events),
         "summary_text": text,
-        "filterStart": window_start.isoformat().replace("+00:00", "Z"),
-        "filterEnd": window_end.isoformat().replace("+00:00", "Z"),
-        "events": events,
+        "ical_data": occurrences_to_ics(events),
     }
 
 
 async def async_handle_webcal_to_markdown(call: ServiceCall) -> ServiceResponse:
     runtime = _runtime_or_error(call.hass)
-    timeframe = str(call.data.get("timeframe") or "7d")
-    maximum = int(call.data.get("max_events") or 25)
-    groups = []
-    for index in range(1, 6):
-        raw_value = call.data.get(f"url_{index}")
-        if not raw_value:
-            continue
-        text = coerce_calendar_source(await _maybe_fetch_ics(call.hass, str(raw_value)))
-        events = filter_events(text, timeframe, 0, fallback_tz=_fallback_tz(call.hass))
-        label = str(call.data.get(f"label_{index}") or f"Calendar {index}")
-        groups.append((label, events))
-    merged, sources = select_merged_events(groups, maximum)
-    markdown_settings = dict(runtime.settings)
-    markdown_settings["timeZone"] = _fallback_tz(call.hass)
-    markdown = events_to_markdown(merged, settings=markdown_settings)
+    fallback_tz = _fallback_tz(call.hass)
+    fmt = str(call.data.get("format") or "day_view").strip()
+
+    droptoken = call.data.get("droptoken")
+    if not droptoken and (call.data.get("url_1") or call.data.get("url")):
+        droptoken = call.data.get("url_1") or call.data.get("url")
+
+    events: list[dict[str, Any]] = []
+    if droptoken:
+        events, _, _ = await _extract_calendar_events(call.hass, droptoken, runtime, fallback_tz)
+    else:
+        groups = []
+        timeframe = str(call.data.get("timeframe") or "7d")
+        for index in range(1, 6):
+            raw_value = call.data.get(f"url_{index}")
+            if not raw_value:
+                continue
+            text = coerce_calendar_source(await _maybe_fetch_ics(call.hass, str(raw_value)))
+            evs = filter_events(text, timeframe, 0, fallback_tz=fallback_tz)
+            label = str(call.data.get(f"label_{index}") or f"Calendar {index}")
+            groups.append((label, evs))
+        merged, _ = select_merged_events(groups, int(call.data.get("max_events") or 25))
+        events = merged
+
+    markdown_opts = dict(runtime.settings)
+    markdown_opts["timeZone"] = fallback_tz
+    markdown_opts["viewFormat"] = fmt
+    markdown = generate_calendar_markdown(events, options=markdown_opts)
+
     topic = str(call.data.get("topic") or "").strip()
     if topic:
         await runtime.publish_custom(topic, markdown, retain=True)
-        await runtime.publish_custom(f"{topic}_blocks", event_blocks(merged), retain=True)
-        await runtime.publish_custom(f"{topic}_sources", source_blocks(sources), retain=True)
+        await runtime.publish_custom(f"{topic}_blocks", event_blocks(events), retain=True)
+
     return {
         "markdown": markdown,
-        "event_count": len(merged),
-        "event_blocks_json": event_blocks(merged),
-        "source_blocks_json": source_blocks(sources),
+        "event_count": len(events),
+        "event_blocks_json": event_blocks(events),
     }
 
 
 async def async_handle_combine_ical(call: ServiceCall) -> ServiceResponse:
     runtime = _runtime_or_error(call.hass)
-    documents = []
-    for index in range(1, 6):
-        raw_value = call.data.get(f"ical_{index}")
-        if not raw_value:
-            continue
-        documents.append(coerce_calendar_source(await _maybe_fetch_ics(call.hass, str(raw_value))))
-    combined = merge_ics_documents(documents) if documents else ""
-    timeframe = str(call.data.get("timeframe") or "30d")
-    events = filter_events(combined, timeframe, 0, fallback_tz=_fallback_tz(call.hass)) if combined else []
-    text = summary_text(events)
+    fallback_tz = _fallback_tz(call.hass)
+
+    token_a = call.data.get("events_token_a") or call.data.get("ical_1")
+    token_b = call.data.get("events_token_b") or call.data.get("ical_2")
+
+    events_a, start_a, end_a = await _extract_calendar_events(call.hass, token_a, runtime, fallback_tz)
+    events_b, start_b, end_b = await _extract_calendar_events(call.hass, token_b, runtime, fallback_tz)
+
+    merged_events = list(events_a) + list(events_b)
+    all_starts = [s for s in (start_a, start_b) if s]
+    all_ends = [e for e in (end_a, end_b) if e]
+
+    for index in range(3, 6):
+        raw_val = call.data.get(f"ical_{index}")
+        if raw_val:
+            evs, st, en = await _extract_calendar_events(call.hass, raw_val, runtime, fallback_tz)
+            merged_events.extend(evs)
+            if st:
+                all_starts.append(st)
+            if en:
+                all_ends.append(en)
+
+    merged_events.sort(key=lambda item: item.get("startDate") or item.get("start") or "")
+    filter_start = min(all_starts) if all_starts else None
+    filter_end = max(all_ends) if all_ends else None
+
+    payload = {
+        "filterStart": filter_start,
+        "filterEnd": filter_end,
+        "events": merged_events,
+    }
+    combined_events_json = json.dumps(payload)
     topic = str(call.data.get("topic") or "").strip()
-    if topic and combined:
-        await runtime.publish_custom(topic, combined, retain=True)
-    return {"ical_data": combined, "event_count": len(events), "summary_text": text}
+    if topic:
+        await runtime.publish_custom(topic, combined_events_json, retain=True)
+
+    text = summary_text(merged_events)
+    return {
+        "combined_events_json": combined_events_json,
+        "events": merged_events,
+        "filterStart": filter_start,
+        "filterEnd": filter_end,
+        "event_count": len(merged_events),
+        "summary_text": text,
+        "ical_data": occurrences_to_ics(merged_events),
+    }
 
 
 async def async_handle_fetch_rss(call: ServiceCall) -> ServiceResponse:
