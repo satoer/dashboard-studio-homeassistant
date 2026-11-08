@@ -29,7 +29,7 @@ from .const import (
     SERVICE_SEND_INSIGHTS_ADVANCED,
     SERVICE_WEBCAL_TO_MARKDOWN,
 )
-from .insights import resample_data, window_start
+from .insights import resample_data, time_window, window_start
 from .rss_markdown import feed_response, feeds_to_markdown, parse_feed
 from .runtime import get_runtime
 
@@ -60,15 +60,16 @@ async def _maybe_fetch_ics(hass: HomeAssistant, value: str) -> str:
     return text
 
 
-async def _history_entries(hass: HomeAssistant, entity_id: str, timespan: str) -> list[dict[str, Any]]:
-    start = window_start(timespan)
-    end = datetime.now(timezone.utc)
+async def _history_entries(
+    hass: HomeAssistant, entity_id: str, timespan: str
+) -> tuple[list[dict[str, Any]], datetime, datetime]:
+    start, end = time_window(timespan, tz_name=_fallback_tz(hass))
     try:
         from homeassistant.components.recorder import get_instance
         from homeassistant.components.recorder.history import get_significant_states
     except ImportError:
         _LOGGER.debug("Recorder is not available")
-        return []
+        return [], start, end
 
     def _load():
         try:
@@ -88,7 +89,8 @@ async def _history_entries(hass: HomeAssistant, entity_id: str, timespan: str) -
         result = await get_instance(hass).async_add_executor_job(_load)
     except Exception as err:  # noqa: BLE001
         _LOGGER.warning("Recorder history for %s failed: %s", entity_id, err)
-        return []
+        return [], start, end
+
     states = []
     if isinstance(result, dict):
         states = result.get(entity_id) or []
@@ -104,7 +106,35 @@ async def _history_entries(hass: HomeAssistant, entity_id: str, timespan: str) -
             continue
         stamp = changed.isoformat()
         entries.append({"t": stamp, "v": value})
-    return entries
+
+    # Fall back to long-term statistics if recorder purged raw states for long periods
+    if len(entries) < 2 and (end - start).total_seconds() > 7 * 86400:
+        try:
+            from homeassistant.components.recorder.statistics import statistics_during_period
+
+            period = "hour" if (end - start).total_seconds() <= 31 * 86400 else "day"
+            stats = await get_instance(hass).async_add_executor_job(
+                statistics_during_period,
+                hass,
+                start,
+                end,
+                {entity_id},
+                period,
+                None,
+                {"mean", "state"},
+            )
+            if stats and entity_id in stats:
+                for row in stats[entity_id]:
+                    v = row.get("mean") if row.get("mean") is not None else row.get("state")
+                    if v is not None:
+                        t_sec = row.get("start")
+                        if t_sec:
+                            ts = datetime.fromtimestamp(t_sec, timezone.utc).isoformat()
+                            entries.append({"t": ts, "v": float(v)})
+        except Exception as stat_err:  # noqa: BLE001
+            _LOGGER.debug("Statistics fallback for %s: %s", entity_id, stat_err)
+
+    return entries, start, end
 
 
 async def async_handle_send(call: ServiceCall) -> None:
@@ -125,9 +155,10 @@ async def async_handle_send_insights(call: ServiceCall) -> None:
     runtime = _runtime_or_error(call.hass)
     entity_id = str(call.data.get("entity_id") or "")
     timespan = str(call.data.get("timespan") or "24h")
-    topic = str(call.data.get("topic") or entity_id)
-    entries = await _history_entries(call.hass, entity_id, timespan)
-    points = resample_data(entries, timespan, "auto", "mean")
+    topic = str(call.data.get("topic") or "").strip() or entity_id
+    datapoints = call.data.get("datapoints")
+    entries, start, end = await _history_entries(call.hass, entity_id, timespan)
+    points = resample_data(entries, start, end, datapoints=datapoints, aggregation="mean")
     await runtime.async_publish_insight(topic, points)
 
 
@@ -135,18 +166,35 @@ async def async_handle_send_insights_advanced(call: ServiceCall) -> ServiceRespo
     runtime = _runtime_or_error(call.hass)
     entity_id = str(call.data.get("entity_id") or "")
     timespan = str(call.data.get("timespan") or "24h")
-    topic = str(call.data.get("topic") or entity_id)
+    topic = str(call.data.get("topic") or "").strip() or entity_id
+    datapoints = call.data.get("datapoints")
     resolution = str(call.data.get("resolution") or "auto")
     aggregation = str(call.data.get("aggregation") or "mean")
-    entries = await _history_entries(call.hass, entity_id, timespan)
-    points = resample_data(entries, timespan, resolution, aggregation)
+    entries, start, end = await _history_entries(call.hass, entity_id, timespan)
+    points = resample_data(
+        entries,
+        start,
+        end,
+        datapoints=datapoints,
+        resolution=resolution,
+        aggregation=aggregation,
+    )
     await runtime.async_publish_insight(topic, points)
-    values = [point["v"] for point in points]
+
+    numeric_values = [p["v"] for p in points if p.get("v") is not None]
+    highest = round(max(numeric_values), 2) if numeric_values else None
+    lowest = round(min(numeric_values), 2) if numeric_values else None
+    average = round(sum(numeric_values) / len(numeric_values), 2) if numeric_values else None
+    last_val = round(numeric_values[-1], 2) if numeric_values else None
+
     return {
+        "highest": highest,
+        "lowest": lowest,
+        "average": average,
+        "last": last_val,
         "points": len(points),
-        "highest": max(values) if values else None,
-        "lowest": min(values) if values else None,
-        "last": values[-1] if values else None,
+        "raw_json": json.dumps(points),
+        "data": points,
     }
 
 

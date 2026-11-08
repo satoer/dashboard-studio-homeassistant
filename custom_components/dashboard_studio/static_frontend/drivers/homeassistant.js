@@ -1261,11 +1261,12 @@ class HomeAssistantDriver extends BaseDataDriver {
             if (!data || !data.name) return;
             var rawName = String(data.name).replace(/^(?:homey|homeassistant)\/insights?\//i, '');
             var topic = 'homey/insight/' + rawName;
-            var val = Array.isArray(data.data)
-                ? data.data.map(function (pt) { return Array.isArray(pt) ? pt : [new Date(pt.t).getTime(), pt.v]; })
-                : data.data;
+            var val = data.data;
             self.updateStatsAndHistory(topic, val);
             self.dispatchMessage(topic, val);
+            if (rawName && rawName !== topic) {
+                self.dispatchMessage(rawName, val);
+            }
         });
         this.socket.on('reload_dashboard', function (data) {
             if (!data || !data.name) return;

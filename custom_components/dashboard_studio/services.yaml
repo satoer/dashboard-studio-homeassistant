@@ -43,6 +43,12 @@ send_insights:
       selector:
         select:
           options:
+            - label: "Today"
+              value: "today"
+            - label: "Yesterday"
+              value: "yesterday"
+            - label: "This Week"
+              value: "this_week"
             - label: "Last 1 Hour"
               value: "1h"
             - label: "Last 6 Hours"
@@ -53,10 +59,23 @@ send_insights:
               value: "7d"
             - label: "Last 30 Days"
               value: "30d"
+            - label: "Last Year"
+              value: "365d"
+    datapoints:
+      name: Resolution (Datapoints)
+      description: Number of datapoints along the chart axis (2 to 500).
+      required: false
+      default: 20
+      selector:
+        number:
+          min: 2
+          max: 500
+          mode: slider
+          step: 1
     topic:
-      name: Target Topic
-      description: Topic that the chart widget listens to.
-      required: true
+      name: Target Topic (Optional)
+      description: Topic that the chart widget listens to. If omitted, the entity ID is used.
+      required: false
       example: "insights/living_room_temp"
       selector:
         text:
@@ -64,6 +83,7 @@ send_insights:
 send_insights_advanced:
   name: Send Recorder / History data to chart (Advanced)
   description: Query Home Assistant history with custom aggregation, resolution, and time buckets and publish to a chart topic.
+  supports_response: "optional"
   fields:
     entity_id:
       name: Entity
@@ -80,6 +100,12 @@ send_insights_advanced:
       selector:
         select:
           options:
+            - label: "Today"
+              value: "today"
+            - label: "Yesterday"
+              value: "yesterday"
+            - label: "This Week"
+              value: "this_week"
             - label: "Last 1 Hour"
               value: "1h"
             - label: "Last 6 Hours"
@@ -92,6 +118,19 @@ send_insights_advanced:
               value: "14d"
             - label: "Last 30 Days"
               value: "30d"
+            - label: "Last Year"
+              value: "365d"
+    datapoints:
+      name: Resolution (Datapoints)
+      description: Number of datapoints along the chart axis (2 to 500).
+      required: false
+      default: 20
+      selector:
+        number:
+          min: 2
+          max: 500
+          mode: slider
+          step: 1
     resolution:
       name: Resolution / Bucket Size
       description: Optional bucket size (auto, 5m, 15m, 1h, 6h, 1d).
@@ -132,10 +171,14 @@ send_insights_advanced:
               value: "delta"
             - label: "Last"
               value: "last"
+            - label: "First"
+              value: "first"
+            - label: "Median"
+              value: "median"
     topic:
-      name: Target Topic
-      description: Topic that the chart widget listens to.
-      required: true
+      name: Target Topic (Optional)
+      description: Topic that the chart widget listens to. If omitted, the entity ID is used.
+      required: false
       example: "insights/power_24h"
       selector:
         text:
