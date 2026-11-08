@@ -1313,7 +1313,7 @@
     <div class="dashboard-url-box">
         <div class="dashboard-url-row">
             <p data-translate="settings.dashboard.access">Open your local dashboard:</p>
-            <a id="dashboard-link" class="dashboard-link" href="/dashboard_studio/" target="_blank" data-translate="settings.dashboard.loading">Loading dashboard URL…</a>
+            <a id="dashboard-link" class="dashboard-link" href="/dashboard_studio/" target="_blank">Loading dashboard URL…</a>
         </div>
         <div id="manual-help" class="manual-instruction">
             <strong data-translate="settings.dashboard.cantAccess">Can't open the link?</strong><br>
@@ -1952,6 +1952,9 @@
             if (capFilter) capFilter.setAttribute('placeholder', __('settings.config.filterCapability'));
             if (typeof currentTheme !== 'undefined' && typeof applyTheme === 'function') {
                 applyTheme(currentTheme);
+            }
+            if (typeof updateDashboardLinks === 'function') {
+                updateDashboardLinks();
             }
         }
 
