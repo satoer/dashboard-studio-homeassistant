@@ -1176,6 +1176,15 @@ const Dashboard = {
         return { ...plugin, ...fromFile };
     },
 
+    /** Normalize app-relative `/images/...` paths so subpath hosts load bundled images cleanly. */
+    _resolveAssetUrl: function (url) {
+        if (typeof url !== 'string') return '';
+        const trimmed = url.trim();
+        if (!trimmed) return '';
+        if (trimmed.indexOf('/images/') === 0) return trimmed.slice(1);
+        return trimmed;
+    },
+
     _collectDashboardImageUrls: function (data) {
         try {
             const set = new Set();
@@ -1187,10 +1196,8 @@ const Dashboard = {
                     canvasImage = master.environment.canvasImage;
                 }
             }
-            if (canvasImage) {
-                const t = canvasImage.trim();
-                if (t) set.add(t);
-            }
+            const resolvedCanvas = this._resolveAssetUrl(canvasImage);
+            if (resolvedCanvas) set.add(resolvedCanvas);
             const masterBaseline = this._masterBaselineForWidgetMerge(data);
             const addFromRecord = (wData, widgetId) => {
                 if (!wData || typeof wData !== 'object') return;
@@ -1203,7 +1210,10 @@ const Dashboard = {
                 const forExtract = WidgetClass
                     ? BaseWidget.buildMergedOverridesForSeed(WidgetClass, widgetId, o, masterBaseline)
                     : o;
-                WidgetRegistry.collectPreloadImageUrlsFromOverrides(type, forExtract).forEach(u => set.add(u));
+                WidgetRegistry.collectPreloadImageUrlsFromOverrides(type, forExtract).forEach((u) => {
+                    const resolved = this._resolveAssetUrl(u);
+                    if (resolved) set.add(resolved);
+                });
             };
             if (data.widgets && typeof data.widgets === 'object') {
                 Object.keys(data.widgets).forEach(k => addFromRecord(data.widgets[k], k));
@@ -1225,9 +1235,7 @@ const Dashboard = {
     _collectDashboardImageUrlsFromWidgets: function () {
         try {
             const set = new Set();
-            const bg = MASTER_SETTINGS && typeof MASTER_SETTINGS.canvasImage === 'string'
-                ? MASTER_SETTINGS.canvasImage.trim()
-                : '';
+            const bg = MASTER_SETTINGS ? this._resolveAssetUrl(MASTER_SETTINGS.canvasImage) : '';
             if (bg) set.add(bg);
             Object.keys(this.widgets || {}).forEach(id => {
                 const widget = this.widgets[id];
@@ -1236,7 +1244,10 @@ const Dashboard = {
                 if (!type) return;
                 const o = widget.overrides;
                 if (!o || typeof o !== 'object') return;
-                WidgetRegistry.collectPreloadImageUrlsFromOverrides(type, o).forEach(u => set.add(u));
+                WidgetRegistry.collectPreloadImageUrlsFromOverrides(type, o).forEach((u) => {
+                    const resolved = this._resolveAssetUrl(u);
+                    if (resolved) set.add(resolved);
+                });
             });
             return Array.from(set);
         } catch (err) {
@@ -1247,11 +1258,7 @@ const Dashboard = {
 
     _preloadImageUrl: function (url) {
         return new Promise((resolve) => {
-            if (typeof url !== 'string') {
-                resolve();
-                return;
-            }
-            const trimmed = url.trim();
+            const trimmed = this._resolveAssetUrl(url);
             if (!trimmed) {
                 resolve();
                 return;
@@ -8751,8 +8758,9 @@ const Dashboard = {
         let targetBgSize = 'auto';
         let targetBgRepeat = 'repeat';
 
-        if (MASTER_SETTINGS.canvasImage) {
-            const img = `url(${MASTER_SETTINGS.canvasImage})`;
+        const canvasImageUrl = this._resolveAssetUrl(MASTER_SETTINGS.canvasImage);
+        if (canvasImageUrl) {
+            const img = `url(${canvasImageUrl})`;
             if (bgStyle) {
                 if (MASTER_SETTINGS.canvasBgOverlay) {
                     targetBgImage = `${bgStyle}, ${img}`;

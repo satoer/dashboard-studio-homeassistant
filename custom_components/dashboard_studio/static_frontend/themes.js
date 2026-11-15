@@ -197,7 +197,7 @@ const PRESET_THEMES = {
             "environment": {
                 "canvas": {
                     "background": {
-                        "image": "/images/dark-theme.jpg",
+                        "image": "images/dark-theme.jpg",
                         "startOpacity": 100,
                         "endOpacity": 100,
                         "size": "cover",
@@ -574,7 +574,7 @@ const PRESET_THEMES = {
                         "type": "linear",
                         "angle": 135,
                         "overlay": false,
-                        "image": "/images/neon-low-poly-theme.jpg",
+                        "image": "images/neon-low-poly-theme.jpg",
                         "size": "cover"
                     }
                 }
@@ -794,7 +794,7 @@ const PRESET_THEMES = {
             "environment": {
                 "canvas": {
                     "background": {
-                        "image": "/images/neon-low-poly-theme.jpg",
+                        "image": "images/neon-low-poly-theme.jpg",
                         "startOpacity": 100,
                         "endOpacity": 100,
                         "size": "cover",
@@ -2861,7 +2861,7 @@ const PRESET_THEMES = {
                         "endColor": "#e4d8c8",
                         "endOpacity": 100,
                         "overlay": false,
-                        "image": "/images/ivory-theme.jpg",
+                        "image": "images/ivory-theme.jpg",
                         "size": "cover"
                     }
                 }
@@ -3270,7 +3270,7 @@ const PRESET_THEMES = {
                     "background": {
                         "type": "linear_mirror",
                         "angle": 152,
-                        "image": "/images/barbie-theme.jpg",
+                        "image": "images/barbie-theme.jpg",
                         "startOpacity": 100,
                         "endOpacity": 100,
                         "size": "cover",
@@ -3458,7 +3458,7 @@ const PRESET_THEMES = {
                         "type": "linear_mirror",
                         "angle": 152,
                         "overlay": false,
-                        "image": "/images/barbie-theme.jpg",
+                        "image": "images/barbie-theme.jpg",
                         "size": "cover"
                     }
                 }
@@ -4076,7 +4076,7 @@ const PRESET_THEMES = {
                         "angle": 135,
                         "startColor": "#1a100c",
                         "endColor": "#2a1810",
-                        "image": "/images/ember-theme.jpg",
+                        "image": "images/ember-theme.jpg",
                         "startOpacity": 100,
                         "endOpacity": 100,
                         "size": "cover",
@@ -4295,7 +4295,7 @@ const PRESET_THEMES = {
                         "type": "linear",
                         "angle": 135,
                         "overlay": false,
-                        "image": "/images/ember-theme.jpg",
+                        "image": "images/ember-theme.jpg",
                         "size": "cover"
                     }
                 }
@@ -4720,7 +4720,7 @@ const PRESET_THEMES = {
                         "endColor": "#f7f1e4",
                         "endOpacity": 100,
                         "overlay": false,
-                        "image": "/images/orchid-theme.jpg",
+                        "image": "images/orchid-theme.jpg",
                         "size": "cover"
                     }
                 }
@@ -5136,7 +5136,7 @@ const PRESET_THEMES = {
                         "type": "linear_mirror",
                         "angle": 152,
                         "overlay": false,
-                        "image": "/images/kingdom-theme.jpg",
+                        "image": "images/kingdom-theme.jpg",
                         "size": "cover"
                     }
                 }
@@ -6128,7 +6128,7 @@ const PRESET_THEMES = {
             "environment": {
                 "canvas": {
                     "background": {
-                        "image": "/images/forest-theme.jpg",
+                        "image": "images/forest-theme.jpg",
                         "startOpacity": 100,
                         "endOpacity": 100,
                         "size": "cover",
@@ -6860,7 +6860,7 @@ const PRESET_THEMES = {
             "environment": {
                 "canvas": {
                     "background": {
-                        "image": "/images/deep-sea-theme.jpg",
+                        "image": "images/deep-sea-theme.jpg",
                         "startOpacity": 100,
                         "endOpacity": 100,
                         "size": "cover",
@@ -7024,7 +7024,7 @@ const PRESET_THEMES = {
                         "angle": 180,
                         "startColor": "#042838",
                         "endColor": "#0a6e8a",
-                        "image": "/images/deep-sea-theme.jpg",
+                        "image": "images/deep-sea-theme.jpg",
                         "startOpacity": 100,
                         "endOpacity": 100,
                         "size": "cover",
@@ -7248,7 +7248,7 @@ const PRESET_THEMES = {
                         "endColor": "#e6d8c4",
                         "endOpacity": 100,
                         "overlay": false,
-                        "image": "/images/tide-theme.jpg",
+                        "image": "images/tide-theme.jpg",
                         "size": "cover"
                     }
                 }
@@ -7663,7 +7663,7 @@ const PRESET_THEMES = {
                         "type": "linear",
                         "angle": 90,
                         "overlay": false,
-                        "image": "/images/sunset-theme.jpg",
+                        "image": "images/sunset-theme.jpg",
                         "size": "cover"
                     }
                 }
@@ -8073,7 +8073,7 @@ const PRESET_THEMES = {
                     "background": {
                         "type": "linear",
                         "angle": 135,
-                        "image": "/images/nebula-theme.jpg",
+                        "image": "images/nebula-theme.jpg",
                         "startOpacity": 100,
                         "endOpacity": 100,
                         "size": "cover",
@@ -8242,7 +8242,7 @@ const PRESET_THEMES = {
                         "type": "radial",
                         "angle": 0,
                         "overlay": false,
-                        "image": "/images/nebula-theme.jpg",
+                        "image": "images/nebula-theme.jpg",
                         "size": "cover"
                     }
                 }
@@ -8652,7 +8652,7 @@ const PRESET_THEMES = {
                     "background": {
                         "type": "linear",
                         "angle": 180,
-                        "image": "/images/ruby-theme.jpg",
+                        "image": "images/ruby-theme.jpg",
                         "startOpacity": 100,
                         "endOpacity": 100,
                         "size": "cover",
@@ -9008,7 +9008,7 @@ const PRESET_THEMES = {
                     "background": {
                         "startColor": "#0b1220",
                         "endColor": "#151c2c",
-                        "image": "/images/slate-theme.jpg",
+                        "image": "images/slate-theme.jpg",
                         "startOpacity": 100,
                         "endOpacity": 100,
                         "size": "cover",

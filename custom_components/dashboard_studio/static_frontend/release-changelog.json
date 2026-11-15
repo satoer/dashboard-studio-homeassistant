@@ -46,14 +46,6 @@
       "date": "2026-11-15",
       "changes": [
         {
-          "title": "New: Dashboard Regional and Localization Settings",
-          "description": "Added a Regional & Localization section in Master Settings with Language / Locale (13 built-in languages plus custom translation presets), Time Format (Auto, 24-Hour, 12-Hour), Date Format (Auto, DD-MM-YYYY, MM-DD-YYYY, YYYY-MM-DD), and First Day of Week (Auto, Monday, Sunday), along with a Custom Translation Dialog featuring segmented navigation, JSON import/export, and saved presets for duration units, clock indicators, weekdays, and months.",
-          "tags": [
-            39,
-            42
-          ]
-        },
-        {
           "title": "New: Countdown Formula Function",
           "description": "Use countdown() in bindings and inline {{countdown(...)}} Text widget Markdown to build real-time timers, progress percentages, and completion triggers (isDone, isRunning) from durations, clock strings, dates, or timestamps across 15 format options, powered by a demand-driven 1-second background heartbeat that ticks only active-page widgets with running timers.",
           "tags": [
@@ -74,6 +66,14 @@
           "description": "Payload formulas automatically convert duration and clock strings (such as 2m 30s or 01:30) into seconds so you can compare timers against thresholds or use them in calculations.",
           "tags": [
             41
+          ]
+        },
+        {
+          "title": "New: Dashboard Regional and Localization Settings",
+          "description": "Added a Regional & Localization section in Master Settings with Language / Locale (13 built-in languages plus custom translation presets), Time Format (Auto, 24-Hour, 12-Hour), Date Format (Auto, DD-MM-YYYY, MM-DD-YYYY, YYYY-MM-DD), and First Day of Week (Auto, Monday, Sunday), along with a Custom Translation Dialog featuring segmented navigation, JSON import/export, and saved presets for duration units, clock indicators, weekdays, and months.",
+          "tags": [
+            39,
+            42
           ]
         },
         {
