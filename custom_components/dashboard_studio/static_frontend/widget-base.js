@@ -3410,11 +3410,46 @@ class BaseWidget {
         }
     }
 
+    /** Resolve smooth 1s CSS transitions for active x/y countdown formulas in View mode. */
+    _syncPositionCountdownTransition(wrapperStyle) {
+        if (!wrapperStyle) return;
+        const isEdit = typeof Dashboard !== 'undefined' && Dashboard.isEditMode && !Dashboard._holdLivePreviewActive;
+        if (isEdit || typeof FormulaEngine === 'undefined' || typeof FormulaEngine.getWidgetKeyCountdownState !== 'function') {
+            this._posCountdownActive = null;
+            if (wrapperStyle.transition) wrapperStyle.transition = '';
+            return;
+        }
+        if (!this._posCountdownActive) this._posCountdownActive = { x: false, y: false };
+        const axes = [
+            { key: 'x', prop: 'left' },
+            { key: 'y', prop: 'top' }
+        ];
+        const parts = [];
+        for (let i = 0; i < axes.length; i++) {
+            const ax = axes[i];
+            const st = FormulaEngine.getWidgetKeyCountdownState(this.id, ax.key);
+            if (st.active) {
+                this._posCountdownActive[ax.key] = true;
+                parts.push(ax.prop + ' 1s linear');
+            } else if (this._posCountdownActive[ax.key] && st.hasBucket) {
+                this._posCountdownActive[ax.key] = false;
+                parts.push(ax.prop + ' 1s linear');
+            } else {
+                this._posCountdownActive[ax.key] = false;
+            }
+        }
+        const nextTransition = parts.join(', ');
+        if (wrapperStyle.transition !== nextTransition) {
+            wrapperStyle.transition = nextTransition;
+        }
+    }
+
     /** Fixed Resolution / Scale geometry: absolute pixel position and size. */
     _applyFixedGeometry(c, skipClipping) {
         this._clearResponsiveLayoutArtifacts();
         const s = this.elements.wrapper.style;
         const cs = this.elements.container.style;
+        this._syncPositionCountdownTransition(s);
         const x = BaseWidget.toFiniteNumber(c.x, BaseWidget.BASE_LAYOUT.x);
         const y = BaseWidget.toFiniteNumber(c.y, BaseWidget.BASE_LAYOUT.y);
         const width = BaseWidget.clampNumber(c.width, 1, null);

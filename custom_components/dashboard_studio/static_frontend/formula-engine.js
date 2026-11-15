@@ -469,8 +469,8 @@ const FormulaEngine = (function () {
             if ((name === 'contains' || name === 'containsanycase') && args.length !== 2) {
                 return { error: name + '() requires 2 arguments' };
             }
-            if (name === 'countdown' && (args.length < 1 || args.length > 3)) {
-                return { error: 'countdown() requires 1, 2, or 3 arguments' };
+            if (name === 'countdown' && (args.length < 1 || args.length > 6)) {
+                return { error: 'countdown() requires between 1 and 6 arguments' };
             }
             return { t: 'call', fn: name, args: args };
         }
@@ -641,35 +641,276 @@ const FormulaEngine = (function () {
         return null;
     }
 
+    const COUNTDOWN_EASING = {
+        'linear': function (p) { return p; },
+        'ease': function (p) {
+            return p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+        },
+        'ease-in': function (p) {
+            return p * p;
+        },
+        'ease-out': function (p) {
+            return 1 - (1 - p) * (1 - p);
+        },
+        'ease-in-out': function (p) {
+            return p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+        },
+        'bounce': function (p) {
+            const n1 = 7.5625;
+            const d1 = 2.75;
+            if (p < 1 / d1) {
+                return n1 * p * p;
+            } else if (p < 2 / d1) {
+                const p2 = p - 1.5 / d1;
+                return n1 * p2 * p2 + 0.75;
+            } else if (p < 2.5 / d1) {
+                const p2 = p - 2.25 / d1;
+                return n1 * p2 * p2 + 0.9375;
+            } else {
+                const p2 = p - 2.625 / d1;
+                return n1 * p2 * p2 + 0.984375;
+            }
+        }
+    };
+
+    function resolveThemeColor(token) {
+        if (typeof window !== 'undefined' && window.Dashboard && typeof window.Dashboard.resolveThemeColorValue === 'function') {
+            const resolved = window.Dashboard.resolveThemeColorValue(token);
+            if (resolved) return resolved;
+        }
+        const tokenClean = String(token).replace(/^@/, '').toLowerCase();
+        const FALLBACK_THEME = {
+            primary: '#3b82f6',
+            accent: '#22c55e',
+            success: '#10b981',
+            warning: '#f59e0b',
+            danger: '#ef4444',
+            error: '#ef4444',
+            surface: '#1e293b',
+            background: '#0f172a',
+            text_primary: '#ffffff',
+            text_secondary: '#94a3b8'
+        };
+        return FALLBACK_THEME[tokenClean] || '#ffffff';
+    }
+
+    function parseColorToRgba(rawVal) {
+        if (!rawVal && rawVal !== 0) return null;
+        let str = String(rawVal).trim();
+        if (str.charAt(0) === '@') {
+            str = resolveThemeColor(str);
+        }
+        if (typeof ColorUtils !== 'undefined' && typeof ColorUtils.parse === 'function') {
+            const p = ColorUtils.parse(str);
+            if (p && typeof ColorUtils.hsvToRgb === 'function') {
+                const rgb = ColorUtils.hsvToRgb(p.h, p.s, p.v);
+                const a = p.a !== undefined ? p.a : 1;
+                return { r: rgb.r, g: rgb.g, b: rgb.b, a: a };
+            }
+        }
+        if (str.charAt(0) === '#') {
+            let hex = str.slice(1);
+            if (hex.length === 3) {
+                hex = hex.charAt(0) + hex.charAt(0) + hex.charAt(1) + hex.charAt(1) + hex.charAt(2) + hex.charAt(2);
+            } else if (hex.length === 4) {
+                hex = hex.charAt(0) + hex.charAt(0) + hex.charAt(1) + hex.charAt(1) + hex.charAt(2) + hex.charAt(2) + hex.charAt(3) + hex.charAt(3);
+            }
+            if (hex.length === 6) {
+                const num = parseInt(hex, 16);
+                if (!Number.isNaN(num)) {
+                    return { r: (num >> 16) & 255, g: (num >> 8) & 255, b: num & 255, a: 1 };
+                }
+            } else if (hex.length === 8) {
+                const num = parseInt(hex, 16);
+                if (!Number.isNaN(num)) {
+                    const r = (num >>> 24) & 255;
+                    const g = (num >>> 16) & 255;
+                    const b = (num >>> 8) & 255;
+                    const a = Math.round(((num & 255) / 255) * 100) / 100;
+                    return { r: r, g: g, b: b, a: a };
+                }
+            }
+        }
+        if (str.indexOf('rgb') === 0) {
+            const parts = str.match(/[\d.]+/g);
+            if (parts && parts.length >= 3) {
+                const r = Math.min(255, Math.max(0, parseFloat(parts[0])));
+                const g = Math.min(255, Math.max(0, parseFloat(parts[1])));
+                const b = Math.min(255, Math.max(0, parseFloat(parts[2])));
+                const a = parts.length > 3 ? Math.min(1, Math.max(0, parseFloat(parts[3]))) : 1;
+                return { r: Math.round(r), g: Math.round(g), b: Math.round(b), a: a };
+            }
+        }
+        return null;
+    }
+
+    function formatRgbaToColor(rgba, forceAlpha) {
+        const r = Math.min(255, Math.max(0, Math.round(rgba.r)));
+        const g = Math.min(255, Math.max(0, Math.round(rgba.g)));
+        const b = Math.min(255, Math.max(0, Math.round(rgba.b)));
+        const a = rgba.a !== undefined ? Math.min(1, Math.max(0, rgba.a)) : 1;
+        if (a < 1 || forceAlpha) {
+            const aFixed = Math.round(a * 100) / 100;
+            return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + aFixed + ')';
+        }
+        const rh = (r < 16 ? '0' : '') + r.toString(16);
+        const gh = (g < 16 ? '0' : '') + g.toString(16);
+        const bh = (b < 16 ? '0' : '') + b.toString(16);
+        return '#' + rh + gh + bh;
+    }
+
+    function isColorNode(ev) {
+        if (!ev || ev.failed) return false;
+        if (ev.type === 'color' || ev.type === 'token') return true;
+        if (ev.type === 'string') {
+            const s = String(ev.v).trim();
+            if (s.charAt(0) === '#' || s.charAt(0) === '@' || s.indexOf('rgb') === 0 || s.indexOf('hsl') === 0) {
+                return parseColorToRgba(s) !== null;
+            }
+        }
+        return false;
+    }
+
+    function isNumericNode(ev) {
+        if (!ev || ev.failed) return false;
+        if (ev.type === 'number') return Number.isFinite(ev.v);
+        if (ev.type === 'string') {
+            const s = String(ev.v).trim();
+            if (s === '') return false;
+            if (s.charAt(0) === '#' || s.charAt(0) === '@' || s.indexOf('rgb') === 0) return false;
+            const n = Number(s);
+            return Number.isFinite(n);
+        }
+        return false;
+    }
+
     function evalCountdown(node, scope) {
         const targetEv = evalAst(node.args[0], scope);
         if (targetEv.failed) return { failed: true };
 
+        let isColorInterp = false;
+        let isNumInterp = false;
+        let startColorVal = null;
+        let midColorVal = null;
+        let endColorVal = null;
+        let startNumVal = null;
+        let endNumVal = null;
+        let decimals = null;
+        let easingName = 'linear';
+        let repeatMode = 'once';
+        let stepCount = null;
         let formatStr = '';
         let doneText = null;
 
-        if (node.args.length === 3) {
-            const fmtEv = evalAst(node.args[1], scope);
-            if (fmtEv.failed) return { failed: true };
-            formatStr = String(fmtEv.v || '').trim();
-            const doneEv = evalAst(node.args[2], scope);
-            if (!doneEv.failed && doneEv.v !== undefined && doneEv.v !== null) {
-                doneText = String(doneEv.v);
-            }
-        } else if (node.args.length === 2) {
-            const secondEv = evalAst(node.args[1], scope);
-            if (secondEv.failed) return { failed: true };
-            const secondVal = String(secondEv.v || '').trim();
-            const secondValLow = secondVal.toLowerCase();
-            if (KNOWN_COUNTDOWN_FORMATS[secondValLow]) {
-                formatStr = secondVal;
+        if (node.args.length >= 2) {
+            const arg1 = evalAst(node.args[1], scope);
+            if (arg1.failed) return { failed: true };
+
+            if (isColorNode(arg1)) {
+                isColorInterp = true;
+                startColorVal = arg1.v;
+                const extraArgs = [];
+                for (let ai = 2; ai < node.args.length; ai++) {
+                    const aEv = evalAst(node.args[ai], scope);
+                    if (!aEv.failed) extraArgs.push(aEv);
+                }
+                let optStartIdx = 0;
+                if (extraArgs.length >= 2 && isColorNode(extraArgs[0]) && isColorNode(extraArgs[1])) {
+                    midColorVal = extraArgs[0].v;
+                    endColorVal = extraArgs[1].v;
+                    optStartIdx = 2;
+                } else if (extraArgs.length >= 1 && isColorNode(extraArgs[0])) {
+                    endColorVal = extraArgs[0].v;
+                    optStartIdx = 1;
+                } else {
+                    endColorVal = startColorVal;
+                    optStartIdx = 0;
+                }
+                for (let oi = optStartIdx; oi < extraArgs.length; oi++) {
+                    const opt = extraArgs[oi];
+                    if (opt.type === 'number' && opt.v > 1) {
+                        stepCount = Math.floor(opt.v);
+                    } else if (opt.type === 'string') {
+                        const s = String(opt.v).trim().toLowerCase();
+                        if (COUNTDOWN_EASING[s]) {
+                            easingName = s;
+                        } else if (s === 'loop' || s === 'repeat' || s === 'pingpong' || s === 'bounce' || s === 'yoyo' || s === 'once') {
+                            repeatMode = s;
+                        } else {
+                            const sm = /^steps\((\d+)\)$/.exec(s);
+                            if (sm) stepCount = parseInt(sm[1], 10);
+                        }
+                    }
+                }
+            } else if (isNumericNode(arg1)) {
+                isNumInterp = true;
+                startNumVal = Number(arg1.v);
+                const extraArgs = [];
+                for (let ai = 2; ai < node.args.length; ai++) {
+                    const aEv = evalAst(node.args[ai], scope);
+                    if (!aEv.failed) extraArgs.push(aEv);
+                }
+                let optStartIdx = 0;
+                if (extraArgs.length >= 1 && isNumericNode(extraArgs[0])) {
+                    endNumVal = Number(extraArgs[0].v);
+                    optStartIdx = 1;
+                } else {
+                    endNumVal = 0;
+                    optStartIdx = 0;
+                }
+                for (let oi = optStartIdx; oi < extraArgs.length; oi++) {
+                    const opt = extraArgs[oi];
+                    if (opt.type === 'number') {
+                        if (decimals === null) {
+                            decimals = Math.max(0, Math.floor(opt.v));
+                        } else if (opt.v > 1 && stepCount === null) {
+                            stepCount = Math.floor(opt.v);
+                        }
+                    } else if (opt.type === 'string') {
+                        const s = String(opt.v).trim().toLowerCase();
+                        if (COUNTDOWN_EASING[s]) {
+                            easingName = s;
+                        } else if (s === 'loop' || s === 'repeat' || s === 'pingpong' || s === 'bounce' || s === 'yoyo' || s === 'once') {
+                            repeatMode = s;
+                        } else {
+                            const sm = /^steps\((\d+)\)$/.exec(s);
+                            if (sm) stepCount = parseInt(sm[1], 10);
+                        }
+                    }
+                }
             } else {
-                formatStr = '';
-                doneText = secondVal;
+                if (node.args.length === 3) {
+                    formatStr = String(arg1.v || '').trim();
+                    const doneEv = evalAst(node.args[2], scope);
+                    if (!doneEv.failed && doneEv.v !== undefined && doneEv.v !== null) {
+                        doneText = String(doneEv.v);
+                    }
+                } else {
+                    const secondVal = String(arg1.v || '').trim();
+                    const secondValLow = secondVal.toLowerCase();
+                    if (KNOWN_COUNTDOWN_FORMATS[secondValLow]) {
+                        formatStr = secondVal;
+                    } else {
+                        formatStr = '';
+                        doneText = secondVal;
+                    }
+                }
             }
         }
 
         const fmtLow = formatStr.toLowerCase();
+        const isRepeatingInterp = (isColorInterp || isNumInterp)
+            && (repeatMode === 'loop' || repeatMode === 'repeat' || repeatMode === 'pingpong' || repeatMode === 'bounce' || repeatMode === 'yoyo');
+        const u = (!isColorInterp && !isNumInterp) ? getLocaleUnits() : null;
+        if (!isColorInterp && !isNumInterp && doneText === null && u && u.done !== undefined && u.done !== null && String(u.done).trim() !== '') {
+            doneText = String(u.done);
+        }
+        const variantKey = isColorInterp
+            ? ('col|' + String(startColorVal) + '|' + String(midColorVal) + '|' + String(endColorVal) + '|' + easingName + '|' + repeatMode + '|' + String(stepCount))
+            : isNumInterp
+                ? ('num|' + String(startNumVal) + '|' + String(endNumVal) + '|' + String(decimals) + '|' + easingName + '|' + repeatMode + '|' + String(stepCount))
+                : ('std|' + fmtLow + '|' + (doneText === null ? '' : String(doneText)));
+
         const nowMs = Date.now();
         const targetKey = targetEv.type + ':' + String(targetEv.v).trim();
         const ctxKey = scope.countdownContext || '__default__';
@@ -687,12 +928,121 @@ const FormulaEngine = (function () {
             entry = {
                 targetKey: targetKey,
                 kind: parsedTarget.kind,
-                startTimeMs: parsedTarget.startTimeMs,
+                startTimeMs: nowMs,
                 endTimeMs: parsedTarget.endTimeMs,
                 totalDurationMs: parsedTarget.totalDurationMs,
-                completedTickDone: (parsedTarget.endTimeMs - nowMs) <= 0
+                completedTickDone: false,
+                cachedResults: Object.create(null)
             };
             ctxBucket[targetKey] = entry;
+        }
+
+        // Fast path: if already completed and cached in 'once' mode, return cached result for this variant
+        if (!isRepeatingInterp && entry.completedTickDone && entry.cachedResults && entry.cachedResults[variantKey]) {
+            return entry.cachedResults[variantKey];
+        }
+
+        if (isColorInterp || isNumInterp) {
+            const totalDurationMs = entry.totalDurationMs;
+            const elapsedMs = Math.max(0, nowMs - entry.startTimeMs);
+            let rawProgress = 1;
+            let isComplete = false;
+
+            if (totalDurationMs <= 0) {
+                rawProgress = 1;
+                isComplete = true;
+            } else if (repeatMode === 'loop' || repeatMode === 'repeat') {
+                const mod = elapsedMs % totalDurationMs;
+                rawProgress = mod / totalDurationMs;
+                isComplete = false;
+            } else if (repeatMode === 'pingpong' || repeatMode === 'bounce' || repeatMode === 'yoyo') {
+                const cycleMs = totalDurationMs * 2;
+                const mod = elapsedMs % cycleMs;
+                if (mod < totalDurationMs) {
+                    rawProgress = mod / totalDurationMs;
+                } else {
+                    rawProgress = 1 - ((mod - totalDurationMs) / totalDurationMs);
+                }
+                isComplete = false;
+            } else {
+                if (elapsedMs >= totalDurationMs) {
+                    rawProgress = 1;
+                    isComplete = true;
+                } else {
+                    rawProgress = Math.max(0, Math.min(1, elapsedMs / totalDurationMs));
+                    isComplete = false;
+                }
+            }
+
+            if (stepCount && stepCount > 1) {
+                rawProgress = Math.floor(rawProgress * (stepCount - 1) + 0.000001) / (stepCount - 1);
+                rawProgress = Math.min(1, Math.max(0, rawProgress));
+            }
+
+            let easedProgress = rawProgress;
+            const easeFn = COUNTDOWN_EASING[easingName] || COUNTDOWN_EASING.linear;
+            easedProgress = easeFn(rawProgress);
+            if (easingName !== 'bounce') {
+                easedProgress = Math.min(1, Math.max(0, easedProgress));
+            }
+
+            let resultObj = null;
+
+            if (isColorInterp) {
+                const c1 = parseColorToRgba(startColorVal);
+                if (!c1) return { failed: true };
+
+                let r, g, b, a;
+                let hasAlpha = false;
+
+                if (midColorVal !== null) {
+                    const c2 = parseColorToRgba(midColorVal);
+                    const c3 = parseColorToRgba(endColorVal);
+                    if (!c2 || !c3) return { failed: true };
+                    hasAlpha = c1.a < 1 || c2.a < 1 || c3.a < 1;
+                    if (easedProgress <= 0.5) {
+                        const sub = easedProgress * 2;
+                        r = c1.r + (c2.r - c1.r) * sub;
+                        g = c1.g + (c2.g - c1.g) * sub;
+                        b = c1.b + (c2.b - c1.b) * sub;
+                        a = c1.a + (c2.a - c1.a) * sub;
+                    } else {
+                        const sub = (easedProgress - 0.5) * 2;
+                        r = c2.r + (c3.r - c2.r) * sub;
+                        g = c2.g + (c3.g - c2.g) * sub;
+                        b = c2.b + (c3.b - c2.b) * sub;
+                        a = c2.a + (c3.a - c2.a) * sub;
+                    }
+                } else {
+                    const c2 = parseColorToRgba(endColorVal);
+                    if (!c2) return { failed: true };
+                    hasAlpha = c1.a < 1 || c2.a < 1;
+                    r = c1.r + (c2.r - c1.r) * easedProgress;
+                    g = c1.g + (c2.g - c1.g) * easedProgress;
+                    b = c1.b + (c2.b - c1.b) * easedProgress;
+                    a = c1.a + (c2.a - c1.a) * easedProgress;
+                }
+
+                const colorStr = formatRgbaToColor({ r: r, g: g, b: b, a: a }, hasAlpha);
+                resultObj = { v: colorStr, type: 'color' };
+            } else {
+                const numVal = startNumVal + (endNumVal - startNumVal) * easedProgress;
+                let finalNum;
+                if (decimals !== null && decimals >= 0) {
+                    finalNum = parseFloat(numVal.toFixed(decimals));
+                } else {
+                    finalNum = Math.round(numVal);
+                }
+                resultObj = { v: finalNum, type: 'number' };
+            }
+
+            if (isComplete) {
+                entry.completedTickDone = true;
+                entry.cachedResults[variantKey] = resultObj;
+            } else if (!isRepeatingInterp) {
+                entry.completedTickDone = false;
+            }
+            return resultObj;
         }
 
         const remainingMs = Math.max(0, entry.endTimeMs - nowMs);
@@ -702,99 +1052,92 @@ const FormulaEngine = (function () {
             entry.completedTickDone = false;
         }
         const totalSec = remainingMs > 0 ? Math.ceil(remainingMs / 1000) : 0;
-        const u = getLocaleUnits();
 
-        if (doneText === null && u && u.done !== undefined && u.done !== null && String(u.done).trim() !== '') {
-            doneText = String(u.done);
-        }
+        let stdResult = null;
 
         if (fmtLow === 'years') {
-            return { v: Math.floor(totalSec / 31536000), type: 'number' };
-        }
-        if (fmtLow === 'days') {
-            return { v: Math.floor(totalSec / 86400), type: 'number' };
-        }
-        if (fmtLow === 'hours') {
-            return { v: Math.floor(totalSec / 3600), type: 'number' };
-        }
-        if (fmtLow === 'minutes') {
-            return { v: Math.floor(totalSec / 60), type: 'number' };
-        }
-        if (fmtLow === 'seconds') {
-            return { v: totalSec, type: 'number' };
-        }
-        if (fmtLow === 'percent') {
-            if (entry.totalDurationMs <= 0) return { v: 100, type: 'number' };
-            const elapsedPct = Math.round(((entry.totalDurationMs - remainingMs) / entry.totalDurationMs) * 100);
-            return { v: Math.min(100, Math.max(0, elapsedPct)), type: 'number' };
-        }
-        if (fmtLow === 'percent-remaining') {
-            if (entry.totalDurationMs <= 0) return { v: 0, type: 'number' };
-            const remPct = Math.round((remainingMs / entry.totalDurationMs) * 100);
-            return { v: Math.min(100, Math.max(0, remPct)), type: 'number' };
-        }
-        if (fmtLow === 'isdone') {
-            return { v: remainingMs <= 0 ? 1 : 0, type: 'number' };
-        }
-        if (fmtLow === 'isrunning') {
-            return { v: remainingMs > 0 ? 1 : 0, type: 'number' };
-        }
-
-        if (remainingMs <= 0 && doneText !== null) {
-            return { v: doneText, type: 'string' };
-        }
-
-        const SEC_IN_YEAR = 31536000;
-        const y = Math.floor(totalSec / SEC_IN_YEAR);
-        const remAfterYears = totalSec % SEC_IN_YEAR;
-        const d = Math.floor(remAfterYears / 86400);
-        const h = Math.floor((remAfterYears % 86400) / 3600);
-        const m = Math.floor((remAfterYears % 3600) / 60);
-        const s = remAfterYears % 60;
-
-        if (fmtLow === 'timer') {
-            const totalH = (y * 365 * 24) + (d * 24) + h;
-            return { v: pad2(totalH) + ':' + pad2(m) + ':' + pad2(s), type: 'string' };
-        }
-
-        if (fmtLow === 'compact' || fmtLow === 'compact-full') {
-            const parts = [];
-            if (y > 0) parts.push(y + (u.y || 'y'));
-            if (d > 0) parts.push(d + (u.d || 'd'));
-            if (h > 0) parts.push(h + (u.h || 'h'));
-            if (m > 0) parts.push(m + (u.m || 'm'));
-            if (s > 0) parts.push(s + (u.s || 's'));
-            if (parts.length === 0) {
-                return { v: '0' + (u.s || 's'), type: 'string' };
+            stdResult = { v: Math.floor(totalSec / 31536000), type: 'number' };
+        } else if (fmtLow === 'days') {
+            stdResult = { v: Math.floor(totalSec / 86400), type: 'number' };
+        } else if (fmtLow === 'hours') {
+            stdResult = { v: Math.floor(totalSec / 3600), type: 'number' };
+        } else if (fmtLow === 'minutes') {
+            stdResult = { v: Math.floor(totalSec / 60), type: 'number' };
+        } else if (fmtLow === 'seconds') {
+            stdResult = { v: totalSec, type: 'number' };
+        } else if (fmtLow === 'percent') {
+            if (entry.totalDurationMs <= 0) {
+                stdResult = { v: 100, type: 'number' };
+            } else {
+                const elapsedPct = Math.round(((entry.totalDurationMs - remainingMs) / entry.totalDurationMs) * 100);
+                stdResult = { v: Math.min(100, Math.max(0, elapsedPct)), type: 'number' };
             }
-            const limit = fmtLow === 'compact' ? 2 : parts.length;
-            return { v: parts.slice(0, limit).join(' '), type: 'string' };
-        }
-
-        if (fmtLow === 'words' || fmtLow === 'words-full') {
-            const wordParts = [];
-            if (y > 0) wordParts.push(y + ' ' + (y === 1 ? (u.year || 'year') : (u.years || 'years')));
-            if (d > 0) wordParts.push(d + ' ' + (d === 1 ? (u.day || 'day') : (u.days || 'days')));
-            if (h > 0) wordParts.push(h + ' ' + (h === 1 ? (u.hour || 'hour') : (u.hours || 'hours')));
-            if (m > 0) wordParts.push(m + ' ' + (m === 1 ? (u.minute || 'minute') : (u.minutes || 'minutes')));
-            if (s > 0) wordParts.push(s + ' ' + (s === 1 ? (u.second || 'second') : (u.seconds || 'seconds')));
-            if (wordParts.length === 0) {
-                return { v: '0 ' + (u.seconds || 'seconds'), type: 'string' };
+        } else if (fmtLow === 'percent-remaining') {
+            if (entry.totalDurationMs <= 0) {
+                stdResult = { v: 0, type: 'number' };
+            } else {
+                const remPct = Math.round((remainingMs / entry.totalDurationMs) * 100);
+                stdResult = { v: Math.min(100, Math.max(0, remPct)), type: 'number' };
             }
-            const limit = fmtLow === 'words' ? 2 : wordParts.length;
-            return { v: wordParts.slice(0, limit).join(', '), type: 'string' };
+        } else if (fmtLow === 'isdone') {
+            stdResult = { v: remainingMs <= 0 ? 1 : 0, type: 'number' };
+        } else if (fmtLow === 'isrunning') {
+            stdResult = { v: remainingMs > 0 ? 1 : 0, type: 'number' };
+        } else if (remainingMs <= 0 && doneText !== null) {
+            stdResult = { v: doneText, type: 'string' };
+        } else {
+            const SEC_IN_YEAR = 31536000;
+            const y = Math.floor(totalSec / SEC_IN_YEAR);
+            const remAfterYears = totalSec % SEC_IN_YEAR;
+            const d = Math.floor(remAfterYears / 86400);
+            const h = Math.floor((remAfterYears % 86400) / 3600);
+            const m = Math.floor((remAfterYears % 3600) / 60);
+            const s = remAfterYears % 60;
+
+            if (fmtLow === 'timer') {
+                const totalH = (y * 365 * 24) + (d * 24) + h;
+                stdResult = { v: pad2(totalH) + ':' + pad2(m) + ':' + pad2(s), type: 'string' };
+            } else if (fmtLow === 'compact' || fmtLow === 'compact-full') {
+                const parts = [];
+                if (y > 0) parts.push(y + (u.y || 'y'));
+                if (d > 0) parts.push(d + (u.d || 'd'));
+                if (h > 0) parts.push(h + (u.h || 'h'));
+                if (m > 0) parts.push(m + (u.m || 'm'));
+                if (s > 0) parts.push(s + (u.s || 's'));
+                if (parts.length === 0) {
+                    stdResult = { v: '0' + (u.s || 's'), type: 'string' };
+                } else {
+                    const limit = fmtLow === 'compact' ? 2 : parts.length;
+                    stdResult = { v: parts.slice(0, limit).join(' '), type: 'string' };
+                }
+            } else if (fmtLow === 'words' || fmtLow === 'words-full') {
+                const wordParts = [];
+                if (y > 0) wordParts.push(y + ' ' + (y === 1 ? (u.year || 'year') : (u.years || 'years')));
+                if (d > 0) wordParts.push(d + ' ' + (d === 1 ? (u.day || 'day') : (u.days || 'days')));
+                if (h > 0) wordParts.push(h + ' ' + (h === 1 ? (u.hour || 'hour') : (u.hours || 'hours')));
+                if (m > 0) wordParts.push(m + ' ' + (m === 1 ? (u.minute || 'minute') : (u.minutes || 'minutes')));
+                if (s > 0) wordParts.push(s + ' ' + (s === 1 ? (u.second || 'second') : (u.seconds || 'seconds')));
+                if (wordParts.length === 0) {
+                    stdResult = { v: '0 ' + (u.seconds || 'seconds'), type: 'string' };
+                } else {
+                    const limit = fmtLow === 'words' ? 2 : wordParts.length;
+                    stdResult = { v: wordParts.slice(0, limit).join(', '), type: 'string' };
+                }
+            } else if (y > 0) {
+                stdResult = { v: y + (u.y || 'y') + ' ' + d + (u.d || 'd') + ' ' + pad2(h) + ':' + pad2(m) + ':' + pad2(s), type: 'string' };
+            } else if (d > 0) {
+                stdResult = { v: d + (u.d || 'd') + ' ' + pad2(h) + ':' + pad2(m) + ':' + pad2(s), type: 'string' };
+            } else if (h > 0) {
+                stdResult = { v: pad2(h) + ':' + pad2(m) + ':' + pad2(s), type: 'string' };
+            } else {
+                stdResult = { v: pad2(m) + ':' + pad2(s), type: 'string' };
+            }
         }
 
-        if (y > 0) {
-            return { v: y + (u.y || 'y') + ' ' + d + (u.d || 'd') + ' ' + pad2(h) + ':' + pad2(m) + ':' + pad2(s), type: 'string' };
+        if (remainingMs <= 0) {
+            entry.cachedResults[variantKey] = stdResult;
         }
-        if (d > 0) {
-            return { v: d + (u.d || 'd') + ' ' + pad2(h) + ':' + pad2(m) + ':' + pad2(s), type: 'string' };
-        }
-        if (h > 0) {
-            return { v: pad2(h) + ':' + pad2(m) + ':' + pad2(s), type: 'string' };
-        }
-        return { v: pad2(m) + ':' + pad2(s), type: 'string' };
+        return stdResult;
     }
 
     const PATH_SHAPED_RE = /^[A-Za-z0-9_.$-]+(\/[A-Za-z0-9_.$-]+)*$/;
@@ -891,6 +1234,18 @@ const FormulaEngine = (function () {
         return tokens;
     }
 
+    /** Evaluate variadic boolean args left-to-right with short-circuiting so skipped countdown()/topic branches do not execute. */
+    function evalShortCircuitLogical(args, scope, stopOnTruthy) {
+        for (let i = 0; i < args.length; i++) {
+            const ev = coerceEvalNodeToNumber(evalAst(args[i], scope));
+            if (ev.failed) return { failed: true };
+            if (Boolean(ev.v) === stopOnTruthy) {
+                return { v: stopOnTruthy ? 1 : 0, type: 'number' };
+            }
+        }
+        return { v: stopOnTruthy ? 0 : 1, type: 'number' };
+    }
+
     function evalAst(node, scope) {
         if (!node || node.error) return { failed: true };
 
@@ -969,6 +1324,12 @@ const FormulaEngine = (function () {
                 const branch = evalAst(cond.v ? node.args[1] : node.args[2], scope);
                 return branch;
             }
+            if (fn === 'and') {
+                return evalShortCircuitLogical(node.args, scope, false);
+            }
+            if (fn === 'or') {
+                return evalShortCircuitLogical(node.args, scope, true);
+            }
             if (fn === 'countdown') {
                 return evalCountdown(node, scope);
             }
@@ -1004,22 +1365,6 @@ const FormulaEngine = (function () {
                 result = Math.abs(evArgs[0]);
             } else if (fn === 'number') {
                 result = Number(evArgs[0]);
-            } else if (fn === 'and') {
-                result = 1;
-                for (i = 0; i < evArgs.length; i++) {
-                    if (!evArgs[i]) {
-                        result = 0;
-                        break;
-                    }
-                }
-            } else if (fn === 'or') {
-                result = 0;
-                for (i = 0; i < evArgs.length; i++) {
-                    if (evArgs[i]) {
-                        result = 1;
-                        break;
-                    }
-                }
             } else if (fn === 'not') {
                 result = evArgs[0] ? 0 : 1;
             } else if (fn === 'xor') {
@@ -1144,6 +1489,21 @@ const FormulaEngine = (function () {
         return false;
     }
 
+    function getWidgetKeyCountdownState(widgetId, key) {
+        if (!widgetId || !key) return { active: false, hasBucket: false };
+        const bucket = countdownStore[String(widgetId) + '::' + String(key)];
+        if (!bucket) return { active: false, hasBucket: false };
+        const tKeys = Object.keys(bucket);
+        if (tKeys.length === 0) return { active: false, hasBucket: false };
+        for (let i = 0; i < tKeys.length; i++) {
+            const entry = bucket[tKeys[i]];
+            if (entry && !entry.completedTickDone) {
+                return { active: true, hasBucket: true };
+            }
+        }
+        return { active: false, hasBucket: true };
+    }
+
     function isDefaultFormula(raw) {
         const norm = normalize(raw);
         const t = norm.trim().toLowerCase();
@@ -1155,6 +1515,7 @@ const FormulaEngine = (function () {
         chip.className = 'ds-value-tag';
         chip.contentEditable = 'false';
         chip.textContent = 'Value';
+        chip.title = 'Payload from the topic linked in the field dropdown (value)';
         chip.setAttribute('data-formula-value', '1');
         return chip;
     }
@@ -1766,6 +2127,11 @@ const FormulaEngine = (function () {
             label: 'Threshold 50',
             hint: 'Returns 100 when the payload is above 50; returns 0 when 50 or below.',
             formula: 'if(value > 50, 100, 0)'
+        },
+        {
+            label: 'Countdown Range',
+            hint: 'Animates a number from 0 to 100 over 10 seconds with ease-out curve.',
+            formula: 'countdown("10s", 0, 100, "ease-out")'
         }
     ];
 
@@ -1878,6 +2244,16 @@ const FormulaEngine = (function () {
             label: 'Contains Any Case',
             hint: 'Returns the @success theme color when the payload contains ON, On, or on.',
             formula: 'if(containsanycase(value, "ON"), @success, @danger)'
+        },
+        {
+            label: 'Countdown Color Morph',
+            hint: 'Smoothly morphs colors from @warning to @danger over 1 minute.',
+            formula: 'countdown("1m", @warning, @danger, "ease-in-out")'
+        },
+        {
+            label: 'Countdown Pulse Glow',
+            hint: 'Pulses between two colors back and forth in a 2-second ping-pong loop.',
+            formula: 'countdown("2s", #ff3333, #330000, "pingpong")'
         }
     ];
 
@@ -1893,6 +2269,7 @@ const FormulaEngine = (function () {
         withCountdownContext: withCountdownContext,
         clearWidgetCountdowns: clearWidgetCountdowns,
         hasActiveCountdownsForWidget: hasActiveCountdownsForWidget,
+        getWidgetKeyCountdownState: getWidgetKeyCountdownState,
         parseDurationOrClockToSeconds: parseDurationOrClockToSeconds,
         scanDoubleBraceTokens: scanDoubleBraceTokens,
         createFormulaInput: createFormulaInput,

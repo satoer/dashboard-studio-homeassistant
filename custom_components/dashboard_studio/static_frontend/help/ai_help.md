@@ -145,7 +145,11 @@ Click faders icon next to bound property to configure:
   - `abs(n)`: Absolute numerical value.
   - `number(n)`: Coerces string or argument to number.
   - `contains(text, part)` / `containsanycase(text, part)`: Returns 1 if `part` appears inside `text`.
-  - `countdown(target, [format])`: Live ticking countdown. Targets: duration string (`"5m"`), seconds (`300`), topic (`value`), calendar date (`"2026-12-25"`). Formats: default (`mm:ss`/`hh:mm:ss`), `"timer"` (`HH:MM:SS`), `"compact"` (`1h 30m`), `"compact-full"`, `"words"`, `"days"`, `"hours"`, `"minutes"`, `"seconds"`, `"percent"` (0-100), `"percent-remaining"` (100-0), `"isDone"` (0 while running, 1 when done), `"isRunning"` (1 while running, 0 when done). Auto-coerces clock/duration strings to numbers in numeric widgets and comparisons.
+  - `countdown(target, ...)`: Live ticking countdown and animation driver.
+    - Standard Clocks: `countdown(target, [format], [doneText])`. Formats: default (`mm:ss`/`hh:mm:ss`), `"timer"` (`HH:MM:SS`), `"compact"` (`1h 30m`), `"compact-full"`, `"words"`, `"words-full"`, `"years"`, `"days"`, `"hours"`, `"minutes"`, `"seconds"`, `"percent"` (0-100), `"percent-remaining"` (100-0), `"isDone"` (0 while running, 1 when done), `"isRunning"` (1 while running, 0 when done).
+    - Numeric Ranges: `countdown(target, startVal, [endVal], [decimals], [easing], [mode])` (e.g. `countdown("10s", 0, 100, 2, "ease-out")`). `startVal` alone counts down to 0.
+    - Color Morphing: `countdown(target, startColor, [midColor], endColor, [easing], [mode])` (e.g. `countdown("1m", #123412, #22ff44)` or `countdown("2s", #ff0000, #220000, "pingpong")`). Supports hex, theme tokens (`@accent`, `@warning`), and CSS rgba strings.
+    - Easing: `'linear'`, `'ease'`, `'ease-in'`, `'ease-out'`, `'ease-in-out'`, `'bounce'`. Modes: `'once'`, `'loop'`, `'pingpong'`. Quantize with `'steps(n)'`. Locks to final value at 0 in `'once'` mode and stops heartbeat ticking for battery efficiency. Auto-coerces clock/duration strings to numbers in numeric widgets and comparisons.
 - **Nested Formulas & Multi-Band Thresholds:**
   - Place nested `if()` calls in the else branch to map ranges.
   - Rule: Evaluate **highest** threshold on outside first so upper values match immediately.
@@ -280,7 +284,7 @@ Rendered through `markdown-it` and sanitized via `DOMPurify`.
 - **Text Color:** `[color #RRGGBB]text[/color]` or `[color @themeToken]text[/color]`. Usable in headers, paragraphs, table cells.
 - **Table Cell Background:** `[cell #RRGGBB]` or `[cell @themeToken]` placed at the very start of a markdown table cell.
   Example: `| Room | [cell @accentSoft][color @text]21 °C[/color] |`.
-- **Block Callouts:** `[block1:Content]` through `[block4:Content]`. Styled via Block 1-4 Color settings in Text widget.
+- **Block Callouts:** `[block1:Content]` through `[block4:Content]` use Block 1 Color through Block 4 Color. Any other color uses `[block #RRGGBB:Content]` or `[block @themeToken:Content]`. A theme token follows the dashboard theme. `rgb()` and `hsl()` are accepted too. Custom callouts are drawn the same way as the four presets.
 - **GFM Tables:** Standard syntax `| A | B |` with alignment row `| :--- | :---: | ---: |`. Can be forced via widget typography alignment settings.
 - **Line Breaks in Payload:** `\n` inside single-line topic payloads or MQTT strings is converted to `<br>`.
 - **Live Topic Embedding:** `{{topic/path}}` in text widget body is automatically interpolated with real-time topic data.

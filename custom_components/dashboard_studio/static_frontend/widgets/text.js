@@ -21,7 +21,7 @@ class TextWidget extends BaseWidget {
             color_dark: 'hsl(300, 80%, 65%)',
             color_light: 'hsl(300, 85%, 35%)',
             version: '2.4.0',
-            date: '2026-11-07'
+            date: '2026-11-12'
         };
     }
 
@@ -667,7 +667,7 @@ class TextWidget extends BaseWidget {
         if (typeof window === 'undefined' || !window.DOMPurify || typeof window.DOMPurify.addHook !== 'function') return;
         TextWidget._purifyHookInstalled = true;
         const mdTdThTextAlignOnlyRe = /^\s*text-align\s*:\s*(left|right|center)\s*;?\s*$/;
-        const mdBlockDivClassRe = /^text-md-block\s+text-md-block-[1-4]$/;
+        const mdBlockDivClassRe = /^text-md-block\s+text-md-block-(?:[1-4]|custom)$/;
         const mdImgSizedClassRe = /^text-md-img-sized$/;
         const mdImgPreprocessedClassRe = /^text-md-img-preprocessed$/;
         window.DOMPurify.addHook('uponSanitizeAttribute', function (node, data) {
@@ -1772,12 +1772,37 @@ class TextWidget extends BaseWidget {
         });
     }
 
-    /** Shortcodes `[block1:text]` … `[block4:text]` (case-insensitive) → sanitized container div markup. */
+    /**
+     * Accept a preset slot (`[block1:text]` … `[block4:text]`) or an inline color
+     * (`[block #hex:text]`, `[block @token:text]`, `rgb()` / `hsl()`).
+     * An unrecognized color stays as literal text so a typo cannot swallow the callout.
+     */
+    static _validateBlockCalloutColor(raw) {
+        if (typeof MarkdownColorSpec === 'undefined' || !MarkdownColorSpec.validateColorSpec) return null;
+        return MarkdownColorSpec.validateColorSpec(raw);
+    }
+
+    static _escapeBlockCalloutAttr(val) {
+        if (typeof MarkdownColorSpec !== 'undefined' && MarkdownColorSpec.escapeHtmlAttrValue) {
+            return MarkdownColorSpec.escapeHtmlAttrValue(val);
+        }
+        return String(val == null ? '' : val)
+            .replace(/&/g, '&amp;')
+            .replace(/"/g, '&quot;')
+            .replace(/</g, '&lt;');
+    }
+
+    /** Shortcodes `[block1:text]` … `[block4:text]` and `[block #hex|@token:text]` → sanitized container div markup. */
     static _preprocessBlocks(src, opts) {
         if (src === undefined || src === null) return '';
         const pOpts = opts || {};
         const srcStr = String(src);
-        return srcStr.replace(/\[block\s*([1-4])\s*:\s*([\s\S]*?)\]/gi, function (_m, index, inner, offset) {
+        return srcStr.replace(/\[block\s*(?:([1-4])|(#[0-9a-fA-F]{3,8}|@[a-zA-Z][a-zA-Z0-9]*|rgba?\([^)]*\)|hsla?\([^)]*\)))\s*:\s*([\s\S]*?)\]/gi, function (_m, index, colorRaw, inner, offset) {
+            var customColor = '';
+            if (!index) {
+                customColor = TextWidget._validateBlockCalloutColor(colorRaw);
+                if (!customColor) return _m;
+            }
             const raw = inner == null ? '' : String(inner);
             const bodyTrim = raw.replace(/^[\s\u00a0]+|[\s\u00a0]+$/g, '');
             const innerHtml = TextWidget._renderMarkdownInlineBody(bodyTrim, pOpts);
@@ -1790,6 +1815,10 @@ class TextWidget extends BaseWidget {
             var line = srcStr.slice(lineStart, lineEnd);
             if (TextWidget._isMarkdownTableRowLine(line)) {
                 suffix = '';
+            }
+            if (customColor) {
+                return '<div class="text-md-block text-md-block-custom" data-text-md-block-color="'
+                    + TextWidget._escapeBlockCalloutAttr(customColor) + '">' + innerHtml + '</div>' + suffix;
             }
             return '<div class="text-md-block text-md-block-' + index + '">' + innerHtml + '</div>' + suffix;
         });
@@ -1875,7 +1904,7 @@ class TextWidget extends BaseWidget {
         ];
         return P.sanitize(html, {
             ALLOWED_TAGS: allowedTags,
-            ALLOWED_ATTR: ['class', 'style', 'src', 'alt', 'title', 'href', 'target', 'rel', 'data-md-align', 'data-md-w', 'data-md-h', 'data-text-md-col', 'data-text-md-img-tint', 'data-text-md-blink', 'data-countdown-id'],
+            ALLOWED_ATTR: ['class', 'style', 'src', 'alt', 'title', 'href', 'target', 'rel', 'data-md-align', 'data-md-w', 'data-md-h', 'data-text-md-col', 'data-text-md-block-color', 'data-text-md-img-tint', 'data-text-md-blink', 'data-countdown-id'],
             ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|sms|cid|xmpp|help):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i
         });
     }
@@ -2470,6 +2499,7 @@ class TextWidget extends BaseWidget {
             S + '.text-md-root .text-md-block.text-md-block-2{border:1px solid var(--text-md-block-2-border,transparent);background:var(--text-md-block-2-bg,transparent);border-left:4px solid var(--text-md-block-2-solid,transparent);}',
             S + '.text-md-root .text-md-block.text-md-block-3{border:1px solid var(--text-md-block-3-border,transparent);background:var(--text-md-block-3-bg,transparent);border-left:4px solid var(--text-md-block-3-solid,transparent);}',
             S + '.text-md-root .text-md-block.text-md-block-4{border:1px solid var(--text-md-block-4-border,transparent);background:var(--text-md-block-4-bg,transparent);border-left:4px solid var(--text-md-block-4-solid,transparent);}',
+            S + '.text-md-root .text-md-block.text-md-block-custom{border:1px solid var(--text-md-block-custom-border,transparent);background:var(--text-md-block-custom-bg,transparent);border-left:4px solid var(--text-md-block-custom-solid,transparent);}',
             S + '.text-md-root table.text-md-table{width:100%;box-sizing:border-box;background:var(--text-md-tr-bg,transparent);}',
             S + '.text-md-root table.text-md-table th{padding:var(--text-md-table-cell-padding,10px);vertical-align:top;}',
             S + '.text-md-root table.text-md-table td{padding-top:calc(var(--text-md-table-cell-padding, 10px) + var(--text-md-td-block-space, 0px) / 2);padding-bottom:calc(var(--text-md-table-cell-padding, 10px) + var(--text-md-td-block-space, 0px) / 2);padding-left:var(--text-md-table-cell-padding, 10px);padding-right:var(--text-md-table-cell-padding, 10px);vertical-align:top;}',
@@ -3304,6 +3334,13 @@ class TextWidget extends BaseWidget {
             TextWidget._sharedCssCache = null;
         }
         if (TextWidget._sharedCssCache && TextWidget._sharedCssCache.indexOf('--text-md-para-block-space') === -1) {
+            TextWidget._sharedCssCache = null;
+            if (TextWidget._sharedStyleEl && TextWidget._sharedStyleEl.parentNode) {
+                TextWidget._sharedStyleEl.parentNode.removeChild(TextWidget._sharedStyleEl);
+                TextWidget._sharedStyleEl = null;
+            }
+        }
+        if (TextWidget._sharedCssCache && TextWidget._sharedCssCache.indexOf('text-md-block-custom') === -1) {
             TextWidget._sharedCssCache = null;
             if (TextWidget._sharedStyleEl && TextWidget._sharedStyleEl.parentNode) {
                 TextWidget._sharedStyleEl.parentNode.removeChild(TextWidget._sharedStyleEl);
@@ -4401,6 +4438,47 @@ class TextWidget extends BaseWidget {
         }
     }
 
+    /** Write one custom property when the painted value actually changed. */
+    _setElCssVarIfDiff(el, prop, value) {
+        var next = value == null ? '' : String(value);
+        var prev = el.style.getPropertyValue(prop);
+        if (prev != null && String(prev).trim() === next) return;
+        el.style.setProperty(prop, next);
+    }
+
+    /**
+     * Inline `[block #hex:]` / `[block @token:]` callouts store the color spec on the element.
+     * Preset blocks 1-4 keep using the root CSS variables from Block 1-4 Color.
+     * Fill, border, and left bar use the same 30 / 38 / 100 opacities as those presets.
+     */
+    _paintCustomBlockCallouts(root, c) {
+        if (!root || !root.querySelectorAll || !c) return;
+        var html = this._cachedRenderHtml;
+        if (!html || html.indexOf('data-text-md-block-color') < 0) return;
+        var nodes = root.querySelectorAll('.text-md-block-custom[data-text-md-block-color]');
+        if (!nodes.length) return;
+        var deactivated = !!c.deactivated;
+        var accentCol = deactivated ? BaseWidget.getDeactivatedColorAccent(c) : '';
+        var deactCol = deactivated ? BaseWidget.getDeactivatedColor(c) : '';
+        var i, el, spec, solid, bg, border;
+        for (i = 0; i < nodes.length; i++) {
+            el = nodes[i];
+            if (deactivated) {
+                solid = accentCol;
+                bg = 'transparent';
+                border = deactCol;
+            } else {
+                spec = el.getAttribute('data-text-md-block-color');
+                solid = TextWidget.resolveMarkdownColorWithOpacity(spec, 100);
+                bg = TextWidget.resolveMarkdownColorWithOpacity(spec, 30);
+                border = TextWidget.resolveMarkdownColorWithOpacity(spec, 38);
+            }
+            this._setElCssVarIfDiff(el, '--text-md-block-custom-solid', solid);
+            this._setElCssVarIfDiff(el, '--text-md-block-custom-bg', bg);
+            this._setElCssVarIfDiff(el, '--text-md-block-custom-border', border);
+        }
+    }
+
     /**
      * Typography, table classes, and column layout on parsed markdown DOM.
      * Always safe to run while content animation defers innerHTML — only appearance keys change.
@@ -4502,6 +4580,7 @@ class TextWidget extends BaseWidget {
             && root.querySelector('[data-text-md-img-tint]')) {
             MarkdownImageTint.reapplyFromDataAttrs(root);
         }
+        this._paintCustomBlockCallouts(root, c);
     }
 
     /**

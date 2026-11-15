@@ -42,6 +42,105 @@
   },
   "releases": [
     {
+      "version": "2.4.0",
+      "date": "2026-11-15",
+      "changes": [
+        {
+          "title": "New: Dashboard Regional and Localization Settings",
+          "description": "Added a Regional & Localization section in Master Settings with Language / Locale (13 built-in languages plus custom translation presets), Time Format (Auto, 24-Hour, 12-Hour), Date Format (Auto, DD-MM-YYYY, MM-DD-YYYY, YYYY-MM-DD), and First Day of Week (Auto, Monday, Sunday), along with a Custom Translation Dialog featuring segmented navigation, JSON import/export, and saved presets for duration units, clock indicators, weekdays, and months.",
+          "tags": [
+            39,
+            42
+          ]
+        },
+        {
+          "title": "New: Countdown Formula Function",
+          "description": "Use countdown() in bindings and inline {{countdown(...)}} Text widget Markdown to build real-time timers, progress percentages, and completion triggers (isDone, isRunning) from durations, clock strings, dates, or timestamps across 15 format options, powered by a demand-driven 1-second background heartbeat that ticks only active-page widgets with running timers.",
+          "tags": [
+            41,
+            49
+          ]
+        },
+        {
+          "title": "New: Countdown Animations, Color Morphing, and Smooth Movement",
+          "description": "Animate numbers, colors, and widget positions over time using countdown(). Supports numeric countdowns and ranges (such as countdown('30s', 100) or countdown('1m', 60, 150)), 2- and 3-color gradient morphing (#hex, @theme tokens, rgb() / rgba()), easing curves (linear, ease, ease-in, ease-out, ease-in-out, bounce), repeat modes (once, loop, pingpong), discrete steps(n) quantization, and smooth 1-second linear position transitions when bound to a widget's X or Y coordinates in View mode.",
+          "tags": [
+            41,
+            49
+          ]
+        },
+        {
+          "title": "New: Duration and Time String Math in Formulas",
+          "description": "Payload formulas automatically convert duration and clock strings (such as 2m 30s or 01:30) into seconds so you can compare timers against thresholds or use them in calculations.",
+          "tags": [
+            41
+          ]
+        },
+        {
+          "title": "New: Custom Block Callout Colors",
+          "description": "Give a Text callout any theme color or hex code with [block @danger:Alarm] or [block #e11d48:Heat]. Block 1 through Block 4 still use their colors from the Markdown settings.",
+          "tags": [
+            16
+          ]
+        },
+        {
+          "title": "New: Interactive Countdown and Mission Control Demo Page",
+          "description": "Added Page 19 to the built-in demo dashboard showcasing all countdown() output formats, interactive timer buttons, live progress sliders and gauges, an animated Mission Control launch sequence, and cosmic event countdowns.",
+          "tags": [
+            41,
+            42
+          ]
+        },
+        {
+          "title": "New: Formula 1 Race Tracker and Countdown Help Guides",
+          "description": "Added a Formula 1 Race Tracker Tips & Tricks guide, added a complete countdown() reference to Binding Options & Payload Formulas, and updated the Timed Countdown Button guide around countdown() and additional output topics.",
+          "tags": [
+            41,
+            44
+          ]
+        },
+        {
+          "title": "Improved: Setting Tooltips and Smart-Home Inspiration",
+          "description": "Expanded inspector tooltips with practical automation ideas, clearer option explanations, and higher contrast in Light Mode.",
+          "tags": [
+            42
+          ]
+        },
+        {
+          "title": "Improved: Empty Bound Topic Warnings and Binding Options Clarity",
+          "description": "Empty msg.topic dropdowns now display a clear amber reminder to pick a topic or unlink, and the Binding Options popup shows a top status banner indicating the bound topic (or explaining how Value and Insert Topic work when no topic is selected), alongside clearer Default Value and Payload Formula guidance.",
+          "tags": [
+            42,
+            49
+          ]
+        },
+        {
+          "title": "Improved: Unified Widget Language, Time, and Date Inheritance",
+          "description": "Consolidated the Clock widget's flip and text language selectors into a single Language / Locale setting (Auto by default), and added Auto (from Dashboard) and YYYY-MM-DD options across Clock, Text Calendar, List, and Graph widgets so they automatically follow your dashboard's Regional & Localization settings (with automatic migration for older dashboards).",
+          "tags": [
+            3,
+            7,
+            12,
+            16
+          ]
+        },
+        {
+          "title": "Fixed: Responsive Columns Layout on Hidden Widgets",
+          "description": "Hiding a widget or group in Responsive Columns mode now immediately rearranges the layout to close empty column gaps without requiring a window resize.",
+          "tags": [
+            40
+          ]
+        },
+        {
+          "title": "Fixed: Graph Legend Stacking Order",
+          "description": "Canvas graph legends now match their graph widget's own Z-index layer instead of using a fixed z-index: 20, preventing legends from painting over widgets or other graphs placed above them.",
+          "tags": [
+            7
+          ]
+        }
+      ]
+    },
+    {
       "version": "2.3.5",
       "date": "2026-11-07",
       "changes": [

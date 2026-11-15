@@ -1227,7 +1227,7 @@
 
             var hint = document.createElement('div');
             hint.className = 'text-full-editor-table-picker-hint';
-            hint.innerHTML = '<i class="ph-bold ph-lightbulb"></i> Wraps the selected text in <code>[blockN:…]</code>.';
+            hint.innerHTML = '<i class="ph-bold ph-lightbulb"></i> Wraps the selection in <code>[blockN:…]</code>. Any other color can be typed as <code>[block @accent:…]</code> or <code>[block #e11d48:…]</code>.';
 
             pop.appendChild(title);
             pop.appendChild(row);

@@ -511,14 +511,23 @@ const Editor = {
         });
     },
 
-    createTopicDropdown: function (currentVal, placeholder, onChangeCallback, extraClasses, alignMenuToInput, commitPickOnly, onConfirmed) {
+    createTopicDropdown: function (currentVal, placeholder, onChangeCallback, extraClasses, alignMenuToInput, commitPickOnly, onConfirmed, options) {
         if (typeof extraClasses !== 'string') {
             extraClasses = '';
         }
         const alignToInput = alignMenuToInput === true;
         const onCommitPickOnly = commitPickOnly === true;
+        const warnWhenEmpty = (options && options.warnWhenEmpty !== undefined)
+            ? (options.warnWhenEmpty === true)
+            : (placeholder === 'msg.topic');
         const wrap = document.createElement('div');
-        wrap.className = `relative flex items-center w-full bound-topic-wrap ${extraClasses}`;
+        wrap.className = warnWhenEmpty
+            ? `w-full bound-topic-wrap bound-topic-has-warning ${extraClasses}`
+            : `relative flex items-center w-full bound-topic-wrap ${extraClasses}`;
+        const inputRow = warnWhenEmpty ? document.createElement('div') : wrap;
+        if (warnWhenEmpty) {
+            inputRow.className = 'bound-topic-input-row relative flex items-center w-full';
+        }
 
         const linkIcon = document.createElement('i');
         linkIcon.className = 'ph-bold ph-link bound-topic-link-icon absolute left-2 pointer-events-none z-10 text-[11px] opacity-80';
@@ -533,6 +542,11 @@ const Editor = {
 
         const ddIcon = document.createElement('i');
         ddIcon.className = 'ph-bold ph-caret-down bound-topic-caret absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer transition-colors z-[1001]';
+
+        const syncEmptyWarning = () => {
+            if (!warnWhenEmpty) return;
+            wrap.classList.toggle('bound-topic-empty', !String(inp.value || '').trim());
+        };
 
         const menuWrap = document.createElement('div');
         menuWrap.className = 'ds-editor-menu bound-topic-menu';
@@ -587,6 +601,7 @@ const Editor = {
                     item.onmousedown = (e) => {
                         e.preventDefault(); // maintain focus flow
                         inp.value = t;
+                        syncEmptyWarning();
                         onChangeCallback(t);
                         hideMenu();
                         inp.blur();
@@ -653,6 +668,7 @@ const Editor = {
                 item.onmousedown = (e) => {
                     e.preventDefault();
                     inp.value = cand.topic;
+                    syncEmptyWarning();
                     onChangeCallback(cand.topic);
                     if (typeof onConfirmed === 'function') onConfirmed(cand.topic);
                     hideMenu();
@@ -667,6 +683,7 @@ const Editor = {
             keepItem.onmousedown = (e) => {
                 e.preventDefault();
                 inp.value = queryStr;
+                syncEmptyWarning();
                 onChangeCallback(queryStr);
                 if (typeof onConfirmed === 'function') onConfirmed(queryStr);
                 hideMenu();
@@ -711,6 +728,7 @@ const Editor = {
 
         inp.addEventListener('input', (e) => {
             renderMenu(e.target.value);
+            syncEmptyWarning();
             if (!onCommitPickOnly) onChangeCallback(e.target.value);
         });
 
@@ -721,6 +739,7 @@ const Editor = {
                 if (!isDisambiguating) hideMenu();
             }, 180);
             processTopicCommit(inp.value);
+            syncEmptyWarning();
         });
 
         inp.addEventListener('keydown', (e) => {
@@ -732,6 +751,7 @@ const Editor = {
             }
             hideMenu();
             processTopicCommit(t);
+            syncEmptyWarning();
             inp.blur();
         });
 
@@ -776,9 +796,17 @@ const Editor = {
             }
         };
 
-        wrap.appendChild(linkIcon);
-        wrap.appendChild(inp);
-        wrap.appendChild(ddIcon);
+        inputRow.appendChild(linkIcon);
+        inputRow.appendChild(inp);
+        inputRow.appendChild(ddIcon);
+        if (warnWhenEmpty) {
+            wrap.appendChild(inputRow);
+            const warnEl = document.createElement('div');
+            warnEl.className = 'bound-topic-empty-hint';
+            warnEl.innerHTML = '<i class="ph-bold ph-warning"></i><span>No topic selected - pick a topic or unlink</span>';
+            wrap.appendChild(warnEl);
+            syncEmptyWarning();
+        }
         Editor._bindOverflowTitle(inp, inp, function () { return inp.value; });
 
         return wrap;
@@ -7738,6 +7766,52 @@ const Editor = {
         return !v.ok;
     },
 
+    getBoundTopicForBindingOptionsField: function (f, isGlobal) {
+        if (!f || typeof Dashboard === 'undefined') return '';
+        if (isGlobal) {
+            const gb = Dashboard.globalBindings || {};
+            return typeof gb[f.key] === 'string' ? gb[f.key].trim() : '';
+        }
+        const w = Dashboard.widgets ? Dashboard.widgets[this.currentId] : null;
+        const b = w ? (w.bindings || {}) : {};
+        const key = f.key || '';
+
+        if (typeof BindingsTree !== 'undefined') {
+            const lm = key.match(/^lightItemBind_(\d+)_(.+)$/);
+            if (lm && typeof LightGridWidget !== 'undefined' && typeof LightGridWidget.lightItemBindingPath === 'function') {
+                const raw = BindingsTree.getAtPath(b, LightGridWidget.lightItemBindingPath(parseInt(lm[1], 10), lm[2]));
+                return typeof raw === 'string' ? raw.trim() : '';
+            }
+            const mm = key.match(/^menuItemBind_(\d+)_(.+)$/);
+            if (mm && typeof MenuWidget !== 'undefined' && typeof MenuWidget.menuItemBindingPath === 'function') {
+                const raw = BindingsTree.getAtPath(b, MenuWidget.menuItemBindingPath(parseInt(mm[1], 10), mm[2]));
+                return typeof raw === 'string' ? raw.trim() : '';
+            }
+            const propPattern = (typeof GraphWidget !== 'undefined' && typeof GraphWidget.seriesBindPropPattern === 'function')
+                ? GraphWidget.seriesBindPropPattern()
+                : 'data|name|visible|positiveColor|positiveColorOpacity|negativeColor|negativeColorOpacity|positiveFillColor|negativeFillColor|pointColor|positiveOutlineColor|negativeOutlineColor|lineWidth|positiveStartOpacity|positiveEndOpacity|negativeStartOpacity|negativeEndOpacity|valueMultiplier';
+            const gm = key.match(new RegExp('^graphSeries_(.+)_(' + propPattern + ')$'));
+            if (gm && w) {
+                const seriesList = Array.isArray(w.overrides && w.overrides.series)
+                    ? w.overrides.series
+                    : (w.config && Array.isArray(w.config.series) ? w.config.series : []);
+                const idx = seriesList.findIndex((row) => row && row.id === gm[1]);
+                if (idx >= 0) {
+                    const raw = BindingsTree.getAtPath(b, ['series', idx, gm[2]]);
+                    return typeof raw === 'string' ? raw.trim() : '';
+                }
+            }
+            const bindPath = Editor.bindingPathFromSchemaField(f);
+            if (bindPath) {
+                const raw = BindingsTree.getAtPath(b, bindPath);
+                return typeof raw === 'string' ? raw.trim() : '';
+            }
+        }
+
+        const raw = b[key];
+        return typeof raw === 'string' ? raw.trim() : '';
+    },
+
     positionEditorPopupNearAnchor: function (popup, anchorBtn, options) {
         popup.style.position = 'fixed';
         const pad = (options && options.pad !== undefined) ? options.pad : 10;
@@ -7836,8 +7910,8 @@ const Editor = {
         const insertRow = document.createElement('button');
         insertRow.type = 'button';
         insertRow.className = 'flex items-center gap-1.5 text-xs editor-muted-text editor-text-hover mb-0 mt-1 px-0 py-0.5 bg-transparent border-0 cursor-pointer w-full text-left';
-        insertRow.title = 'Insert Value';
-        insertRow.innerHTML = '<i class="ph-bold ph-tag text-xs flex-shrink-0"></i><span>Insert Value</span>';
+        insertRow.title = 'Insert Value token representing the payload from the bound topic in the field dropdown';
+        insertRow.innerHTML = '<i class="ph-bold ph-tag text-xs flex-shrink-0"></i><span>Insert Value</span><span class="ds-bind-insert-tag">bound topic</span>';
         insertRow.onclick = function (e) {
             e.stopPropagation();
             if (typeof formulaFieldApi.saveCaret === 'function') formulaFieldApi.saveCaret();
@@ -7849,8 +7923,8 @@ const Editor = {
         const insertTopicRow = document.createElement('button');
         insertTopicRow.type = 'button';
         insertTopicRow.className = 'flex items-center gap-1.5 text-xs editor-muted-text editor-text-hover mb-0 mt-0.5 px-0 py-0.5 bg-transparent border-0 cursor-pointer w-full text-left';
-        insertTopicRow.title = 'Insert Topic';
-        insertTopicRow.innerHTML = '<i class="ph-bold ph-tree-structure text-xs flex-shrink-0"></i><span>Insert Topic</span>';
+        insertTopicRow.title = 'Insert an extra topic reference ({{topic}}) to combine another topic into this formula';
+        insertTopicRow.innerHTML = '<i class="ph-bold ph-tree-structure text-xs flex-shrink-0"></i><span>Insert Topic</span><span class="ds-bind-insert-tag">extra topic</span>';
         insertTopicRow.onclick = function (e) {
             e.stopPropagation();
             if (typeof formulaFieldApi.saveCaret === 'function') formulaFieldApi.saveCaret();
@@ -7865,7 +7939,7 @@ const Editor = {
             host.className = 'ds-formula-topic-wrap';
             const lbl = document.createElement('div');
             lbl.className = 'ds-formula-topic-label';
-            lbl.innerHTML = '<i class="ph-bold ph-tree-structure"></i> Pick a topic to insert as <code>{{topic}}</code>';
+            lbl.innerHTML = '<i class="ph-bold ph-tree-structure"></i> Pick an extra topic to depend on (<code>{{topic}}</code>)';
             const row = document.createElement('div');
             row.className = 'flex gap-1 items-center';
             const dd = Editor.createTopicDropdown('', 'Search topics…', function (val) {
@@ -11438,7 +11512,7 @@ const Editor = {
                                     const patch = {};
                                     BindingsTree.setAtPath(patch, ['series', index, prop], val);
                                     Dashboard.updateWidgetBinding(this.currentId, patch);
-                                });
+                                }, undefined, undefined, undefined, undefined, { warnWhenEmpty: true });
                             };
                             const numInput = (item, key, min, max, index) => {
                                 if (typeof propTopic(index, key) === 'string') return topicControl(index, key);
@@ -11655,7 +11729,7 @@ const Editor = {
                                                 saveValue(arr, true);
                                             }
                                         }
-                                    });
+                                    }, undefined, undefined, undefined, undefined, { warnWhenEmpty: true });
                                 } else {
                                     const dataInput = document.createElement('input');
                                     dataInput.type = 'text';
@@ -13106,14 +13180,60 @@ const Editor = {
         header.appendChild(closeBtn);
         popup.appendChild(header);
 
+        const boundTopic = self.getBoundTopicForBindingOptionsField(f, isGlobal);
+        const topicBanner = document.createElement('div');
+        if (!boundTopic) {
+            topicBanner.className = 'ds-bind-topic-banner ds-bind-topic-banner--warning';
+            const warnIcon = document.createElement('i');
+            warnIcon.className = 'ph-bold ph-warning';
+            const warnMeta = document.createElement('div');
+            warnMeta.className = 'ds-bind-topic-banner-meta';
+            const warnTitle = document.createElement('div');
+            warnTitle.className = 'ds-bind-topic-banner-title';
+            warnTitle.textContent = 'No topic selected in field dropdown';
+            const warnBody = document.createElement('div');
+            warnBody.className = 'ds-bind-topic-banner-body';
+            warnBody.textContent = f.type === 'select'
+                ? 'Pick a topic in the msg.topic dropdown next to this setting so updates are received.'
+                : 'Pick your main topic in the msg.topic dropdown to populate Value. Insert Topic is only for combining extra topics (or standalone functions like countdown()).';
+            warnMeta.appendChild(warnTitle);
+            warnMeta.appendChild(warnBody);
+            topicBanner.appendChild(warnIcon);
+            topicBanner.appendChild(warnMeta);
+        } else {
+            topicBanner.className = 'ds-bind-topic-banner ds-bind-topic-banner--linked';
+            const linkIcon = document.createElement('i');
+            linkIcon.className = 'ph-bold ph-link';
+            const linkMeta = document.createElement('div');
+            linkMeta.className = 'ds-bind-topic-banner-meta';
+            const linkKicker = document.createElement('div');
+            linkKicker.className = 'ds-bind-topic-banner-kicker';
+            linkKicker.textContent = f.type === 'select' ? 'Bound Topic' : 'Bound Topic (Value)';
+            const linkPath = document.createElement('div');
+            linkPath.className = 'ds-bind-topic-banner-path';
+            linkPath.textContent = boundTopic;
+            linkPath.title = boundTopic;
+            linkMeta.appendChild(linkKicker);
+            linkMeta.appendChild(linkPath);
+            topicBanner.appendChild(linkIcon);
+            topicBanner.appendChild(linkMeta);
+        }
+        popup.appendChild(topicBanner);
+
         const defLabel = document.createElement('div');
         defLabel.className = 'text-[10px] uppercase font-bold editor-muted-text mb-1';
         defLabel.textContent = 'Default Value';
         popup.appendChild(defLabel);
 
         const defWrap = document.createElement('div');
-        defWrap.className = 'mb-3';
+        defWrap.className = f.type !== 'checkbox' ? 'mb-1' : 'mb-3';
         popup.appendChild(defWrap);
+        if (f.type !== 'checkbox') {
+            const defHint = document.createElement('div');
+            defHint.className = 'text-[10px] editor-muted-text mb-3';
+            defHint.textContent = 'Fallback used until the bound topic sends a value.';
+            popup.appendChild(defHint);
+        }
 
         const rawVal = this.getBindingFallbackRaw(f, isGlobal);
 
@@ -13399,8 +13519,8 @@ const Editor = {
                 presets: textPresets,
                 showInsertIcon: isIconName,
                 hintText: isIconName
-                    ? 'Incoming payload is Value. Return a Phosphor icon class as a quoted string, e.g. if(value >= 50, "ph-thermometer-hot", "ph-thermometer-cold"). Compare strings with == and != (case-insensitive). contains(value, "ON") matches that exact case. containsanycase(value, "ON") ignores case. Insert Icon adds a quoted class at the cursor. Insert Topic adds {{topic}} references.'
-                    : 'Incoming payload is Value. Return text with quoted strings, e.g. if(value >= 50, "yes", "no"). Compare strings with == and != (case-insensitive). contains(value, "ON") matches that exact case. containsanycase(value, "ON") ignores case. Insert Topic adds {{topic}} references.'
+                    ? 'Value is the payload from the bound topic in the dropdown. Return a Phosphor icon class as a quoted string, e.g. if(value >= 50, "ph-thermometer-hot", "ph-thermometer-cold"). Compare strings with == and != (case-insensitive). contains(value, "ON") matches that exact case. containsanycase(value, "ON") ignores case. Insert Icon adds a quoted class at the cursor. Insert Topic adds {{topic}} only when combining extra topics.'
+                    : 'Value is the payload from the bound topic in the dropdown. Return text with quoted strings, e.g. if(value >= 50, "yes", "no"). Compare strings with == and != (case-insensitive). contains(value, "ON") matches that exact case. containsanycase(value, "ON") ignores case. Insert Topic adds {{topic}} only when combining extra topics.'
             });
         }
 
@@ -13425,7 +13545,7 @@ const Editor = {
                 applyFormulaPayload: applyFormulaPayload,
                 presets: colorPresets,
                 showInsertColor: true,
-                hintText: 'Return a color with hex literals (#121345) or @theme tokens (@warning), e.g. if(value >= 50, @warning, @danger). Use Insert Color to add #hex or @tokens at the cursor. The formula runs first, then Color Adjustments apply below. Use == and != for color/token equality. contains(value, "ON") matches that exact case. containsanycase(value, "ON") ignores case.'
+                hintText: 'Value is the payload from the bound topic in the dropdown. Return a color with hex literals (#121345) or @theme tokens (@warning), e.g. if(value >= 50, @warning, @danger). Use Insert Color to add #hex or @tokens at the cursor. Insert Topic adds {{topic}} only when combining extra topics. The formula runs first, then Color Adjustments apply below. Use == and != for color/token equality. contains(value, "ON") matches that exact case. containsanycase(value, "ON") ignores case.'
             });
             self.appendColorCorrectionSection(popup, {
                 propKey: f.key,
@@ -13584,7 +13704,7 @@ const Editor = {
                 getFormula: getFormula,
                 applyFormulaPayload: applyFormulaPayload,
                 presets: boolPresets,
-                hintText: 'Numeric payload is Value. Referenced topics use Insert Topic. Boolean true/false (case-insensitive) coerce to 1/0. Result is coerced to 0 or 1 for this boolean field. contains(value, "ON") and containsanycase(value, "ON") also run on a sentence and return 1 or 0. Other non-numeric payloads are left unchanged.'
+                hintText: 'Value is the payload from the bound topic in the dropdown. Insert Topic adds {{topic}} only when combining extra topics. Boolean true/false (case-insensitive) coerce to 1/0. Result is coerced to 0 or 1 for this boolean field. contains(value, "ON") and containsanycase(value, "ON") also run on a sentence and return 1 or 0. Other non-numeric payloads are left unchanged.'
             });
 
             const syncTransformPanels = function () {
@@ -13616,7 +13736,7 @@ const Editor = {
                 getFormula: getFormulaNum,
                 applyFormulaPayload: applyFormulaPayload,
                 presets: numPresets,
-                hintText: 'Incoming payload is Value. Use Insert Topic for {{topic}} references. Boolean true/false coerce to 1/0. Uses + - * /, round, min, max, abs, if(), and/or/not/xor/nor, contains(), and containsanycase().'
+                hintText: 'Value is the payload from the bound topic in the dropdown. Use Insert Topic only to combine extra topics as {{topic}}. Boolean true/false coerce to 1/0. Uses + - * /, round, min, max, abs, if(), and/or/not/xor/nor, contains(), and containsanycase().'
             });
         }
 

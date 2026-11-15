@@ -1,6 +1,6 @@
 class GraphWidget extends BaseWidget {
     static get metadata() {
-        return { shortName: "Graph", label: "Graph", icon: "ph-chart-line", category: "Data", color_dark: "hsl(160, 80%, 65%)", color_light: "hsl(160, 85%, 35%)", version: "2.4.0", date: "2026-11-07" };
+        return { shortName: "Graph", label: "Graph", icon: "ph-chart-line", category: "Data", color_dark: "hsl(160, 80%, 65%)", color_light: "hsl(160, 85%, 35%)", version: "2.4.0", date: "2026-11-13" };
     }
 
     static getLegendPositionOptions(values, isGlobal) {
@@ -3336,7 +3336,6 @@ class GraphWidget extends BaseWidget {
         legend.id = 'graph-legend-' + this.id;
         legend.style.display = 'none';
         legend.style.position = 'absolute';
-        legend.style.zIndex = '20';
         legend.style.padding = '0';
 
         const legendOffCanvasFill = document.createElement('div');
@@ -6504,6 +6503,28 @@ class GraphWidget extends BaseWidget {
         return document.getElementById('dashboard-canvas');
     }
 
+    /**
+     * Canvas legends are siblings of widget wrappers. They must use the graph's
+     * z-index and sit directly after that wrapper, so the legend paints above its
+     * own graph and still loses to any widget on a higher layer (and to a later
+     * sibling on the same layer, including another graph).
+     */
+    _mountCanvasLegend(legend) {
+        if (!legend) return;
+        const wrap = this.elements && this.elements.wrapper;
+        const parent = (wrap && wrap.parentNode) ? wrap.parentNode : this._legendHost();
+        if (!parent) return;
+        const z = (wrap && wrap.style && wrap.style.zIndex !== '') ? wrap.style.zIndex : '10';
+        if (legend.style.zIndex !== z) legend.style.zIndex = z;
+        if (wrap && wrap.parentNode === parent) {
+            if (legend.parentNode === parent && wrap.nextSibling === legend) return;
+            if (wrap.nextSibling) parent.insertBefore(legend, wrap.nextSibling);
+            else parent.appendChild(legend);
+            return;
+        }
+        if (legend.parentNode !== parent) parent.appendChild(legend);
+    }
+
     _legendFrame(c, measured) {
         const box = this._widgetBox();
         const gap = 8;
@@ -6710,11 +6731,9 @@ class GraphWidget extends BaseWidget {
             }
             legend.className = 'graph-legend' + layoutClass + (pos === 'floating' ? ' graph-legend--floating' : '') + (auto ? ' graph-legend--autosize' : '');
             legend.style.position = 'absolute';
-            legend.style.zIndex = '20';
             legend.style.maxWidth = '';
             legend.style.flexShrink = '';
-            const parent = this._legendHost();
-            if (parent && legend.parentNode !== parent) parent.appendChild(legend);
+            this._mountCanvasLegend(legend);
             legend.style.display = this._legendHiddenForPage ? 'none' : '';
             if (!this._legendHiddenForPage) this._placeLegendPanel(c, legend, auto);
         }
@@ -6796,6 +6815,11 @@ class GraphWidget extends BaseWidget {
     _syncEditModeVisuals(resolved) {
         BaseWidget.prototype._syncEditModeVisuals.call(this, resolved);
         this._syncLegendHandles(resolved);
+        const legend = this.legendEl;
+        const wrap = this.elements && this.elements.wrapper;
+        if (!legend || !wrap || legend.dataset.stacked === '1') return;
+        if (!legend.parentNode || legend.parentNode !== wrap.parentNode) return;
+        this._mountCanvasLegend(legend);
     }
 
     _syncLegendHandles(c) {

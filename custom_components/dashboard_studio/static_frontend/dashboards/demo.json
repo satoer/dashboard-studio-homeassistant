@@ -59,11 +59,16 @@
         "slot6_enable": false,
         "slot7_enable": false,
         "slot8_enable": false,
-        "slot9_enable": false
+        "slot9_enable": false,
+        "slot6_topic": "custom/topic6",
+        "slot7_topic": "custom/topic7",
+        "slot8_topic": "custom/topic8",
+        "slot9_topic": "custom/topic9"
       }
     },
     "environment": {
       "editorMode": "advanced",
+      "editorTooltips": true,
       "editorZoom": 100,
       "widgetLabelMode": "hover",
       "holdToActivateDuration": 1.5,
@@ -78,6 +83,10 @@
         "columns": 2,
         "rows": 0
       },
+      "locale": "auto",
+      "timeFormat": "auto",
+      "dateFormat": "auto",
+      "firstDayOfWeek": "auto",
       "canvas": {
         "width": 1180,
         "height": 820,
@@ -100,7 +109,7 @@
         "snap": true
       },
       "paging": {
-        "currentPage": 1,
+        "currentPage": 19,
         "currentPageOutputTopic": "local/curentPage",
         "inactivityPageEnabled": true,
         "inactivityReturnPage": 1,
@@ -151,11 +160,6 @@
       "audio": {
         "topicMap": []
       },
-      "editorTooltips": true,
-      "locale": "auto",
-      "timeFormat": "auto",
-      "dateFormat": "auto",
-      "firstDayOfWeek": "auto",
       "dialogBox": {
         "message": "Are you sure?",
         "confirmLabel": "Yes",
@@ -292,148 +296,81 @@
       }
     },
     "widgetDefaults": {
-      "menu": {
-        "itemSpacing": 4,
-        "itemCornerRadius": 8,
+      "switch": {
+        "mode": "toggle",
+        "style": "switch",
+        "buttonAlignment": "center",
+        "buttonLabelPosition": "top",
+        "labelHint": "truncated",
+        "bevel": false,
+        "scale": 1,
+        "buttonRadius": 12,
+        "buttonContentInset": 10,
         "icons": {
           "on": {
+            "size": 24,
+            "offsetX": 0,
+            "offsetY": 0,
+            "builtin": "ph-check-fat",
             "color": "@onAccent",
-            "accentColor": "@iconAccent",
-            "size": 24
+            "hoverColor": "@text"
           },
           "off": {
-            "color": "@icon",
-            "accentColor": "@iconAccent"
+            "color": "@icon"
           }
         },
-        "itemBackgroundOn": "@glow",
-        "itemBackgroundOnOpacity": 100,
-        "itemBackgroundOff": "@accentOff",
-        "itemBackgroundOffOpacity": 100,
-        "itemBackgroundHover": "@accent",
-        "itemBackgroundHoverOpacity": 100,
-        "itemOutlineWidth": 0,
-        "itemOutlineColor": "@borderAccent",
-        "itemOutlineOpacity": 100,
-        "itemBlur": 0,
-        "itemInnerGlow": 0,
-        "itemInnerGlowColor": "@borderAccent",
-        "itemInnerGlowOpacity": 0,
-        "spacerStyle": "empty",
-        "spacerAmount": 5,
-        "spacerColor": "@border",
-        "itemColorOff": "@textMuted",
+        "showIcon": true,
+        "backgroundColorOn": "@glow",
+        "backgroundColorOff": "@accentOff",
+        "backgroundColorHover": "@accent",
+        "thumbColor": "@thumb",
+        "labelColor": "@textMuted",
         "typography": {
-          "item": {
+          "buttonLabelOutside": {
             "fontSize": 12,
-            "textAlign": "left",
-            "textTransform": "none",
+            "textAlign": "center",
+            "textTransform": "uppercase",
             "bold": false,
             "italic": false,
-            "color": "@surfaceAlt",
+            "color": "@text",
             "colorOff": "@textMuted",
+            "opacity": 100,
+            "offsetX": 0,
+            "offsetY": 0
+          },
+          "buttonLabelInside": {
+            "fontSize": 12,
+            "textAlign": "center",
+            "textTransform": "capitalize",
+            "bold": false,
+            "italic": false,
+            "color": "@onAccent",
+            "colorOff": "@thumb",
             "opacity": 100,
             "offsetX": 0,
             "offsetY": 0
           }
         },
-        "labelHint": "truncated"
+        "enableGlow": true,
+        "glowColor": "@glow",
+        "glowRadius": 40,
+        "outlineWidth": 0,
+        "outlineColor": "@borderAccent",
+        "backgroundOpacity": 100,
+        "outlineOpacity": 100,
+        "buttonBlur": 0,
+        "buttonInnerGlow": 0,
+        "buttonInnerGlowColor": "@borderAccent",
+        "buttonInnerGlowOpacity": 0,
+        "thumbOutlineWidth": 0,
+        "thumbOutlineColor": "@accent",
+        "thumbOutlineOpacity": 100,
+        "thumbInnerGlow": 0,
+        "thumbInnerGlowColor": "@accent",
+        "thumbInnerGlowOpacity": 0
       },
-      "clock": {
-        "tickColor": "@controlOff",
-        "numberColor": "@textMuted",
-        "hourColor": "@text",
-        "minuteColor": "@onSurface",
-        "secondColor": "@glow",
-        "showTicks": true,
-        "showNumbers": true,
-        "sweep": "smooth",
-        "capSize": 12,
-        "backCapSize": 18,
-        "offset": 0,
-        "numberDistance": 70,
-        "handWidthHour": 8,
-        "handLengthHour": 55,
-        "handWidthMinute": 5,
-        "handLengthMinute": 85,
-        "handWidthSecond": 2,
-        "handLengthSecond": 90,
-        "useSystemTime": true,
-        "timezone": "UTC",
-        "displayMode": "analog",
-        "use12Hour": false,
-        "flipUpperColor": "@accentSoft",
-        "flipLowerColor": "@accent",
-        "flipCardRadius": 12,
-        "flipSeparator": 6,
-        "flipShowLabels": true,
-        "flipShowSeconds": true,
-        "textShowDate": true,
-        "textDateSeg0": "weekday",
-        "textDateSeg1": "day",
-        "textDateSeg2": "monthName",
-        "textDateSeg3": "yearLong",
-        "textDateSeg4": "none",
-        "textDateSeparator": "",
-        "textDateLinebreak": true,
-        "textShowTime": true,
-        "textShowHour": true,
-        "textShowMinute": true,
-        "textShowSecond": true,
-        "textSeparator": ":",
-        "textBlinkSeparator": false,
-        "typography": {
-          "analogNumbers": {
-            "fontSize": 20,
-            "fontFamily": "'Inter', sans-serif",
-            "color": "@textMuted",
-            "textTransform": "none",
-            "bold": true,
-            "italic": false
-          },
-          "flipNumbers": {
-            "fontSize": 28,
-            "fontFamily": "",
-            "color": "@onAccent",
-            "bold": true,
-            "italic": false
-          },
-          "flipLabel": {
-            "fontSize": 10,
-            "fontFamily": "",
-            "color": "@textMuted",
-            "textTransform": "none",
-            "bold": false,
-            "italic": false,
-            "offsetX": 0,
-            "offsetY": 0
-          },
-          "flipAmPm": {
-            "fontSize": 12,
-            "fontFamily": "",
-            "color": "@onAccent",
-            "textAlign": "center",
-            "textTransform": "none",
-            "bold": true,
-            "italic": false,
-            "offsetX": 0,
-            "offsetY": 0
-          },
-          "timeDate": {
-            "color": "@textMuted"
-          }
-        }
-      },
-      "defaultClockTimeDateFs": 16,
-      "defaultClockTimeDateFont": "",
-      "defaultClockTimeDateAlign": "center",
-      "defaultClockTimeDateCase": "none",
-      "defaultClockTimeDateBold": false,
-      "defaultClockTimeDateItalic": false,
-      "defaultClockTextWeekPrefix": "",
-      "defaultClockFlipLabelHour": "",
-      "defaultClockFlipLabelMinute": "",
-      "defaultClockFlipLabelSecond": "",
+      "defaultSwitchIconOnFilled": true,
+      "defaultSwitchIconOffFilled": true,
       "text": {
         "textWrap": true,
         "linkTarget": "markdown",
@@ -571,6 +508,401 @@
       "textMdCodeOpacity": 100,
       "textMdCodeOffX": 0,
       "textMdCodeOffY": 0,
+      "menu": {
+        "itemSpacing": 4,
+        "itemCornerRadius": 8,
+        "icons": {
+          "on": {
+            "color": "@onAccent",
+            "accentColor": "@iconAccent",
+            "size": 24
+          },
+          "off": {
+            "color": "@icon",
+            "accentColor": "@iconAccent"
+          }
+        },
+        "itemBackgroundOn": "@glow",
+        "itemBackgroundOnOpacity": 100,
+        "itemBackgroundOff": "@accentOff",
+        "itemBackgroundOffOpacity": 100,
+        "itemBackgroundHover": "@accent",
+        "itemBackgroundHoverOpacity": 100,
+        "itemOutlineWidth": 0,
+        "itemOutlineColor": "@borderAccent",
+        "itemOutlineOpacity": 100,
+        "itemBlur": 0,
+        "itemInnerGlow": 0,
+        "itemInnerGlowColor": "@borderAccent",
+        "itemInnerGlowOpacity": 0,
+        "spacerStyle": "empty",
+        "spacerAmount": 5,
+        "spacerColor": "@border",
+        "itemColorOff": "@textMuted",
+        "typography": {
+          "item": {
+            "fontSize": 12,
+            "textAlign": "left",
+            "textTransform": "none",
+            "bold": false,
+            "italic": false,
+            "color": "@surfaceAlt",
+            "colorOff": "@textMuted",
+            "opacity": 100,
+            "offsetX": 0,
+            "offsetY": 0
+          }
+        },
+        "labelHint": "truncated"
+      },
+      "gauge": {
+        "startColor": "@accent",
+        "endColor": "@accentSecondary",
+        "trackColor": "@border",
+        "valueColor": "@text",
+        "unitColor": "@textMuted",
+        "icons": {
+          "on": {
+            "color": "@icon",
+            "source": "phosphor",
+            "builtin": "ph-thermometer-simple",
+            "weight": "fill",
+            "customUrl": "",
+            "tintImage": false,
+            "size": 80,
+            "offsetX": 0,
+            "offsetY": 0
+          }
+        },
+        "barGlow": true,
+        "barThickness": 12,
+        "trackThickness": 16,
+        "barType": "round",
+        "layoutRound": "bottom",
+        "layoutHorizontal": "right",
+        "abbreviateLargeValues": false,
+        "keepTrailingZeros": false,
+        "customDisplayRange": false,
+        "displayMin": 0,
+        "displayMax": 100,
+        "displayDecimalPlaces": 1,
+        "displayKeepTrailingZeros": false,
+        "solidBarColor": false,
+        "roundGap": -25,
+        "horizontalGap": 16,
+        "trackOutlineWidth": 0,
+        "trackOutlineColor": "@accent",
+        "trackOpacity": 100,
+        "trackOutlineOpacity": 100,
+        "trackBlur": 0,
+        "trackInnerGlow": 0,
+        "trackInnerGlowColor": "@accent",
+        "trackInnerGlowOpacity": 0,
+        "barOpacity": 100,
+        "barOutlineWidth": 0,
+        "barOutlineColor": "@thumb",
+        "barOutlineOpacity": 100,
+        "barInnerGlow": 0,
+        "barInnerGlowColor": "@thumb",
+        "barInnerGlowOpacity": 0,
+        "sizeOffset": 0,
+        "showIcon": true,
+        "typography": {
+          "caption": {
+            "fontSize": 12,
+            "color": "@textMuted",
+            "textTransform": "uppercase",
+            "bold": false,
+            "italic": false,
+            "opacity": 100,
+            "offsetX": 0,
+            "offsetY": 0
+          },
+          "value": {
+            "fontFamily": "",
+            "fontSize": 48,
+            "color": "@text",
+            "bold": true,
+            "italic": false,
+            "opacity": 100,
+            "offsetX": 0,
+            "offsetY": 0
+          },
+          "unit": {
+            "fontSize": 20,
+            "color": "@textMuted",
+            "bold": false,
+            "italic": false,
+            "opacity": 100
+          },
+          "axis": {
+            "fontSize": 11,
+            "color": "@textMuted",
+            "bold": false,
+            "italic": false,
+            "opacity": 100
+          }
+        },
+        "captionAlignRound": "center",
+        "captionAlignHorizontal": "left"
+      },
+      "slider": {
+        "trackColor": "@border",
+        "fillColor": "@accent",
+        "thumbColor": "@thumb",
+        "valueColor": "@text",
+        "trackThickness": 36,
+        "fillThickness": 24,
+        "thumbSize": 29,
+        "thumbShadow": true,
+        "showValue": true,
+        "valueLocation": "middle",
+        "labelLocation": "top",
+        "typography": {
+          "value": {
+            "offsetX": 0,
+            "offsetY": 0,
+            "fontSize": 10,
+            "textAlign": "center",
+            "fontFamily": "'Inter', sans-serif",
+            "bold": false
+          },
+          "caption": {
+            "offsetX": 0,
+            "offsetY": 0
+          },
+          "unit": {
+            "fontSize": 20,
+            "color": "@textMuted",
+            "bold": false,
+            "italic": false,
+            "opacity": 100
+          }
+        },
+        "vertical": false,
+        "allowDecimals": false,
+        "stepSize": 0.1,
+        "customDisplayRange": false,
+        "displayMin": 0,
+        "displayMax": 100,
+        "displayDecimalPlaces": 1,
+        "displayKeepTrailingZeros": false,
+        "trackOutlineWidth": 0,
+        "trackOutlineColor": "@accent",
+        "trackOpacity": 100,
+        "trackOutlineOpacity": 100,
+        "trackBlur": 0,
+        "trackInnerGlow": 0,
+        "trackInnerGlowColor": "@accent",
+        "trackInnerGlowOpacity": 0,
+        "fillOpacity": 100,
+        "fillOutlineWidth": 0,
+        "fillOutlineColor": "@thumb",
+        "fillOutlineOpacity": 100,
+        "fillInnerGlow": 0,
+        "fillInnerGlowColor": "@thumb",
+        "fillInnerGlowOpacity": 0,
+        "thumbOutlineWidth": 0,
+        "thumbOutlineColor": "@accent",
+        "thumbOutlineOpacity": 100,
+        "thumbInnerGlow": 0,
+        "thumbInnerGlowColor": "@accent",
+        "thumbInnerGlowOpacity": 0
+      },
+      "icon": {
+        "icons": {
+          "on": {
+            "color": "@danger",
+            "source": "phosphor",
+            "builtin": "",
+            "weight": "fill",
+            "customUrl": "",
+            "tintImage": false,
+            "accentColor": "@iconAccent"
+          },
+          "off": {
+            "color": "@icon",
+            "source": "phosphor",
+            "builtin": "ph-warning",
+            "weight": "fill",
+            "customUrl": "",
+            "tintImage": false,
+            "accentColor": "@iconAccent"
+          }
+        },
+        "filled": true,
+        "animSpeed": 1,
+        "blink": false,
+        "glowOnActive": true,
+        "size": 80,
+        "typography": {
+          "caption": {
+            "fontFamily": null,
+            "fontSize": null,
+            "textAlign": null,
+            "textTransform": null,
+            "bold": null,
+            "color": null,
+            "offsetX": null,
+            "offsetY": null
+          }
+        }
+      },
+      "battery": {
+        "goodColor": "@success",
+        "lowColor": "@danger",
+        "borderColor": "@controlOff",
+        "emptyColor": "@borderAccent",
+        "vertical": false,
+        "segments": 0,
+        "lowThreshold": 20,
+        "outlineWidth": 4,
+        "innerPadding": 4,
+        "terminalSize": 10
+      },
+      "arrow": {
+        "mainColor": "@accentSecondary",
+        "flowColor": "@success",
+        "reverseFlowColor": "@danger",
+        "glowColor": "@accentSoft",
+        "thickness": 10,
+        "headSize": 30,
+        "lineRadius": 5,
+        "headRound": 4,
+        "bendRadius": 15,
+        "customPoints": [],
+        "animationEnabled": true,
+        "animationSpeed": 2,
+        "animationReverse": false,
+        "flowWidth": 0,
+        "gradientWidth": 100,
+        "glowWidth": 15,
+        "glowOpacity": 50
+      },
+      "list": {
+        "showIcons": true,
+        "showTimestamp": false,
+        "maxLines": 10,
+        "rawMode": false,
+        "iconSize": 20,
+        "iconColor": "@icon",
+        "iconGap": 12,
+        "textColor": "@onSurface",
+        "fontSize": 14,
+        "gap": 4,
+        "textWrap": false,
+        "lineHeight": 1.5,
+        "textTransform": "none",
+        "fontFamily": "'Inter', sans-serif",
+        "bold": false,
+        "timeSize": 12,
+        "timeColor": "@warning",
+        "timeFormat": "HH:mm",
+        "time24h": true,
+        "dateFormat": "none"
+      },
+      "image": {
+        "fitContainer": true,
+        "proportional": true,
+        "scale": 100,
+        "opacity": 100,
+        "fallbackUrl": "images/brokenlink.png"
+      },
+      "clock": {
+        "tickColor": "@controlOff",
+        "numberColor": "@textMuted",
+        "hourColor": "@text",
+        "minuteColor": "@onSurface",
+        "secondColor": "@glow",
+        "showTicks": true,
+        "showNumbers": true,
+        "sweep": "smooth",
+        "capSize": 12,
+        "backCapSize": 18,
+        "offset": 0,
+        "numberDistance": 70,
+        "handWidthHour": 8,
+        "handLengthHour": 55,
+        "handWidthMinute": 5,
+        "handLengthMinute": 85,
+        "handWidthSecond": 2,
+        "handLengthSecond": 90,
+        "useSystemTime": true,
+        "timezone": "UTC",
+        "displayMode": "analog",
+        "use12Hour": false,
+        "flipUpperColor": "@accentSoft",
+        "flipLowerColor": "@accent",
+        "flipCardRadius": 12,
+        "flipSeparator": 6,
+        "flipShowLabels": true,
+        "flipShowSeconds": true,
+        "textShowDate": true,
+        "textDateSeg0": "weekday",
+        "textDateSeg1": "day",
+        "textDateSeg2": "monthName",
+        "textDateSeg3": "yearLong",
+        "textDateSeg4": "none",
+        "textDateSeparator": "",
+        "textDateLinebreak": true,
+        "textShowTime": true,
+        "textShowHour": true,
+        "textShowMinute": true,
+        "textShowSecond": true,
+        "textSeparator": ":",
+        "textBlinkSeparator": false,
+        "typography": {
+          "analogNumbers": {
+            "fontSize": 20,
+            "fontFamily": "'Inter', sans-serif",
+            "color": "@textMuted",
+            "textTransform": "none",
+            "bold": true,
+            "italic": false
+          },
+          "flipNumbers": {
+            "fontSize": 28,
+            "fontFamily": "",
+            "color": "@onAccent",
+            "bold": true,
+            "italic": false
+          },
+          "flipLabel": {
+            "fontSize": 10,
+            "fontFamily": "",
+            "color": "@textMuted",
+            "textTransform": "none",
+            "bold": false,
+            "italic": false,
+            "offsetX": 0,
+            "offsetY": 0
+          },
+          "flipAmPm": {
+            "fontSize": 12,
+            "fontFamily": "",
+            "color": "@onAccent",
+            "textAlign": "center",
+            "textTransform": "none",
+            "bold": true,
+            "italic": false,
+            "offsetX": 0,
+            "offsetY": 0
+          },
+          "timeDate": {
+            "color": "@textMuted"
+          }
+        }
+      },
+      "defaultClockTimeDateFs": 16,
+      "defaultClockTimeDateFont": "",
+      "defaultClockTimeDateAlign": "center",
+      "defaultClockTimeDateCase": "none",
+      "defaultClockTimeDateBold": false,
+      "defaultClockTimeDateItalic": false,
+      "defaultClockTextWeekPrefix": "",
+      "defaultClockFlipLabelHour": "",
+      "defaultClockFlipLabelMinute": "",
+      "defaultClockFlipLabelSecond": "",
       "graph": {
         "chartType": "line",
         "smoothingAmount": 0,
@@ -762,241 +1094,6 @@
         "tickYThickness": 2,
         "tickYColor": "@accentSoft",
         "tickYOffset": 0
-      },
-      "editbox": {
-        "backgroundColor": "@surface",
-        "backgroundOpacity": 100,
-        "borderColor": "@accentSecondary",
-        "borderWidth": 1,
-        "borderRadius": 8,
-        "enableFocusGlow": true,
-        "focusColor": "@link",
-        "typography": {
-          "inputText": {
-            "color": "@text",
-            "fontSize": 14,
-            "bold": false,
-            "textAlign": "left"
-          }
-        },
-        "placeholderColor": "@placeholder",
-        "textPadding": 8
-      },
-      "switch": {
-        "mode": "toggle",
-        "style": "switch",
-        "buttonAlignment": "center",
-        "buttonLabelPosition": "top",
-        "labelHint": "truncated",
-        "bevel": false,
-        "scale": 1,
-        "buttonRadius": 12,
-        "buttonContentInset": 10,
-        "icons": {
-          "on": {
-            "size": 24,
-            "offsetX": 0,
-            "offsetY": 0,
-            "builtin": "ph-check-fat",
-            "color": "@onAccent",
-            "hoverColor": "@text"
-          },
-          "off": {
-            "color": "@icon"
-          }
-        },
-        "showIcon": true,
-        "backgroundColorOn": "@glow",
-        "backgroundColorOff": "@accentOff",
-        "backgroundColorHover": "@accent",
-        "thumbColor": "@thumb",
-        "labelColor": "@textMuted",
-        "typography": {
-          "buttonLabelOutside": {
-            "fontSize": 12,
-            "textAlign": "center",
-            "textTransform": "uppercase",
-            "bold": false,
-            "italic": false,
-            "color": "@text",
-            "colorOff": "@textMuted",
-            "opacity": 100,
-            "offsetX": 0,
-            "offsetY": 0
-          },
-          "buttonLabelInside": {
-            "fontSize": 12,
-            "textAlign": "center",
-            "textTransform": "capitalize",
-            "bold": false,
-            "italic": false,
-            "color": "@onAccent",
-            "colorOff": "@thumb",
-            "opacity": 100,
-            "offsetX": 0,
-            "offsetY": 0
-          }
-        },
-        "enableGlow": true,
-        "glowColor": "@glow",
-        "glowRadius": 40,
-        "outlineWidth": 0,
-        "outlineColor": "@borderAccent",
-        "backgroundOpacity": 100,
-        "outlineOpacity": 100,
-        "buttonBlur": 0,
-        "buttonInnerGlow": 0,
-        "buttonInnerGlowColor": "@borderAccent",
-        "buttonInnerGlowOpacity": 0,
-        "thumbOutlineWidth": 0,
-        "thumbOutlineColor": "@accent",
-        "thumbOutlineOpacity": 100,
-        "thumbInnerGlow": 0,
-        "thumbInnerGlowColor": "@accent",
-        "thumbInnerGlowOpacity": 0
-      },
-      "defaultSwitchIconOnFilled": true,
-      "defaultSwitchIconOffFilled": true,
-      "label": {
-        "widthAuto": true,
-        "heightAuto": true,
-        "typography": {
-          "widgetLabel": {
-            "fontFamily": "",
-            "fontSize": 12,
-            "textAlign": "left",
-            "textTransform": "none",
-            "bold": false,
-            "italic": false,
-            "color": "@onSurface",
-            "opacity": 100,
-            "offsetX": 0,
-            "offsetY": 0
-          }
-        }
-      },
-      "battery": {
-        "goodColor": "@success",
-        "lowColor": "@danger",
-        "borderColor": "@controlOff",
-        "emptyColor": "@borderAccent",
-        "vertical": false,
-        "segments": 0,
-        "lowThreshold": 20,
-        "outlineWidth": 4,
-        "innerPadding": 4,
-        "terminalSize": 10
-      },
-      "slider": {
-        "trackColor": "@border",
-        "fillColor": "@accent",
-        "thumbColor": "@thumb",
-        "valueColor": "@text",
-        "trackThickness": 36,
-        "fillThickness": 24,
-        "thumbSize": 29,
-        "thumbShadow": true,
-        "showValue": true,
-        "valueLocation": "middle",
-        "labelLocation": "top",
-        "typography": {
-          "value": {
-            "offsetX": 0,
-            "offsetY": 0,
-            "fontSize": 10,
-            "textAlign": "center",
-            "fontFamily": "'Inter', sans-serif",
-            "bold": false
-          },
-          "caption": {
-            "offsetX": 0,
-            "offsetY": 0
-          },
-          "unit": {
-            "fontSize": 20,
-            "color": "@textMuted",
-            "bold": false,
-            "italic": false,
-            "opacity": 100
-          }
-        },
-        "vertical": false,
-        "allowDecimals": false,
-        "stepSize": 0.1,
-        "customDisplayRange": false,
-        "displayMin": 0,
-        "displayMax": 100,
-        "displayDecimalPlaces": 1,
-        "displayKeepTrailingZeros": false,
-        "trackOutlineWidth": 0,
-        "trackOutlineColor": "@accent",
-        "trackOpacity": 100,
-        "trackOutlineOpacity": 100,
-        "trackBlur": 0,
-        "trackInnerGlow": 0,
-        "trackInnerGlowColor": "@accent",
-        "trackInnerGlowOpacity": 0,
-        "fillOpacity": 100,
-        "fillOutlineWidth": 0,
-        "fillOutlineColor": "@thumb",
-        "fillOutlineOpacity": 100,
-        "fillInnerGlow": 0,
-        "fillInnerGlowColor": "@thumb",
-        "fillInnerGlowOpacity": 0,
-        "thumbOutlineWidth": 0,
-        "thumbOutlineColor": "@accent",
-        "thumbOutlineOpacity": 100,
-        "thumbInnerGlow": 0,
-        "thumbInnerGlowColor": "@accent",
-        "thumbInnerGlowOpacity": 0
-      },
-      "arrow": {
-        "mainColor": "@accentSecondary",
-        "flowColor": "@success",
-        "reverseFlowColor": "@danger",
-        "glowColor": "@accentSoft",
-        "thickness": 10,
-        "headSize": 30,
-        "lineRadius": 5,
-        "headRound": 4,
-        "bendRadius": 15,
-        "customPoints": [],
-        "animationEnabled": true,
-        "animationSpeed": 2,
-        "animationReverse": false,
-        "flowWidth": 0,
-        "gradientWidth": 100,
-        "glowWidth": 15,
-        "glowOpacity": 50
-      },
-      "image": {
-        "fitContainer": true,
-        "proportional": true,
-        "scale": 100,
-        "opacity": 100,
-        "fallbackUrl": "images/brokenlink.png"
-      },
-      "list": {
-        "showIcons": true,
-        "showTimestamp": false,
-        "maxLines": 10,
-        "rawMode": false,
-        "iconSize": 20,
-        "iconColor": "@icon",
-        "iconGap": 12,
-        "textColor": "@onSurface",
-        "fontSize": 14,
-        "gap": 4,
-        "textWrap": false,
-        "lineHeight": 1.5,
-        "textTransform": "none",
-        "fontFamily": "'Inter', sans-serif",
-        "bold": false,
-        "timeSize": 12,
-        "timeColor": "@warning",
-        "timeFormat": "HH:mm",
-        "time24h": true,
-        "dateFormat": "none"
       },
       "lightgrid": {
         "presets": [
@@ -1196,135 +1293,42 @@
           }
         }
       },
-      "icon": {
-        "icons": {
-          "on": {
-            "color": "@danger",
-            "source": "phosphor",
-            "builtin": "",
-            "weight": "fill",
-            "customUrl": "",
-            "tintImage": false,
-            "accentColor": "@iconAccent"
-          },
-          "off": {
-            "color": "@icon",
-            "source": "phosphor",
-            "builtin": "ph-warning",
-            "weight": "fill",
-            "customUrl": "",
-            "tintImage": false,
-            "accentColor": "@iconAccent"
+      "editbox": {
+        "backgroundColor": "@surface",
+        "backgroundOpacity": 100,
+        "borderColor": "@accentSecondary",
+        "borderWidth": 1,
+        "borderRadius": 8,
+        "enableFocusGlow": true,
+        "focusColor": "@link",
+        "typography": {
+          "inputText": {
+            "color": "@text",
+            "fontSize": 14,
+            "bold": false,
+            "textAlign": "left"
           }
         },
-        "filled": true,
-        "animSpeed": 1,
-        "blink": false,
-        "glowOnActive": true,
-        "size": 80,
+        "placeholderColor": "@placeholder",
+        "textPadding": 8
+      },
+      "label": {
+        "widthAuto": true,
+        "heightAuto": true,
         "typography": {
-          "caption": {
-            "fontFamily": null,
-            "fontSize": null,
-            "textAlign": null,
-            "textTransform": null,
-            "bold": null,
-            "color": null,
-            "offsetX": null,
-            "offsetY": null
+          "widgetLabel": {
+            "fontFamily": "",
+            "fontSize": 12,
+            "textAlign": "left",
+            "textTransform": "none",
+            "bold": false,
+            "italic": false,
+            "color": "@onSurface",
+            "opacity": 100,
+            "offsetX": 0,
+            "offsetY": 0
           }
         }
-      },
-      "gauge": {
-        "startColor": "@accent",
-        "endColor": "@accentSecondary",
-        "trackColor": "@border",
-        "valueColor": "@text",
-        "unitColor": "@textMuted",
-        "icons": {
-          "on": {
-            "color": "@icon",
-            "source": "phosphor",
-            "builtin": "ph-thermometer-simple",
-            "weight": "fill",
-            "customUrl": "",
-            "tintImage": false,
-            "size": 80,
-            "offsetX": 0,
-            "offsetY": 0
-          }
-        },
-        "barGlow": true,
-        "barThickness": 12,
-        "trackThickness": 16,
-        "barType": "round",
-        "layoutRound": "bottom",
-        "layoutHorizontal": "right",
-        "abbreviateLargeValues": false,
-        "keepTrailingZeros": false,
-        "customDisplayRange": false,
-        "displayMin": 0,
-        "displayMax": 100,
-        "displayDecimalPlaces": 1,
-        "displayKeepTrailingZeros": false,
-        "solidBarColor": false,
-        "roundGap": -25,
-        "horizontalGap": 16,
-        "trackOutlineWidth": 0,
-        "trackOutlineColor": "@accent",
-        "trackOpacity": 100,
-        "trackOutlineOpacity": 100,
-        "trackBlur": 0,
-        "trackInnerGlow": 0,
-        "trackInnerGlowColor": "@accent",
-        "trackInnerGlowOpacity": 0,
-        "barOpacity": 100,
-        "barOutlineWidth": 0,
-        "barOutlineColor": "@thumb",
-        "barOutlineOpacity": 100,
-        "barInnerGlow": 0,
-        "barInnerGlowColor": "@thumb",
-        "barInnerGlowOpacity": 0,
-        "sizeOffset": 0,
-        "showIcon": true,
-        "typography": {
-          "caption": {
-            "fontSize": 12,
-            "color": "@textMuted",
-            "textTransform": "uppercase",
-            "bold": false,
-            "italic": false,
-            "opacity": 100,
-            "offsetX": 0,
-            "offsetY": 0
-          },
-          "value": {
-            "fontFamily": "",
-            "fontSize": 48,
-            "color": "@text",
-            "bold": true,
-            "italic": false,
-            "opacity": 100,
-            "offsetX": 0,
-            "offsetY": 0
-          },
-          "unit": {
-            "fontSize": 20,
-            "color": "@textMuted",
-            "bold": false,
-            "italic": false,
-            "opacity": 100
-          },
-          "axis": {
-            "fontSize": 11,
-            "color": "@textMuted",
-            "bold": false,
-            "italic": false,
-            "opacity": 100
-          }
-        },
-        "captionAlignRound": "center",
-        "captionAlignHorizontal": "left"
       },
       "defaultDeactivatedColor": "@controlOff",
       "defaultDeactivatedColorAccent": "@textMuted"
@@ -9177,16 +9181,22 @@
       },
       "bindings": {}
     },
-    "text_p19_title": {
+    "p19_title": {
       "type": "text",
       "overrides": {
         "x": 20,
         "y": 20,
-        "width": 1020,
+        "width": 1030,
         "height": 80,
-        "page": "19",
-        "text": "# LIVE COUNTDOWN & TIMER LAB\n*Interactive cooldown locks, dynamic smart gauges, and real-time deep-space clocks*",
-        "metaName": "Title - Countdown Lab"
+        "page": 19,
+        "zIndex": 10,
+        "text": "# Countdown Timer Functions and animation capabilities",
+        "metaName": "Title - Mission Control",
+        "typography": {
+          "mdH1": {
+            "textTransform": "uppercase"
+          }
+        }
       },
       "bindings": {}
     },
@@ -9197,7 +9207,8 @@
         "y": 20,
         "width": 100,
         "height": 80,
-        "page": "19",
+        "page": 19,
+        "zIndex": 10,
         "buttonLabel": "BACK",
         "actionType": "page",
         "pageTo": 4,
@@ -9208,36 +9219,82 @@
             "weight": "fill",
             "customUrl": "",
             "tintImage": false,
-            "size": 24
+            "size": 20
           }
         },
         "mode": "push",
         "style": "button",
-        "metaName": "Button - Back (P19)",
+        "metaName": "Button - Back",
+        "padding": 5,
+        "typography": {
+          "buttonLabelOutside": {
+            "textTransform": "uppercase"
+          },
+          "buttonLabelInside": {
+            "textTransform": "uppercase"
+          }
+        },
+        "state": false,
         "buttonLabelPosition": "inside_bottom"
       },
       "bindings": {}
     },
-    "switch_p19_warp_btn": {
+    "text_mc_clock": {
+      "type": "text",
+      "overrides": {
+        "x": 40,
+        "y": 170,
+        "width": 460,
+        "height": 80,
+        "page": 19,
+        "zIndex": 10,
+        "metaName": "Mission Control - Countdown Clock",
+        "text": "# [color @accent]T - 10[/color]",
+        "text_bind_formula": "if({{local/mission}}==1,if(countdown(\"30s\",\"seconds\")>20,\"# [color @warning]T - \"+(countdown(\"30s\",\"seconds\")-20)+\"[/color]\",if(countdown(\"30s\",\"seconds\")==20,\"# [color @danger]LIFTOFF![/color]\",if(countdown(\"30s\",\"seconds\")<=0,\"# [color @success]ORBIT ACHIEVED[/color]\",\"# [color @accent]T + \"+(20-countdown(\"30s\",\"seconds\"))+\"s[/color]\"))),\"# [color @accent]T - 10[/color]\")",
+        "textAlign": "center",
+        "textVerticalAlign": "middle",
+        "typography": {
+          "mdH1": {
+            "fontSize": 44,
+            "bold": true
+          }
+        },
+        "container": {
+          "show": true,
+          "glow": {
+            "enabled": true,
+            "radius": 28,
+            "opacity": 35,
+            "color": "@accent"
+          }
+        },
+        "glowColor_bind_formula": "if({{local/mission}}==1,if(countdown(\"30s\",\"seconds\")>20,countdown(\"2s\",#f59e0b,#ef4444,\"pingpong\"),if(countdown(\"30s\",\"seconds\")<=0,#22c55e,#ef4444)),#22d3ee)",
+        "borderColor_bind_formula": "if({{local/mission}}==1,if(countdown(\"30s\",\"seconds\")>20,#f59e0b,if(countdown(\"30s\",\"seconds\")<=0,#22c55e,#ef4444)),#1e3a5f)",
+        "padding": 0
+      },
+      "bindings": {}
+    },
+    "switch_mc_start": {
       "type": "switch",
       "overrides": {
-        "x": 20,
-        "y": 110,
-        "width": 360,
-        "height": 85,
-        "page": "19",
-        "buttonLabel": "ENGAGE HYPERDRIVE (15s)",
-        "buttonLabelPosition": "inside_bottom",
-        "actionType": "topic",
-        "outputTopic": "local/warp_cooldown",
-        "onPayload": "15s",
+        "x": 40,
+        "y": 260,
+        "width": 220,
+        "height": 60,
+        "page": 19,
+        "zIndex": 10,
+        "metaName": "Mission Control - Start Sequence",
         "mode": "push",
         "style": "button",
-        "metaName": "Button - Warp Drive",
-        "container": {
-          "show": false
-        },
-        "padding": 0,
+        "actionType": "topic",
+        "outputTopic": "local/mission",
+        "onPayload": "1",
+        "buttonLabel": "START SEQUENCE",
+        "buttonLabelPosition": "inside_right",
+        "showIcon": true,
+        "iconColOff": "@onAccent",
+        "deactivated": false,
+        "deactivated_bind_formula": "if({{local/mission}} == 1, 1, 0)",
         "icons": {
           "on": {
             "source": "phosphor",
@@ -9245,74 +9302,46 @@
             "weight": "fill",
             "customUrl": "",
             "tintImage": false,
-            "size": 34
+            "size": 24
           }
         },
-        "deactivated_bind_formula": "countdown(value, \"isRunning\")",
-        "buttonRadius": 12
-      },
-      "bindings": {
-        "deactivated": "local/warp_cooldown"
-      }
-    },
-    "gauge_p19_warp_gauge": {
-      "type": "gauge",
-      "overrides": {
-        "x": 20,
-        "y": 210,
-        "width": 360,
-        "height": 60,
-        "page": "19",
-        "label": "Capacitor Recharge",
-        "unit": "%",
-        "min": 0,
-        "max": 100,
-        "value": 0,
-        "showIcon": false,
-        "barType": "horizontal",
-        "trackThickness": 16,
-        "metaName": "Gauge - Warp Capacitor",
-        "layoutHorizontal": "left",
-        "value_bind_formula": "countdown(value, \"percent\")"
-      },
-      "bindings": {
-        "value": "local/warp_cooldown"
-      }
-    },
-    "text_p19_warp_status": {
-      "type": "text",
-      "overrides": {
-        "x": 20,
-        "y": 285,
-        "width": 360,
-        "height": 440,
-        "page": "19",
-        "metaName": "Text - Warp Status",
-        "textVerticalAlign": "top",
-        "text": "### :ph-lightning|26|@accent: Jump Core Telemetry\n\n| System Metric | Real-time Value |\n| :--- | :--- |\n| **Engine State** | {{if(countdown({{local/warp_cooldown}}, \"isDone\") == 1, \"✨ Thrusters Charged (Ready)\", if(countdown({{local/warp_cooldown}}, \"seconds\") > 10, \"🔥 Field Acceleration (Stage 1)\", if(countdown({{local/warp_cooldown}}, \"seconds\") > 5, \"⚡ Quantum Dampening (Stage 2)\", if(countdown({{local/warp_cooldown}}, \"isRunning\") == 1, \"❄️ Final Stabilization (Stage 3)\", \"✨ Standby (Ready)\"))))}} |\n| **Lock Duration** | {{countdown({{local/warp_cooldown}}, \"timer\")}} |\n| **Core Charge** | {{countdown({{local/warp_cooldown}}, \"percent\")}}% |\n| **Time Remaining** | {{countdown({{local/warp_cooldown}}, \"words\")}} |\n\n[block3:Controls are locked during jump cooldown. Re-engagement is prohibited until thrusters reach 100%.]\n\n#### :ph-cpu|22|@accent: Nav-Computer Feed\n- **Quantum foam flux:** 0.042 mN\n- **Relativistic dilation:** 1.0004c\n- **Sub-light barrier:** Stable nominal"
-      },
-      "bindings": {}
-    },
-    "switch_p19_warp_reset": {
-      "type": "switch",
-      "overrides": {
-        "x": 20,
-        "y": 737,
-        "width": 360,
-        "height": 63,
-        "page": "19",
-        "buttonLabel": "EMERGENCY COOLDOWN OVERRIDE",
-        "buttonLabelPosition": "inside_right",
-        "actionType": "topic",
-        "outputTopic": "local/warp_cooldown",
-        "onPayload": "0s",
-        "mode": "push",
-        "style": "button",
-        "metaName": "Button - Warp Override",
+        "typography": {
+          "buttonLabelInside": {
+            "fontSize": 15,
+            "bold": true,
+            "colorOff": "@onAccent"
+          }
+        },
+        "state": false,
         "container": {
           "show": false
         },
         "padding": 0,
+        "backgroundColorOff": "@success"
+      },
+      "bindings": {}
+    },
+    "switch_mc_reset": {
+      "type": "switch",
+      "overrides": {
+        "x": 280,
+        "y": 260,
+        "width": 220,
+        "height": 60,
+        "page": 19,
+        "zIndex": 10,
+        "metaName": "Mission Control - Reset",
+        "mode": "push",
+        "style": "button",
+        "actionType": "topic",
+        "outputTopic": "local/mission",
+        "onPayload": "0",
+        "buttonLabel": "MISSION RESET",
+        "buttonLabelPosition": "inside_right",
+        "showIcon": true,
+        "iconColOff": "#ffffff",
+        "deactivated": true,
+        "deactivated_bind_formula": "if({{local/mission}} == 1, 0, 1)",
         "icons": {
           "on": {
             "source": "phosphor",
@@ -9323,231 +9352,402 @@
             "size": 22
           }
         },
-        "buttonRadius": 10
-      },
-      "bindings": {}
-    },
-    "switch_p19_pizza_btn": {
-      "type": "switch",
-      "overrides": {
-        "x": 405,
-        "y": 110,
-        "width": 172,
-        "height": 85,
-        "page": "19",
-        "buttonLabel": "PIZZA BAKE (20s)",
-        "buttonLabelPosition": "inside_bottom",
-        "actionType": "topic",
-        "outputTopic": "local/oven_timer",
-        "onPayload": "20s",
-        "mode": "push",
-        "style": "button",
-        "metaName": "Button - Bake Pizza",
+        "typography": {
+          "buttonLabelInside": {
+            "fontSize": 15,
+            "bold": true,
+            "colorOff": "#ffffff"
+          }
+        },
+        "state": false,
         "container": {
           "show": false
         },
         "padding": 0,
-        "icons": {
-          "on": {
-            "source": "phosphor",
-            "builtin": "ph-pizza",
-            "weight": "fill",
-            "customUrl": "",
-            "tintImage": false,
-            "size": 34
-          }
-        },
-        "buttonRadius": 12
+        "backgroundColorOff": "@danger"
       },
       "bindings": {}
     },
-    "switch_p19_popcorn_btn": {
-      "type": "switch",
+    "text_mc_status": {
+      "type": "text",
       "overrides": {
-        "x": 593,
-        "y": 110,
-        "width": 172,
-        "height": 85,
-        "page": "19",
-        "buttonLabel": "POPCORN (10s)",
-        "buttonLabelPosition": "inside_bottom",
-        "actionType": "topic",
-        "outputTopic": "local/oven_timer",
-        "onPayload": "10s",
-        "mode": "push",
-        "style": "button",
-        "metaName": "Button - Popcorn",
-        "container": {
-          "show": false
-        },
-        "padding": 0,
-        "icons": {
-          "on": {
-            "source": "phosphor",
-            "builtin": "ph-popcorn",
-            "weight": "fill",
-            "customUrl": "",
-            "tintImage": false,
-            "size": 34
-          }
-        },
-        "buttonRadius": 12
+        "x": 40,
+        "y": 330,
+        "width": 460,
+        "height": 100,
+        "page": 19,
+        "zIndex": 10,
+        "metaName": "Mission Control - Telemetry Log",
+        "textVerticalAlign": "middle",
+        "padding": 14,
+        "text": "### :ph-broadcast|22|@accent: FLIGHT DIRECTOR COMMS\n**Stage:** {{if({{local/mission}}==1,if(countdown(\"30s\",\"seconds\")>26,\"CHILLDOWN\",if(countdown(\"30s\",\"seconds\")>20,\"IGNITION\",if(countdown(\"30s\",\"seconds\")>13,\"LIFTOFF & MAX-Q\",if(countdown(\"30s\",\"seconds\")>0,\"ORBITAL ASCENT\",\"ORBIT ACHIEVED\")))),\"STANDBY\")}}\n\n{{if({{local/mission}}==1,if(countdown(\"30s\",\"seconds\")>26,\"LOX chilldown active. Zero duct tape used. Turbopumps awake.\",if(countdown(\"30s\",\"seconds\")>20,\"Main engine start! Crew holding onto their coffee mugs.\",if(countdown(\"30s\",\"seconds\")>13,\"Tower cleared! Max-Q rumble, hull groaning politely.\",if(countdown(\"30s\",\"seconds\")>0,\"Past 100 km! Earth confirmed round. Seatbelt sign ON.\",\"Orbit achieved! Hit Mission Reset to warp home.\")))),\"Fueled with LOX & espresso. Interns cleared from pad.\")}}",
+        "borderColor_bind_formula": "if({{local/mission}}==1,if(countdown(\"30s\",\"seconds\")>20,#f59e0b,if(countdown(\"30s\",\"seconds\")<=0,#22c55e,#ef4444)),#1e3a5f)"
       },
       "bindings": {}
     },
-    "gauge_p19_oven_gauge": {
+    "gauge_mc_speed": {
       "type": "gauge",
       "overrides": {
-        "x": 405,
-        "y": 210,
-        "width": 172,
-        "height": 150,
-        "page": "19",
-        "label": "Oven Bake",
-        "unit": "%",
-        "min": 0,
-        "max": 100,
-        "value": 0,
-        "showIcon": false,
+        "x": 40,
+        "y": 440,
+        "width": 220,
+        "height": 210,
+        "page": 19,
+        "zIndex": 10,
+        "metaName": "Mission Control - Velocity Gauge",
         "barType": "round",
-        "trackThickness": 16,
-        "metaName": "Gauge - Oven Progress",
-        "value_bind_formula": "if(value == \"0s\", 0, if(countdown(value, \"isRunning\") == 1, countdown(value, \"percent\"), 0))"
-      },
-      "bindings": {
-        "value": "local/oven_timer"
-      }
-    },
-    "text_p19_oven_status": {
-      "type": "text",
-      "overrides": {
-        "x": 593,
-        "y": 210,
-        "width": 172,
-        "height": 150,
-        "page": "19",
-        "metaName": "Text - Oven Status",
-        "textVerticalAlign": "top",
-        "text": "### :ph-fire|24|@accent: Oven Bake\n\n**Status:** {{if(countdown({{local/oven_timer}}, \"isDone\") == 1, \"🔔 Ding! Crispy & Ready!\", if(countdown({{local/oven_timer}}, \"seconds\") > 12, \"🔥 Rapid Searing (Stage 1)\", if(countdown({{local/oven_timer}}, \"seconds\") > 4, \"🧀 Melting Toppings (Stage 2)\", if(countdown({{local/oven_timer}}, \"isRunning\") == 1, \"✨ Crust Crisping (Stage 3)\", \"Cold Standby\"))))}}\n\n**Clock:** {{countdown({{local/oven_timer}}, \"timer\")}}\n\n[block1:Pre-heated 220°C]"
-      },
-      "bindings": {}
-    },
-    "switch_p19_espresso_btn": {
-      "type": "switch",
-      "overrides": {
-        "x": 405,
-        "y": 375,
-        "width": 172,
-        "height": 68,
-        "page": "19",
-        "buttonLabel": "START BREW (30s)",
-        "buttonLabelPosition": "inside_bottom",
-        "actionType": "topic",
-        "outputTopic": "local/espresso_timer",
-        "onPayload": "30s",
-        "mode": "push",
-        "style": "button",
-        "metaName": "Button - Espresso Start",
-        "container": {
-          "show": false
-        },
-        "padding": 0,
+        "label": "Velocity",
+        "unit": "km/h",
+        "min": 0,
+        "max": 28000,
+        "value": 0,
+        "value_bind_formula": "if({{local/mission}}==1,if(countdown(\"30s\",\"seconds\")<=20,countdown(\"20s\",0,28000,\"ease-in\"),0),0)",
+        "decimalPlaces": 0,
+        "trackThickness": 20,
+        "barThickness": 14,
+        "startColor": "@accent",
+        "colMidCustom": "@warning",
+        "endColor": "@danger",
+        "showLabels": true,
+        "showTickMarks": true,
+        "labelCount": 5,
+        "axisRoundingMode": "smart",
         "icons": {
           "on": {
             "source": "phosphor",
-            "builtin": "ph-coffee",
-            "weight": "fill",
+            "builtin": "ph-speedometer",
+            "weight": "duotone",
             "customUrl": "",
             "tintImage": false,
-            "size": 26
+            "offsetY": 0
           }
         },
-        "buttonRadius": 12
+        "labelOffset": 22
       },
       "bindings": {}
     },
-    "switch_p19_espresso_stop": {
-      "type": "switch",
+    "gauge_mc_alt": {
+      "type": "gauge",
       "overrides": {
-        "x": 593,
-        "y": 375,
-        "width": 172,
-        "height": 68,
-        "page": "19",
-        "buttonLabel": "STOP / RESET",
-        "buttonLabelPosition": "inside_bottom",
-        "actionType": "topic",
-        "outputTopic": "local/espresso_timer",
-        "onPayload": "0s",
-        "mode": "push",
-        "style": "button",
-        "metaName": "Button - Espresso Cancel",
-        "container": {
-          "show": false
-        },
-        "padding": 0,
+        "x": 280,
+        "y": 440,
+        "width": 220,
+        "height": 210,
+        "page": 19,
+        "zIndex": 10,
+        "metaName": "Mission Control - Altitude Gauge",
+        "barType": "round",
+        "label": "Altitude",
+        "unit": "km",
+        "min": 0,
+        "max": 400,
+        "value": 0,
+        "value_bind_formula": "if({{local/mission}}==1,if(countdown(\"30s\",\"seconds\")<=20,countdown(\"20s\",0,400,\"ease-in-out\"),0),0)",
+        "decimalPlaces": 0,
+        "trackThickness": 20,
+        "barThickness": 14,
+        "startColor": "@accent",
+        "colMidCustom": "@accentSecondary",
+        "endColor": "@success",
+        "showLabels": true,
+        "showTickMarks": true,
+        "labelCount": 5,
+        "axisRoundingMode": "smart",
         "icons": {
           "on": {
             "source": "phosphor",
-            "builtin": "ph-x-circle",
-            "weight": "bold",
+            "builtin": "ph-planet",
+            "weight": "duotone",
             "customUrl": "",
             "tintImage": false,
-            "size": 24
+            "offsetY": 0
           }
         },
-        "buttonRadius": 12
+        "labelOffset": 22
       },
       "bindings": {}
     },
-    "slider_p19_espresso_slider": {
-      "type": "slider",
+    "gauge_mc_progress": {
+      "type": "gauge",
       "overrides": {
-        "x": 405,
-        "y": 452,
-        "width": 360,
-        "height": 44,
-        "page": "19",
-        "metaName": "Slider - Brew Progress",
-        "labelLocation": "none",
+        "x": 40,
+        "y": 660,
+        "width": 460,
+        "height": 120,
+        "page": 19,
+        "zIndex": 10,
+        "padding": 14,
+        "metaName": "Mission Control - Mission Progress",
+        "barType": "horizontal",
+        "layoutHorizontal": "left",
+        "label": "Mission Progress",
         "unit": "%",
         "min": 0,
         "max": 100,
         "value": 0,
-        "showVal": true,
-        "vertical": false,
-        "valueLocation": "right",
-        "value_bind_formula": "if(value == \"0s\", 0, if(countdown(value, \"isRunning\") == 1, countdown(value, \"percent\"), 0))"
-      },
-      "bindings": {
-        "value": "local/espresso_timer"
-      }
-    },
-    "text_p19_espresso_status": {
-      "type": "text",
-      "overrides": {
-        "x": 405,
-        "y": 506,
-        "width": 360,
-        "height": 294,
-        "page": "19",
-        "metaName": "Text - Espresso Status",
-        "textVerticalAlign": "top",
-        "text": "### :ph-coffee|26|@accent: Espresso Extraction Lab\n\n| Extraction Metric | Live Telemetry |\n| :--- | :--- |\n| **Brew State** | {{if(countdown({{local/espresso_timer}}, \"isDone\") == 1, \"☕ Crema Locked • Ready!\", if(countdown({{local/espresso_timer}}, \"seconds\") > 22, \"💧 Pre-Infusion Bloom (Stage 1)\", if(countdown({{local/espresso_timer}}, \"seconds\") > 8, \"⚡ 9-Bar Extraction (Stage 2)\", if(countdown({{local/espresso_timer}}, \"isRunning\") == 1, \"✨ Golden Crema Flow (Stage 3)\", \"Portafilter Locked\"))))}} |\n| **Shot Clock** | {{countdown({{local/espresso_timer}}, \"timer\")}} |\n| **Extraction Bar** | {{countdown({{local/espresso_timer}}, \"percent\")}}% |\n| **Remaining Time** | {{countdown({{local/espresso_timer}}, \"words\")}} |\n\n[block2:Pump: 9.0 bar • Temp: 93.5°C • Crema lock]"
+        "value_bind_formula": "if({{local/mission}}==1,countdown(\"30s\",\"percent\"),0)",
+        "decimalPlaces": 0,
+        "trackThickness": 20,
+        "barThickness": 14,
+        "iconSize": 42,
+        "startColor": "@accent",
+        "colMidCustom": "@warning",
+        "endColor": "@success",
+        "icons": {
+          "on": {
+            "source": "phosphor",
+            "builtin": "ph-rocket-launch",
+            "weight": "duotone",
+            "customUrl": "",
+            "tintImage": false,
+            "offsetY": 0
+          }
+        }
       },
       "bindings": {}
     },
-    "text_p19_deep_space": {
+    "text_mc_corridor": {
       "type": "text",
       "overrides": {
-        "x": 790,
-        "y": 110,
-        "width": 370,
-        "height": 690,
-        "page": "19",
-        "metaName": "Text - Deep Space Events",
+        "x": 540,
+        "y": 118,
+        "width": 180,
+        "height": 682,
+        "page": 19,
+        "zIndex": 5,
+        "metaName": "Mission Control - Launch Corridor",
+        "textAlign": "center",
+        "textVerticalAlign": "bottom",
+        "padding": 12,
+        "text": "[color @accent]══ LAUNCHPAD · 0 km ══[/color]",
+        "container": {
+          "show": true,
+          "background": {
+            "startOpacity": 35,
+            "endOpacity": 55
+          },
+          "border": {
+            "opacity": 45
+          }
+        },
+        "glowColor_bind_formula": "if({{local/mission}}==1,if(countdown(\"30s\",\"seconds\")>20,countdown(\"1s\",#f59e0b,#ef4444,\"pingpong\"),#ef4444),#1e3a5f)"
+      },
+      "bindings": {}
+    },
+    "text_mc_alt_350": {
+      "type": "text",
+      "overrides": {
+        "x": 544,
+        "y": 210,
+        "width": 172,
+        "height": 34,
+        "page": 19,
+        "zIndex": 6,
+        "metaName": "Altitude Marker - 350 km",
+        "textAlign": "center",
+        "textVerticalAlign": "middle",
+        "padding": 2,
+        "text": "[color @success]- 350 km · ORBIT -[/color]",
+        "container": {
+          "show": false
+        }
+      },
+      "bindings": {}
+    },
+    "text_mc_alt_200": {
+      "type": "text",
+      "overrides": {
+        "x": 544,
+        "y": 345,
+        "width": 172,
+        "height": 34,
+        "page": 19,
+        "zIndex": 6,
+        "metaName": "Altitude Marker - 200 km",
+        "textAlign": "center",
+        "textVerticalAlign": "middle",
+        "padding": 2,
+        "text": "[color @textMuted]- 200 km · LEO -[/color]",
+        "container": {
+          "show": false
+        }
+      },
+      "bindings": {}
+    },
+    "text_mc_alt_100": {
+      "type": "text",
+      "overrides": {
+        "x": 544,
+        "y": 480,
+        "width": 172,
+        "height": 34,
+        "page": 19,
+        "zIndex": 6,
+        "metaName": "Altitude Marker - 100 km",
+        "textAlign": "center",
+        "textVerticalAlign": "middle",
+        "padding": 2,
+        "text": "[color @warning]- 100 km · KÁRMÁN -[/color]",
+        "container": {
+          "show": false
+        }
+      },
+      "bindings": {}
+    },
+    "image_9768": {
+      "type": "image",
+      "overrides": {
+        "x": 504,
+        "y": 532,
+        "width": 250,
+        "height": 350,
+        "page": 19,
+        "zIndex": 30,
+        "metaName": "Rocket Image",
+        "url": "images/rocket0.png",
+        "url_bind_formula": "if({{local/mission}}==1,if(countdown(\"30s\",\"seconds\")>20,\"images/rocket1.png\",\"images/rocket2.png\"),\"images/rocket0.png\")",
+        "y_bind_formula": "if({{local/mission}}==1,if(countdown(\"30s\",\"seconds\")<=20,countdown(\"20s\",532,14,\"ease-in-out\"),532),532)",
+        "fit": true,
+        "proportional": true,
+        "contentAnimation": "cross-fade",
+        "contentAnimationDuration": 0.4,
+        "container": {
+          "show": false
+        }
+      },
+      "bindings": {}
+    },
+    "text_mc_events_hdr": {
+      "type": "text",
+      "overrides": {
+        "x": 740,
+        "y": 118,
+        "width": 420,
+        "height": 680,
+        "page": 19,
+        "zIndex": 9,
+        "metaName": "Deep Space Events - Header",
         "textVerticalAlign": "top",
-        "text": "# :ph-planet|32|@accent: Mission Horizon\n*Confirmed astronomical & deep-space exploration milestones*\n\n---\n\n### :ph-moon-stars|24|@accent: Artemis III Crewed Landing\n**Target:** 2028-09-01 &nbsp;•&nbsp; **Remaining:** {{countdown(\"2028-09-01\", \"compact\")}}\n[block1:NASA astronauts touch down on the lunar south pole.]\n\n### :ph-meteor|24|@danger: Asteroid Apophis Flyby\n**Target:** 2029-04-13 &nbsp;•&nbsp; **Remaining:** {{countdown(\"2029-04-13 21:46\", \"compact\")}}\n[block3:Passes within 31,600 km of Earth: closer than TV satellites!]\n\n### :ph-broadcast|24|@warning: Voyager 1 RTG Depletion\n**Target:** 2030-01-01 &nbsp;•&nbsp; **Remaining:** {{countdown(\"2030-01-01\", \"days\")}} days\n[block2:Humanity's most distant explorer enters perpetual silence.]\n\n### :ph-sun|24|@accent: Total Solar Eclipse\n**Target:** 2027-08-02 &nbsp;•&nbsp; **Remaining:** {{countdown(\"2027-08-02 10:00\", \"compact\")}}\n[block1:Total darkness over Spain, Gibraltar, and North Africa.]\n\n[block2:Apophis sub-GEO Earth flyby in words: {{countdown(\"2029-04-13 21:46\", \"words\")}}]"
+        "padding": 12,
+        "text": "### :ph-telescope|24|@accent: UPCOMING COSMIC EVENTS\n[color @textMuted]Live calendar countdowns across formats[/color]",
+        "container": {
+          "show": true
+        }
+      },
+      "bindings": {}
+    },
+    "text_mc_event_1": {
+      "type": "text",
+      "overrides": {
+        "x": 750,
+        "y": 186,
+        "width": 400,
+        "height": 94,
+        "page": 19,
+        "zIndex": 10,
+        "metaName": "Cosmic Event 1 - Solar Eclipse 2028",
+        "textVerticalAlign": "middle",
+        "padding": 10,
+        "text": "### :ph-sun-dim|22|@warning: Great Australasian Solar Eclipse\n[color @textMuted]July 22, 2028 · 5m 10s totality across Australia[/color]\n**Countdown:** {{countdown(\"2028-07-22 02:56\")}} ({{countdown(\"2028-07-22 02:56\",\"days\")}} days)"
+      },
+      "bindings": {}
+    },
+    "text_mc_event_2": {
+      "type": "text",
+      "overrides": {
+        "x": 750,
+        "y": 288,
+        "width": 400,
+        "height": 94,
+        "page": 19,
+        "zIndex": 10,
+        "metaName": "Cosmic Event 2 - Apophis 2029",
+        "textVerticalAlign": "middle",
+        "padding": 10,
+        "text": "### :ph-meteor|22|@danger: Asteroid 99942 Apophis Flyby\n[color @textMuted]April 13, 2029 · Passes inside geostationary orbit[/color]\n**ETA:** {{countdown(\"2029-04-13 21:46\",\"words\")}}"
+      },
+      "bindings": {}
+    },
+    "text_mc_event_3": {
+      "type": "text",
+      "overrides": {
+        "x": 750,
+        "y": 390,
+        "width": 400,
+        "height": 94,
+        "page": 19,
+        "zIndex": 10,
+        "metaName": "Cosmic Event 3 - Europa Clipper 2030",
+        "textVerticalAlign": "middle",
+        "padding": 10,
+        "text": "### :ph-planet|22|@accent: Europa Clipper at Jupiter\n[color @textMuted]April 11, 2030 · Orbit insertion at icy ocean moon[/color]\n**Arrival in:** {{countdown(\"2030-04-11\",\"compact-full\")}}"
+      },
+      "bindings": {}
+    },
+    "text_mc_event_4": {
+      "type": "text",
+      "overrides": {
+        "x": 750,
+        "y": 492,
+        "width": 400,
+        "height": 94,
+        "page": 19,
+        "zIndex": 10,
+        "metaName": "Cosmic Event 4 - Transit of Mercury 2032",
+        "textVerticalAlign": "middle",
+        "padding": 10,
+        "text": "### :ph-circle-half|22|@warning: Transit of Mercury Across Sun\n[color @textMuted]November 13, 2032 · 08:54 UTC midpoint transit[/color]\n**Transit in:** {{countdown(\"2032-11-13 08:54\",\"compact\")}} ({{countdown(\"2032-11-13 08:54\",\"hours\")}} hours)"
+      },
+      "bindings": {}
+    },
+    "text_3661715": {
+      "type": "text",
+      "overrides": {
+        "x": 20,
+        "y": 120,
+        "width": 500,
+        "height": 680,
+        "page": 19,
+        "zIndex": 9,
+        "metaName": "Mission Control",
+        "textVerticalAlign": "top",
+        "padding": 12,
+        "text": "### :ph-telescope|24|@accent: MISSION CONTROL",
+        "container": {
+          "show": true
+        }
+      },
+      "bindings": {}
+    },
+    "text_mc_event_5": {
+      "type": "text",
+      "overrides": {
+        "x": 750,
+        "y": 594,
+        "width": 400,
+        "height": 94,
+        "page": 19,
+        "zIndex": 10,
+        "metaName": "Cosmic Event 5 - Golden Alignment 2040",
+        "textVerticalAlign": "middle",
+        "padding": 10,
+        "text": "### :ph-circles-four|22|@accent: Five-Planet Golden Alignment\n[color @textMuted]September 8, 2040 · Five bright planets in dusk sky[/color]\n**Alignment in:** {{countdown(\"2040-09-08\",\"words-full\")}}"
+      },
+      "bindings": {}
+    },
+    "text_mc_event_6": {
+      "type": "text",
+      "overrides": {
+        "x": 750,
+        "y": 696,
+        "width": 400,
+        "height": 94,
+        "page": 19,
+        "zIndex": 10,
+        "metaName": "Cosmic Event 6 - Halley Comet 2061",
+        "textVerticalAlign": "middle",
+        "padding": 10,
+        "text": "### :ph-sparkle|22|@success: Halley's Comet Perihelion\n[color @textMuted]July 28, 2061 · Closest approach to the Sun[/color]\n**Remaining:** {{countdown(\"2061-07-28\",\"compact\")}} ({{countdown(\"2061-07-28\",\"years\")}} years)"
       },
       "bindings": {}
     }
