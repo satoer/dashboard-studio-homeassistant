@@ -50,6 +50,8 @@ const Dashboard = {
     _groupModalAbsZByWidgetId: null,
     /** Per manual selection group id: { allowEmptySelection: boolean }. Missing id implies allowEmptySelection false. */
     selectionGroups: {},
+    /** Sparse page records keyed by page number. Only pages with a custom name or future settings are stored. */
+    pages: {},
     history: {
         undoStack: [],
         redoStack: [],
@@ -1825,6 +1827,7 @@ const Dashboard = {
         this._applyEditModeVisuals();
         this._syncInactivityPageWatch();
         this._syncGestureControls();
+        this._syncSmoothCountdownTicker();
     },
 
     exitHoldLivePreview: function () {
@@ -1838,6 +1841,7 @@ const Dashboard = {
         this._applyEditModeVisuals();
         this._syncInactivityPageWatch();
         this._syncGestureControls();
+        this._syncSmoothCountdownTicker();
     },
 
     _widgetMatchesPage: function (widgetPayload, pageNumber) {
@@ -2324,84 +2328,284 @@ const Dashboard = {
         }
     },
 
-    _getMaxDashboardPage: function () {
-        // Pages are inferred from widget overrides. We allow editor navigation
-        // one extra page beyond the highest used page so the user can add
-        // a new (currently empty) page.
-        let maxUsedPage = 1;
-        Object.values(this.widgets || {}).forEach(widget => {
+    _catalogCap: function () {
+        return (typeof WidgetPageSpec !== 'undefined' && WidgetPageSpec.CATALOG_MAX)
+            ? WidgetPageSpec.CATALOG_MAX
+            : 200;
+    },
+
+    /**
+     * Default label is "Page N". A stored name replaces it.
+     * `pages` lets a draft tree be labeled before it is saved.
+     */
+    _pageDisplayName: function (pageNum, pages) {
+        const n = Math.max(1, parseInt(pageNum, 10) || 1);
+        const bag = pages || this.pages || {};
+        const rec = bag[String(n)];
+        const name = rec && typeof rec.name === 'string' ? rec.name.trim() : '';
+        if (name) return name;
+        return 'Page ' + n;
+    },
+
+    /**
+     * Widget-list heading. A custom name is appended.
+     * The default "Page N" is never repeated after the number.
+     */
+    _pageMenuLabel: function (pageNum) {
+        const n = Math.max(1, parseInt(pageNum, 10) || 1);
+        const rec = this.pages && this.pages[String(n)];
+        const name = rec && typeof rec.name === 'string' ? rec.name.trim() : '';
+        if (name && name !== ('Page ' + n)) return 'Page ' + n + ': ' + name;
+        return 'Page ' + n;
+    },
+
+    /** Pages that have a stored custom name, oldest number first. Default "Page N" is skipped. */
+    _namedPageEntries: function () {
+        const out = [];
+        const bag = this.pages;
+        if (!bag || typeof bag !== 'object') return out;
+        const keys = Object.keys(bag);
+        for (let i = 0; i < keys.length; i++) {
+            const n = parseInt(keys[i], 10);
+            if (!Number.isFinite(n) || n <= 0) continue;
+            const rec = bag[keys[i]];
+            const name = rec && typeof rec.name === 'string' ? rec.name.trim() : '';
+            if (!name || name === ('Page ' + n)) continue;
+            out.push({ page: n, name: name });
+        }
+        out.sort(function (a, b) { return a.page - b.page; });
+        return out;
+    },
+
+    /** A typed page number, or the exact custom name of a named page. */
+    _resolveTypedEditorPage: function (raw) {
+        const text = String(raw == null ? '' : raw).trim();
+        if (!text) return null;
+        if (/^\d+$/.test(text)) {
+            const num = parseInt(text, 10);
+            if (!Number.isFinite(num) || isNaN(num)) return null;
+            const maxPage = this._getMaxDashboardPage();
+            return Math.max(1, Math.min(maxPage, num));
+        }
+        const named = this._namedPageEntries();
+        const lower = text.toLowerCase();
+        for (let i = 0; i < named.length; i++) {
+            if (named[i].name.toLowerCase() === lower) return named[i].page;
+        }
+        return null;
+    },
+
+    _goToEditorPage: function (pageNum) {
+        const maxPage = this._getMaxDashboardPage();
+        const n = parseInt(pageNum, 10);
+        if (!Number.isFinite(n) || isNaN(n)) return;
+        const clamped = Math.max(1, Math.min(maxPage, n));
+        const prev = Math.max(1, Number(MASTER_SETTINGS.currentPage) || 1);
+        if (clamped === prev) {
+            this._refreshEditorPageIndicator();
+            return;
+        }
+        this.updateGlobal({ currentPage: clamped });
+    },
+
+    /** Keep only real page records. Drop a name that is still the default for that number. */
+    _normalizePagesTree: function (raw) {
+        const out = {};
+        if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return out;
+        const cap = this._catalogCap();
+        const keys = Object.keys(raw);
+        for (let i = 0; i < keys.length; i++) {
+            const n = parseInt(keys[i], 10);
+            if (!Number.isFinite(n) || n <= 0 || n > cap) continue;
+            const rec = raw[keys[i]];
+            if (!rec || typeof rec !== 'object' || Array.isArray(rec)) continue;
+            const clean = {};
+            const recKeys = Object.keys(rec);
+            for (let j = 0; j < recKeys.length; j++) {
+                const k = recKeys[j];
+                if (k === 'name') {
+                    const name = String(rec.name == null ? '' : rec.name).trim();
+                    if (name && name !== ('Page ' + n)) clean.name = name;
+                    continue;
+                }
+                if (rec[k] === undefined) continue;
+                clean[k] = this._cloneJson(rec[k]);
+            }
+            if (Object.keys(clean).length) out[String(n)] = clean;
+        }
+        return out;
+    },
+
+    _bumpCatalogPage: function (maxUsed, n) {
+        const v = parseInt(n, 10);
+        if (!Number.isFinite(v) || v <= 0 || v > this._catalogCap()) return maxUsed;
+        return v > maxUsed ? v : maxUsed;
+    },
+
+    _bumpCatalogSpec: function (maxUsed, spec) {
+        if (spec == null || spec === '') return maxUsed;
+        if (typeof WidgetPageSpec !== 'undefined' && typeof WidgetPageSpec.listedMax === 'function') {
+            return this._bumpCatalogPage(maxUsed, WidgetPageSpec.listedMax(spec));
+        }
+        return maxUsed;
+    },
+
+    /**
+     * Highest page that is a real dashboard page.
+     * Wide ranges such as 1-10000 do not raise this.
+     * Does not include the extra blank page the navigator offers.
+     */
+    _contentPageMax: function () {
+        let maxUsed = 1;
+        const self = this;
+        Object.keys(this.widgets || {}).forEach(function (id) {
+            const widget = self.widgets[id];
             if (!widget) return;
             const raw = (widget.overrides && widget.overrides.page != null) ? widget.overrides.page : '1';
-            const pageSpec = (typeof this.resolveEffectivePageForWidgetId === 'function')
-                ? this.resolveEffectivePageForWidgetId(widget.id, raw)
+            const pageSpec = (typeof self.resolveEffectivePageForWidgetId === 'function')
+                ? self.resolveEffectivePageForWidgetId(id, raw)
                 : raw;
-            if (pageSpec !== undefined && pageSpec !== null && pageSpec !== '') {
-                if (typeof WidgetPageSpec !== 'undefined' && typeof WidgetPageSpec.maxPageInSpec === 'function') {
-                    const m = WidgetPageSpec.maxPageInSpec(pageSpec);
-                    if (m > maxUsedPage) maxUsedPage = m;
-                } else {
-                    String(pageSpec).split(',').forEach(token => {
-                        const parsed = parseInt(String(token).trim(), 10);
-                        if (!isNaN(parsed) && parsed > maxUsedPage) maxUsedPage = parsed;
-                    });
-                }
-            }
-            const pageToRaw = widget.overrides && widget.overrides.pageTo;
-            if (pageToRaw !== undefined && pageToRaw !== null) {
-                const parsedPageTo = parseInt(String(pageToRaw).trim(), 10);
-                if (!isNaN(parsedPageTo) && parsedPageTo > maxUsedPage) maxUsedPage = parsedPageTo;
-            }
+            maxUsed = self._bumpCatalogSpec(maxUsed, pageSpec);
         });
-        Object.keys(this.groups || {}).forEach((gid) => {
-            const g = this.groups[gid];
-            if (!g) return;
-            const spec = typeof this.getGroupEffectiveOverridePageSpecForGroup === 'function'
-                ? this.getGroupEffectiveOverridePageSpecForGroup(gid)
+        this._eachStoredPageTarget(function (pageNum) {
+            maxUsed = self._bumpCatalogPage(maxUsed, pageNum);
+        });
+        Object.keys(this.groups || {}).forEach(function (gid) {
+            const spec = typeof self.getGroupEffectiveOverridePageSpecForGroup === 'function'
+                ? self.getGroupEffectiveOverridePageSpecForGroup(gid)
                 : '';
-            if (!spec) return;
-            if (typeof WidgetPageSpec !== 'undefined' && typeof WidgetPageSpec.maxPageInSpec === 'function') {
-                const m = WidgetPageSpec.maxPageInSpec(spec);
-                if (m > maxUsedPage) maxUsedPage = m;
+            maxUsed = self._bumpCatalogSpec(maxUsed, spec);
+        });
+        Object.keys(this.pages || {}).forEach(function (key) {
+            maxUsed = self._bumpCatalogPage(maxUsed, key);
+        });
+        return maxUsed;
+    },
+
+    _getMaxDashboardPage: function () {
+        // One extra page past the highest real page, so the editor can step onto a blank page.
+        return this._contentPageMax() + 1;
+    },
+
+    /**
+     * Numeric page targets stored on widgets and master settings (buttons, menu items, swipe, and so on).
+     * fn(pageNumber, descriptor).
+     */
+    _eachStoredPageTarget: function (fn) {
+        if (typeof fn !== 'function') return;
+        const self = this;
+        const consider = function (n, desc) {
+            const v = parseInt(n, 10);
+            if (!Number.isFinite(v) || v <= 0) return;
+            fn(v, desc);
+        };
+        Object.keys(this.widgets || {}).forEach(function (id) {
+            const w = self.widgets[id];
+            if (!w || !w.overrides) return;
+            const ov = w.overrides;
+            const name = (ov.metaName && String(ov.metaName).trim()) || id;
+            if (ov.actionType === 'page') {
+                consider(ov.pageTo, { id: id, name: name, slot: 'pageTo', detail: 'Button target' });
+            }
+            if (Array.isArray(ov.menuItems)) {
+                ov.menuItems.forEach(function (item, i) {
+                    if (!item || item.actionType !== 'page') return;
+                    const label = item.label ? String(item.label) : ('Item ' + (i + 1));
+                    consider(item.pageTo, {
+                        id: id,
+                        name: name,
+                        slot: 'menu',
+                        index: i,
+                        detail: 'Menu item ' + label
+                    });
+                });
+            }
+            if (Array.isArray(ov.lightsData)) {
+                ov.lightsData.forEach(function (light, i) {
+                    if (!light) return;
+                    const sa = light.switchAction;
+                    if (String(light.outputMode || 'light') !== 'switch' || !sa || sa.actionType !== 'page') return;
+                    const label = light.name ? String(light.name) : ('Light ' + (i + 1));
+                    consider(sa.pageTo, {
+                        id: id,
+                        name: name,
+                        slot: 'light',
+                        index: i,
+                        detail: label + ' switch'
+                    });
+                });
             }
         });
-        return maxUsedPage + 1;
+        if (typeof MASTER_SETTINGS === 'undefined' || !MASTER_SETTINGS) return;
+        if (MASTER_SETTINGS.inactivityPageEnabled === true) {
+            consider(MASTER_SETTINGS.inactivityReturnPage, {
+                master: 'inactivityReturnPage',
+                detail: 'Inactivity return page'
+            });
+        }
+        const swipes = [
+            ['Left', 'swipeLeft'],
+            ['Right', 'swipeRight'],
+            ['Up', 'swipeUp'],
+            ['Down', 'swipeDown']
+        ];
+        swipes.forEach(function (pair) {
+            const prefix = pair[1];
+            if (MASTER_SETTINGS[prefix + 'Enabled'] === true && MASTER_SETTINGS[prefix + 'Action'] === 'specific_page') {
+                consider(MASTER_SETTINGS[prefix + 'Page'], {
+                    master: prefix + 'Page',
+                    detail: 'Swipe ' + pair[0]
+                });
+            }
+        });
+    },
+
+    /** Widget names placed on a listable page. Wide ranges do not mark every page occupied. */
+    _pagePlacementNames: function (pageNum) {
+        const page = parseInt(pageNum, 10);
+        const names = [];
+        if (!Number.isFinite(page) || page <= 0) return names;
+        const self = this;
+        Object.keys(this.widgets || {}).forEach(function (id) {
+            const w = self.widgets[id];
+            if (!w) return;
+            const raw = (w.overrides && w.overrides.page != null) ? w.overrides.page : '1';
+            const spec = (typeof self.resolveEffectivePageForWidgetId === 'function')
+                ? self.resolveEffectivePageForWidgetId(id, raw)
+                : raw;
+            let hit = false;
+            if (typeof WidgetPageSpec !== 'undefined' && typeof WidgetPageSpec.listedCovers === 'function') {
+                hit = WidgetPageSpec.listedCovers(spec, page);
+            }
+            if (hit) names.push((w.overrides && w.overrides.metaName) || id);
+        });
+        return names;
     },
 
     _getPagesWithWidgets: function () {
         const found = {};
+        const self = this;
         const addSpec = function (raw) {
-            const pieces = String(raw == null || raw === '' ? '1' : raw).split(',');
+            const text = String(raw == null || raw === '' ? '1' : raw);
             let any = false;
-            pieces.forEach(function (token) {
-                const t = String(token).trim();
-                const range = t.match(/^(\d+)\s*-\s*(\d+)$/);
-                if (range) {
+            if (typeof WidgetPageSpec !== 'undefined' && typeof WidgetPageSpec.forEachListedPage === 'function') {
+                WidgetPageSpec.forEachListedPage(text, function (p) {
                     any = true;
-                    let lo = parseInt(range[1], 10);
-                    let hi = parseInt(range[2], 10);
-                    if (!Number.isFinite(lo) || !Number.isFinite(hi)) return;
-                    if (lo > hi) {
-                        const tmp = lo;
-                        lo = hi;
-                        hi = tmp;
-                    }
-                    for (let p = lo; p <= hi; p++) found[p] = true;
-                    return;
+                    found[p] = true;
+                });
+                if (!any && !(typeof WidgetPageSpec.hasWideRange === 'function' && WidgetPageSpec.hasWideRange(text))) {
+                    found[1] = true;
                 }
-                const n = parseInt(t, 10);
-                if (!isNaN(n) && n > 0) {
-                    any = true;
-                    found[n] = true;
-                }
-            });
-            if (!any) found[1] = true;
+                return;
+            }
+            found[1] = true;
         };
-        Object.keys(this.widgets || {}).forEach((id) => {
-            const widget = this.widgets[id];
+        Object.keys(this.widgets || {}).forEach(function (id) {
+            const widget = self.widgets[id];
             if (!widget) return;
             const raw = widget.overrides && widget.overrides.page != null ? widget.overrides.page : '1';
-            const spec = (typeof this.resolveEffectivePageForWidgetId === 'function')
-                ? this.resolveEffectivePageForWidgetId(id, raw)
+            const spec = (typeof self.resolveEffectivePageForWidgetId === 'function')
+                ? self.resolveEffectivePageForWidgetId(id, raw)
                 : raw;
             addSpec(spec);
         });
@@ -3958,11 +4162,26 @@ const Dashboard = {
 
         const currentPage = Math.max(1, Number(MASTER_SETTINGS.currentPage) || 1);
         const maxPage = this._getMaxDashboardPage();
-        const pageText = `Page ${currentPage}`;
+        const pageText = this._pageDisplayName(currentPage);
         if (!this._editorPageIndicatorEditing) {
-            label.textContent = pageText;
+            const textEl = label.querySelector('.editor-page-indicator-text');
+            if (textEl) textEl.textContent = pageText;
+            else label.textContent = pageText;
+            label.title = pageText;
         }
-        if (headerPage) headerPage.textContent = `P${currentPage}`;
+        if (typeof EditorTooltipData !== 'undefined' && EditorTooltipData['page-indicator']) {
+            let tip = 'You are on ' + pageText;
+            if (pageText !== ('Page ' + currentPage)) tip += ' (page ' + currentPage + ')';
+            tip += '. Jump to any page from this box.';
+            tip += '\n• Type a number: Press Enter to open that page. You can also type a page name you have set.';
+            tip += '\n• Named pages: The list shows only pages you have named, so you can open one directly.';
+            tip += '\n• Unnamed pages: They stay off the list. Type the page number anyway.';
+            EditorTooltipData['page-indicator'].description = tip;
+        }
+        if (headerPage) {
+            headerPage.textContent = 'P' + currentPage;
+            headerPage.title = pageText;
+        }
 
         const canGoPrev = currentPage > 1;
         const canGoNext = currentPage < maxPage;
@@ -3980,59 +4199,125 @@ const Dashboard = {
         if (!label || label.getAttribute('data-page-edit-bound') === '1') return;
         label.setAttribute('data-page-edit-bound', '1');
         label.classList.add('cursor-pointer');
-        label.setAttribute('title', 'Current dashboard page (click to type a page number)');
 
         const self = this;
+        const menu = document.getElementById('editor-page-indicator-menu');
         label.addEventListener('click', function () {
             if (label.querySelector('input')) return;
             const currentPage = Math.max(1, Number(MASTER_SETTINGS.currentPage) || 1);
+            const textEl = label.querySelector('.editor-page-indicator-text');
+            const caret = label.querySelector('.editor-page-indicator-caret');
             self._editorPageIndicatorEditing = true;
-            label.textContent = '';
+            if (textEl) textEl.classList.add('hidden');
+
             const input = document.createElement('input');
             input.type = 'text';
             input.inputMode = 'numeric';
             input.className = 'editor-page-indicator-input';
-            input.setAttribute('aria-label', 'Dashboard page number');
+            input.setAttribute('aria-label', 'Dashboard page number or name');
+            input.setAttribute('aria-autocomplete', 'list');
             input.value = String(currentPage);
-            label.appendChild(input);
-            input.focus();
-            input.select();
+            if (caret) label.insertBefore(input, caret);
+            else label.appendChild(input);
+
+            function closeMenu() {
+                if (!menu) return;
+                if (typeof Editor !== 'undefined' && typeof Editor._closeDsFixedDropdown === 'function') {
+                    Editor._closeDsFixedDropdown(menu);
+                } else {
+                    menu.classList.add('hidden');
+                }
+                label.setAttribute('aria-expanded', 'false');
+            }
 
             function finish(applyParsed) {
-                if (!input.parentNode || input.parentNode !== label) return;
+                if (!self._editorPageIndicatorEditing) return;
                 self._editorPageIndicatorEditing = false;
-                if (applyParsed) {
-                    const rawVal = String(input.value).trim();
-                    const num = parseInt(rawVal, 10);
-                    const maxPage = self._getMaxDashboardPage();
-                    if (Number.isFinite(num) && !isNaN(num)) {
-                        const clamped = Math.max(1, Math.min(maxPage, num));
-                        const prev = Math.max(1, Number(MASTER_SETTINGS.currentPage) || 1);
-                        if (clamped !== prev) {
-                            self.updateGlobal({ currentPage: clamped });
-                        }
-                    }
-                }
-                label.removeChild(input);
-                self._refreshEditorPageIndicator();
+                document.removeEventListener('mousedown', onPointerDown, true);
+                let nextPage = null;
+                if (applyParsed) nextPage = self._resolveTypedEditorPage(input.value);
+                closeMenu();
+                if (input.parentNode) input.parentNode.removeChild(input);
+                if (textEl) textEl.classList.remove('hidden');
+                if (nextPage != null) self._goToEditorPage(nextPage);
+                else self._refreshEditorPageIndicator();
+            }
+
+            function onPointerDown(e) {
+                if (!e || !e.target) return;
+                if (label.contains(e.target)) return;
+                if (menu && menu.contains(e.target)) return;
+                finish(true);
             }
 
             function onBlur() {
                 finish(true);
             }
+
+            function openNamedMenu() {
+                if (!menu) return;
+                const named = self._namedPageEntries();
+                menu.textContent = '';
+                if (!named.length) {
+                    closeMenu();
+                    return;
+                }
+                const here = Math.max(1, Number(MASTER_SETTINGS.currentPage) || 1);
+                for (let i = 0; i < named.length; i++) {
+                    const item = named[i];
+                    const row = document.createElement('div');
+                    row.className = 'ds-select-opt';
+                    if (item.page === here) row.classList.add('selected');
+                    row.setAttribute('role', 'option');
+                    row.setAttribute('aria-selected', item.page === here ? 'true' : 'false');
+                    row.title = item.name;
+                    const num = document.createElement('span');
+                    num.className = 'editor-page-menu-num';
+                    num.textContent = String(item.page);
+                    const name = document.createElement('span');
+                    name.className = 'ds-select-opt-label';
+                    name.textContent = item.name;
+                    row.appendChild(num);
+                    row.appendChild(name);
+                    row.addEventListener('mousedown', function (e) {
+                        e.preventDefault();
+                    });
+                    row.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        finish(false);
+                        self._goToEditorPage(item.page);
+                    });
+                    menu.appendChild(row);
+                }
+                if (typeof Editor !== 'undefined' && typeof Editor._openDsFixedDropdown === 'function') {
+                    if (typeof Editor._bindDsFixedDropdownOutsideClick === 'function') {
+                        Editor._bindDsFixedDropdownOutsideClick();
+                    }
+                    if (typeof Editor._closeAllDsFixedDropdowns === 'function') {
+                        Editor._closeAllDsFixedDropdowns(menu);
+                    }
+                    Editor._openDsFixedDropdown(menu, label, true);
+                } else {
+                    menu.classList.remove('hidden');
+                }
+                label.setAttribute('aria-expanded', 'true');
+            }
+
+            openNamedMenu();
+            input.focus();
+            input.select();
             input.addEventListener('blur', onBlur);
             input.addEventListener('keydown', function (e) {
                 if (e.key === 'Enter') {
                     e.preventDefault();
-                    input.blur();
+                    finish(true);
                 } else if (e.key === 'Escape') {
                     e.preventDefault();
-                    input.removeEventListener('blur', onBlur);
-                    self._editorPageIndicatorEditing = false;
-                    if (input.parentNode === label) label.removeChild(input);
-                    self._refreshEditorPageIndicator();
+                    finish(false);
                 }
             });
+            document.addEventListener('mousedown', onPointerDown, true);
         });
     },
 
@@ -4192,6 +4477,13 @@ const Dashboard = {
             const payload = direction === 'undo' ? entry.before : entry.after;
             if (!payload) return;
             this.updateGlobal(this._pickObjectKeys(payload, Object.keys(payload)), true, false);
+            return;
+        }
+
+        if (entry.kind === 'dashboard-pages') {
+            const payload = direction === 'undo' ? entry.before : entry.after;
+            this.pages = this._normalizePagesTree(payload);
+            this._refreshEditorPageIndicator();
             return;
         }
 
@@ -7769,247 +8061,9 @@ const Dashboard = {
         }
     },
 
-    insertPage: async function () {
-        const beforePageState = {};
-        Object.values(this.widgets).forEach(w => {
-            beforePageState[w.id] = {
-                page: w.overrides.page,
-                pageTo: w.overrides.pageTo
-            };
-        });
-        const currentPageBefore = MASTER_SETTINGS.currentPage;
-        const defaultDest = String(MASTER_SETTINGS.currentPage || 1);
-        const input = await CustomDialog.prompt(`Insert a new empty page at index:\n(This will shift all widgets on this page and above +1)`, defaultDest, "Insert Page");
-        if (!input) return;
-
-        const targetPage = parseInt(input.trim());
-        if (isNaN(targetPage) || targetPage <= 0) {
-            await CustomDialog.alert("Please enter a valid positive page number.", "Invalid Input");
-            return;
-        }
-
-        let widgetsUpdated = 0;
-        Object.values(this.widgets).forEach(w => {
-            let changed = false;
-
-            if (w.overrides.actionType === 'page' && w.overrides.pageTo !== undefined) {
-                const destPage = parseInt(w.overrides.pageTo);
-                if (!isNaN(destPage) && destPage >= targetPage) {
-                    w.overrides.pageTo = destPage + 1;
-                    changed = true;
-                }
-            }
-
-            if (w.overrides.page) {
-                if (typeof WidgetPageSpec !== 'undefined') {
-                    const next = WidgetPageSpec.shiftForInsert(w.overrides.page, targetPage);
-                    if (next !== String(w.overrides.page)) {
-                        w.overrides.page = next;
-                        changed = true;
-                    }
-                } else {
-                    const pages = String(w.overrides.page).split(',').map(p => p.trim());
-                    let pageStrChanged = false;
-                    for (let i = 0; i < pages.length; i++) {
-                        const pNum = parseInt(pages[i], 10);
-                        if (!isNaN(pNum) && pNum >= targetPage) {
-                            pages[i] = (pNum + 1).toString();
-                            pageStrChanged = true;
-                            changed = true;
-                        }
-                    }
-                    if (pageStrChanged) w.overrides.page = pages.join(', ');
-                }
-            }
-
-            if (changed) {
-                w.render();
-                widgetsUpdated++;
-            }
-        });
-
-        if (MASTER_SETTINGS.currentPage >= targetPage) {
-            this.updateGlobal({ currentPage: Object.values(this.widgets).length ? MASTER_SETTINGS.currentPage + 1 : targetPage });
-        }
-
-        this.selectWidget(null);
-        this.markUnsaved();
-        this._refreshEditorPageIndicator();
-        const patchEntries = [];
-        Object.values(this.widgets).forEach(w => {
-            const before = beforePageState[w.id] || {};
-            const after = { page: w.overrides.page, pageTo: w.overrides.pageTo };
-            const beforePatch = {};
-            const afterPatch = {};
-            if (before.page !== after.page) {
-                beforePatch.page = before.page;
-                afterPatch.page = after.page;
-            }
-            if (before.pageTo !== after.pageTo) {
-                beforePatch.pageTo = before.pageTo;
-                afterPatch.pageTo = after.pageTo;
-            }
-            if (Object.keys(afterPatch).length > 0) {
-                patchEntries.push({
-                    kind: 'widget-overrides',
-                    id: w.id,
-                    replace: false,
-                    before: beforePatch,
-                    after: afterPatch
-                });
-            }
-        });
-        if (currentPageBefore !== MASTER_SETTINGS.currentPage) {
-            patchEntries.push({
-                kind: 'global-settings',
-                before: { currentPage: currentPageBefore },
-                after: { currentPage: MASTER_SETTINGS.currentPage }
-            });
-        }
-        if (patchEntries.length === 1) {
-            this._recordHistoryEntry(patchEntries[0]);
-        } else if (patchEntries.length > 1) {
-            this._recordHistoryEntry({
-                kind: 'batch',
-                label: 'Insert Page',
-                entries: patchEntries
-            });
-        }
-        const notification = typeof parent.Homey !== 'undefined' ? '' : ` (${widgetsUpdated} widgets shifted)`;
-        await CustomDialog.alert(`Page successfully inserted at index ${targetPage}.` + notification, "Page Inserted");
-    },
-
-    deletePage: async function () {
-        const beforePageState = {};
-        Object.values(this.widgets).forEach(w => {
-            beforePageState[w.id] = {
-                page: w.overrides.page,
-                pageTo: w.overrides.pageTo
-            };
-        });
-        const currentPageBefore = MASTER_SETTINGS.currentPage;
-        const defaultDest = String(MASTER_SETTINGS.currentPage || 1);
-        const input = await CustomDialog.prompt(`Delete empty page at index:\n(This will shift all widgets above this page -1)`, defaultDest, "Delete Page");
-        if (!input) return;
-
-        const targetPage = parseInt(input.trim());
-        if (isNaN(targetPage) || targetPage <= 0) {
-            await CustomDialog.alert("Please enter a valid positive page number.", "Invalid Input");
-            return;
-        }
-
-        // Phase 1: Verify the page is completely empty
-        const blockingWidgets = [];
-        Object.values(this.widgets).forEach(w => {
-            if (!w.overrides.page) return;
-            let blocks = false;
-            if (typeof WidgetPageSpec !== 'undefined') {
-                blocks = WidgetPageSpec.coversPage(w.overrides.page, targetPage);
-            } else {
-                const pages = String(w.overrides.page).split(',').map(p => parseInt(p.trim(), 10));
-                blocks = pages.includes(targetPage);
-            }
-            if (blocks) blockingWidgets.push(w.overrides.metaName || w.id);
-        });
-
-        if (blockingWidgets.length > 0) {
-            await CustomDialog.alert(`Cannot delete page ${targetPage}!\n\nIt contains ${blockingWidgets.length} widget(s). Move or delete them first to prevent homeless widgets.`, "Action Blocked");
-            return;
-        }
-
-        // Phase 2: Shift all widgets flowing ABOVE the deleted boundary down by 1
-        let widgetsUpdated = 0;
-        Object.values(this.widgets).forEach(w => {
-            let changed = false;
-
-            if (w.overrides.actionType === 'page' && w.overrides.pageTo !== undefined) {
-                const destPage = parseInt(w.overrides.pageTo);
-                if (!isNaN(destPage) && destPage > targetPage) {
-                    w.overrides.pageTo = destPage - 1;
-                    changed = true;
-                } else if (!isNaN(destPage) && destPage === targetPage) {
-                    w.overrides.pageTo = 1; // Safely default fallback to page 1
-                    changed = true;
-                }
-            }
-
-            if (w.overrides.page) {
-                if (typeof WidgetPageSpec !== 'undefined') {
-                    const next = WidgetPageSpec.shiftForDelete(w.overrides.page, targetPage);
-                    if (next !== String(w.overrides.page)) {
-                        w.overrides.page = next;
-                        changed = true;
-                    }
-                } else {
-                    const pages = String(w.overrides.page).split(',').map(p => p.trim());
-                    let pageStrChanged = false;
-                    for (let i = 0; i < pages.length; i++) {
-                        const pNum = parseInt(pages[i], 10);
-                        if (!isNaN(pNum) && pNum > targetPage) {
-                            pages[i] = (pNum - 1).toString();
-                            pageStrChanged = true;
-                            changed = true;
-                        }
-                    }
-                    if (pageStrChanged) w.overrides.page = pages.join(', ');
-                }
-            }
-
-            if (changed) {
-                w.render();
-                widgetsUpdated++;
-            }
-        });
-
-        if (MASTER_SETTINGS.currentPage > targetPage) {
-            this.updateGlobal({ currentPage: MASTER_SETTINGS.currentPage - 1 });
-        }
-
-        this.selectWidget(null);
-        this.markUnsaved();
-        this._refreshEditorPageIndicator();
-        const patchEntries = [];
-        Object.values(this.widgets).forEach(w => {
-            const before = beforePageState[w.id] || {};
-            const after = { page: w.overrides.page, pageTo: w.overrides.pageTo };
-            const beforePatch = {};
-            const afterPatch = {};
-            if (before.page !== after.page) {
-                beforePatch.page = before.page;
-                afterPatch.page = after.page;
-            }
-            if (before.pageTo !== after.pageTo) {
-                beforePatch.pageTo = before.pageTo;
-                afterPatch.pageTo = after.pageTo;
-            }
-            if (Object.keys(afterPatch).length > 0) {
-                patchEntries.push({
-                    kind: 'widget-overrides',
-                    id: w.id,
-                    replace: false,
-                    before: beforePatch,
-                    after: afterPatch
-                });
-            }
-        });
-        if (currentPageBefore !== MASTER_SETTINGS.currentPage) {
-            patchEntries.push({
-                kind: 'global-settings',
-                before: { currentPage: currentPageBefore },
-                after: { currentPage: MASTER_SETTINGS.currentPage }
-            });
-        }
-        if (patchEntries.length === 1) {
-            this._recordHistoryEntry(patchEntries[0]);
-        } else if (patchEntries.length > 1) {
-            this._recordHistoryEntry({
-                kind: 'batch',
-                label: 'Delete Page',
-                entries: patchEntries
-            });
-        }
-        if (widgetsUpdated > 0) {
-            await CustomDialog.alert(`Page ${targetPage} deleted.\nShifted ${widgetsUpdated} widgets down by 1.`, "Page Deleted");
+    openPageManager: function () {
+        if (typeof PageManager !== 'undefined' && typeof PageManager.open === 'function') {
+            PageManager.open();
         }
     },
 
@@ -8693,6 +8747,7 @@ const Dashboard = {
                 this._flushDirtyWidgets(true);
                 this._syncCountdownHeartbeatTimer();
                 this._tickCountdownWidgets();
+                this._syncSmoothCountdownTicker();
                 if (this._isResponsiveLayoutMode && this._isResponsiveLayoutMode()) {
                     this._requestResponsiveReflow();
                 }
@@ -11165,6 +11220,9 @@ const Dashboard = {
             globalBindings: this._cleanObject(this.globalBindings),
             widgets: {}
         };
+        const pagesTree = this._normalizePagesTree(this.pages);
+        this.pages = pagesTree;
+        if (Object.keys(pagesTree).length > 0) data.pages = pagesTree;
         this.cleanupInvalidGroups();
         const groupedWidgetIds = new Set();
 
@@ -11466,6 +11524,7 @@ const Dashboard = {
         this.globalBindings = (data.globalBindings && typeof data.globalBindings === 'object')
             ? data.globalBindings
             : {};
+        this.pages = this._normalizePagesTree(data && data.pages);
 
         if (data.master && typeof data.master === 'object') {
             if (typeof MasterLayout !== 'undefined' && typeof MasterLayout.expandMasterToFlat === 'function') {
@@ -13986,11 +14045,15 @@ const Dashboard = {
             this._tickCountdownWidgets();
         }
         this._syncCountdownHeartbeatTimer();
+        this._syncSmoothCountdownTicker();
     },
 
     _countdownWidgetIds: new Set(),
     _countdownHeartbeatTimer: null,
     _countdownHeartbeatUsesWorker: false,
+    _smoothCountdownWidgetIds: new Set(),
+    _smoothCountdownTickerActive: false,
+    _lastSmoothCountdownTickAt: 0,
 
     registerCountdownWidget: function (id) {
         if (!id) return;
@@ -14002,6 +14065,108 @@ const Dashboard = {
         if (!id) return;
         this._countdownWidgetIds.delete(String(id));
         this._syncCountdownHeartbeatTimer();
+    },
+
+    registerSmoothCountdownWidget: function (id) {
+        if (!id) return;
+        this._smoothCountdownWidgetIds.add(String(id));
+        this._syncSmoothCountdownTicker();
+    },
+
+    unregisterSmoothCountdownWidget: function (id) {
+        if (!id) return;
+        this._smoothCountdownWidgetIds.delete(String(id));
+        this._syncSmoothCountdownTicker();
+    },
+
+    _hasActiveOnPageSmoothWidget: function () {
+        if (!this._smoothCountdownWidgetIds || this._smoothCountdownWidgetIds.size === 0) return false;
+        let hasOnPage = false;
+        this._smoothCountdownWidgetIds.forEach((wid) => {
+            if (hasOnPage) return;
+            const w = this.widgets && this.widgets[wid];
+            if (!w) {
+                this._smoothCountdownWidgetIds.delete(wid);
+                return;
+            }
+            const onPage = (typeof this._widgetCoversActivePage === 'function')
+                ? this._widgetCoversActivePage(wid, w)
+                : true;
+            if (onPage) hasOnPage = true;
+        });
+        return hasOnPage;
+    },
+
+    _syncSmoothCountdownTicker: function () {
+        const shouldRun = !this._pageHidden && !this.isEditMode && this._hasActiveOnPageSmoothWidget();
+        if (!shouldRun) {
+            if (this._smoothCountdownTickerActive) {
+                this._smoothCountdownTickerActive = false;
+                this._lastSmoothCountdownTickAt = 0;
+                this.unregisterTicker('__smoothCountdowns');
+            }
+            return;
+        }
+        if (this._smoothCountdownTickerActive) return;
+        this._smoothCountdownTickerActive = true;
+        this._lastSmoothCountdownTickAt = 0;
+        const self = this;
+        this.registerTicker('__smoothCountdowns', function () {
+            self._tickSmoothCountdownWidgets();
+        });
+    },
+
+    _tickSmoothCountdownWidgets: function () {
+        if (this._pageHidden || this.isEditMode || !this._smoothCountdownWidgetIds || this._smoothCountdownWidgetIds.size === 0) {
+            this._syncSmoothCountdownTicker();
+            return;
+        }
+        const now = (typeof performance !== 'undefined' && typeof performance.now === 'function') ? performance.now() : Date.now();
+        // Gate at 31.5ms (~30 fps) so 60Hz/120Hz displays hit steady 30fps without dropping to 20fps on rAF jitter.
+        if (this._lastSmoothCountdownTickAt > 0 && (now - this._lastSmoothCountdownTickAt) < 31.5) {
+            return;
+        }
+        this._lastSmoothCountdownTickAt = now;
+
+        const hasKeyQuery = typeof FormulaEngine !== 'undefined' && typeof FormulaEngine.getActiveSmoothCountdownKeys === 'function';
+        const hasSmoothQuery = typeof FormulaEngine !== 'undefined' && typeof FormulaEngine.hasActiveSmoothCountdownsForWidget === 'function';
+        const ids = Array.from(this._smoothCountdownWidgetIds);
+        for (let i = 0; i < ids.length; i++) {
+            const wid = ids[i];
+            const w = this.widgets && this.widgets[wid];
+            if (!w) {
+                this._smoothCountdownWidgetIds.delete(wid);
+                continue;
+            }
+            const onPage = (typeof this._widgetCoversActivePage === 'function')
+                ? this._widgetCoversActivePage(wid, w)
+                : true;
+            if (!onPage) continue;
+            const smoothKeys = hasKeyQuery ? FormulaEngine.getActiveSmoothCountdownKeys(wid) : [];
+            if (smoothKeys.length === 0) {
+                this._smoothCountdownWidgetIds.delete(wid);
+                try {
+                    if (typeof w.tickCountdowns === 'function') w.tickCountdowns();
+                } catch (errEnd) {
+                    console.error('[Dashboard] Smooth countdown final tick failed for', wid, errEnd);
+                }
+                continue;
+            }
+            try {
+                if (typeof w.tickSmoothAnimations === 'function') {
+                    w.tickSmoothAnimations(smoothKeys);
+                } else if (typeof w.tickCountdowns === 'function') {
+                    w.tickCountdowns();
+                }
+                if (hasSmoothQuery && !FormulaEngine.hasActiveSmoothCountdownsForWidget(wid)) {
+                    this._smoothCountdownWidgetIds.delete(wid);
+                    if (typeof w.tickCountdowns === 'function') w.tickCountdowns();
+                }
+            } catch (err) {
+                console.error('[Dashboard] Smooth countdown tick failed for', wid, err);
+            }
+        }
+        this._syncSmoothCountdownTicker();
     },
 
     _syncCountdownHeartbeatTimer: function () {
@@ -14119,6 +14284,7 @@ const Dashboard = {
         this._applyEditModeVisuals();
         this._syncInactivityPageWatch();
         this._syncGestureControls();
+        this._syncSmoothCountdownTicker();
         if (this.isEditMode && typeof DemoOnboarding !== 'undefined' && typeof DemoOnboarding.onEditorOpened === 'function') {
             DemoOnboarding.onEditorOpened();
         }

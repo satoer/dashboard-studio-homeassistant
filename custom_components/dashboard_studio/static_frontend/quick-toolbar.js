@@ -477,7 +477,12 @@ const QuickToolbar = {
         const pages = (typeof Dashboard !== 'undefined' && Dashboard._getPagesWithWidgets)
             ? Dashboard._getPagesWithWidgets()
             : [];
-        const signature = pages.join(',');
+        const signature = pages.map(function (page) {
+            const name = (typeof Dashboard._pageDisplayName === 'function')
+                ? Dashboard._pageDisplayName(page)
+                : ('Page ' + page);
+            return page + ':' + name;
+        }).join(',');
         const currentPage = Math.max(1, Number(typeof MASTER_SETTINGS !== 'undefined' ? MASTER_SETTINGS.currentPage : 1) || 1);
         if (signature !== this._pageSignature) {
             this._pageSignature = signature;
@@ -490,9 +495,12 @@ const QuickToolbar = {
                     const btn = document.createElement('button');
                     btn.type = 'button';
                     btn.className = 'btn-tool btn-tool-icon-only quick-toolbar-page';
+                    const pageName = (typeof Dashboard._pageDisplayName === 'function')
+                        ? Dashboard._pageDisplayName(page)
+                        : ('Page ' + page);
                     btn.textContent = String(page);
-                    btn.title = 'Go to page ' + page;
-                    btn.setAttribute('aria-label', 'Go to page ' + page);
+                    btn.title = pageName;
+                    btn.setAttribute('aria-label', pageName);
                     btn.setAttribute('data-page', String(page));
                     btn.addEventListener('click', function (e) {
                         e.preventDefault();

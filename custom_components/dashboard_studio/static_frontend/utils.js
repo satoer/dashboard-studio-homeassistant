@@ -155,6 +155,173 @@ const WidgetPageSpec = (function () {
                 }
             }
             return out.join(', ');
+        },
+
+        /**
+         * Highest page number the page manager and navigator will materialize.
+         * A widget page spec of 1-10000 must not create thousands of rows or JSON entries.
+         * Ranges whose high end is above this cap are ignored when listing pages.
+         */
+        CATALOG_MAX: 200,
+
+        /** True when a range is too wide to list as individual pages. */
+        _isWideRange: function (seg) {
+            return !!(seg && seg.kind === 'range' && seg.hi > this.CATALOG_MAX);
+        },
+
+        forEachListedPage: function (raw, fn) {
+            if (typeof fn !== 'function') return;
+            const pieces = String(raw == null ? '' : raw).split(',');
+            const seen = Object.create(null);
+            for (let i = 0; i < pieces.length; i++) {
+                const p = parseSegment(pieces[i].trim());
+                if (!p || this._isWideRange(p)) continue;
+                if (p.kind === 'single') {
+                    if (p.n > this.CATALOG_MAX || seen[p.n]) continue;
+                    seen[p.n] = true;
+                    fn(p.n);
+                } else {
+                    for (let n = p.lo; n <= p.hi && n <= this.CATALOG_MAX; n++) {
+                        if (seen[n]) continue;
+                        seen[n] = true;
+                        fn(n);
+                    }
+                }
+            }
+        },
+
+        /** Highest listed page in the spec, or 0 when the spec lists none. */
+        listedMax: function (raw) {
+            let max = 0;
+            this.forEachListedPage(raw, function (n) {
+                if (n > max) max = n;
+            });
+            return max;
+        },
+
+        /** Membership for listable pages only. Wide ranges and empty specs do not count. */
+        listedCovers: function (raw, pageNum) {
+            const page = parseInt(pageNum, 10);
+            if (!Number.isFinite(page) || page <= 0) return false;
+            let hit = false;
+            this.forEachListedPage(raw, function (n) {
+                if (n === page) hit = true;
+            });
+            return hit;
+        },
+
+        hasWideRange: function (raw) {
+            const pieces = String(raw == null ? '' : raw).split(',');
+            for (let i = 0; i < pieces.length; i++) {
+                if (this._isWideRange(parseSegment(pieces[i].trim()))) return true;
+            }
+            return false;
+        },
+
+        /**
+         * Remap page numbers without expanding a wide range into one token per page.
+         * mapPage(n) returns the new page for n <= oldEnd, or null when that page was removed.
+         * Pages above oldEnd all move by delta (inserts minus deletes inside the catalog).
+         * Returns the original string when the listed pages do not change.
+         */
+        remap: function (raw, mapPage, oldEnd, delta) {
+            const original = String(raw == null ? '' : raw);
+            if (typeof mapPage !== 'function') return original;
+            const end = parseInt(oldEnd, 10);
+            const oldBound = Number.isFinite(end) && end > 0 ? end : 0;
+            const next = this._formatRemap(original, mapPage, oldBound, delta);
+            const ident = this._formatRemap(original, function (n) { return n; }, oldBound, 0);
+            if (next === ident) return original;
+            // An empty spec means "every page". Never collapse a real spec into that.
+            if (!next && ident) return '1';
+            return next;
+        },
+
+        _formatRemap: function (original, mapPage, oldBound, delta) {
+            const shift = parseInt(delta, 10);
+            const deltaN = Number.isFinite(shift) ? shift : 0;
+
+            function mapOne(n) {
+                if (!Number.isFinite(n) || n <= 0) return null;
+                if (n > oldBound) {
+                    const moved = n + deltaN;
+                    return moved > 0 ? moved : null;
+                }
+                const mapped = mapPage(n);
+                const v = parseInt(mapped, 10);
+                if (!Number.isFinite(v) || v <= 0) return null;
+                return v;
+            }
+
+            const pieces = original.split(',');
+            const intervals = [];
+            const leftovers = [];
+            let anyValid = false;
+
+            function addInterval(a, b) {
+                const lo = parseInt(a, 10);
+                const hi = parseInt(b, 10);
+                if (!Number.isFinite(lo) || !Number.isFinite(hi) || lo <= 0 || hi < lo) return;
+                intervals.push([lo, hi]);
+            }
+
+            for (let i = 0; i < pieces.length; i++) {
+                const trimmed = pieces[i].trim();
+                if (!trimmed) continue;
+                const seg = parseSegment(trimmed);
+                if (!seg) {
+                    leftovers.push(trimmed);
+                    continue;
+                }
+                anyValid = true;
+                if (seg.kind === 'single') {
+                    const mapped = mapOne(seg.n);
+                    if (mapped) addInterval(mapped, mapped);
+                    continue;
+                }
+                const span = seg.hi - seg.lo + 1;
+                if (span > 512) {
+                    if (seg.lo > oldBound) {
+                        addInterval(seg.lo + deltaN, seg.hi + deltaN);
+                    } else {
+                        const walkHi = Math.min(seg.hi, oldBound);
+                        for (let n = seg.lo; n <= walkHi; n++) {
+                            const mapped = mapOne(n);
+                            if (mapped) addInterval(mapped, mapped);
+                        }
+                        if (seg.hi > oldBound) addInterval(oldBound + 1 + deltaN, seg.hi + deltaN);
+                    }
+                    continue;
+                }
+                for (let n = seg.lo; n <= seg.hi; n++) {
+                    const mapped = mapOne(n);
+                    if (mapped) addInterval(mapped, mapped);
+                }
+            }
+
+            if (!anyValid) return original;
+
+            intervals.sort(function (a, b) {
+                if (a[0] !== b[0]) return a[0] - b[0];
+                return a[1] - b[1];
+            });
+            const merged = [];
+            for (let i = 0; i < intervals.length; i++) {
+                const iv = intervals[i];
+                if (!merged.length || iv[0] > merged[merged.length - 1][1] + 1) {
+                    merged.push([iv[0], iv[1]]);
+                } else if (iv[1] > merged[merged.length - 1][1]) {
+                    merged[merged.length - 1][1] = iv[1];
+                }
+            }
+
+            const parts = [];
+            for (let i = 0; i < merged.length; i++) {
+                const iv = merged[i];
+                parts.push(iv[0] === iv[1] ? String(iv[0]) : (iv[0] + '-' + iv[1]));
+            }
+            for (let i = 0; i < leftovers.length; i++) parts.push(leftovers[i]);
+            return parts.join(', ');
         }
     };
 })();

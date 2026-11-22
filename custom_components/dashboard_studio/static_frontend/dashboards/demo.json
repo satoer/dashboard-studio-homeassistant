@@ -1335,6 +1335,27 @@
     }
   },
   "globalBindings": {},
+  "pages": {
+    "1": { "name": "Reactor" },
+    "2": { "name": "Camera" },
+    "3": { "name": "Dialogs" },
+    "4": { "name": "Showcase" },
+    "5": { "name": "Switches & Buttons" },
+    "6": { "name": "Smart Gauges" },
+    "7": { "name": "Live Graphs" },
+    "8": { "name": "Precision Sliders" },
+    "9": { "name": "Energy Flow" },
+    "10": { "name": "Logs & Lists" },
+    "11": { "name": "Rich Typography" },
+    "12": { "name": "Calendars" },
+    "13": { "name": "Icons & Images" },
+    "14": { "name": "Timekeeping" },
+    "15": { "name": "Battery Monitoring" },
+    "16": { "name": "Advanced Layouts" },
+    "17": { "name": "Menus" },
+    "18": { "name": "Text Formulas" },
+    "19": { "name": "Mission Control" }
+  },
   "widgets": {
     "start_btn": {
       "type": "switch",
@@ -9250,7 +9271,7 @@
         "zIndex": 10,
         "metaName": "Mission Control - Countdown Clock",
         "text": "# [color @accent]T - 10[/color]",
-        "text_bind_formula": "if({{local/mission}}==1,if(countdown(\"30s\",\"seconds\")>20,\"# [color @warning]T - \"+(countdown(\"30s\",\"seconds\")-20)+\"[/color]\",if(countdown(\"30s\",\"seconds\")==20,\"# [color @danger]LIFTOFF![/color]\",if(countdown(\"30s\",\"seconds\")<=0,\"# [color @success]ORBIT ACHIEVED[/color]\",\"# [color @accent]T + \"+(20-countdown(\"30s\",\"seconds\"))+\"s[/color]\"))),\"# [color @accent]T - 10[/color]\")",
+        "text_bind_formula": "if(value==1,if(countdown(\"30s\",\"seconds\")>20,\"# [color @warning]T - \"+(countdown(\"30s\",\"seconds\")-20)+\"[/color]\",if(countdown(\"30s\",\"seconds\")==20,\"# [color @danger]LIFTOFF![/color]\",if(countdown(\"30s\",\"seconds\")<=0,\"# [color @success]ORBIT ACHIEVED[/color]\",\"# [color @accent]T + \"+(20-countdown(\"30s\",\"seconds\"))+\"s[/color]\"))),\"# [color @accent]T - 10[/color]\")",
         "textAlign": "center",
         "textVerticalAlign": "middle",
         "typography": {
@@ -9268,11 +9289,21 @@
             "color": "@accent"
           }
         },
-        "glowColor_bind_formula": "if({{local/mission}}==1,if(countdown(\"30s\",\"seconds\")>20,countdown(\"2s\",#f59e0b,#ef4444,\"pingpong\"),if(countdown(\"30s\",\"seconds\")<=0,#22c55e,#ef4444)),#22d3ee)",
-        "borderColor_bind_formula": "if({{local/mission}}==1,if(countdown(\"30s\",\"seconds\")>20,#f59e0b,if(countdown(\"30s\",\"seconds\")<=0,#22c55e,#ef4444)),#1e3a5f)",
+        "glowColor_bind_formula": "if(value==1,if(countdown(\"30s\",\"seconds\")>20,countdown(\"2s\",#f59e0b,#ef4444,\"pingpong\"),if(countdown(\"30s\",\"seconds\")<=0,#22c55e,#ef4444)),#22d3ee)",
+        "borderColor_bind_formula": "if(value==1,if(countdown(\"30s\",\"seconds\")>20,#f59e0b,if(countdown(\"30s\",\"seconds\")<=0,#22c55e,#ef4444)),#1e3a5f)",
         "padding": 0
       },
-      "bindings": {}
+      "bindings": {
+        "text": "local/mission",
+        "container": {
+          "glow": {
+            "color": "local/mission"
+          },
+          "border": {
+            "color": "local/mission"
+          }
+        }
+      }
     },
     "switch_mc_start": {
       "type": "switch",
@@ -9294,7 +9325,8 @@
         "showIcon": true,
         "iconColOff": "@onAccent",
         "deactivated": false,
-        "deactivated_bind_formula": "if({{local/mission}} == 1, 1, 0)",
+        "deactivated_bind_transformMode": "numericFormula",
+        "deactivated_bind_formula": "if(value == 1, 1, 0)",
         "icons": {
           "on": {
             "source": "phosphor",
@@ -9319,7 +9351,9 @@
         "padding": 0,
         "backgroundColorOff": "@success"
       },
-      "bindings": {}
+      "bindings": {
+        "deactivated": "local/mission"
+      }
     },
     "switch_mc_reset": {
       "type": "switch",
@@ -9340,8 +9374,9 @@
         "buttonLabelPosition": "inside_right",
         "showIcon": true,
         "iconColOff": "#ffffff",
-        "deactivated": true,
-        "deactivated_bind_formula": "if({{local/mission}} == 1, 0, 1)",
+        "deactivated": false,
+        "deactivated_bind_transformMode": "numericFormula",
+        "deactivated_bind_formula": "if(value == 1, 0, 1)",
         "icons": {
           "on": {
             "source": "phosphor",
@@ -9366,7 +9401,9 @@
         "padding": 0,
         "backgroundColorOff": "@danger"
       },
-      "bindings": {}
+      "bindings": {
+        "deactivated": "local/mission"
+      }
     },
     "text_mc_status": {
       "type": "text",
@@ -9381,9 +9418,15 @@
         "textVerticalAlign": "middle",
         "padding": 14,
         "text": "### :ph-broadcast|22|@accent: FLIGHT DIRECTOR COMMS\n**Stage:** {{if({{local/mission}}==1,if(countdown(\"30s\",\"seconds\")>26,\"CHILLDOWN\",if(countdown(\"30s\",\"seconds\")>20,\"IGNITION\",if(countdown(\"30s\",\"seconds\")>13,\"LIFTOFF & MAX-Q\",if(countdown(\"30s\",\"seconds\")>0,\"ORBITAL ASCENT\",\"ORBIT ACHIEVED\")))),\"STANDBY\")}}\n\n{{if({{local/mission}}==1,if(countdown(\"30s\",\"seconds\")>26,\"LOX chilldown active. Zero duct tape used. Turbopumps awake.\",if(countdown(\"30s\",\"seconds\")>20,\"Main engine start! Crew holding onto their coffee mugs.\",if(countdown(\"30s\",\"seconds\")>13,\"Tower cleared! Max-Q rumble, hull groaning politely.\",if(countdown(\"30s\",\"seconds\")>0,\"Past 100 km! Earth confirmed round. Seatbelt sign ON.\",\"Orbit achieved! Hit Mission Reset to warp home.\")))),\"Fueled with LOX & espresso. Interns cleared from pad.\")}}",
-        "borderColor_bind_formula": "if({{local/mission}}==1,if(countdown(\"30s\",\"seconds\")>20,#f59e0b,if(countdown(\"30s\",\"seconds\")<=0,#22c55e,#ef4444)),#1e3a5f)"
+        "borderColor_bind_formula": "if(value==1,if(countdown(\"30s\",\"seconds\")>20,#f59e0b,if(countdown(\"30s\",\"seconds\")<=0,#22c55e,#ef4444)),#1e3a5f)"
       },
-      "bindings": {}
+      "bindings": {
+        "container": {
+          "border": {
+            "color": "local/mission"
+          }
+        }
+      }
     },
     "gauge_mc_speed": {
       "type": "gauge",
@@ -9401,7 +9444,7 @@
         "min": 0,
         "max": 28000,
         "value": 0,
-        "value_bind_formula": "if({{local/mission}}==1,if(countdown(\"30s\",\"seconds\")<=20,countdown(\"20s\",0,28000,\"ease-in\"),0),0)",
+        "value_bind_formula": "if(value==1,if(countdown(\"30s\",\"seconds\")<=20,countdown(\"20s\",0,28000,\"ease-in\"),0),0)",
         "decimalPlaces": 0,
         "trackThickness": 20,
         "barThickness": 14,
@@ -9424,7 +9467,9 @@
         },
         "labelOffset": 22
       },
-      "bindings": {}
+      "bindings": {
+        "value": "local/mission"
+      }
     },
     "gauge_mc_alt": {
       "type": "gauge",
@@ -9442,7 +9487,7 @@
         "min": 0,
         "max": 400,
         "value": 0,
-        "value_bind_formula": "if({{local/mission}}==1,if(countdown(\"30s\",\"seconds\")<=20,countdown(\"20s\",0,400,\"ease-in-out\"),0),0)",
+        "value_bind_formula": "if(value==1,if(countdown(\"30s\",\"seconds\")<=20,countdown(\"20s\",0,400,\"ease-in-out\"),0),0)",
         "decimalPlaces": 0,
         "trackThickness": 20,
         "barThickness": 14,
@@ -9465,7 +9510,9 @@
         },
         "labelOffset": 22
       },
-      "bindings": {}
+      "bindings": {
+        "value": "local/mission"
+      }
     },
     "gauge_mc_progress": {
       "type": "gauge",
@@ -9485,7 +9532,7 @@
         "min": 0,
         "max": 100,
         "value": 0,
-        "value_bind_formula": "if({{local/mission}}==1,countdown(\"30s\",\"percent\"),0)",
+        "value_bind_formula": "if(value==1,countdown(\"30s\",\"percent\"),0)",
         "decimalPlaces": 0,
         "trackThickness": 20,
         "barThickness": 14,
@@ -9504,7 +9551,9 @@
           }
         }
       },
-      "bindings": {}
+      "bindings": {
+        "value": "local/mission"
+      }
     },
     "text_mc_corridor": {
       "type": "text",
@@ -9530,9 +9579,15 @@
             "opacity": 45
           }
         },
-        "glowColor_bind_formula": "if({{local/mission}}==1,if(countdown(\"30s\",\"seconds\")>20,countdown(\"1s\",#f59e0b,#ef4444,\"pingpong\"),#ef4444),#1e3a5f)"
+        "glowColor_bind_formula": "if(value==1,if(countdown(\"30s\",\"seconds\")>20,countdown(\"1s\",#f59e0b,#ef4444,\"pingpong\"),#ef4444),#1e3a5f)"
       },
-      "bindings": {}
+      "bindings": {
+        "container": {
+          "glow": {
+            "color": "local/mission"
+          }
+        }
+      }
     },
     "text_mc_alt_350": {
       "type": "text",
@@ -9605,8 +9660,8 @@
         "zIndex": 30,
         "metaName": "Rocket Image",
         "url": "images/rocket0.png",
-        "url_bind_formula": "if({{local/mission}}==1,if(countdown(\"30s\",\"seconds\")>20,\"images/rocket1.png\",\"images/rocket2.png\"),\"images/rocket0.png\")",
-        "y_bind_formula": "if({{local/mission}}==1,if(countdown(\"30s\",\"seconds\")<=20,countdown(\"20s\",532,14,\"ease-in-out\"),532),532)",
+        "url_bind_formula": "if(value==1,if(countdown(\"30s\",\"seconds\")>20,\"images/rocket1.png\",\"images/rocket2.png\"),\"images/rocket0.png\")",
+        "y_bind_formula": "if(value==1,if(countdown(\"30s\",\"seconds\")<=20,countdown(\"20s\",532,14,\"ease-in-out\"),532),532)",
         "fit": true,
         "proportional": true,
         "contentAnimation": "cross-fade",
@@ -9615,7 +9670,10 @@
           "show": false
         }
       },
-      "bindings": {}
+      "bindings": {
+        "url": "local/mission",
+        "y": "local/mission"
+      }
     },
     "text_mc_events_hdr": {
       "type": "text",

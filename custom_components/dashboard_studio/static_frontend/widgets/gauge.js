@@ -1,6 +1,6 @@
 class GaugeWidget extends BaseWidget {
     static get metadata() {
-        return { shortName: "Gauge", label: "Gauge", icon: "ph-gauge", category: "Data", color_dark: "hsl(190, 80%, 65%)", color_light: "hsl(190, 85%, 35%)", version: "2.3.5", date: "2026-11-07" };
+        return { shortName: "Gauge", label: "Gauge", icon: "ph-gauge", category: "Data", color_dark: "hsl(190, 80%, 65%)", color_light: "hsl(190, 85%, 35%)", version: "2.5.2", date: "2026-11-18" };
     }
 
     static _firstColor() {
@@ -2526,6 +2526,20 @@ class GaugeWidget extends BaseWidget {
             });
         }
         this._applyLiveValueUpdate(c);
+        this._lastGaugeSmoothConfig = c;
+        this._syncCountdownHeartbeatRegistration();
+        return true;
+    }
+
+    onSmoothCountdownTick(smoothKeys) {
+        if (!smoothKeys || smoothKeys.length !== 1 || smoothKeys[0] !== 'value') return false;
+        const c = this._lastGaugeSmoothConfig;
+        if (!c || c.deactivated || !this.els) return false;
+        const nextVal = BaseWidget.toFiniteNumber(this.resolveValue('value', c.value), 0);
+        if (nextVal !== c.value) {
+            c.value = nextVal;
+            this._applyLiveValueUpdate(c);
+        }
         return true;
     }
 
@@ -2936,6 +2950,7 @@ class GaugeWidget extends BaseWidget {
             e.unit.style.color = accentColor;
             e.unit.style.textShadow = 'none';
         }
+        this._lastGaugeSmoothConfig = c;
     }
 
     onRemove() {

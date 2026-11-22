@@ -2249,40 +2249,7 @@ class BaseWidget {
     }
 
     /**
-     * Find the field aux-key whose binding equals topicPath (root bindings or global master).
-     */
-    _findAuxKeyForTopic(topicPath) {
-        if (!topicPath) return null;
-        const walk = (node, prefix) => {
-            if (typeof node === 'string') {
-                return node === topicPath ? prefix : null;
-            }
-            if (!node || typeof node !== 'object' || Array.isArray(node)) return null;
-            const keys = Object.keys(node);
-            for (let i = 0; i < keys.length; i++) {
-                const k = keys[i];
-                const nextPrefix = prefix ? prefix + '.' + k : k;
-                const found = walk(node[k], nextPrefix);
-                if (found) return found;
-            }
-            return null;
-        };
-        if (this.bindings) {
-            const fromTree = walk(this.bindings, '');
-            if (fromTree) return fromTree;
-        }
-        if (typeof Dashboard !== 'undefined' && Dashboard.globalBindings) {
-            const gb = Dashboard.globalBindings;
-            const gkeys = Object.keys(gb);
-            for (let j = 0; j < gkeys.length; j++) {
-                if (gb[gkeys[j]] === topicPath) return gkeys[j];
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Resolve a referenced topic to a finite number for formula evaluation (depth + cycle guarded).
+     * Resolve a referenced {{topic}} token to a coerced FormulaEngine value from liveData (depth + cycle guarded).
      */
     _resolveTopicToNumber(topicPath, depth, visited) {
         const MAX_DEPTH = 5;
@@ -2294,15 +2261,28 @@ class BaseWidget {
 
         try {
             if (typeof Dashboard === 'undefined' || !Dashboard.liveData) return { failed: true };
-            if (!Object.prototype.hasOwnProperty.call(Dashboard.liveData, topicPath)) return { failed: true };
-            const payload = Dashboard.liveData[topicPath];
-            const auxKey = this._findAuxKeyForTopic(topicPath) || topicPath;
-            const transformed = this._applyPayloadTransformsForFormula(auxKey, payload, depth, visited);
+            let payload;
+            if (Object.prototype.hasOwnProperty.call(Dashboard.liveData, topicPath)) {
+                payload = Dashboard.liveData[topicPath];
+            } else if (typeof HomeyTopicAlias !== 'undefined' && typeof HomeyTopicAlias.aliasOf === 'function') {
+                const alt = HomeyTopicAlias.aliasOf(topicPath);
+                if (!alt || !Object.prototype.hasOwnProperty.call(Dashboard.liveData, alt)) {
+                    return { failed: true };
+                }
+                payload = Dashboard.liveData[alt];
+            } else {
+                return { failed: true };
+            }
+
+            if (typeof payload === 'object' && payload !== null && typeof ColorUtils !== 'undefined') {
+                const parsed = ColorUtils.parse(payload);
+                if (parsed) payload = ColorUtils.toCss(parsed);
+            }
 
             if (typeof FormulaEngine !== 'undefined' && FormulaEngine.coerceValue) {
-                return FormulaEngine.coerceValue(transformed);
+                return FormulaEngine.coerceValue(payload);
             }
-            const n = Number(transformed);
+            const n = Number(payload);
             if (!Number.isFinite(n)) return { failed: true };
             return { v: n, type: 'number' };
         } finally {
@@ -2311,7 +2291,7 @@ class BaseWidget {
     }
 
     /**
-     * Apply binding transforms (map, formula) without color correction. Used for primary and referenced topics.
+     * Apply binding transforms (map, formula) without color correction.
      */
     _applyPayloadTransformsForFormula(key, value, depth, visited) {
         if (typeof value === 'object' && value !== null) {
@@ -3410,46 +3390,11 @@ class BaseWidget {
         }
     }
 
-    /** Resolve smooth 1s CSS transitions for active x/y countdown formulas in View mode. */
-    _syncPositionCountdownTransition(wrapperStyle) {
-        if (!wrapperStyle) return;
-        const isEdit = typeof Dashboard !== 'undefined' && Dashboard.isEditMode && !Dashboard._holdLivePreviewActive;
-        if (isEdit || typeof FormulaEngine === 'undefined' || typeof FormulaEngine.getWidgetKeyCountdownState !== 'function') {
-            this._posCountdownActive = null;
-            if (wrapperStyle.transition) wrapperStyle.transition = '';
-            return;
-        }
-        if (!this._posCountdownActive) this._posCountdownActive = { x: false, y: false };
-        const axes = [
-            { key: 'x', prop: 'left' },
-            { key: 'y', prop: 'top' }
-        ];
-        const parts = [];
-        for (let i = 0; i < axes.length; i++) {
-            const ax = axes[i];
-            const st = FormulaEngine.getWidgetKeyCountdownState(this.id, ax.key);
-            if (st.active) {
-                this._posCountdownActive[ax.key] = true;
-                parts.push(ax.prop + ' 1s linear');
-            } else if (this._posCountdownActive[ax.key] && st.hasBucket) {
-                this._posCountdownActive[ax.key] = false;
-                parts.push(ax.prop + ' 1s linear');
-            } else {
-                this._posCountdownActive[ax.key] = false;
-            }
-        }
-        const nextTransition = parts.join(', ');
-        if (wrapperStyle.transition !== nextTransition) {
-            wrapperStyle.transition = nextTransition;
-        }
-    }
-
     /** Fixed Resolution / Scale geometry: absolute pixel position and size. */
     _applyFixedGeometry(c, skipClipping) {
         this._clearResponsiveLayoutArtifacts();
         const s = this.elements.wrapper.style;
         const cs = this.elements.container.style;
-        this._syncPositionCountdownTransition(s);
         const x = BaseWidget.toFiniteNumber(c.x, BaseWidget.BASE_LAYOUT.x);
         const y = BaseWidget.toFiniteNumber(c.y, BaseWidget.BASE_LAYOUT.y);
         const width = BaseWidget.clampNumber(c.width, 1, null);
@@ -4295,6 +4240,7 @@ class BaseWidget {
             el.container.style.overflow = rescaleChrome ? 'visible' : 'hidden';
         }
         BaseWidget.applyContainerChromeToElement(el.container, c);
+        this._lastRenderConfig = c;
 
         if (el.scaleViewport) {
             if (rescaleChrome) {
@@ -4369,6 +4315,9 @@ class BaseWidget {
         }
         if (typeof Dashboard !== 'undefined' && typeof Dashboard.unregisterCountdownWidget === 'function') {
             Dashboard.unregisterCountdownWidget(this.id);
+        }
+        if (typeof Dashboard !== 'undefined' && typeof Dashboard.unregisterSmoothCountdownWidget === 'function') {
+            Dashboard.unregisterSmoothCountdownWidget(this.id);
         }
         if (this._fittedSizeRaf != null && typeof cancelAnimationFrame === 'function') {
             cancelAnimationFrame(this._fittedSizeRaf);
@@ -4453,11 +4402,107 @@ class BaseWidget {
                 Dashboard.unregisterCountdownWidget(this.id);
             }
         }
+        const hasSmooth = typeof FormulaEngine.hasActiveSmoothCountdownsForWidget === 'function'
+            && FormulaEngine.hasActiveSmoothCountdownsForWidget(this.id);
+        if (hasSmooth) {
+            if (typeof Dashboard.registerSmoothCountdownWidget === 'function') {
+                Dashboard.registerSmoothCountdownWidget(this.id);
+            }
+        } else {
+            if (typeof Dashboard.unregisterSmoothCountdownWidget === 'function') {
+                Dashboard.unregisterSmoothCountdownWidget(this.id);
+            }
+        }
     }
 
     tickCountdowns() {
         this._widgetConfigEpoch += 1;
         this.render();
+    }
+
+    /** Fast-path 30fps update for active smooth countdown keys without calling get config or render(). */
+    tickSmoothAnimations(smoothKeys) {
+        const lastC = this._lastRenderConfig;
+        const el = this.elements;
+        if (!lastC || !el || !el.wrapper || !el.container || el.wrapper.style.display === 'none') {
+            return;
+        }
+        if (!smoothKeys || !smoothKeys.length) return;
+
+        const COLOR_CHROME_KEYS = {
+            bgColStart: true, bgColEnd: true, borderColor: true, glowColor: true, innerGlowColor: true
+        };
+        const NUMERIC_CHROME_KEYS = {
+            bgOpacityStart: true, bgOpacityEnd: true, bgAngle: true, bgBlur: true,
+            glowRadius: true, glowOpacity: true, borderWidth: true, borderOpacity: true,
+            cornerRadius: true, innerGlow: true, innerGlowOpacity: true
+        };
+
+        const canFixedGeom = !BaseWidget.isResponsiveMode()
+            || (!Dashboard.getWidgetCompositeContext(this.id) && !BaseWidget.usesResponsiveGridLayout(this.id));
+        let chromeDirty = false;
+        let cornerRadiusDirty = false;
+        let sizeChanged = false;
+        const remainingKeys = [];
+
+        for (let i = 0; i < smoothKeys.length; i++) {
+            const k = smoothKeys[i];
+            if (k === 'x' || k === 'y') {
+                if (canFixedGeom) {
+                    const nextPos = BaseWidget.toFiniteNumber(this.resolveValue(k, lastC[k]), BaseWidget.BASE_LAYOUT[k]);
+                    lastC[k] = nextPos;
+                    this._setStyleIfChanged(el.wrapper, k === 'x' ? 'left' : 'top', nextPos + 'px');
+                }
+            } else if (k === 'width' || k === 'height') {
+                if (canFixedGeom) {
+                    const nextDim = BaseWidget.clampNumber(this.resolveValue(k, lastC[k]), 1, null);
+                    if (lastC[k] !== nextDim) {
+                        lastC[k] = nextDim;
+                        const px = nextDim + 'px';
+                        this._setStyleIfChanged(el.wrapper, k, px);
+                        this._setStyleIfChanged(el.container, k, px);
+                        sizeChanged = true;
+                    }
+                }
+            } else if (k === 'opacity') {
+                const nextOp = BaseWidget.clampNumber(this.resolveValue('opacity', lastC.opacity != null ? lastC.opacity : 100), 0, 100);
+                lastC.opacity = nextOp;
+                if (lastC.visible !== false) {
+                    this._setStyleIfChanged(el.wrapper, 'opacity', String(nextOp / 100));
+                }
+            } else if (COLOR_CHROME_KEYS[k]) {
+                lastC[k] = this.resolveValuePreservingThemeRef(k, lastC[k]);
+                chromeDirty = true;
+            } else if (NUMERIC_CHROME_KEYS[k]) {
+                lastC[k] = this.resolveValue(k, lastC[k]);
+                chromeDirty = true;
+                if (k === 'cornerRadius' || k === 'borderWidth') cornerRadiusDirty = true;
+            } else {
+                remainingKeys.push(k);
+            }
+        }
+
+        if (sizeChanged && typeof this._onGeometryUpdate === 'function') {
+            this._onGeometryUpdate();
+        }
+        if (chromeDirty) {
+            BaseWidget.applyContainerChromeToElement(el.container, lastC);
+            if (cornerRadiusDirty && el.scaleViewport && BaseWidget.widgetUsesResponsiveRescale(this)) {
+                const innerRadius = Math.max(0, (lastC.cornerRadius || 0) - (lastC.borderWidth || 0));
+                this._setStyleIfChanged(el.scaleViewport, 'borderRadius', innerRadius + 'px');
+            }
+        }
+        if (remainingKeys.length > 0) {
+            const handled = this.onSmoothCountdownTick(remainingKeys, lastC);
+            if (handled !== true) {
+                this.tickCountdowns();
+            }
+        }
+    }
+
+    /** Subclass fast-path hook for 30fps smooth countdown keys. Return true when all keys are handled. */
+    onSmoothCountdownTick(smoothKeys, lastConfig) {
+        return false;
     }
 
     onRemove() { }

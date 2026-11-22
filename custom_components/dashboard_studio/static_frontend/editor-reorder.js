@@ -102,6 +102,9 @@
         const threshold = options.dragMoveThresholdPx != null ? options.dragMoveThresholdPx : DEFAULT_THRESHOLD_PX;
         const layout = options.layout === 'grid' ? 'grid' : 'column';
         const onReorderCb = options.onReorder;
+        const onDragMoveCb = typeof options.onDragMove === 'function' ? options.onDragMove : null;
+        const onDragDropCb = typeof options.onDragDrop === 'function' ? options.onDragDrop : null;
+        const onDragEndCb = typeof options.onDragEnd === 'function' ? options.onDragEnd : null;
 
         let dragActive = false;
         let armActive = false;
@@ -113,6 +116,8 @@
         let dragEl = null;
         let startClientX = 0;
         let startClientY = 0;
+        let lastClientX = 0;
+        let lastClientY = 0;
         let mids = [];
         let gridRects = [];
         let gapPx = 0;
@@ -238,6 +243,9 @@
             const oi = oldIndex;
             const ni = newIndex;
             const wasDrag = dragActive;
+            const droppedEl = dragEl;
+            const dropX = lastClientX;
+            const dropY = lastClientY;
 
             dragActive = false;
             captureEl = null;
@@ -249,6 +257,13 @@
             mids = [];
             gridRects = [];
 
+            if (wasDrag && !skipCommit && onDragDropCb && oi >= 0) {
+                if (onDragDropCb(oi, dropX, dropY, droppedEl) === true) {
+                    if (onDragEndCb) onDragEndCb();
+                    return;
+                }
+            }
+            if (wasDrag && onDragEndCb) onDragEndCb();
             if (wasDrag && !skipCommit && oi >= 0 && ni >= 0 && oi !== ni) {
                 onReorderCb(oi, ni);
             }
@@ -256,6 +271,8 @@
 
         function onPointerMove(ev) {
             if (!dragActive || ev.pointerId !== pointerId) return;
+            lastClientX = ev.clientX;
+            lastClientY = ev.clientY;
             pendingMove = ev;
             if (rafId != null) return;
             if (typeof global.requestAnimationFrame !== 'function') {
@@ -274,6 +291,8 @@
 
             const clientX = ev.clientX;
             const clientY = ev.clientY;
+            lastClientX = clientX;
+            lastClientY = clientY;
             const dx = clientX - startClientX;
             const dy = clientY - startClientY;
 
@@ -284,6 +303,18 @@
                 newIndex = j;
                 applyGridDrag(dx, dy);
             } else {
+                if (onDragMoveCb && onDragMoveCb(oldIndex, clientX, clientY, dragEl) === true) {
+                    for (let i = 0; i < rows.length; i++) {
+                        const el = rows[i];
+                        if (el === dragEl) {
+                            el.style.transform = 'translate(' + dx + 'px,' + dy + 'px)';
+                        } else {
+                            el.classList.remove('is-shifting');
+                            el.style.transform = '';
+                        }
+                    }
+                    return;
+                }
                 const ins = insertIndexFromMids(clientY, mids, rows.length);
                 newIndex = toIndexAfterRemove(oldIndex, ins, rows.length);
                 applyColumnShifts(dy);
@@ -293,12 +324,14 @@
         function onPointerUp(ev) {
             if (ev.pointerId !== pointerId) return;
             ev.preventDefault();
+            lastClientX = ev.clientX;
+            lastClientY = ev.clientY;
             finishPointerGesture();
         }
 
         function onPointerCancel(ev) {
             if (ev.pointerId !== pointerId) return;
-            finishPointerGesture();
+            finishPointerGesture(true);
         }
 
         function onLostCapture(ev) {
@@ -316,6 +349,8 @@
 
             removeArmListeners();
             dragActive = true;
+            lastClientX = ev.clientX;
+            lastClientY = ev.clientY;
 
             if (typeof captureEl.setPointerCapture === 'function') {
                 try {
@@ -357,6 +392,10 @@
 
             ev.preventDefault();
 
+            if (global.EditorTooltip && typeof global.EditorTooltip.hideImmediately === 'function') {
+                global.EditorTooltip.hideImmediately();
+            }
+
             oldIndex = idx;
             newIndex = idx;
             dragEl = row;
@@ -364,6 +403,8 @@
             captureEl = row;
             startClientX = ev.clientX;
             startClientY = ev.clientY;
+            lastClientX = ev.clientX;
+            lastClientY = ev.clientY;
 
             if (layout === 'grid') {
                 gridRects = snapshotGridRects(rows);

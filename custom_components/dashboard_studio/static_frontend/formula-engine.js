@@ -913,15 +913,17 @@ const FormulaEngine = (function () {
 
         const nowMs = Date.now();
         const targetKey = targetEv.type + ':' + String(targetEv.v).trim();
+        // Keep clock/trigger countdowns shared per target, while isolating distinct animation variants (e.g. 0->100 vs 100->0)
+        const storeKey = (isColorInterp || isNumInterp) ? (targetKey + '::' + variantKey) : targetKey;
         const ctxKey = scope.countdownContext || '__default__';
         if (!countdownStore[ctxKey]) {
             countdownStore[ctxKey] = Object.create(null);
         }
         const ctxBucket = countdownStore[ctxKey];
         if (scope.visitedCountdowns) {
-            scope.visitedCountdowns[targetKey] = true;
+            scope.visitedCountdowns[storeKey] = true;
         }
-        let entry = ctxBucket[targetKey];
+        let entry = ctxBucket[storeKey];
         if (!entry || entry.targetKey !== targetKey) {
             const parsedTarget = parseCountdownTarget(targetEv, nowMs);
             if (!parsedTarget) return { failed: true };
@@ -931,10 +933,11 @@ const FormulaEngine = (function () {
                 startTimeMs: nowMs,
                 endTimeMs: parsedTarget.endTimeMs,
                 totalDurationMs: parsedTarget.totalDurationMs,
+                isSmooth: false,
                 completedTickDone: false,
                 cachedResults: Object.create(null)
             };
-            ctxBucket[targetKey] = entry;
+            ctxBucket[storeKey] = entry;
         }
 
         // Fast path: if already completed and cached in 'once' mode, return cached result for this variant
@@ -1037,18 +1040,24 @@ const FormulaEngine = (function () {
             }
 
             if (isComplete) {
+                entry.isSmooth = false;
                 entry.completedTickDone = true;
                 entry.cachedResults[variantKey] = resultObj;
-            } else if (!isRepeatingInterp) {
-                entry.completedTickDone = false;
+            } else {
+                entry.isSmooth = totalDurationMs > 0;
+                if (!isRepeatingInterp) {
+                    entry.completedTickDone = false;
+                }
             }
             return resultObj;
         }
 
         const remainingMs = Math.max(0, entry.endTimeMs - nowMs);
         if (remainingMs <= 0) {
+            entry.isSmooth = false;
             entry.completedTickDone = true;
         } else {
+            entry.isSmooth = (fmtLow === 'percent' || fmtLow === 'percent-remaining') && entry.totalDurationMs > 0;
             entry.completedTickDone = false;
         }
         const totalSec = remainingMs > 0 ? Math.ceil(remainingMs / 1000) : 0;
@@ -1487,6 +1496,33 @@ const FormulaEngine = (function () {
             }
         }
         return false;
+    }
+
+    function getActiveSmoothCountdownKeys(widgetId) {
+        const out = [];
+        if (!widgetId) return out;
+        const prefix = String(widgetId) + '::';
+        const mdPrefix = prefix + '__md__::';
+        const keys = Object.keys(countdownStore);
+        for (let i = 0; i < keys.length; i++) {
+            const k = keys[i];
+            if (k.indexOf(prefix) !== 0 || k.indexOf(mdPrefix) === 0) continue;
+            const bucket = countdownStore[k];
+            if (!bucket) continue;
+            const tKeys = Object.keys(bucket);
+            for (let j = 0; j < tKeys.length; j++) {
+                const entry = bucket[tKeys[j]];
+                if (entry && !entry.completedTickDone && entry.isSmooth === true) {
+                    out.push(k.slice(prefix.length));
+                    break;
+                }
+            }
+        }
+        return out;
+    }
+
+    function hasActiveSmoothCountdownsForWidget(widgetId) {
+        return getActiveSmoothCountdownKeys(widgetId).length > 0;
     }
 
     function getWidgetKeyCountdownState(widgetId, key) {
@@ -2269,6 +2305,8 @@ const FormulaEngine = (function () {
         withCountdownContext: withCountdownContext,
         clearWidgetCountdowns: clearWidgetCountdowns,
         hasActiveCountdownsForWidget: hasActiveCountdownsForWidget,
+        hasActiveSmoothCountdownsForWidget: hasActiveSmoothCountdownsForWidget,
+        getActiveSmoothCountdownKeys: getActiveSmoothCountdownKeys,
         getWidgetKeyCountdownState: getWidgetKeyCountdownState,
         parseDurationOrClockToSeconds: parseDurationOrClockToSeconds,
         scanDoubleBraceTokens: scanDoubleBraceTokens,

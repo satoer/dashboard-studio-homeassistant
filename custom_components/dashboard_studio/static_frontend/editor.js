@@ -549,10 +549,22 @@ const Editor = {
         };
 
         const menuWrap = document.createElement('div');
-        menuWrap.className = 'ds-editor-menu bound-topic-menu';
+        menuWrap.className = 'ds-editor-menu bound-topic-menu scrollbar-thin';
         menuWrap.style.cssText = 'display:none; position:fixed; max-height:40vh; z-index:10050;';
 
+        const hideMenuTooltip = () => {
+            if (typeof EditorTooltip !== 'undefined'
+                && typeof EditorTooltip.hideImmediately === 'function'
+                && EditorTooltip._activeTarget
+                && menuWrap.contains(EditorTooltip._activeTarget)) {
+                EditorTooltip.hideImmediately();
+            }
+        };
+
+        menuWrap.addEventListener('scroll', hideMenuTooltip, { passive: true });
+
         const renderMenu = (filterStr = '') => {
+            hideMenuTooltip();
             menuWrap.innerHTML = '';
             let topics = [];
             if (Dashboard.liveData) {
@@ -572,6 +584,7 @@ const Editor = {
                 topics.forEach(t => {
                     const item = document.createElement('div');
                     item.className = 'ds-editor-menu-item bound-topic-text font-mono truncate flex items-center justify-between';
+                    item.setAttribute('data-topic-preview', t);
 
                     let meta = null;
                     if (typeof Dashboard !== 'undefined' && Dashboard.topicMeta && Dashboard.topicMeta[t]) {
@@ -595,8 +608,6 @@ const Editor = {
                     }
                     let html = `${tagHtml}<span class="truncate">${t}</span>`;
                     item.innerHTML = html;
-                    const nameSpan = item.querySelector('span.truncate');
-                    Editor._bindOverflowTitle(item, nameSpan || item, function () { return t; });
 
                     item.onmousedown = (e) => {
                         e.preventDefault(); // maintain focus flow
@@ -627,6 +638,7 @@ const Editor = {
 
         const hideMenu = () => {
             isDisambiguating = false;
+            hideMenuTooltip();
             menuWrap.style.display = 'none';
         };
 
@@ -636,6 +648,7 @@ const Editor = {
 
         const showDisambiguationMenu = (queryStr, candidates) => {
             isDisambiguating = true;
+            hideMenuTooltip();
             menuWrap.innerHTML = '';
 
             const header = document.createElement('div');
@@ -646,6 +659,7 @@ const Editor = {
             candidates.forEach(cand => {
                 const item = document.createElement('div');
                 item.className = 'ds-editor-menu-item bound-topic-text font-mono truncate flex items-center justify-between gap-2 py-1.5 px-2.5 cursor-pointer';
+                if (cand.topic) item.setAttribute('data-topic-preview', cand.topic);
 
                 let badgeColor = 'bg-blue-500/20 text-blue-300';
                 if (cand.type === 'variable') badgeColor = 'bg-amber-500/20 text-amber-300';
@@ -1072,7 +1086,7 @@ const Editor = {
         ddIcon.className = 'ph-bold ph-caret-down bound-topic-caret absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer transition-colors z-[1001]';
 
         const menuWrap = document.createElement('div');
-        menuWrap.className = 'ds-editor-menu bound-topic-menu';
+        menuWrap.className = 'ds-editor-menu bound-topic-menu scrollbar-thin';
         menuWrap.style.cssText = 'display:none; position:fixed; max-height:40vh; z-index:10050;';
 
         const applyCommitIfChanged = () => {
@@ -4818,6 +4832,7 @@ const Editor = {
         if (this.container) {
             Editor.compactSchemaInspectorGrids(this.container);
         }
+        this.syncSectionToggleButtons();
     },
 
     /**
@@ -5407,7 +5422,9 @@ const Editor = {
                 currentPage = w.minPage;
                 const spc = document.createElement('div');
                 spc.className = 'ds-editor-menu-header';
-                spc.innerText = `Page ${currentPage}`;
+                spc.innerText = (typeof Dashboard !== 'undefined' && typeof Dashboard._pageMenuLabel === 'function')
+                    ? Dashboard._pageMenuLabel(currentPage)
+                    : ('Page ' + currentPage);
                 menu.appendChild(spc);
             }
             const html = this._getDropdownLabelHtml(w.id, widgetsMap);
@@ -5477,6 +5494,7 @@ const Editor = {
         if (typeof Dashboard !== 'undefined' && typeof Dashboard._refreshHistoryUiState === 'function') {
             Dashboard._refreshHistoryUiState();
         }
+        this.syncSectionToggleButtons();
     },
 
     loadWidget: function (id) {
@@ -5544,7 +5562,10 @@ const Editor = {
         }
 
         const widget = Dashboard.widgets[id];
-        if (!widget) return;
+        if (!widget) {
+            this.syncSectionToggleButtons();
+            return;
+        }
 
         try {
             const schema = this._buildWidgetInspectorSchema(widget);
@@ -5553,6 +5574,8 @@ const Editor = {
             this.renderSchema(schema, mergedValues, widget.overrides, widget.bindings);
         } catch (err) {
             console.error('[Editor] Failed to render widget settings:', err);
+        } finally {
+            this.syncSectionToggleButtons();
         }
     },
 
@@ -6020,6 +6043,7 @@ const Editor = {
             const cg = document.createElement('div');
             cg.className = 'control-group text-left';
             const optGid = 'group_multi_options';
+            cg.dataset.groupId = optGid;
             if (this.panelStates[optGid] === undefined) this.panelStates[optGid] = false;
             if (this.panelStates[optGid]) cg.classList.add('collapsed');
             const sectionTitle = document.createElement('div');
@@ -6028,6 +6052,7 @@ const Editor = {
             sectionTitle.onclick = () => {
                 const collapsed = cg.classList.toggle('collapsed');
                 this.panelStates[optGid] = collapsed;
+                this.syncSectionToggleButtons();
             };
             cg.appendChild(sectionTitle);
 
@@ -6278,6 +6303,7 @@ const Editor = {
             }
 
             this.container.appendChild(root);
+            this.syncSectionToggleButtons();
             return;
         }
 
@@ -6299,6 +6325,7 @@ const Editor = {
                 </div>
             </div>
         `;
+        this.syncSectionToggleButtons();
     },
 
     /**
@@ -6352,6 +6379,7 @@ const Editor = {
         const cg = document.createElement('div');
         cg.className = 'control-group text-left';
         const gid = 'group_responsive_layout';
+        cg.dataset.groupId = gid;
         if (this.panelStates[gid] === undefined) this.panelStates[gid] = false;
         if (this.panelStates[gid]) cg.classList.add('collapsed');
         const sectionTitle = document.createElement('div');
@@ -6360,6 +6388,7 @@ const Editor = {
         sectionTitle.onclick = () => {
             const collapsed = cg.classList.toggle('collapsed');
             this.panelStates[gid] = collapsed;
+            this.syncSectionToggleButtons();
         };
         cg.appendChild(sectionTitle);
 
@@ -6678,44 +6707,121 @@ const Editor = {
         }
         this._prepareReactiveContext(fullSchema, displayValues, true);
         this.renderSchema(fullSchema, displayValues, displayValues, Dashboard.globalBindings, true);
+        this.syncSectionToggleButtons();
     },
 
-    toggleAllGroups: function () {
-        const allGroups = document.querySelectorAll('.control-group');
-        if (allGroups.length === 0) return;
+    /**
+     * Returns top-level collapsible section elements inside `#editor-content`,
+     * excluding nested `column_split` / `editor-collapse-content` wrappers and title-less groups.
+     */
+    _getTopLevelInspectorSectionEls: function (onlyVisible) {
+        const container = this.container || (typeof document !== 'undefined' ? document.getElementById('editor-content') : null);
+        if (!container || typeof container.querySelectorAll !== 'function') return [];
+        const groups = container.querySelectorAll('.control-group');
+        const sections = [];
+        for (let i = 0; i < groups.length; i++) {
+            const g = groups[i];
+            if (!g) continue;
+            if (g.parentElement && g.parentElement.closest('.control-group, .editor-collapse-content')) continue;
+            let titleEl = null;
+            for (let c = 0; c < g.children.length; c++) {
+                if (g.children[c] && g.children[c].classList && g.children[c].classList.contains('section-title')) {
+                    titleEl = g.children[c];
+                    break;
+                }
+            }
+            if (!titleEl || titleEl.style.display === 'none') continue;
+            if (onlyVisible && g.style.display === 'none') continue;
+            sections.push(g);
+        }
+        return sections;
+    },
 
-        const topLevelGroups = Array.from(allGroups).filter(function (g) {
-            return !(g.closest && g.closest('.editor-collapse-content'));
+    /** Sync enabled/disabled state of the Open All Sections and Close All Sections toolbar buttons. */
+    syncSectionToggleButtons: function () {
+        if (typeof document === 'undefined') return;
+        const openBtn = document.getElementById('btn-open-all-sections');
+        const closeBtn = document.getElementById('btn-close-all-sections');
+        if (!openBtn && !closeBtn) return;
+
+        const visibleSections = this._getTopLevelInspectorSectionEls(true);
+        const hasSections = visibleSections.length > 0;
+        let anyOpen = false;
+        let anyClosed = false;
+        for (let i = 0; i < visibleSections.length; i++) {
+            if (visibleSections[i].classList.contains('collapsed')) anyClosed = true;
+            else anyOpen = true;
+            if (anyOpen && anyClosed) break;
+        }
+
+        const openDisabled = !hasSections || !anyClosed;
+        const closeDisabled = !hasSections || !anyOpen;
+
+        if (openBtn) {
+            this._setChromeDisabled(openBtn, openDisabled);
+            openBtn.disabled = openDisabled;
+        }
+        if (closeBtn) {
+            this._setChromeDisabled(closeBtn, closeDisabled);
+            closeBtn.disabled = closeDisabled;
+        }
+    },
+
+    /** Expand or collapse all top-level inspector sections and persist their states. */
+    setAllSectionsCollapsed: function (collapsed) {
+        const nextCollapsed = !!collapsed;
+        const visibleSections = this._getTopLevelInspectorSectionEls(true);
+        if (visibleSections.length === 0) {
+            this.syncSectionToggleButtons();
+            return;
+        }
+        const hasActionableChange = visibleSections.some(function (g) {
+            return g.classList.contains('collapsed') !== nextCollapsed;
         });
-        if (topLevelGroups.length === 0) return;
+        if (!hasActionableChange) {
+            this.syncSectionToggleButtons();
+            return;
+        }
 
-        const firstCollapsed = topLevelGroups[0].classList.contains('collapsed');
-        const newState = !firstCollapsed;
+        const allTopLevelSections = this._getTopLevelInspectorSectionEls(false);
+        allTopLevelSections.forEach(function (g) {
+            g.classList.toggle('collapsed', nextCollapsed);
+            const gid = g.dataset ? g.dataset.groupId : null;
+            if (gid) this.panelStates[gid] = nextCollapsed;
+        }, this);
 
-        let currentSchema;
+        let currentSchema = [];
         if (this.currentId === 'GLOBAL_SETTINGS') {
             currentSchema = this.composeDashboardGlobalMasterSchema();
-        } else if (this.currentId === 'MULTIPLE') {
-            currentSchema = [];
-        } else {
+        } else if (this.currentId && this.currentId !== 'MULTIPLE' && typeof Dashboard !== 'undefined' && Dashboard.widgets && Dashboard.widgets[this.currentId]) {
             currentSchema = this._buildWidgetInspectorSchema(Dashboard.widgets[this.currentId]);
         }
 
-        currentSchema.forEach((group, index) => {
-            const gid = group.id || `g_${index}`;
-            this.panelStates[gid] = newState;
-        });
-
-        topLevelGroups.forEach(function (g) {
-            if (newState) g.classList.add('collapsed');
-            else g.classList.remove('collapsed');
-        });
+        currentSchema.forEach(function (group, index) {
+            if (!group || group.title === '') return;
+            const gid = group.id || ('g_' + index);
+            this.panelStates[gid] = nextCollapsed;
+        }, this);
 
         Object.keys(this.panelStates).forEach(function (k) {
             if (k.startsWith('typo_ui_') || k.startsWith('icon_style_ui_') || k.startsWith('list_row_ui_')) return;
-            if (k.startsWith('typo_fields_') || k.startsWith('icon_style_fields_')) return;
-            this.panelStates[k] = newState;
+            if (k.startsWith('menu_icon_style_') || k.startsWith('lg_light_icon_')) return;
+            if (k.startsWith('typo_fields_') || k.startsWith('icon_style_fields_') || k.startsWith('column_split_')) return;
+            this.panelStates[k] = nextCollapsed;
         }, this);
+
+        if (nextCollapsed && typeof this._closeAllDsFixedDropdowns === 'function') {
+            this._closeAllDsFixedDropdowns();
+        }
+        this.syncSectionToggleButtons();
+    },
+
+    openAllSections: function () {
+        this.setAllSectionsCollapsed(false);
+    },
+
+    closeAllSections: function () {
+        this.setAllSectionsCollapsed(true);
     },
 
     copyToClipboard: function (text) {
@@ -8570,6 +8676,9 @@ const Editor = {
             title.onclick = () => {
                 const isCollapsed = g.classList.toggle('collapsed');
                 this.panelStates[gid] = isCollapsed;
+                if (group.title !== '') {
+                    this.syncSectionToggleButtons();
+                }
             };
             if (group.title === '') {
                 title.style.display = 'none';
@@ -9265,7 +9374,7 @@ const Editor = {
                     wrapper.style.height = '300px';
 
                     const toolbar = document.createElement('div');
-                    toolbar.className = 'editor-surface p-2 border-b editor-hairline flex gap-2 items-center';
+                    toolbar.className = 'editor-surface p-2 border-b editor-hairline flex-shrink-0 flex gap-2 items-center';
 
                     const filterInput = document.createElement('input');
                     filterInput.className = 'control-input text-xs py-1 px-2 h-6 flex-1';
@@ -9290,6 +9399,17 @@ const Editor = {
                     const list = document.createElement('div');
                     list.className = 'overflow-y-auto flex-1 p-0 scrollbar-thin min-h-0';
                     wrapper.appendChild(list);
+
+                    const hideMonitorTooltip = () => {
+                        if (typeof EditorTooltip !== 'undefined'
+                            && typeof EditorTooltip.hideImmediately === 'function'
+                            && EditorTooltip._activeTarget
+                            && list.contains(EditorTooltip._activeTarget)) {
+                            EditorTooltip.hideImmediately();
+                        }
+                    };
+
+                    list.addEventListener('scroll', hideMonitorTooltip, { passive: true });
 
                     const copyAllBar = document.createElement('div');
                     copyAllBar.className = 'editor-surface border-t editor-hairline p-2 flex-shrink-0 flex gap-2 items-center';
@@ -9371,6 +9491,7 @@ const Editor = {
 
                     clearBtn.onclick = () => {
                         if (driver && driver.seenTopics) {
+                            hideMonitorTooltip();
                             driver.seenTopics.clear();
                             if (driver.stats) driver.stats.msgCount = 0;
                             list.innerHTML = '<div class="p-4 text-center text-xs editor-muted-text italic">History Cleared</div>';
@@ -9398,6 +9519,7 @@ const Editor = {
                         lastRenderTime = now;
                         
                         const filter = filterInput.value.toLowerCase();
+                        hideMonitorTooltip();
                         list.innerHTML = '';
 
                         const entries = Array.from(driver.seenTopics.entries())
@@ -9437,13 +9559,13 @@ const Editor = {
                                 rawString = String(data.payload);
                             }
 
-                            let fullValue = rawString.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-                            let valDisplay = fullValue;
-
+                            let valDisplay = rawString;
                             if (valDisplay.length > 50) valDisplay = valDisplay.substring(0, 50) + '...';
 
                             const row = document.createElement('div');
                             row.className = 'group flex items-center justify-between p-2 border-b editor-hairline editor-surface-hover transition-colors';
+                            row.setAttribute('data-topic-preview', topic);
+                            row.setAttribute('data-topic-preview-source', 'monitor');
 
                             const info = document.createElement('div');
                             info.className = 'min-w-0 flex-1 mr-2';
@@ -9468,14 +9590,29 @@ const Editor = {
                                 tagHtml = UIUtils.createAccessLevelTag(false, false, false, true);
                             }
 
-                            info.innerHTML = `
-                                <div class="flex items-center gap-2">
-                                    ${tagHtml}
-                                    <div class="text-xs font-mono editor-accent-text font-bold truncate select-all" title="${topic}">${topic}</div>
-                                    <div class="text-[9px] px-1 rounded editor-surface-raised editor-muted-text">${data.count}</div>
-                                </div>
-                                <div class="text-[10px] font-mono editor-muted-text truncate mt-0.5" title='${fullValue.replace(/'/g, "&#39;")}'>${valDisplay}</div>
-                            `;
+                            const topRow = document.createElement('div');
+                            topRow.className = 'flex items-center gap-2';
+                            if (tagHtml) {
+                                const tagWrap = document.createElement('span');
+                                tagWrap.innerHTML = tagHtml;
+                                while (tagWrap.firstChild) topRow.appendChild(tagWrap.firstChild);
+                            }
+                            const topicEl = document.createElement('div');
+                            topicEl.className = 'text-xs font-mono editor-accent-text font-bold truncate select-all';
+                            topicEl.textContent = topic;
+                            topRow.appendChild(topicEl);
+
+                            const countEl = document.createElement('div');
+                            countEl.className = 'text-[9px] px-1 rounded editor-surface-raised editor-muted-text';
+                            countEl.textContent = String(data.count);
+                            topRow.appendChild(countEl);
+
+                            const valEl = document.createElement('div');
+                            valEl.className = 'text-[10px] font-mono editor-muted-text truncate mt-0.5';
+                            valEl.textContent = valDisplay;
+
+                            info.appendChild(topRow);
+                            info.appendChild(valEl);
 
                             const actions = document.createElement('div');
                             actions.className = 'flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity';
@@ -9595,8 +9732,12 @@ const Editor = {
                     this.fieldRegistry[fKey].labelEl = lblSpan;
                 }
 
+                const mapActive = canBind && this.hasBindingMapActiveForField(f, overrides, isGlobal);
+                const formulaInvalid = canBind && this.hasBindingFormulaInvalidForField(f, overrides, isGlobal);
+                const showBindOpts = isBound || mapActive || formulaInvalid;
+
                 const controlsDiv = document.createElement('div');
-                controlsDiv.className = 'control-header-actions' + (isBound ? ' control-header-actions--pinned' : '');
+                controlsDiv.className = 'control-header-actions' + (showBindOpts ? ' control-header-actions--pinned' : '');
 
                 let resetIcon = null;
                 const canResetGlobal = isGlobal && f.key && !isBound && gid !== 'm_conn'
@@ -9734,10 +9875,8 @@ const Editor = {
                     controlsDiv.appendChild(resetIcon);
                 }
 
-                if (isBound) {
+                if (showBindOpts) {
                     const bindOptsBtn = document.createElement('button');
-                    const mapActive = this.hasBindingMapActiveForField(f, overrides, isGlobal);
-                    const formulaInvalid = this.hasBindingFormulaInvalidForField(f, overrides, isGlobal);
                     bindOptsBtn.className = 'btn-bind';
                     Editor.setBindAuxHighlight(bindOptsBtn, mapActive, formulaInvalid);
                     bindOptsBtn.title = 'Binding Options';

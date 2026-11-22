@@ -31,6 +31,7 @@ const WidgetScriptLoader = {
     EDITOR_TAIL: [
         'dashboard-editor-api.js',
         'editor-reorder.js',
+        'page-manager.js',
         'editor-color-picker.js',
         'editor-tooltip-data.js',
         'editor-tooltip.js',

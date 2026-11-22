@@ -42,6 +42,116 @@
   },
   "releases": [
     {
+      "version": "2.6.0",
+      "date": "2026-11-21",
+      "changes": [
+        {
+          "title": "New: Markdown Studio",
+          "description": "Introducing Markdown Studio, a brand-new full editor for Text widgets with three workspace modes: Blocks (a drag-and-drop builder with starter templates and a live properties panel), Visual (edit directly on the formatted page as it appears on your dashboard and click any icon, image, link, or topic to customize it in place), and Raw (a Markdown source editor with formatting toolbar and table tools). Toggle Split view to keep the live formatted page side by side with a draggable divider, drag blocks directly into table cells and callouts to combine multiple elements, preview real dashboard values with Live Data, and browse Phosphor icons, your Homey Image Gallery, and topic formulas right inside the editor.",
+          "tags": [
+            16,
+            42
+          ]
+        },
+        {
+          "title": "Fixed: Formula 1 Race Tracker Guide Timezone",
+          "description": "Updated the Formula 1 Race Tracker tip so the HomeyScript formats session start times in your Homey's local timezone instead of UTC, along with safer countdown checks when no session is active.",
+          "tags": [
+            44
+          ]
+        }
+      ]
+    },
+    {
+      "version": "2.5.2",
+      "date": "2026-11-18",
+      "changes": [
+        {
+          "title": "New: Topic Preview Tooltip",
+          "description": "Hover over any item in a topic list or the Live Monitor to see a preview with its full address and current live value, even when editor tooltips are turned off.",
+          "tags": [
+            42,
+            49
+          ]
+        },
+        {
+          "title": "Improved: Smooth Animations",
+          "description": "Countdowns that move widgets, blend colors, or animate gauges, sliders, and batteries now run smoothly at 30 frames per second without slowing down your dashboard.",
+          "tags": [
+            2,
+            6,
+            14,
+            41,
+            45
+          ]
+        },
+        {
+          "title": "Fixed: Formula Controls and Active Timers",
+          "description": "The Binding Options button stays visible whenever a field has a formula or rule configured even without a chosen topic, and formulas reading a topic directly no longer reset running countdown timers.",
+          "tags": [
+            41,
+            42,
+            49
+          ]
+        }
+      ]
+    },
+    {
+      "version": "2.5.1",
+      "date": "2026-11-18",
+      "changes": [
+        {
+          "title": "Improved: Current Page Box",
+          "description": "Type a page number and press Enter to jump there, or open the list and pick a page that has a name.",
+          "tags": [
+            42
+          ]
+        },
+        {
+          "title": "Improved: Multiple Countdown Animations in One Formula",
+          "description": "You can now use multiple countdown() animations with the same duration in a single formula, such as animating up when on and back down when off.",
+          "tags": [
+            41,
+            49
+          ]
+        }
+      ]
+    },
+    {
+      "version": "2.5.0",
+      "date": "2026-11-17",
+      "changes": [
+        {
+          "title": "New: Page Manager",
+          "description": "Name your dashboard pages, drag them into a new order, and insert or delete pages from the Page Manager beside the page arrows. Pages start as Page 1, Page 2, and so on, and a name you type, such as Kitchen, shows in the editor as Page 12: Kitchen. Nothing is saved until you press Apply, and you can undo it in one step. Deleting a page warns you first. Widgets that live only on that page are removed, and widgets that also use other pages keep those pages. If a button, menu item, or similar control opens a page by number, you can relink it so it still opens the same page.",
+          "tags": [
+            42
+          ]
+        },
+        {
+          "title": "Fixed: Homey Self-Hosted Server",
+          "description": "Homey Self-Hosted Server (SHS) is more reliable. Dashboards keep showing live devices and values, and recover if the connection drops.",
+          "tags": [
+            33
+          ]
+        }
+      ]
+    },
+    {
+      "version": "2.4.1",
+      "date": "2026-11-15",
+      "changes": [
+        {
+          "title": "Fixed: App Settings Stability and Unused Capability Scan",
+          "description": "Changing many device capabilities quickly in the Homey app settings now saves smoothly without overloading memory, and the Unused Capabilities cleanup scan reliably checks saved dashboards again.",
+          "tags": [
+            33,
+            45
+          ]
+        }
+      ]
+    },
+    {
       "version": "2.4.0",
       "date": "2026-11-15",
       "changes": [

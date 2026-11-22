@@ -349,41 +349,55 @@
                                 <i class="ph-bold ph-arrows-out-simple"></i> Open Group
                             </button>
                         </div>
-                        <div class="grid grid-cols-2">
-                            <button class="btn-tool flex-1" data-editor-tooltip="page-insert" title="Insert a new dashboard page at a chosen position" onclick="Dashboard.insertPage()">
-                                <i class="ph-bold ph-file-plus"></i> Insert Page
-                            </button>
-                            <button class="btn-tool danger flex-1" data-editor-tooltip="page-delete" title="Delete an empty dashboard page at a chosen position"
-                                onclick="Dashboard.deletePage()">
-                                <i class="ph-bold ph-file-minus"></i> Delete Page
-                            </button>
-                        </div>
                     </div>
                 </div>
 
                 <div class="toolbar-divider"></div>
 
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                        <button id="editor-page-prev" class="btn-tool btn-tool-icon-only" data-editor-tooltip="page-prev"
-                            title="Go to previous dashboard page" onclick="Dashboard.stepEditorPage(-1)">
-                            <i class="ph-bold ph-caret-left"></i>
-                        </button>
-                        <div id="editor-page-indicator"
-                            class="editor-page-indicator"
-                            data-editor-tooltip="page-indicator"
-                            title="Current dashboard page">
-                            Page 1
+                <div class="toolbar-section">
+                    <label class="toolbar-label" data-editor-tooltip="pages-toolbar">Pages</label>
+                    <div class="flex flex-col">
+                        <div class="editor-page-nav flex items-center">
+                            <button id="editor-page-manager" type="button" class="btn-tool btn-tool-icon-only" data-editor-tooltip="page-manager"
+                                title="Open the page manager" onclick="Dashboard.openPageManager()">
+                                <i class="ph-bold ph-files"></i>
+                            </button>
+                            <button id="editor-page-prev" class="btn-tool btn-tool-icon-only" data-editor-tooltip="page-prev"
+                                title="Go to previous dashboard page" onclick="Dashboard.stepEditorPage(-1)">
+                                <i class="ph-bold ph-caret-left"></i>
+                            </button>
+                            <div id="editor-page-indicator"
+                                class="editor-page-indicator"
+                                data-editor-tooltip="page-indicator"
+                                role="combobox"
+                                aria-expanded="false"
+                                aria-haspopup="listbox"
+                                aria-controls="editor-page-indicator-menu"
+                                title="Current dashboard page">
+                                <span class="editor-page-indicator-text">Page 1</span>
+                                <i class="ph-bold ph-caret-down editor-page-indicator-caret" aria-hidden="true"></i>
+                                <div id="editor-page-indicator-menu" class="editor-page-indicator-menu ds-select-menu hidden" role="listbox"></div>
+                            </div>
+                            <button id="editor-page-next" class="btn-tool btn-tool-icon-only" data-editor-tooltip="page-next"
+                                title="Go to next dashboard page" onclick="Dashboard.stepEditorPage(1)">
+                                <i class="ph-bold ph-caret-right"></i>
+                            </button>
                         </div>
-                        <button id="editor-page-next" class="btn-tool btn-tool-icon-only" data-editor-tooltip="page-next"
-                            title="Go to next dashboard page" onclick="Dashboard.stepEditorPage(1)">
-                            <i class="ph-bold ph-caret-right"></i>
-                        </button>
+                        <div class="editor-section-actions grid grid-cols-2">
+                            <button id="btn-open-all-sections" type="button" class="btn-tool flex-1 is-disabled"
+                                data-editor-tooltip="open-all-sections" aria-disabled="true" disabled
+                                title="Open all settings sections in the inspector"
+                                onclick="Editor.openAllSections()">
+                                <i class="ph-bold ph-arrows-out-line-vertical"></i> Open All Sections
+                            </button>
+                            <button id="btn-close-all-sections" type="button" class="btn-tool flex-1 is-disabled"
+                                data-editor-tooltip="close-all-sections" aria-disabled="true" disabled
+                                title="Close all settings sections in the inspector"
+                                onclick="Editor.closeAllSections()">
+                                <i class="ph-bold ph-arrows-in-line-vertical"></i> Close All Sections
+                            </button>
+                        </div>
                     </div>
-                    <button class="btn-tool" data-editor-tooltip="toggle-all-groups" title="Collapse or expand all settings groups in the editor panel"
-                        onclick="Editor.toggleAllGroups()">
-                        <i class="ph-bold ph-list-dashes"></i> Toggle Groups
-                    </button>
                 </div>
             </div>
 

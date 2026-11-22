@@ -7172,25 +7172,52 @@
         "description": "Remove an empty dashboard page from the sequence.",
         "help": null
     },
+    "page-manager": {
+        "title": "Page Manager",
+        "description": "Name your pages and drag them into a new order. Insert a blank page, or delete a page. Widgets that live only on a deleted page are removed. Widgets that also sit on other pages keep those other pages. Nothing is saved until you press Apply. If a button or menu item opens one of those pages, you can relink it so it still opens the same page.",
+        "help": null
+    },
     "page-prev": {
         "title": "Previous Page",
         "description": "Navigate canvas view to the previous dashboard page.",
         "help": null
     },
+    "pages-toolbar": {
+        "title": "Pages",
+        "description": "Move between dashboard pages, open the Page Manager, and open or close the settings sections below.",
+        "help": {
+            "topic": "Editor Interface Guide",
+            "anchor": "8-page-navigator-utilities"
+        }
+    },
     "page-indicator": {
         "title": "Current Page",
-        "description": "Displays the active dashboard page number currently shown in the editor.",
-        "help": null
+        "description": "Jump to any page from this box.\n• Type a number: Press Enter to open that page. You can also type a page name you have set.\n• Named pages: The list shows only pages you have named, so you can open one directly.\n• Unnamed pages: They stay off the list. Type the page number anyway.",
+        "help": {
+            "topic": "Editor Interface Guide",
+            "anchor": "8-page-navigator-utilities"
+        }
     },
     "page-next": {
         "title": "Next Page",
         "description": "Navigate canvas view to the next dashboard page.",
         "help": null
     },
-    "toggle-all-groups": {
-        "title": "Collapse or Expand Groups",
-        "description": "Quickly toggle all property accordion groups in the inspector open or closed at once.",
-        "help": null
+    "open-all-sections": {
+        "title": "Open All Sections",
+        "description": "Expand every settings section in the inspector at once so you can scan or adjust multiple categories quickly. Disabled when all visible sections are already open.",
+        "help": {
+            "topic": "Editor Interface Guide",
+            "anchor": "8-page-navigator-utilities"
+        }
+    },
+    "close-all-sections": {
+        "title": "Close All Sections",
+        "description": "Collapse every settings section in the inspector at once to keep the sidebar compact and focused. Disabled when all visible sections are already closed.",
+        "help": {
+            "topic": "Editor Interface Guide",
+            "anchor": "8-page-navigator-utilities"
+        }
     },
     "fab-mode-switch": {
         "title": "Toggle Edit Mode",

@@ -1,6 +1,6 @@
 class BatteryWidget extends BaseWidget {
     static get metadata() {
-        return { shortName: "Battery", label: "Battery", icon: "ph-battery-charging", category: "Data", color_dark: "hsl(130, 80%, 65%)", color_light: "hsl(130, 85%, 35%)", version: "2.3.1", date: "2026-11-02" };
+        return { shortName: "Battery", label: "Battery", icon: "ph-battery-charging", category: "Data", color_dark: "hsl(130, 80%, 65%)", color_light: "hsl(130, 85%, 35%)", version: "2.5.2", date: "2026-11-18" };
     }
 
     static get BATTERY_LABEL_LEGACY_TYPO_KEYS() {
@@ -297,6 +297,53 @@ class BatteryWidget extends BaseWidget {
             e.b.style.transform = `translateX(-${termOffset / 2}px)`;
         }
 
+        this._applyBatteryChargeFill(c);
+
+        e.i.style.display = c.charging ? 'block' : 'none';
+        e.i.style.fontSize = `${Math.min(w, h) * 0.6}px`;
+
+        if (c.deactivated) {
+            const deactColor = BaseWidget.getDeactivatedColor(c);
+            const accentColor = BaseWidget.getDeactivatedColorAccent(c);
+            e.b.style.borderColor = deactColor;
+            e.b.style.color = deactColor;
+            e.n.style.backgroundColor = deactColor;
+            e.f.style.backgroundColor = 'transparent';
+            const p = Math.max(0, Math.min(c.value, 100));
+            if (c.segments > 0) {
+                const fs = Math.ceil((p / 100) * c.segments);
+                e.f.querySelectorAll('div').forEach((s, i) => {
+                    if (i < fs) {
+                        s.style.backgroundColor = accentColor;
+                        s.style.opacity = '1';
+                        s.style.visibility = 'visible';
+                    } else {
+                        s.style.backgroundColor = 'transparent';
+                        s.style.opacity = '0';
+                        s.style.visibility = 'hidden';
+                    }
+                });
+            } else {
+                e.f.style.backgroundColor = accentColor;
+            }
+            if (c.charging) {
+                e.i.style.display = 'block';
+                e.i.style.color = accentColor;
+            }
+            if (c.label) {
+                this.lblEl.style.display = 'block';
+                this.lblEl.style.color = accentColor;
+            } else {
+                this.lblEl.style.display = 'none';
+            }
+        }
+        this._lastBatterySmoothConfig = c;
+    }
+
+    _applyBatteryChargeFill(c) {
+        const e = this.e;
+        if (!e || !e.f) return;
+        const v = c.vertical;
         const col = BaseWidget.resolveCssColor(c.value <= c.lowThresh ? c.colLow : c.colGood);
         const p = Math.max(0, Math.min(c.value, 100));
         const segCount = c.segments > 0 ? (c.segments | 0) : 0;
@@ -354,44 +401,18 @@ class BatteryWidget extends BaseWidget {
                 e.f.style.height = '100%';
             }
         }
+    }
 
-        e.i.style.display = c.charging ? 'block' : 'none';
-        e.i.style.fontSize = `${Math.min(w, h) * 0.6}px`;
-
-        if (c.deactivated) {
-            const deactColor = BaseWidget.getDeactivatedColor(c);
-            const accentColor = BaseWidget.getDeactivatedColorAccent(c);
-            e.b.style.borderColor = deactColor;
-            e.b.style.color = deactColor;
-            e.n.style.backgroundColor = deactColor;
-            e.f.style.backgroundColor = 'transparent';
-            if (c.segments > 0) {
-                const fs = Math.ceil((p / 100) * c.segments);
-                e.f.querySelectorAll('div').forEach((s, i) => {
-                    if (i < fs) {
-                        s.style.backgroundColor = accentColor;
-                        s.style.opacity = '1';
-                        s.style.visibility = 'visible';
-                    } else {
-                        s.style.backgroundColor = 'transparent';
-                        s.style.opacity = '0';
-                        s.style.visibility = 'hidden';
-                    }
-                });
-            } else {
-                e.f.style.backgroundColor = accentColor;
-            }
-            if (c.charging) {
-                e.i.style.display = 'block';
-                e.i.style.color = accentColor;
-            }
-            if (c.label) {
-                this.lblEl.style.display = 'block';
-                this.lblEl.style.color = accentColor;
-            } else {
-                this.lblEl.style.display = 'none';
-            }
+    onSmoothCountdownTick(smoothKeys) {
+        if (!smoothKeys || smoothKeys.length !== 1 || smoothKeys[0] !== 'value') return false;
+        const c = this._lastBatterySmoothConfig;
+        if (!c || c.deactivated || !this.e) return false;
+        const nextVal = BaseWidget.toFiniteNumber(this.resolveValue('value', c.value), c.value);
+        if (nextVal !== c.value) {
+            c.value = nextVal;
+            this._applyBatteryChargeFill(c);
         }
+        return true;
     }
 }
 

@@ -1,6 +1,6 @@
 class ListWidget extends BaseWidget {
     static get metadata() {
-        return { label: "List / Log", shortName: "List", icon: "ph-list-dashes", category: "Text", color_dark: "hsl(280, 80%, 65%)", color_light: "hsl(280, 85%, 35%)", version: "2.4.0", date: "2026-11-07" };
+        return { label: "List / Log", shortName: "List", icon: "ph-list-dashes", category: "Text", color_dark: "hsl(280, 80%, 65%)", color_light: "hsl(280, 85%, 35%)", version: "2.4.0", date: "2026-11-15" };
     }
 
     static get LIST_ICON_SLOT_NAMES() {

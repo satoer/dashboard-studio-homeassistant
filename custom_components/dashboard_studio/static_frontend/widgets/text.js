@@ -21,7 +21,7 @@ class TextWidget extends BaseWidget {
             color_dark: 'hsl(300, 80%, 65%)',
             color_light: 'hsl(300, 85%, 35%)',
             version: '2.4.0',
-            date: '2026-11-12'
+            date: '2026-11-15'
         };
     }
 

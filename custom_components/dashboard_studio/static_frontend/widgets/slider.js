@@ -1,6 +1,6 @@
 class SliderWidget extends BaseWidget {
     static get metadata() {
-        return { label: "Slider", shortName: "Slider", icon: "ph-sliders-horizontal", category: "Control", color_dark: "hsl(240, 80%, 65%)", color_light: "hsl(240, 85%, 35%)", version: "2.3.5", date: "2026-11-07" };
+        return { label: "Slider", shortName: "Slider", icon: "ph-sliders-horizontal", category: "Control", color_dark: "hsl(240, 80%, 65%)", color_light: "hsl(240, 85%, 35%)", version: "2.5.2", date: "2026-11-18" };
     }
 
     /** Remap raw slider value to display range when customDisplayRange is enabled (MQTT/output unchanged). */
@@ -1687,8 +1687,6 @@ class SliderWidget extends BaseWidget {
             this.e.th.style.top = '50%';
         }
 
-        let pct = (c.max === c.min) ? 0 : (c.value - c.min) / (c.max - c.min);
-        pct = Math.max(0, Math.min(1, pct));
         this.e.t.style.backgroundColor = BaseWidget.colorAtOpacity(c.colTrack, c.trackOpacity);
         this.e.f.style.backgroundColor = BaseWidget.colorAtOpacity(c.colFill, c.fillOpacity);
         if (hasFill && fillOutW > 0) {
@@ -1711,14 +1709,7 @@ class SliderWidget extends BaseWidget {
         if (thumbIg) thumbShadows.push(thumbIg);
         if (c.thumbShadow) thumbShadows.push('0 2px 5px rgba(0,0,0,0.5)');
         this.e.th.style.boxShadow = thumbShadows.length > 0 ? thumbShadows.join(', ') : 'none';
-
-        if (c.vertical) {
-            if (hasFill) this.e.f.style.height = `calc((${safePad}px + (100% - ${safePad * 2}px) * ${pct}) - ${gap}px)`;
-            this.e.th.style.top = `calc(${safePad}px + (100% - ${safePad * 2}px) * ${1 - pct})`;
-        } else {
-            if (hasFill) this.e.f.style.width = `calc((${safePad}px + (100% - ${safePad * 2}px) * ${pct}) - ${gap}px)`;
-            this.e.th.style.left = `calc(${safePad}px + (100% - ${safePad * 2}px) * ${pct})`;
-        }
+        this._applySliderValueFillAndThumb(c, safePad, gap, hasFill);
 
         if (c.deactivated) {
             const deactColor = BaseWidget.getDeactivatedColor(c);
@@ -1754,6 +1745,33 @@ class SliderWidget extends BaseWidget {
         const trkCursor = (deactivated || Dashboard.isEditMode) ? 'default' : 'pointer';
         if (this.e.c && this.e.c.style.cursor !== trkCursor) this.e.c.style.cursor = trkCursor;
         if (isResp && innerEl) this._scheduleSliderLayoutMeasure(sliderBoxW, sliderBoxH);
+        this._lastSliderSmoothMeta = { c: c, safePad: safePad, gap: gap, hasFill: hasFill };
+    }
+
+    _applySliderValueFillAndThumb(c, safePad, gap, hasFill) {
+        let pct = (c.max === c.min) ? 0 : (c.value - c.min) / (c.max - c.min);
+        pct = Math.max(0, Math.min(1, pct));
+        if (c.vertical) {
+            if (hasFill) this.e.f.style.height = `calc((${safePad}px + (100% - ${safePad * 2}px) * ${pct}) - ${gap}px)`;
+            this.e.th.style.top = `calc(${safePad}px + (100% - ${safePad * 2}px) * ${1 - pct})`;
+        } else {
+            if (hasFill) this.e.f.style.width = `calc((${safePad}px + (100% - ${safePad * 2}px) * ${pct}) - ${gap}px)`;
+            this.e.th.style.left = `calc(${safePad}px + (100% - ${safePad * 2}px) * ${pct})`;
+        }
+    }
+
+    onSmoothCountdownTick(smoothKeys) {
+        if (!smoothKeys || smoothKeys.length !== 1 || smoothKeys[0] !== 'value') return false;
+        const meta = this._lastSliderSmoothMeta;
+        if (!meta || !meta.c || meta.c.deactivated || !this.e) return false;
+        const c = meta.c;
+        const nextVal = BaseWidget.toFiniteNumber(this.resolveValue('value', c.value), c.value);
+        if (nextVal !== c.value) {
+            c.value = nextVal;
+            this._setTextContentIfChanged(this.e.vNum, SliderWidget.formatSliderDisplayValue(nextVal, c));
+            this._applySliderValueFillAndThumb(c, meta.safePad, meta.gap, meta.hasFill);
+        }
+        return true;
     }
 
     /**

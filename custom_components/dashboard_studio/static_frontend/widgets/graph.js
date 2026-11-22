@@ -1,6 +1,6 @@
 class GraphWidget extends BaseWidget {
     static get metadata() {
-        return { shortName: "Graph", label: "Graph", icon: "ph-chart-line", category: "Data", color_dark: "hsl(160, 80%, 65%)", color_light: "hsl(160, 85%, 35%)", version: "2.4.0", date: "2026-11-13" };
+        return { shortName: "Graph", label: "Graph", icon: "ph-chart-line", category: "Data", color_dark: "hsl(160, 80%, 65%)", color_light: "hsl(160, 85%, 35%)", version: "2.4.0", date: "2026-11-15" };
     }
 
     static getLegendPositionOptions(values, isGlobal) {
